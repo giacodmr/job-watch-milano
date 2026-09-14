@@ -29,7 +29,6 @@ OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 
 LOCALE_SEGMENT_RE = re.compile(r"^[a-z]{2}(?:-[A-Z]{2})?$")
 SAFE_TENANT_RE = re.compile(r"^[A-Za-z0-9._-]+$")
-\
 DATEISH_RE = re.compile(
     r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
     r"\b\d{4}[./-]\d{1,2}[./-]\d{1,2}\b|"
