@@ -53,6 +53,15 @@ KNOWN_NOT_CHECKED = {
     "unilever": "Known Lever tenant `unilever` is not a verified public board; skipped without HTTP request.",
 }
 
+# Greenhouse board tokens already exercised successfully by collector v1.2.
+# Bolt is deliberately excluded: its old `bolt` token returned 404.
+KNOWN_GREENHOUSE_TOKENS = {
+    "Adyen": "adyen",
+    "N26": "n26",
+    "SumUp": "sumup",
+    "Trade Republic": "traderepublicbank",
+}
+
 _thread_local = threading.local()
 
 
@@ -330,7 +339,7 @@ def greenhouse_token(company):
     token = clean_text(ats.get("tenant")) or infer_token(ats.get("inventory_url"), ("greenhouse.io",))
     if token and SAFE_TENANT_RE.fullmatch(token):
         return token
-    return None
+    return KNOWN_GREENHOUSE_TOKENS.get(company.get("company"))
 
 
 def collect_greenhouse(company):
@@ -808,6 +817,19 @@ def find_sf_next_url(base: str, parser: SFPageParser, visited: set[str]) -> str 
     return None
 
 
+def sf_get_html(url: str) -> tuple[str, str]:
+    """SAP access-denied pages are uncheckable, not collector failures."""
+    try:
+        return get_html(url)
+    except requests.HTTPError as e:
+        status = e.response.status_code if e.response is not None else None
+        if status in {401, 403}:
+            raise NotCheckable(
+                f"SuccessFactors public inventory not enumerable from runner (HTTP {status})"
+            ) from e
+        raise
+
+
 def collect_successfactors(company):
     name = company.get("company")
     ats = company.get("ats", {})
@@ -816,7 +838,7 @@ def collect_successfactors(company):
         raise NotCheckable("SuccessFactors inventory URL missing")
 
     # We only follow URLs actually present in the mapped portal. No guessed API endpoint.
-    html_text, current_url = get_html(inventory)
+    html_text, current_url = sf_get_html(inventory)
     parser = SFPageParser()
     parser.feed(html_text)
 
@@ -824,7 +846,7 @@ def collect_successfactors(company):
         discovered = find_sf_search_url(current_url, parser)
         if not discovered:
             raise NotCheckable("No same-host exhaustive /search/ or /viewalljobs/ link exposed by portal")
-        html_text, current_url = get_html(discovered)
+        html_text, current_url = sf_get_html(discovered)
         parser = SFPageParser()
         parser.feed(html_text)
 
@@ -856,7 +878,7 @@ def collect_successfactors(company):
             raise NotCheckable(
                 f"SuccessFactors inventory not exhaustible: retrieved={len(inventory_jobs)}, total={expected_total}"
             )
-        html_text, current_url = get_html(nxt)
+        html_text, current_url = sf_get_html(nxt)
         parser = SFPageParser()
         parser.feed(html_text)
 
