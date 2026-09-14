@@ -46,34 +46,40 @@ jobs:
 
           if "KNOWN_GREENHOUSE_TOKENS" not in text:
               marker = "}\n\n_thread_local = threading.local()"
-              replacement = '''}
-
-# Greenhouse board tokens already exercised successfully by collector v1.2.
-# Bolt is deliberately excluded: its old `bolt` token returned 404.
-KNOWN_GREENHOUSE_TOKENS = {
-    "Adyen": "adyen",
-    "N26": "n26",
-    "SumUp": "sumup",
-    "Trade Republic": "traderepublicbank",
-}
-
-_thread_local = threading.local()'''
+              lines = [
+                  "}",
+                  "",
+                  "# Greenhouse board tokens already exercised successfully by collector v1.2.",
+                  "# Bolt is deliberately excluded: its old `bolt` token returned 404.",
+                  "KNOWN_GREENHOUSE_TOKENS = {",
+                  '    "Adyen": "adyen",',
+                  '    "N26": "n26",',
+                  '    "SumUp": "sumup",',
+                  '    "Trade Republic": "traderepublicbank",',
+                  "}",
+                  "",
+                  "_thread_local = threading.local()",
+              ]
               if marker not in text:
                   raise SystemExit("KNOWN_NOT_CHECKED insertion point not found")
-              text = text.replace(marker, replacement, 1)
+              text = text.replace(marker, "\n".join(lines), 1)
 
-          old = '''    if token and SAFE_TENANT_RE.fullmatch(token):
-        return token
-    return None
-
-
-def collect_greenhouse'''
-          new = '''    if token and SAFE_TENANT_RE.fullmatch(token):
-        return token
-    return KNOWN_GREENHOUSE_TOKENS.get(company.get("company"))
-
-
-def collect_greenhouse'''
+          old = "\n".join([
+              "    if token and SAFE_TENANT_RE.fullmatch(token):",
+              "        return token",
+              "    return None",
+              "",
+              "",
+              "def collect_greenhouse",
+          ])
+          new = "\n".join([
+              "    if token and SAFE_TENANT_RE.fullmatch(token):",
+              "        return token",
+              '    return KNOWN_GREENHOUSE_TOKENS.get(company.get("company"))',
+              "",
+              "",
+              "def collect_greenhouse",
+          ])
           if old in text:
               text = text.replace(old, new, 1)
           elif new not in text:
@@ -81,24 +87,26 @@ def collect_greenhouse'''
 
           if "def sf_get_html(" not in text:
               marker = "\ndef collect_successfactors(company):"
-              helper = '''
-def sf_get_html(url: str) -> tuple[str, str]:
-    """SAP access-denied pages are uncheckable, not collector failures."""
-    try:
-        return get_html(url)
-    except requests.HTTPError as e:
-        status = e.response.status_code if e.response is not None else None
-        if status in {401, 403}:
-            raise NotCheckable(
-                f"SuccessFactors public inventory not enumerable from runner (HTTP {status})"
-            ) from e
-        raise
-
-
-def collect_successfactors(company):'''
+              helper_lines = [
+                  "",
+                  "def sf_get_html(url: str) -> tuple[str, str]:",
+                  '    """SAP access-denied pages are uncheckable, not collector failures."""',
+                  "    try:",
+                  "        return get_html(url)",
+                  "    except requests.HTTPError as e:",
+                  "        status = e.response.status_code if e.response is not None else None",
+                  "        if status in {401, 403}:",
+                  "            raise NotCheckable(",
+                  '                f"SuccessFactors public inventory not enumerable from runner (HTTP {status})"',
+                  "            ) from e",
+                  "        raise",
+                  "",
+                  "",
+                  "def collect_successfactors(company):",
+              ]
               if marker not in text:
                   raise SystemExit("SuccessFactors helper insertion point not found")
-              text = text.replace(marker, helper, 1)
+              text = text.replace(marker, "\n".join(helper_lines), 1)
 
           text = text.replace("html_text, current_url = get_html(", "html_text, current_url = sf_get_html(")
           path.write_text(text, encoding="utf-8")
