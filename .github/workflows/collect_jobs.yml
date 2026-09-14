@@ -44,68 +44,37 @@ jobs:
           path = Path("collector.py")
           text = path.read_text(encoding="utf-8")
 
-          old_date = '''DATEISH_RE = re.compile(
-              r"(?:\\b\\d{1,2}[./-]\\d{1,2}[./-]\\d{2,4}\\b|"
-              r"\\b\\d{4}[./-]\\d{1,2}[./-]\\d{1,2}\\b|"
-              r"\\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\b)",
-              re.I,
-          )'''.replace("              ", "")
-          new_date = '''DATEISH_RE = re.compile(
-              r"(?:\\b\\d{1,2}[./-]\\d{1,2}[./-]\\d{2,4}\\b|"
-              r"\\b\\d{4}[./-]\\d{1,2}[./-]\\d{1,2}\\b|"
-              r"\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\s+\\d{1,2}(?:,\\s*\\d{4})?\\b|"
-              r"\\b\\d{1,2}\\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)(?:\\s+\\d{4})?\\b)",
-              re.I,
-          )'''.replace("              ", "")
-          if old_date in text:
-              text = text.replace(old_date, new_date, 1)
-          elif new_date not in text:
-              raise SystemExit("DATEISH_RE patch point not found")
+          def replace_section(source, start, end, replacement):
+              i = source.index(start)
+              j = source.index(end, i)
+              return source[:i] + replacement.rstrip() + "\n\n" + source[j:].lstrip("\n")
 
-          old_loc = '''def location_matches(location) -> bool:
-              """Match only target cities, not substrings such as Roma inside Romagna."""
-              if not location:
-                  return False
-              return bool(TARGET_LOCATION_RE.search(str(location)))'''.replace("              ", "")
-          new_loc = '''def location_matches(location) -> bool:
+          date_block = r'''DATEISH_RE = re.compile(
+              r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
+              r"\b\d{4}[./-]\d{1,2}[./-]\d{1,2}\b|"
+              r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s*\d{4})?\b|"
+              r"\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)(?:\s+\d{4})?\b)",
+              re.I,
+          )'''.replace("              ", "")
+          text = replace_section(text, "DATEISH_RE = re.compile(", "SF_TOTAL_PATTERNS = (", date_block)
+
+          location_block = '''def location_matches(location) -> bool:
               """Match target cities while excluding obvious North-American namesakes."""
               if not location:
                   return False
               s = str(location)
               if not TARGET_LOCATION_RE.search(s):
                   return False
-              if re.search(r"\\b(?:United States|USA|Canada)\\b", s, re.I):
+              if re.search(r"\\bLondon\\s*,\\s*(?:ON|Ontario)(?:\\s*,|\\b)", s, re.I):
                   return False
-              if re.search(r"\\bLondon\\s*,\\s*(?:ON|Ontario)\\b", s, re.I):
+              if re.search(r"\\bLondon\\b.*\\bCanada\\b", s, re.I):
                   return False
-              if re.search(r"\\b(?:Milan|Rome)\\s*,\\s*[A-Z]{2}\\s*,\\s*(?:US|USA)\\b", s, re.I):
+              if re.search(r"\\b(?:Milan|Rome)\\s*,\\s*[A-Z]{2}\\s*,\\s*(?:US|USA|United States)\\b", s, re.I):
                   return False
               return True'''.replace("              ", "")
-          if old_loc in text:
-              text = text.replace(old_loc, new_loc, 1)
-          elif new_loc not in text:
-              raise SystemExit("location_matches patch point not found")
+          text = replace_section(text, "def location_matches(location) -> bool:", "def epoch_millis_to_iso", location_block)
 
-          old_rows = '''def parse_sf_rows(base: str, parser: SFPageParser) -> dict[str, dict]:
-              """Extract jobs from classic SuccessFactors grid rows (Title / Location / Date)."""
-              found: dict[str, dict] = {}
-              for row in parser.rows:
-                  job_anchor = None
-                  for a in row.get("anchors") or []:
-                      u = normalize_abs_url(base, a.get("href"))
-                      if u and same_host(base, u) and "/job/" in urlparse(u).path.casefold():
-                          job_anchor = (u, clean_text(a.get("text")) or clean_text(a.get("title")))
-                          break
-                  if not job_anchor:
-                      continue
-                  u, title = job_anchor
-                  cells = [clean_text(x) for x in row.get("cells") or [] if clean_text(x)]
-                  non_title = [x for x in cells if x != title]
-                  date_value = next((x for x in reversed(non_title) if DATEISH_RE.search(x or "")), None)
-                  location = next((x for x in non_title if x != date_value), None)
-                  found[u] = {"url": u, "title": title, "location": location, "published_at": date_value}
-              return found'''.replace("              ", "")
-          new_rows = '''def strip_sf_title_prefix(value: str | None, title: str | None) -> str | None:
+          rows_block = '''def strip_sf_title_prefix(value: str | None, title: str | None) -> str | None:
               s = clean_text(value)
               t = clean_text(title)
               if not s or not t:
@@ -147,10 +116,7 @@ jobs:
                   location = next((x for x in non_title if x != date_value), None)
                   found[u] = {"url": u, "title": title, "location": location, "published_at": date_value}
               return found'''.replace("              ", "")
-          if old_rows in text:
-              text = text.replace(old_rows, new_rows, 1)
-          elif new_rows not in text:
-              raise SystemExit("parse_sf_rows patch point not found")
+          text = replace_section(text, "def parse_sf_rows(base: str, parser: SFPageParser)", "def merge_sf_page_jobs", rows_block)
 
           path.write_text(text, encoding="utf-8")
           PY
@@ -160,16 +126,23 @@ jobs:
           import collector
           checks = {
               "Milano, IT": True,
+              "Milan, IT": True,
+              "Roma, IT": True,
+              "Rome, Italy": True,
               "London, GB": True,
+              "London, England, UK": True,
               "London, ON, CA": False,
               "London, Ontario, Canada": False,
               "Milan, TN, US": False,
               "Rome, GA, USA": False,
+              "New York, NY, US": False,
           }
           for location, expected in checks.items():
               actual = collector.location_matches(location)
               if actual != expected:
                   raise SystemExit(f"location test failed: {location}: {actual} != {expected}")
+          if collector.DATEISH_RE.search("Marketing"):
+              raise SystemExit("date regex incorrectly matches Marketing")
           PY
 
       - name: Collect public ATS inventories
