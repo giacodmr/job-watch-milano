@@ -36,12 +36,15 @@ jobs:
       - name: Commit updated vacancy snapshots
         shell: bash
         run: |
-          if git diff --quiet -- current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json; then
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+
+          if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+
           git commit -m "Update Job Watch vacancy snapshots"
           git push
