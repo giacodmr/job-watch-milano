@@ -2,11 +2,6 @@ name: Collect Job Watch vacancies
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/collect_jobs.yml"
   schedule:
     - cron: "30 6 * * *"
       timezone: "Europe/Rome"
@@ -35,140 +30,21 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Fix v1.3 SuccessFactors metadata parsing
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          from textwrap import dedent
-
-          path = Path("collector.py")
-          text = path.read_text(encoding="utf-8")
-
-          def replace_section(source, start, end, replacement):
-              i = source.index(start)
-              j = source.index(end, i)
-              return source[:i] + replacement.rstrip() + "\n\n" + source[j:].lstrip("\n")
-
-          date_block = dedent(r'''\
-          DATEISH_RE = re.compile(
-              r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
-              r"\b\d{4}[./-]\d{1,2}[./-]\d{1,2}\b|"
-              r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s*\d{4})?\b|"
-              r"\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)(?:\s+\d{4})?\b)",
-              re.I,
-          )
-          ''')
-          text = replace_section(text, "DATEISH_RE = re.compile(", "SF_TOTAL_PATTERNS = (", date_block)
-
-          location_block = dedent('''\
-          def location_matches(location) -> bool:
-              """Match target cities while excluding obvious North-American namesakes."""
-              if not location:
-                  return False
-              s = str(location)
-              if not TARGET_LOCATION_RE.search(s):
-                  return False
-              if re.search(r"\\bLondon\\s*,\\s*(?:ON|Ontario)(?:\\s*,|\\b)", s, re.I):
-                  return False
-              if re.search(r"\\bLondon\\b.*\\bCanada\\b", s, re.I):
-                  return False
-              if re.search(r"\\b(?:Milan|Rome)\\s*,\\s*[A-Z]{2}\\s*,\\s*(?:US|USA|United States)\\b", s, re.I):
-                  return False
-              return True
-          ''')
-          text = replace_section(text, "def location_matches(location) -> bool:", "def epoch_millis_to_iso", location_block)
-
-          rows_block = dedent('''\
-          def strip_sf_title_prefix(value: str | None, title: str | None) -> str | None:
-              s = clean_text(value)
-              t = clean_text(title)
-              if not s or not t:
-                  return s
-              for _ in range(3):
-                  if s[:len(t)].casefold() != t.casefold():
-                      break
-                  s = clean_text(s[len(t):])
-                  if not s:
-                      break
-              return s
-
-
-          def parse_sf_rows(base: str, parser: SFPageParser) -> dict[str, dict]:
-              """Extract jobs from classic SuccessFactors grid rows (Title / Location / Date)."""
-              found: dict[str, dict] = {}
-              for row in parser.rows:
-                  job_anchor = None
-                  for a in row.get("anchors") or []:
-                      u = normalize_abs_url(base, a.get("href"))
-                      if u and same_host(base, u) and "/job/" in urlparse(u).path.casefold():
-                          job_anchor = (u, clean_text(a.get("text")) or clean_text(a.get("title")))
-                          break
-                  if not job_anchor:
-                      continue
-                  u, title = job_anchor
-                  cells = [clean_text(x) for x in row.get("cells") or [] if clean_text(x)]
-                  non_title = []
-                  for value in cells:
-                      if value == title:
-                          continue
-                      cleaned = strip_sf_title_prefix(value, title)
-                      if cleaned:
-                          non_title.append(cleaned)
-                  date_value = next(
-                      (x for x in reversed(non_title) if len(x) <= 40 and DATEISH_RE.search(x or "")),
-                      None,
-                  )
-                  location = next((x for x in non_title if x != date_value), None)
-                  found[u] = {"url": u, "title": title, "location": location, "published_at": date_value}
-              return found
-          ''')
-          text = replace_section(text, "def parse_sf_rows(base: str, parser: SFPageParser)", "def merge_sf_page_jobs", rows_block)
-
-          path.write_text(text, encoding="utf-8")
-          PY
-
-          python -m py_compile collector.py
-          python - <<'PY'
-          import collector
-          checks = {
-              "Milano, IT": True,
-              "Milan, IT": True,
-              "Roma, IT": True,
-              "Rome, Italy": True,
-              "London, GB": True,
-              "London, England, UK": True,
-              "London, ON, CA": False,
-              "London, Ontario, Canada": False,
-              "Milan, TN, US": False,
-              "Rome, GA, USA": False,
-              "New York, NY, US": False,
-          }
-          for location, expected in checks.items():
-              actual = collector.location_matches(location)
-              if actual != expected:
-                  raise SystemExit(f"location test failed: {location}: {actual} != {expected}")
-          if collector.DATEISH_RE.search("Marketing"):
-              raise SystemExit("date regex incorrectly matches Marketing")
-          if collector.strip_sf_title_prefix("Analyst Analyst Milano, IT", "Analyst") != "Milano, IT":
-              raise SystemExit("SuccessFactors title-prefix cleanup failed")
-          PY
-
       - name: Collect public ATS inventories
         run: python collector.py
 
-      - name: Commit parsing fix and vacancy snapshots
+      - name: Commit updated vacancy snapshots
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add collector.py current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Fix SuccessFactors metadata parsing"
+          git commit -m "Update Job Watch vacancy snapshots"
           git push
