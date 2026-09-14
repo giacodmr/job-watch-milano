@@ -2,11 +2,6 @@ name: Collect Job Watch vacancies
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/collect_jobs.yml"
   schedule:
     - cron: "30 6 * * *"
       timezone: "Europe/Rome"
@@ -35,44 +30,21 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Clean collector formatting artifact
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
+      - name: Collect public ATS inventories
+        run: python collector.py
 
-          path = Path("collector.py")
-          text = path.read_text(encoding="utf-8")
-          old = 'SAFE_TENANT_RE = re.compile(r"^[A-Za-z0-9._-]+$")\n\\\nDATEISH_RE = re.compile('
-          new = 'SAFE_TENANT_RE = re.compile(r"^[A-Za-z0-9._-]+$")\nDATEISH_RE = re.compile('
-          if old not in text:
-              raise SystemExit("standalone backslash formatting artifact not found")
-          path.write_text(text.replace(old, new, 1), encoding="utf-8")
-          PY
-
-          python -m py_compile collector.py
-          python - <<'PY'
-          import collector
-          assert collector.location_matches("Milano, IT")
-          assert collector.location_matches("London, GB")
-          assert not collector.location_matches("London, ON, CA")
-          assert not collector.location_matches("Milan, TN, US")
-          assert not collector.DATEISH_RE.search("Marketing")
-          assert collector.strip_sf_title_prefix("Analyst Analyst Milano, IT", "Analyst") == "Milano, IT"
-          PY
-
-      - name: Commit collector cleanup
+      - name: Commit updated vacancy snapshots
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add collector.py
+          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Clean collector v1.3 formatting"
+          git commit -m "Update Job Watch vacancy snapshots"
           git push
