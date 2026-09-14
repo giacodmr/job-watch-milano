@@ -4,16 +4,29 @@ import hashlib, json, re, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 import requests
 
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 TIMEOUT = 30
 MAX_PAGES = 100
-COLLECTOR_VERSION = "1.1"
+COLLECTOR_VERSION = "1.2"
 TARGET_LOCATION_RE = re.compile(r"(?<!\\w)(milan|milano|rome|roma|london)(?!\\w)", re.I)
 OPEN_STATUSES = {"NEW","STILL_OPEN","UPDATED"}
+
+# Hosted-board identifiers reconstructed from current/official job URLs.
+# If one of these endpoints stops working, the run becomes FAILED rather than VERIFIED.
+KNOWN_GREENHOUSE_TOKENS = {
+    "Adyen": "adyen",
+    "N26": "n26",
+    "SumUp": "sumup",
+    "Trade Republic": "traderepublicbank",
+    "Bolt": "bolt",
+}
+
+LOCALE_SEGMENT_RE = re.compile(r"^[a-z]{2}(?:-[A-Z]{2})?$")
+SAFE_TENANT_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
 session = requests.Session()
 session.headers.update({"User-Agent":"job-watch-milano/1.0","Accept":"application/json, text/plain, */*"})
@@ -33,6 +46,13 @@ def write_json(path,obj):
 
 def get_json(url, params=None):
     r=session.get(url,params=params,timeout=TIMEOUT); r.raise_for_status(); return r.json()
+
+def post_json(url, payload, headers=None):
+    h={"Content-Type":"application/json"}
+    if headers: h.update(headers)
+    r=session.post(url,json=payload,headers=h,timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
 
 def clean_text(v):
     if v is None: return None
@@ -109,9 +129,18 @@ def collect_ashby(company):
         if location_matches(j["location"]): jobs.append(j)
     return {"coverage":"VERIFIED","collector":"ashby_public_api","inventory_count":len(all_jobs),"jobs":jobs,"source_url":url}
 
+def greenhouse_token(company):
+    ats=company.get("ats",{})
+    token=clean_text(ats.get("tenant")) or infer_token(
+        ats.get("inventory_url"), ("greenhouse.io",)
+    )
+    if token and SAFE_TENANT_RE.fullmatch(token):
+        return token
+    return KNOWN_GREENHOUSE_TOKENS.get(company.get("company"))
+
 def collect_greenhouse(company):
     ats=company.get("ats",{})
-    token=clean_text(ats.get("tenant")) or infer_token(ats.get("inventory_url"),("greenhouse.io",))
+    token=greenhouse_token(company)
     if not token: raise CollectorError("Greenhouse token missing")
     url=f"https://boards-api.greenhouse.io/v1/boards/{token}/jobs"
     data=get_json(url,{"content":"true"}); all_jobs=data.get("jobs")
@@ -169,12 +198,158 @@ def collect_smartrecruiters(company):
         jobs.append(j)
     return {"coverage":"VERIFIED","collector":"smartrecruiters_posting_api","inventory_count":len(all_jobs),"jobs":jobs,"source_url":url}
 
+
+def workday_config(company):
+    ats=company.get("ats",{})
+    inventory=clean_text(ats.get("inventory_url"))
+    if not inventory:
+        raise CollectorError("Workday inventory URL missing")
+    p=urlparse(inventory)
+    host=p.netloc
+    if "myworkdayjobs.com" not in host.casefold():
+        raise CollectorError("Workday inventory is not a myworkdayjobs.com URL")
+
+    tenant=host.split(".")[0]
+    parts=[unquote(x) for x in p.path.split("/") if x]
+    while parts and LOCALE_SEGMENT_RE.fullmatch(parts[0]):
+        parts.pop(0)
+    if not parts:
+        raise CollectorError("Workday career-site name missing from URL")
+    site=parts[0]
+    return host, tenant, site
+
+def collect_workday(company):
+    host, tenant, site = workday_config(company)
+    search_url=f"https://{host}/wday/cxs/{tenant}/{site}/jobs"
+    referer=f"https://{host}/{site}"
+    limit=20
+    offset=0
+    total=None
+    all_jobs=[]
+
+    for _ in range(MAX_PAGES):
+        payload={
+            "appliedFacets": {},
+            "limit": limit,
+            "offset": offset,
+            "searchText": ""
+        }
+        data=post_json(
+            search_url,
+            payload,
+            headers={
+                "Accept":"application/json",
+                "Referer":referer,
+                "Origin":f"https://{host}",
+            },
+        )
+        page=data.get("jobPostings")
+        if not isinstance(page,list):
+            raise CollectorError("Unexpected Workday CXS response")
+        if total is None:
+            try:
+                total=int(data.get("total", len(page)))
+            except Exception:
+                total=len(page)
+
+        all_jobs.extend(page)
+
+        if len(all_jobs) >= total:
+            break
+        if not page:
+            raise CollectorError(
+                f"Workday paging stopped early: retrieved={len(all_jobs)}, total={total}"
+            )
+        offset += len(page)
+    else:
+        raise CollectorError("Workday pagination safety limit")
+
+    if total is not None and len(all_jobs) < total:
+        raise CollectorError(
+            f"Workday count mismatch: total={total}, retrieved={len(all_jobs)}"
+        )
+
+    jobs=[]
+    for raw in all_jobs:
+        loc=clean_text(raw.get("locationsText"))
+        if not location_matches(loc):
+            continue
+
+        external_path=clean_text(raw.get("externalPath"))
+        if not external_path:
+            continue
+
+        detail={}
+        detail_url=f"https://{host}/wday/cxs/{tenant}/{site}{external_path}"
+        try:
+            detail=get_json(detail_url)
+        except Exception:
+            detail={}
+
+        info=detail.get("jobPostingInfo") or {}
+        extra_locations=info.get("additionalLocations") or []
+        loc_parts=[loc, clean_text(info.get("location"))]
+        if isinstance(extra_locations,list):
+            loc_parts.extend(clean_text(x) for x in extra_locations)
+        full_location=" | ".join(dict.fromkeys(x for x in loc_parts if x))
+
+        canonical=f"https://{host}/{site}{external_path}"
+        source_id=clean_text(info.get("jobReqId")) or external_path
+
+        job={
+            "source_id": source_id,
+            "title": clean_text(info.get("title")) or clean_text(raw.get("title")),
+            "location": clean_text(full_location) or loc,
+            "department": None,
+            "team": None,
+            "employment_type": clean_text(info.get("timeType")),
+            "description": html_to_text(info.get("jobDescription")),
+            "compensation": None,
+            "url": canonical,
+            "apply_url": canonical,
+            "updated_at": clean_text(info.get("startDate")) or clean_text(raw.get("postedOn")),
+        }
+        jobs.append(job)
+        time.sleep(0.03)
+
+    return {
+        "coverage":"VERIFIED",
+        "collector":"workday_cxs",
+        "inventory_count":len(all_jobs),
+        "jobs":jobs,
+        "source_url":search_url,
+    }
+
+
 def choose(company):
-    f=(clean_text((company.get("ats") or {}).get("family")) or "").casefold()
-    if "lever" in f: return collect_lever
-    if "ashby" in f: return collect_ashby
-    if "greenhouse" in f: return collect_greenhouse
-    if "smartrecruiters" in f: return collect_smartrecruiters
+    ats=company.get("ats") or {}
+    family=(clean_text(ats.get("family")) or "").casefold()
+    inventory=clean_text(ats.get("inventory_url")) or ""
+    host=urlparse(inventory).netloc.casefold()
+
+    # Workday: only when we have a canonical public Workday board URL.
+    if "workday" in family and "myworkdayjobs.com" in host:
+        return collect_workday
+
+    # Hosted boards / public APIs. Avoid false positives where the vendor name
+    # appears only as an embedded/application backend behind a custom frontend.
+    if "ashby" in family and ("ashbyhq.com" in host or clean_text(ats.get("tenant"))):
+        return collect_ashby
+
+    if "greenhouse" in family:
+        if greenhouse_token(company):
+            return collect_greenhouse
+
+    if "lever" in family:
+        tenant=clean_text(ats.get("tenant"))
+        if "lever.co" in host or (tenant and SAFE_TENANT_RE.fullmatch(tenant) and "lever" == family.strip()):
+            return collect_lever
+
+    if "smartrecruiters" in family and "attrax" not in family:
+        ident=clean_text(ats.get("tenant"))
+        if "smartrecruiters.com" in host or (ident and SAFE_TENANT_RE.fullmatch(ident) and family.strip()=="smartrecruiters"):
+            return collect_smartrecruiters
+
     return None
 
 def previous_index(path):
@@ -201,7 +376,7 @@ def collect_batch(batch):
         name=company.get("company"); fn=choose(company)
         if fn is None:
             result={"coverage":"NOT_CHECKED","collector":"unsupported_in_mvp","inventory_count":None,"jobs":[],
-                    "reason":"ATS family not supported by API-first MVP","source_url":(company.get("ats") or {}).get("inventory_url")}
+                    "reason":"ATS family/method not yet supported by collector v1.2","source_url":(company.get("ats") or {}).get("inventory_url")}
         else:
             summary["collector_supported"]+=1
             try:
@@ -233,7 +408,7 @@ def collect_batch(batch):
                               "source_url":result.get("source_url"),"reason":result.get("reason"),"jobs":current})
         time.sleep(0.1)
     payload={"version":COLLECTOR_VERSION,"batch":mapping.get("batch") or batch.upper(),"batch_name":mapping.get("batch_name"),"generated_at":utc_now(),
-             "collector_scope":["Lever","Ashby","Greenhouse","SmartRecruiters"],
+             "collector_scope":["Lever","Ashby","Greenhouse","SmartRecruiters","Workday CXS"],
              "location_scope":["Milan","Milano","Rome","Roma","London"],
              "coverage_note":"VERIFIED means the structured public inventory was exhausted/reconciled in this run. Unsupported ATS remain NOT_CHECKED for ChatGPT fallback.",
              "summary":summary,"companies":companies_out}
