@@ -6,10 +6,6 @@ on:
     branches:
       - main
     paths:
-      - "collector.py"
-      - "ats_mapping_jw*.json"
-      - "job_watch_rules.json"
-      - "job_watch_batches.json"
       - ".github/workflows/collect_jobs.yml"
   schedule:
     - cron: "30 6 * * *"
@@ -39,21 +35,92 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
+      - name: Apply v1.3 hotfix
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("collector.py")
+          text = path.read_text(encoding="utf-8")
+
+          if "KNOWN_GREENHOUSE_TOKENS" not in text:
+              marker = "}\n\n_thread_local = threading.local()"
+              replacement = '''}
+
+# Greenhouse board tokens already exercised successfully by collector v1.2.
+# Bolt is deliberately excluded: its old `bolt` token returned 404.
+KNOWN_GREENHOUSE_TOKENS = {
+    "Adyen": "adyen",
+    "N26": "n26",
+    "SumUp": "sumup",
+    "Trade Republic": "traderepublicbank",
+}
+
+_thread_local = threading.local()'''
+              if marker not in text:
+                  raise SystemExit("KNOWN_NOT_CHECKED insertion point not found")
+              text = text.replace(marker, replacement, 1)
+
+          old = '''    if token and SAFE_TENANT_RE.fullmatch(token):
+        return token
+    return None
+
+
+def collect_greenhouse'''
+          new = '''    if token and SAFE_TENANT_RE.fullmatch(token):
+        return token
+    return KNOWN_GREENHOUSE_TOKENS.get(company.get("company"))
+
+
+def collect_greenhouse'''
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit("greenhouse_token patch point not found")
+
+          if "def sf_get_html(" not in text:
+              marker = "\ndef collect_successfactors(company):"
+              helper = '''
+def sf_get_html(url: str) -> tuple[str, str]:
+    """SAP access-denied pages are uncheckable, not collector failures."""
+    try:
+        return get_html(url)
+    except requests.HTTPError as e:
+        status = e.response.status_code if e.response is not None else None
+        if status in {401, 403}:
+            raise NotCheckable(
+                f"SuccessFactors public inventory not enumerable from runner (HTTP {status})"
+            ) from e
+        raise
+
+
+def collect_successfactors(company):'''
+              if marker not in text:
+                  raise SystemExit("SuccessFactors helper insertion point not found")
+              text = text.replace(marker, helper, 1)
+
+          text = text.replace("html_text, current_url = get_html(", "html_text, current_url = sf_get_html(")
+          path.write_text(text, encoding="utf-8")
+          PY
+
+          python -m py_compile collector.py
+
       - name: Collect public ATS inventories
         run: python collector.py
 
-      - name: Commit updated vacancy snapshots
+      - name: Commit v1.3 hotfix and vacancy snapshots
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+          git add collector.py current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Update Job Watch vacancy snapshots"
+          git commit -m "Hotfix Job Watch collector v1.3"
           git push
