@@ -40,6 +40,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          from textwrap import dedent
 
           path = Path("collector.py")
           text = path.read_text(encoding="utf-8")
@@ -49,16 +50,19 @@ jobs:
               j = source.index(end, i)
               return source[:i] + replacement.rstrip() + "\n\n" + source[j:].lstrip("\n")
 
-          date_block = r'''DATEISH_RE = re.compile(
+          date_block = dedent(r'''\
+          DATEISH_RE = re.compile(
               r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
               r"\b\d{4}[./-]\d{1,2}[./-]\d{1,2}\b|"
               r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s*\d{4})?\b|"
               r"\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)(?:\s+\d{4})?\b)",
               re.I,
-          )'''.replace("              ", "")
+          )
+          ''')
           text = replace_section(text, "DATEISH_RE = re.compile(", "SF_TOTAL_PATTERNS = (", date_block)
 
-          location_block = '''def location_matches(location) -> bool:
+          location_block = dedent('''\
+          def location_matches(location) -> bool:
               """Match target cities while excluding obvious North-American namesakes."""
               if not location:
                   return False
@@ -71,10 +75,12 @@ jobs:
                   return False
               if re.search(r"\\b(?:Milan|Rome)\\s*,\\s*[A-Z]{2}\\s*,\\s*(?:US|USA|United States)\\b", s, re.I):
                   return False
-              return True'''.replace("              ", "")
+              return True
+          ''')
           text = replace_section(text, "def location_matches(location) -> bool:", "def epoch_millis_to_iso", location_block)
 
-          rows_block = '''def strip_sf_title_prefix(value: str | None, title: str | None) -> str | None:
+          rows_block = dedent('''\
+          def strip_sf_title_prefix(value: str | None, title: str | None) -> str | None:
               s = clean_text(value)
               t = clean_text(title)
               if not s or not t:
@@ -115,7 +121,8 @@ jobs:
                   )
                   location = next((x for x in non_title if x != date_value), None)
                   found[u] = {"url": u, "title": title, "location": location, "published_at": date_value}
-              return found'''.replace("              ", "")
+              return found
+          ''')
           text = replace_section(text, "def parse_sf_rows(base: str, parser: SFPageParser)", "def merge_sf_page_jobs", rows_block)
 
           path.write_text(text, encoding="utf-8")
@@ -143,6 +150,8 @@ jobs:
                   raise SystemExit(f"location test failed: {location}: {actual} != {expected}")
           if collector.DATEISH_RE.search("Marketing"):
               raise SystemExit("date regex incorrectly matches Marketing")
+          if collector.strip_sf_title_prefix("Analyst Analyst Milano, IT", "Analyst") != "Milano, IT":
+              raise SystemExit("SuccessFactors title-prefix cleanup failed")
           PY
 
       - name: Collect public ATS inventories
