@@ -29,12 +29,15 @@ OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 
 LOCALE_SEGMENT_RE = re.compile(r"^[a-z]{2}(?:-[A-Z]{2})?$")
 SAFE_TENANT_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+\
 DATEISH_RE = re.compile(
     r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
     r"\b\d{4}[./-]\d{1,2}[./-]\d{1,2}\b|"
-    r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\b)",
+    r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s*\d{4})?\b|"
+    r"\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)(?:\s+\d{4})?\b)",
     re.I,
 )
+
 SF_TOTAL_PATTERNS = (
     re.compile(r"\bResults?\s+\d+\s*[-–—]\s*\d+\s+of\s+([\d.,\s]+)\b", re.I),
     re.compile(r"\bRisultati\s+\d+\s*[-–—]\s*\d+\s+(?:di|su)\s+([\d.,\s]+)\b", re.I),
@@ -164,11 +167,19 @@ def html_to_text(v):
 
 
 def location_matches(location) -> bool:
-    """Match only target cities, not substrings such as Roma inside Romagna."""
+    """Match target cities while excluding obvious North-American namesakes."""
     if not location:
         return False
-    return bool(TARGET_LOCATION_RE.search(str(location)))
-
+    s = str(location)
+    if not TARGET_LOCATION_RE.search(s):
+        return False
+    if re.search(r"\bLondon\s*,\s*(?:ON|Ontario)(?:\s*,|\b)", s, re.I):
+        return False
+    if re.search(r"\bLondon\b.*\bCanada\b", s, re.I):
+        return False
+    if re.search(r"\b(?:Milan|Rome)\s*,\s*[A-Z]{2}\s*,\s*(?:US|USA|United States)\b", s, re.I):
+        return False
+    return True
 
 def epoch_millis_to_iso(v):
     try:
@@ -743,6 +754,20 @@ def sf_job_anchors(base: str, parser: SFPageParser) -> list[tuple[str, str | Non
     return out
 
 
+def strip_sf_title_prefix(value: str | None, title: str | None) -> str | None:
+    s = clean_text(value)
+    t = clean_text(title)
+    if not s or not t:
+        return s
+    for _ in range(3):
+        if s[:len(t)].casefold() != t.casefold():
+            break
+        s = clean_text(s[len(t):])
+        if not s:
+            break
+    return s
+
+
 def parse_sf_rows(base: str, parser: SFPageParser) -> dict[str, dict]:
     """Extract jobs from classic SuccessFactors grid rows (Title / Location / Date)."""
     found: dict[str, dict] = {}
@@ -757,12 +782,20 @@ def parse_sf_rows(base: str, parser: SFPageParser) -> dict[str, dict]:
             continue
         u, title = job_anchor
         cells = [clean_text(x) for x in row.get("cells") or [] if clean_text(x)]
-        non_title = [x for x in cells if x != title]
-        date_value = next((x for x in reversed(non_title) if DATEISH_RE.search(x or "")), None)
+        non_title = []
+        for value in cells:
+            if value == title:
+                continue
+            cleaned = strip_sf_title_prefix(value, title)
+            if cleaned:
+                non_title.append(cleaned)
+        date_value = next(
+            (x for x in reversed(non_title) if len(x) <= 40 and DATEISH_RE.search(x or "")),
+            None,
+        )
         location = next((x for x in non_title if x != date_value), None)
         found[u] = {"url": u, "title": title, "location": location, "published_at": date_value}
     return found
-
 
 def merge_sf_page_jobs(base: str, parser: SFPageParser) -> list[dict]:
     rows = parse_sf_rows(base, parser)
