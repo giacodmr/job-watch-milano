@@ -823,12 +823,16 @@ def sf_get_html(url: str) -> tuple[str, str]:
         return get_html(url)
     except requests.HTTPError as e:
         status = e.response.status_code if e.response is not None else None
-        if status in {401, 403}:
+        if status in {401, 403, 404, 410}:
             raise NotCheckable(
                 f"SuccessFactors public inventory not enumerable from runner (HTTP {status})"
             ) from e
         raise
 
+    except requests.exceptions.SSLError as e:
+        raise NotCheckable(
+            "SuccessFactors public inventory is not safely enumerable because TLS validation failed"
+        ) from e
 
 def collect_successfactors(company):
     name = company.get("company")
