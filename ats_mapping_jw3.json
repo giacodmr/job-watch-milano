@@ -1,0 +1,1317 @@
+{
+  "version": "1.0",
+  "batch": "JW3",
+  "batch_name": "Energy, Infrastructure & Industrial",
+  "mapped_at": "2026-09-14",
+  "company_count": 40,
+  "companies": [
+    {
+      "company": "Eni",
+      "batch": "JW3",
+      "ats": {
+        "family": "Oracle Recruiting Cloud (inferred from CX_* career paths)",
+        "tenant": null,
+        "career_site": "https://www.eni.com/it-IT/carriere.html",
+        "inventory_url": "https://jobs.eni.com/it-IT/sites/CX_1001",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic search / facets",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use EniJobs official candidate experience; query location facets and enumerate returned requisitions.",
+        "fallback": "Fallback to official Eni careers pages and exact requisition URLs."
+      },
+      "limitations": [
+        "Oracle family inferred from /sites/CX_1001 pattern; public structured endpoint not independently verified.",
+        "Total inventory count not confirmed in this mapping pass."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Enel",
+      "batch": "JW3",
+      "ats": {
+        "family": "enterprise career portal (vendor unconfirmed)",
+        "tenant": null,
+        "career_site": "https://jobs.enel.com/",
+        "inventory_url": "https://jobs.enel.com/it_IT/careers/JobOpeningsItaly",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic search / pages",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.enel.com official JobOpenings views, then constrain by country/city and enumerate result pages.",
+        "fallback": "Fallback to exact official Enel JobDetail pages discovered from web search."
+      },
+      "limitations": [
+        "Underlying ATS family not conclusively identified.",
+        "Total count/enumeration mechanics not fully proven."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Prysmian",
+      "batch": "JW3",
+      "ats": {
+        "family": "Workday",
+        "tenant": "prysmiangroup / wd3",
+        "career_site": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers",
+        "inventory_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query the Workday Careers tenant directly; use location facets and exhaust all result pages.",
+        "fallback": "Fallback to Workday query-string searches plus requisition-id deduplication."
+      },
+      "limitations": [
+        "JavaScript-heavy UI, but official Workday inventory and requisition pages are public."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Leonardo",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom / enterprise ATS (unconfirmed)",
+        "tenant": null,
+        "career_site": "https://www.leonardo.com/en/careers",
+        "inventory_url": "https://careers.leonardo.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Leonardo official career search and location filters; collect all visible results and requisition IDs.",
+        "fallback": "Fallback to official Leonardo job pages discovered by indexed search."
+      },
+      "limitations": [
+        "ATS family and complete pagination were not conclusively established.",
+        "Do not treat indexed search alone as complete inventory."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Sanlorenzo",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom",
+        "tenant": "unknown",
+        "career_site": "https://www.sanlorenzoyacht.com/it/people/careers",
+        "inventory_url": "https://www.sanlorenzoyacht.com/it/people/careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": false,
+        "locations": [
+          "Italy"
+        ],
+        "pagination": "embedded / CTA driven",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the official careers page and follow every listed role/application CTA.",
+        "fallback": "Fallback to official-site web search limited to Sanlorenzo domains."
+      },
+      "limitations": [
+        "No independently verified exhaustive job inventory endpoint found.",
+        "Location filtering and total count are not exposed."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "A2A",
+      "batch": "JW3",
+      "ats": {
+        "family": "enterprise career site (unconfirmed)",
+        "tenant": "unknown",
+        "career_site": "https://www.gruppoa2a.it/it/carriere",
+        "inventory_url": "https://www.gruppoa2a.it/it/carriere/opportunita-lavoro-nostre-career-areas",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "London"
+        ],
+        "pagination": "career-site search / filters",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Enter A2A's official Career Site from the career-area pages and enumerate all active postings by location/business area.",
+        "fallback": "Fallback to official A2A career-area pages and direct posting links."
+      },
+      "limitations": [
+        "Official Career Site is confirmed, but ATS family and mathematical completeness were not proven.",
+        "Rome/London availability is role-dependent."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Snam",
+      "batch": "JW3",
+      "ats": {
+        "family": "Workday",
+        "tenant": "snam / wd103",
+        "career_site": "https://snam.wd103.myworkdayjobs.com/Carriere",
+        "inventory_url": "https://snam.wd103.myworkdayjobs.com/Carriere",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan"
+        ],
+        "pagination": "Workday paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query the Snam Workday tenant directly and exhaust result pages/location facets.",
+        "fallback": "Fallback to requisition-id search on the same Workday tenant."
+      },
+      "limitations": [
+        "Public Workday candidate experience is JavaScript-heavy but structurally complete."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Edison",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom recruitment portal",
+        "tenant": "edison.join-us.it",
+        "career_site": "https://www.edison.it/it/carriere",
+        "inventory_url": "https://edison.join-us.it/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "dynamic filters",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use edison.join-us.it as the primary inventory and enumerate all visible vacancies by location.",
+        "fallback": "Fallback to Edison's official careers page plus direct join-us.it posting links."
+      },
+      "limitations": [
+        "Custom platform; no verified public feed/API.",
+        "Total count/pagination not independently proven."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Maire",
+      "batch": "JW3",
+      "ats": {
+        "family": "enterprise career portal (unconfirmed)",
+        "tenant": "unknown",
+        "career_site": "https://www.mairetecnimont.com/en/people/careers/",
+        "inventory_url": "https://careers.mairetecnimont.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the official Maire career portal and location filters, recording every requisition returned.",
+        "fallback": "Fallback to official Maire domain search for exact vacancy pages."
+      },
+      "limitations": [
+        "ATS family and exhaustive pagination could not be verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Webuild",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / Career Site Builder (inferred from portal pattern)",
+        "tenant": "jobs.webuildgroup.com",
+        "career_site": "https://www.webuildgroup.com/it/carriere/",
+        "inventory_url": "https://jobs.webuildgroup.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "25 per page / numbered pages",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.webuildgroup.com; apply country/location filters and exhaust every numbered page (including dedicated Italy inventory).",
+        "fallback": "Fallback to accessible-format Job Search pages on the same official domain."
+      },
+      "limitations": [
+        "JavaScript map is optional; accessible paginated tables expose counts and pages."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "TIM",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom recruiting portals",
+        "tenant": "multiple",
+        "career_site": "https://www.gruppotim.it/it/gruppo/lavora-con-noi.html",
+        "inventory_url": "https://www.gruppotim.it/it/gruppo/lavora-con-noi.html",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "multiple portals / dynamic",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use TIM Group official recruiting entry points and distinguish corporate roles from TIM Retail listings.",
+        "fallback": "Fallback to official gruppotim.it recruiting subdomains and exact posting pages."
+      },
+      "limitations": [
+        "Recruiting is fragmented across portals/entities.",
+        "TIM Retail inventory is visible but is not the full TIM corporate inventory."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Fastweb + Vodafone Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "LinkedIn-mediated / official portal transition",
+        "tenant": "unknown",
+        "career_site": "https://www.fastwebvodafone.it/lavora-con-noi/job-opportunities/",
+        "inventory_url": "https://www.fastwebvodafone.it/lavora-con-noi/job-opportunities/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": false,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "external redirect",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the official Fastweb + Vodafone Job Opportunities page for discovery; only mark vacancies verified when an official application endpoint is available.",
+        "fallback": "Fallback to LinkedIn for discovery only, never for completeness."
+      },
+      "limitations": [
+        "Official page currently directs users to LinkedIn for open roles.",
+        "No complete first-party inventory endpoint verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "iliad Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom",
+        "tenant": "unknown",
+        "career_site": "https://corporate.iliad.it/lavorare-in-iliad",
+        "inventory_url": "https://corporate.iliad.it/lavorare-in-iliad",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "dynamic list",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Follow 'Scopri tutte le posizioni aperte' from iliad's official careers page and enumerate the full returned list.",
+        "fallback": "Fallback to official corporate.iliad.it indexed vacancy pages."
+      },
+      "limitations": [
+        "ATS family not conclusively identified.",
+        "Total count not independently verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Terna",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / Career Site Builder (inferred from portal pattern)",
+        "tenant": "jobs.terna.it",
+        "career_site": "https://www.terna.it/it/persone/lavora-noi",
+        "inventory_url": "https://jobs.terna.it/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "SuccessFactors paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.terna.it and exhaust keyword/location filtered result pages.",
+        "fallback": "Fallback to accessible-format search links on the same official portal."
+      },
+      "limitations": [
+        "JavaScript map does not block accessible job search."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Axpo",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom career platform",
+        "tenant": "careers.axpo.com",
+        "career_site": "https://www.axpo.com/it/it/carriere.html",
+        "inventory_url": "https://careers.axpo.com/it/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "filterable inventory / client-side pages",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use careers.axpo.com/jobs; filter Country=Italy then location, and capture the displayed result count plus all returned jobs.",
+        "fallback": "Fallback to company/country query parameters on the same portal."
+      },
+      "limitations": [
+        "Underlying vendor not confirmed, but official inventory exposes counts and filters."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Italgas",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / Career Site Builder",
+        "tenant": "carriere.italgas.it",
+        "career_site": "https://www.italgas.it/persone/",
+        "inventory_url": "https://carriere.italgas.it/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "SuccessFactors paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use carriere.italgas.it and exhaust official job search pages/location filters.",
+        "fallback": "Fallback to accessible-format job search on same portal."
+      },
+      "limitations": [
+        "Career Site Builder is explicitly identified as SAP SuccessFactors on the site's accessibility statement."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Statkraft",
+      "batch": "JW3",
+      "ats": {
+        "family": "enterprise recruitment portal (vendor unconfirmed)",
+        "tenant": "unknown",
+        "career_site": "https://www.statkraft.it/Carriere/",
+        "inventory_url": "https://www.statkraft.com/careers/job-opportunities/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "London"
+        ],
+        "pagination": "dynamic search",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Statkraft's global Open positions recruitment portal, filter Italy/Milan/London and enumerate all returned roles.",
+        "fallback": "Fallback to country careers pages linking into the same official recruitment portal."
+      },
+      "limitations": [
+        "Official all-jobs entry point confirmed; ATS family and total-count mechanics not conclusively verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "E.ON Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / jobs2web (inferred from portal pattern)",
+        "tenant": "careers.eon.com",
+        "career_site": "https://careers.eon.com/italia/",
+        "inventory_url": "https://careers.eon.com/italia/go/italia-tutte-le-posizioni/3727301/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "10/25 per page, numbered pages",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use E.ON's dedicated Italy inventory and then city filters; exhaust numbered pages.",
+        "fallback": "Fallback to global careers.eon.com keyword/location search."
+      },
+      "limitations": [
+        "Official inventory exposes exact result counts and pagination."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "ENGIE Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / Career Site Builder",
+        "tenant": "jobs.engie.com",
+        "career_site": "https://www.engie.it/lavora-con-noi/",
+        "inventory_url": "https://jobs.engie.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "SuccessFactors paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.engie.com and apply country/city filters; exhaust all pages.",
+        "fallback": "Fallback to ENGIE Italy career-area links that point into the same portal."
+      },
+      "limitations": [
+        "SAP SuccessFactors backend evidenced by career55.sapsf.eu cookies/domain."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Sorgenia",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom first-party listing",
+        "tenant": "gruppo.sorgenia.it",
+        "career_site": "https://gruppo.sorgenia.it/posizioni-aperte",
+        "inventory_url": "https://gruppo.sorgenia.it/posizioni-aperte",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": false,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "single official listing page",
+        "total_count_available": false,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Parse the official Posizioni aperte page end-to-end; each role is rendered on the first-party page.",
+        "fallback": "Fallback to direct 'Candidati ora' links from the same page."
+      },
+      "limitations": [
+        "No structured API/feed verified.",
+        "Completeness depends on the official page containing all current roles as stated."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "RWE Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "enterprise global jobs portal (vendor unconfirmed)",
+        "tenant": "jobs.rwe.com",
+        "career_site": "https://it.rwe.com/carriere/",
+        "inventory_url": "https://jobs.rwe.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use RWE's global official jobs portal, filter Country=Italy and city, and exhaust pages.",
+        "fallback": "Fallback to the Italy careers page's 'Search jobs' link."
+      },
+      "limitations": [
+        "Portal family is strongly consistent with SAP SuccessFactors, but backend tenant was not independently confirmed."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Iberdrola Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom / enterprise global employment channel",
+        "tenant": "unknown",
+        "career_site": "https://www.iberdrola.it/chi-siamo/lavora-con-noi",
+        "inventory_url": "https://www.iberdrola.com/careers/careers-iberdrola",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic search",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Iberdrola's global employment channel for formal vacancies; filter Italy and cities.",
+        "fallback": "Fallback to the Italy page for spontaneous applications only."
+      },
+      "limitations": [
+        "Italy page itself emphasizes spontaneous applications; global channel is required for vacancy inventory.",
+        "ATS family not conclusively identified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Saipem",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom first-party job board",
+        "tenant": "jobs.saipem.com",
+        "career_site": "https://www.saipem.com/it/persone/carriere",
+        "inventory_url": "https://jobs.saipem.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "OPAQUE",
+        "method": "official_inventory_unavailable",
+        "location_filter_supported": false,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "unavailable / maintenance",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Check jobs.saipem.com first; only if the complete official list is restored can the company be upgraded.",
+        "fallback": "Fallback to LinkedIn for discovery only; never use it to declare VERIFIED."
+      },
+      "limitations": [
+        "Official job board states list of positions is under maintenance and points to LinkedIn for complete list."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "TotalEnergies Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "global custom career platform",
+        "tenant": "careers.totalenergies.com",
+        "career_site": "https://services.totalenergies.it/chi-siamo/lavora-con-noi",
+        "inventory_url": "https://careers.totalenergies.com/en",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic search / facets",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the global TotalEnergies careers inventory and filter country/location; enumerate every returned result set.",
+        "fallback": "Fallback to TotalEnergies Italy careers page's 'Visualizza' open positions link."
+      },
+      "limitations": [
+        "No public structured feed verified.",
+        "Total-count/pagination implementation not independently proven."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Shell",
+      "batch": "JW3",
+      "ats": {
+        "family": "global enterprise career portal",
+        "tenant": "unknown",
+        "career_site": "https://www.shell.it/carriere.html",
+        "inventory_url": "https://www.shell.com/careers.html",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic search / facets",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Shell's global Search jobs flow, filter country/city and enumerate result pages.",
+        "fallback": "Fallback to Shell Italy careers page and exact official vacancy pages."
+      },
+      "limitations": [
+        "Underlying ATS vendor not conclusively identified in this pass.",
+        "Public API/feed not verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Alpiq",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom first-party inventory",
+        "tenant": "alpiq.com",
+        "career_site": "https://www.alpiq.com/career",
+        "inventory_url": "https://www.alpiq.com/career/open-jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan"
+        ],
+        "pagination": "filterable single inventory",
+        "total_count_available": false,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Alpiq Open jobs; select Italy and enumerate all filtered cards.",
+        "fallback": "Fallback to direct role URLs under /career/open-jobs/your-application/."
+      },
+      "limitations": [
+        "No verified public API/feed; inventory itself is complete and first-party."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "MET Group",
+      "batch": "JW3",
+      "ats": {
+        "family": "SmartRecruiters",
+        "tenant": "metgroup",
+        "career_site": "https://met.com/en/",
+        "inventory_url": "https://careers.smartrecruiters.com/metgroup",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "London"
+        ],
+        "pagination": "SmartRecruiters location groups / load more",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the official SmartRecruiters company page; filter/browse by location and enumerate all job cards.",
+        "fallback": "Fallback to MET Group official site link to the same career portal."
+      },
+      "limitations": [
+        "A SmartRecruiters API likely exists, but no API URL is recorded because it was not independently verified in this pass."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Octopus Energy Italy",
+      "batch": "JW3",
+      "ats": {
+        "family": "Lever",
+        "tenant": "octoenergy",
+        "career_site": "https://octopus.energy/careers/",
+        "inventory_url": "https://jobs.lever.co/octoenergy",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "single Lever board with filters",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the Lever board and filter Department=Octopus Energy Italia / locations; enumerate all cards.",
+        "fallback": "Fallback to Octopus Energy's own careers mirror linking to the same postings."
+      },
+      "limitations": [
+        "Lever structured endpoint is intentionally not recorded because it was not independently verified here."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Acea",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / jobs2web (inferred from portal pattern)",
+        "tenant": "jobs.acea.it",
+        "career_site": "https://www.acea.it/opportunita-carriera",
+        "inventory_url": "https://jobs.acea.it/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Rome",
+          "Milan"
+        ],
+        "pagination": "SuccessFactors paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.acea.it and exhaust all result pages with location/keyword filters.",
+        "fallback": "Fallback to Acea's first-party careers page and direct job links."
+      },
+      "limitations": [
+        "Official jobs portal exposes standard jobs2web search interface."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Mundys",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors / jobs2web (inferred from portal pattern)",
+        "tenant": "jobs.mundys.com",
+        "career_site": "https://www.mundys.com/en/careers/jobs",
+        "inventory_url": "https://jobs.mundys.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Rome",
+          "Milan",
+          "London"
+        ],
+        "pagination": "SuccessFactors paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.mundys.com for Mundys holding roles; do not mix subsidiary inventories unless the batch company explicitly requires them.",
+        "fallback": "Fallback to Mundys careers/jobs ecosystem page."
+      },
+      "limitations": [
+        "Subsidiaries such as ADR have separate portals; keep entity scope explicit."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Autostrade per l'Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "new/migrated enterprise platform (unconfirmed)",
+        "tenant": "unknown",
+        "career_site": "https://www.autostrade.it/it/lavora-con-noi",
+        "inventory_url": "https://www.autostrade.it/it/persone/entra-nel-team",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Rome",
+          "Milan"
+        ],
+        "pagination": "migrated / dynamic",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use ASPI's 'Posizioni aperte' section and follow the post-migration official application platform; enumerate only first-party results.",
+        "fallback": "Fallback to official ASPI people/careers pages; LinkedIn discovery only."
+      },
+      "limitations": [
+        "Site explicitly reported a migration to another application platform in 2026.",
+        "Current backend/inventory URL was not conclusively identified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Ferrovie dello Stato Italiane",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom / enterprise recruiting portal",
+        "tenant": "unknown",
+        "career_site": "https://www.fsitaliane.it/it/persone/lavora-con-noi.html",
+        "inventory_url": "https://www.fsitaliane.it/it/persone/lavora-con-noi.html",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Rome",
+          "Milan"
+        ],
+        "pagination": "dynamic / campaign based",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use FS Italiane's official Lavora con noi > posizioni aperte/invia CV flow and enumerate each active selection campaign.",
+        "fallback": "Fallback to official FS group-company career pages for vacancies not surfaced centrally."
+      },
+      "limitations": [
+        "Group recruiting can be fragmented across companies/campaigns.",
+        "No single exhaustive machine-readable inventory endpoint verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Aeroporti di Roma",
+      "batch": "JW3",
+      "ats": {
+        "family": "subsidiary career portal (Mundys ecosystem)",
+        "tenant": "unknown",
+        "career_site": "https://www.adr.it/lavorare-in-adr",
+        "inventory_url": "https://www.adr.it/lavorare-in-adr",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Rome"
+        ],
+        "pagination": "dynamic",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use ADR's official career portal linked from Mundys and enumerate all roles shown for Aeroporti di Roma.",
+        "fallback": "Fallback to Mundys ecosystem page then ADR official application links."
+      },
+      "limitations": [
+        "Exact ATS family and complete inventory URL were not verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "SEA Milano",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom",
+        "tenant": "unknown",
+        "career_site": "https://www.seamilano.eu/it/lavora-con-noi",
+        "inventory_url": "https://www.seamilano.eu/it/lavora-con-noi",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan"
+        ],
+        "pagination": "dynamic",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use SEA Milano's official Lavora con noi page and follow every active selection link.",
+        "fallback": "Fallback to official SEA-domain vacancy pages only."
+      },
+      "limitations": [
+        "No exhaustive inventory endpoint or ATS family conclusively identified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "ERG",
+      "batch": "JW3",
+      "ats": {
+        "family": "custom first-party recruiting",
+        "tenant": "erg.eu",
+        "career_site": "https://www.erg.eu/it/lavorare-in-erg/entra-nella-squadra",
+        "inventory_url": "https://www.erg.eu/it/lavorare-in-erg/entra-nella-squadra",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "filters / first-party list",
+        "total_count_available": null,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use ERG's official 'Entra nella squadra' vacancy list and country/functional filters; enumerate all visible openings.",
+        "fallback": "Fallback to the official Search Jobs link from ERG recruiting pages."
+      },
+      "limitations": [
+        "Inventory is first-party and filterable, but total-count/pagination mechanics were not fully proven."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Nadara",
+      "batch": "JW3",
+      "ats": {
+        "family": "embedded first-party jobs inventory (vendor unconfirmed)",
+        "tenant": "unknown",
+        "career_site": "https://nadara.com/work-with-us",
+        "inventory_url": "https://nadara.com/work-with-us",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "London"
+        ],
+        "pagination": "20 initially / View more",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Nadara's official Available roles list, repeatedly 'View more jobs' until the displayed total is exhausted; then filter by location.",
+        "fallback": "Fallback to direct Nadara role detail pages."
+      },
+      "limitations": [
+        "Vendor not identified, but official page exposes total roles and deterministic load-more behavior."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "GE Vernova",
+      "batch": "JW3",
+      "ats": {
+        "family": "Phenom",
+        "tenant": "careers.gevernova.com",
+        "career_site": "https://careers.gevernova.com/",
+        "inventory_url": "https://careers.gevernova.com/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "10 per page / numbered or offset pages",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use careers.gevernova.com/jobs; filter Country=Italy and city, capture facet counts, exhaust all pages.",
+        "fallback": "Fallback to Phenom-fed direct job URLs on the same domain."
+      },
+      "limitations": [
+        "Phenom feed attribution is visible in indexed job URLs; inventory exposes facet counts and total jobs."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Schneider Electric",
+      "batch": "JW3",
+      "ats": {
+        "family": "branded global career portal (vendor unconfirmed)",
+        "tenant": "careers.se.com",
+        "career_site": "https://www.se.com/it/it/about-us/careers/overview/",
+        "inventory_url": "https://careers.se.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "dynamic faceted search",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use careers.se.com, select Italy and city, and exhaust all result pages while recording facet counts.",
+        "fallback": "Fallback to Schneider Italy careers landing page's View jobs links."
+      },
+      "limitations": [
+        "Vendor family not independently confirmed, so level kept below FULL despite strong inventory surface."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Siemens Energy",
+      "batch": "JW3",
+      "ats": {
+        "family": "Avature",
+        "tenant": "siemensenergy.avature.net / branded proxy",
+        "career_site": "https://www.siemens-energy.com/it/it/home/careers.html",
+        "inventory_url": "https://jobs.siemens-energy.com/en_US/jobs/Jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "20 per page / result pages",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.siemens-energy.com search, filter country/city/function and exhaust result pages.",
+        "fallback": "Fallback to direct Avature-backed requisition URLs by requisition number."
+      },
+      "limitations": [
+        "Public search is branded; application/login may move to Avature, but vacancy inventory is readable without authentication."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Hitachi Energy",
+      "batch": "JW3",
+      "ats": {
+        "family": "Hitachi global branded career portal (vendor unconfirmed)",
+        "tenant": "careers.hitachi.com",
+        "career_site": "https://www.hitachienergy.com/it/it/careers/open-jobs",
+        "inventory_url": "https://careers.hitachi.com/search/hitachi-energy/jobs/in/country/italy",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "faceted paginated search",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use careers.hitachi.com with Sector/Company=Hitachi Energy and Country=Italy; record exact facet counts and exhaust pages.",
+        "fallback": "Fallback to Hitachi Energy's country open-jobs page linking to the same global inventory."
+      },
+      "limitations": [
+        "Global Hitachi portal mixes sectors, so always retain Hitachi Energy company/sector filter."
+      ],
+      "last_mapped": "2026-09-14"
+    }
+  ]
+}

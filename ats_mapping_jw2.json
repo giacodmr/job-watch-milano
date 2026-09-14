@@ -1,0 +1,1312 @@
+{
+  "version": "1.0",
+  "batch": "JW2",
+  "batch_name": "Strategy, Consulting & Tech",
+  "source_repository": "giacodmr/job-watch-milano",
+  "source_batch_file": "job_watch_batches.json",
+  "last_mapped": "2026-09-14",
+  "summary": {
+    "companies_analyzed": 40,
+    "FULL": 18,
+    "STRONG": 18,
+    "PARTIAL": 4,
+    "OPAQUE": 0
+  },
+  "notes": [
+    "job_watch_batches.json is the definitive source for batch membership.",
+    "FULL is assigned only where the official inventory can be exhaustively enumerated or a provider-documented public job feed can represent all published postings.",
+    "Structured feed URLs derived from a verified Greenhouse/Ashby/SmartRecruiters board or company identifier are recorded only when the vendor's official documentation states that the endpoint is public and unauthenticated; this session's web URL-safety layer may still prevent raw endpoint opening.",
+    "LinkedIn, Glassdoor and aggregators are not completeness sources."
+  ],
+  "companies": [
+    {
+      "company": "Accenture",
+      "batch": "JW2",
+      "ats": {
+        "family": "Workday + Accenture custom career front-end",
+        "tenant": "accenture / AccentureCareers (wd103)",
+        "career_site": "https://www.accenture.com/it-it/careers",
+        "inventory_url": "https://accenture.wd103.myworkdayjobs.com/AccentureCareers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday dynamic paging/load-more; enumerate until the displayed result set is exhausted",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the official Workday AccentureCareers inventory; run separate location queries for Milan/Milano, Rome/Roma and London, enumerate every loaded page/result and deduplicate by requisition/job ID.",
+        "fallback": "Use Accenture's official job search front-end to discover/confirm roles; use web search only for discovery and never to prove completeness."
+      },
+      "limitations": [
+        "Workday is heavily JavaScript-driven in this environment.",
+        "A stable unauthenticated structured feed was not independently validated, so completeness should not be claimed from a single rendered page."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Deloitte / Monitor Deloitte",
+      "batch": "JW2",
+      "ats": {
+        "family": "Avature",
+        "tenant": "deloittecm",
+        "career_site": "https://www.deloitte.com/it/it/careers.html",
+        "inventory_url": "https://deloittecm.avature.net/en_US/careers/SearchJobs/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_ats_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "Avature search pages/filters, but the inventory returned HTTP 406 to this crawler",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Attempt the Deloitte Avature SearchJobs inventory and apply the Italy/location facets for Milan and Rome; only mark the company VERIFIED if the complete result set can actually be enumerated in that run.",
+        "fallback": "Use Deloitte Italy official careers/job pages and exact-title web discovery for individual roles; London must be checked on the UK member-firm career inventory separately."
+      },
+      "limitations": [
+        "The Avature inventory returned HTTP 406 to the available crawler, preventing a complete enumeration.",
+        "Deloitte career inventories are segmented by member firm/country; the Italy inventory does not prove London coverage."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "EY / EY-Parthenon",
+      "batch": "JW2",
+      "ats": {
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
+        "career_site": "https://careers.ey.com/",
+        "inventory_url": "https://careers.ey.com/ey/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Numbered pages with explicit result range and total; enumerate through the last page",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the global EY SuccessFactors search, filter by Country/City for each target city and enumerate every page through the displayed total; then apply Job Watch role/seniority exclusions.",
+        "fallback": "Cross-check EY/EY-Parthenon official role pages if a result detail fails to open."
+      },
+      "limitations": [
+        "Result totals and page counts change continuously; capture them per run."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "PwC / Strategy&",
+      "batch": "JW2",
+      "ats": {
+        "family": "Phenom career front-end (application backend not independently revalidated)",
+        "tenant": null,
+        "career_site": "https://jobs-it.pwc.com/it/en",
+        "inventory_url": "https://jobs-it.pwc.com/it/en/search-results",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "Dynamic Phenom result pages; offset-style navigation is observable but the complete list is client-rendered",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use PwC Italy's official search-results inventory, filter Milan/Rome and exhaust the result pagination/offsets visible in the portal; search Strategy& as a keyword/business line where supported.",
+        "fallback": "Use PwC/Strategy& official job-detail pages for confirmation; London requires the PwC UK inventory separately."
+      },
+      "limitations": [
+        "The search shell is JavaScript-heavy and does not consistently expose a complete total to the crawler.",
+        "Do not infer a Workday tenant solely from job identifiers; the current front-end is Phenom."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "KPMG",
+      "batch": "JW2",
+      "ats": {
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
+        "career_site": "https://careers.kpmg.it/",
+        "inventory_url": "https://careers.kpmg.it/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "Numbered pages with explicit result range and total; enumerate every page",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use careers.kpmg.it/search, apply city/location and keyword filters, and enumerate all pages through the displayed total before role-fit filtering.",
+        "fallback": "Use the KPMG Italy corporate careers page only as navigation; London must be checked on KPMG UK's separate inventory."
+      },
+      "limitations": [
+        "The Italian inventory is separate from the UK member-firm portal."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Capgemini Invent",
+      "batch": "JW2",
+      "ats": {
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
+        "career_site": "https://www.capgemini.com/it-it/carriere/percorsi-professionali/carriere-in-capgemini-invent/",
+        "inventory_url": "https://jobs.capgemini.com/viewalljobs/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Numbered pages/result ranges; enumerate all pages for the filtered set",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Capgemini's global official inventory; filter target locations and restrict to Invent/strategy-transformation keywords or business-unit facets, then enumerate the full filtered result set.",
+        "fallback": "Use the Capgemini Invent country career page to navigate to any role family not surfaced by keyword."
+      },
+      "limitations": [
+        "The inventory contains all Capgemini businesses, so Invent must be isolated by business-unit/keyword checks."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "BearingPoint",
+      "batch": "JW2",
+      "ats": {
+        "family": "Teamtailor",
+        "tenant": "careersitaly.bearingpoint.com",
+        "career_site": "https://careersitaly.bearingpoint.com/",
+        "inventory_url": "https://careersitaly.bearingpoint.com/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_complete_board",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "No pagination required when all published cards are rendered on the board; verify board total against card count",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the Teamtailor /jobs board, set Location/Department filters where needed, and verify that the number of enumerated cards equals the displayed total.",
+        "fallback": "Use individual BearingPoint Italy Teamtailor job pages for role confirmation. London, if required, should be checked on the relevant BearingPoint regional portal."
+      },
+      "limitations": [
+        "This mapping is for the BearingPoint Italy Teamtailor tenant; other countries may use separate regional inventories."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Oliver Wyman",
+      "batch": "JW2",
+      "ats": {
+        "family": "Phenom (Marsh McLennan career platform)",
+        "tenant": null,
+        "career_site": "https://careers.marshmclennan.com/global/en/oliver-wyman",
+        "inventory_url": "https://careers.marshmclennan.com/global/en/oliver-wyman-search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic Phenom pagination/offsets",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the Oliver Wyman-specific search inside Marsh McLennan Careers, filter each target location and exhaust all visible result pages/offsets.",
+        "fallback": "Confirm any discovered job on its official Marsh McLennan detail page; do not use the wider Marsh/Mercer inventory unless the brand is explicitly Oliver Wyman."
+      },
+      "limitations": [
+        "Dynamic Phenom rendering prevents a mathematical completeness proof in this environment.",
+        "Brand filtering is essential because the parent platform hosts multiple Marsh McLennan businesses."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Roland Berger",
+      "batch": "JW2",
+      "ats": {
+        "family": "SmartRecruiters + Roland Berger custom career front-end",
+        "tenant": "RolandBerger",
+        "career_site": "https://www.rolandberger.com/en/Join/",
+        "inventory_url": "https://www.rolandberger.com/en/Join/All-Jobs/",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/RolandBerger/postings"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_public_posting_api_plus_official_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "SmartRecruiters public Posting API uses limit/offset; continue until offset covers totalFound",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query the SmartRecruiters Posting API for companyIdentifier RolandBerger, paginate with limit/offset, and use country/city filters for target locations; reconcile results with Roland Berger All Jobs.",
+        "fallback": "Use the official Roland Berger All Jobs page and current SmartRecruiters job-detail pages if the structured endpoint is inaccessible in a run."
+      },
+      "limitations": [
+        "The API URL is derived from the verified SmartRecruiters company identifier and SmartRecruiters' documented unauthenticated Posting API; the current session's URL-safety layer prevented a direct endpoint fetch."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Kearney",
+      "batch": "JW2",
+      "ats": {
+        "family": "Yello / Recsolu",
+        "tenant": "kearney",
+        "career_site": "https://www.kearney.com/careers",
+        "inventory_url": "https://kearney.recsolu.com/job_boards/1",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_filtered_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Board pagination/results; enumerate until the number of unique roles equals the displayed total for the filtered scope",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Kearney's Yello/Recsolu board; filter Region/Office Location, Consulting vs Non-Consulting and Job Type, then enumerate the full result set and deduplicate by job URL/ID.",
+        "fallback": "Use Kearney's corporate careers page only to navigate back to the Yello board."
+      },
+      "limitations": [
+        "Board totals are live and must be re-read each run."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Protiviti",
+      "batch": "JW2",
+      "ats": {
+        "family": "Workday",
+        "tenant": "roberthalf / ProtivitiItalyCareers (wd1)",
+        "career_site": "https://www.protiviti.com/it-it/careers",
+        "inventory_url": "https://roberthalf.wd1.myworkdayjobs.com/ProtivitiItalyCareers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "Workday dynamic paging/load-more",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the ProtivitiItalyCareers Workday board, filter by Milan/Rome and enumerate all displayed results before applying Job Watch exclusions.",
+        "fallback": "Use Protiviti Italy careers pages to confirm individual requisitions; London should be checked on the appropriate UK Protiviti inventory separately."
+      },
+      "limitations": [
+        "Workday rendering is JavaScript-heavy and no stable public feed was independently validated.",
+        "Italy and UK career inventories are not necessarily the same tenant/board."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Bain & Company",
+      "batch": "JW2",
+      "ats": {
+        "family": "Avature (white-label Bain career flow)",
+        "tenant": "bain",
+        "career_site": "https://www.bain.com/careers/",
+        "inventory_url": "https://www.bain.com/careers/find-a-role/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic/white-label job search; complete page count is not reliably exposed",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Bain's Find a Role interface with office/location filters and follow only official Bain/Avature job links; treat the run as PARTIAL unless all result pages can be enumerated.",
+        "fallback": "Use careers.bain.com official job-detail/folder pages to confirm individual openings."
+      },
+      "limitations": [
+        "The public role finder is heavily dynamic and the underlying Avature inventory is not exposed as a stable enumerable endpoint to these tools.",
+        "Do not infer absence of a Milan/Rome/London role from a generic Bain careers page."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Amazon",
+      "batch": "JW2",
+      "ats": {
+        "family": "Amazon Jobs custom platform",
+        "tenant": null,
+        "career_site": "https://www.amazon.jobs/",
+        "inventory_url": "https://www.amazon.jobs/en/search",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_filtered_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Load-more/result-limit pagination with explicit counts and location facets",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Amazon Jobs search, filter Country/Region/City for each target, record the displayed total, and load/enumerate every result until the count is exhausted.",
+        "fallback": "Use official Amazon job-detail pages for confirmation and requisition-ID deduplication."
+      },
+      "limitations": [
+        "Amazon city/region facets can change labels; use both Milan/Milano and Rome/Roma only where the portal itself exposes those variants."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Google",
+      "batch": "JW2",
+      "ats": {
+        "family": "Google Careers custom platform",
+        "tenant": null,
+        "career_site": "https://www.google.com/about/careers/",
+        "inventory_url": "https://www.google.com/about/careers/applications/jobs/results/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_counted_dynamic_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Client-rendered result navigation/windowing; total count is visible but exhaustive traversal is not robustly exposed to this crawler",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Google Careers Jobs results with exact location filters and enumerate every available result page/window; record the portal total before filtering by role family.",
+        "fallback": "Confirm discovered roles on official Google Careers job-detail pages and use web search only as discovery."
+      },
+      "limitations": [
+        "The portal exposes a total but the crawler does not reliably expose a deterministic final-page mechanism, so FULL is not assigned."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Uber",
+      "batch": "JW2",
+      "ats": {
+        "family": "Uber Careers custom platform",
+        "tenant": null,
+        "career_site": "https://www.uber.com/global/en/careers/",
+        "inventory_url": "https://jobs.uber.com/en/jobs/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic search; total/pagination are not reliably exposed and some crawler-rendered cards resolve as removed",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Uber's official jobs search with Country/City/Team filters and verify each candidate job detail individually; do not mark the company VERIFIED unless the complete result set becomes enumerable in that run.",
+        "fallback": "Use official indexed Uber job-detail pages for discovery/confirmation only."
+      },
+      "limitations": [
+        "Inconsistent dynamic rendering makes the complete inventory impossible to prove with the available tools.",
+        "Some search cards were rendered as removed even while the search interface remained available."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Microsoft",
+      "batch": "JW2",
+      "ats": {
+        "family": "SAP SuccessFactors backend + Microsoft custom candidate portal",
+        "tenant": null,
+        "career_site": "https://careers.microsoft.com/",
+        "inventory_url": "https://apply.careers.microsoft.com/careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic candidate-portal search; full count/page traversal not consistently exposed to the crawler",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use apply.careers.microsoft.com/careers, filter location/worksite/profession/career discipline, and enumerate every result page/window exposed by the portal.",
+        "fallback": "Use Microsoft Careers official job details for confirmation; treat the legacy jobs.careers.microsoft.com URL only as a redirect."
+      },
+      "limitations": [
+        "The legacy jobs.careers.microsoft.com search now redirects to the new apply.careers.microsoft.com portal.",
+        "Portal configuration identifies SuccessFactors as the position system, but a public structured inventory endpoint was not independently validated."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "SAP",
+      "batch": "JW2",
+      "ats": {
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
+        "career_site": "https://jobs.sap.com/",
+        "inventory_url": "https://jobs.sap.com/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Numbered pages with explicit result range/total; enumerate through the last page",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.sap.com/search, filter target city/country and relevant work-area/career-status facets, then enumerate every page to the displayed total.",
+        "fallback": "Use the dedicated Italy jobs landing page for a country-scoped cross-check."
+      },
+      "limitations": [],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "IBM",
+      "batch": "JW2",
+      "ats": {
+        "family": "Avature",
+        "tenant": "ibmglobal",
+        "career_site": "https://www.ibm.com/careers/search",
+        "inventory_url": "https://ibmglobal.avature.net/en_US/careers/OpenJobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_paginated_inventory_with_count_cap",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Avature page-size selector and Next navigation",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the IBM Avature OpenJobs inventory, filter target locations and paginate until Next disappears; deduplicate by requisition ID.",
+        "fallback": "Use IBM's corporate Careers Search front-end to validate any role or recover from Avature rendering issues."
+      },
+      "limitations": [
+        "The displayed inventory count is capped as '999+' rather than an exact total, so a mathematical completeness proof is not guaranteed even though paging is available."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Cisco",
+      "batch": "JW2",
+      "ats": {
+        "family": "Phenom",
+        "tenant": null,
+        "career_site": "https://careers.cisco.com/global/en",
+        "inventory_url": "https://careers.cisco.com/global/en/search-results",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Offset-style dynamic pagination (from=...)",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Cisco's Phenom search-results page, apply target-location filters and advance through every offset until no new requisitions appear.",
+        "fallback": "Use official Cisco job-detail pages for confirmation; the old jobs.cisco.com inventory should be treated only as a redirect."
+      },
+      "limitations": [
+        "The new Phenom search is client-rendered and does not consistently expose a complete total to the crawler.",
+        "The database career URL points to the legacy jobs.cisco.com host, which now redirects to careers.cisco.com."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "ServiceNow",
+      "batch": "JW2",
+      "ats": {
+        "family": "SmartRecruiters + ServiceNow custom career front-end",
+        "tenant": "ServiceNow",
+        "career_site": "https://careers.servicenow.com/",
+        "inventory_url": "https://careers.servicenow.com/jobs/",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_inventory_plus_public_posting_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Official site uses numbered pages; SmartRecruiters Posting API uses limit/offset and returns totalFound",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the official ServiceNow jobs inventory or SmartRecruiters Posting API; filter by Country/State/City and paginate to the official total/totalFound before applying Job Watch rules.",
+        "fallback": "Cross-check individual roles on ServiceNow's official detail pages."
+      },
+      "limitations": [
+        "The API URL is based on the verified SmartRecruiters company identifier and vendor-documented public Posting API; the session URL-safety layer prevented a direct raw endpoint fetch."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Salesforce",
+      "batch": "JW2",
+      "ats": {
+        "family": "Workday + Salesforce custom career front-end",
+        "tenant": "salesforce / External_Career_Site (wd12)",
+        "career_site": "https://www.salesforce.com/company/careers/",
+        "inventory_url": "https://www.salesforce.com/company/careers/jobs/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Numbered pages with explicit result count/range; enumerate through the last page",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Salesforce's current official jobs search, filter target locations and enumerate all numbered pages to the displayed total; deduplicate by JR/requisition ID.",
+        "fallback": "Use the underlying Workday External_Career_Site job detail for any role whose custom front-end page fails."
+      },
+      "limitations": [
+        "The repository's old careers.salesforce.com/en/jobs/ URL is obsolete/redirected; use salesforce.com/company/careers/jobs/."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Booking.com",
+      "batch": "JW2",
+      "ats": {
+        "family": "iCIMS Jibe / JibeApply",
+        "tenant": null,
+        "career_site": "https://careers.booking.com/",
+        "inventory_url": "https://jobs.booking.com/booking/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_inventory_with_blocked_structured_endpoint",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Page/query based; official location taxonomy can scope city/country, but complete count is not robustly exposed",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.booking.com/booking/jobs plus its official location taxonomy, run target-location searches and enumerate every result page available.",
+        "fallback": "Use official Booking.com job details and locations pages to confirm results."
+      },
+      "limitations": [
+        "A JSON /api/jobs endpoint is observable in the site's technical behavior, but direct unauthenticated access returned HTTP 403 in this mapping, so it is not declared as a usable public API.",
+        "Rome may not appear in the location taxonomy when there are no current Rome postings."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Expedia Group",
+      "batch": "JW2",
+      "ats": {
+        "family": "Expedia Group custom career front-end (backend not independently confirmed)",
+        "tenant": null,
+        "career_site": "https://careers.expediagroup.com/",
+        "inventory_url": "https://careers.expediagroup.com/jobs/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_counted_dynamic_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Load-more/client-rendered pagination",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Expedia Group's official jobs inventory, filter target location and exhaust Load More/page state while reconciling the number of unique job cards to the displayed scope count.",
+        "fallback": "Confirm each role on its official Expedia Group job detail page."
+      },
+      "limitations": [
+        "Crawler rendering can show inconsistent empty-state text alongside job cards, so the displayed total cannot by itself prove complete traversal."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Deliveroo",
+      "batch": "JW2",
+      "ats": {
+        "family": "Ashby",
+        "tenant": "deliveroo",
+        "career_site": "https://careers.deliveroo.co.uk/",
+        "inventory_url": "https://jobs.ashbyhq.com/deliveroo",
+        "public_api_or_feed": "https://api.ashbyhq.com/posting-api/job-board/deliveroo"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_public_job_posting_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Ashby lightweight Job Postings API returns all currently published postings for the board in one structured response",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query Ashby's public Job Postings endpoint for board deliveroo, filter the returned structured postings by target location, and reconcile with the hosted Deliveroo board.",
+        "fallback": "Use jobs.ashbyhq.com/deliveroo and Deliveroo's corporate career site if the API is temporarily inaccessible."
+      },
+      "limitations": [
+        "The repository still labels Deliveroo as Greenhouse/custom; the current official job board is Ashby.",
+        "The API endpoint is constructed from the verified Ashby board name and Ashby's official public Job Postings API specification."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Bending Spoons",
+      "batch": "JW2",
+      "ats": {
+        "family": "Bending Spoons custom career platform",
+        "tenant": null,
+        "career_site": "https://bendingspoons.com/careers",
+        "inventory_url": "https://jobs.bendingspoons.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "London"
+        ],
+        "pagination": "Dynamic custom inventory; count/pagination are not consistently exposed",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.bendingspoons.com with its location/department/contract filters and validate each returned position URL; keep coverage PARTIAL unless the board renders an enumerable complete set in that run.",
+        "fallback": "Use current official /positions/<id> pages for confirmation/discovery."
+      },
+      "limitations": [
+        "The crawler has produced an empty/openings mismatch while current individual position pages remain indexed, so absence cannot be proven from the board rendering.",
+        "No stable public structured feed was verified."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Prometeia",
+      "batch": "JW2",
+      "ats": {
+        "family": "Workday",
+        "tenant": "prometeia / Prometeia_External_Career_Portal (wd3)",
+        "career_site": "https://prometeia.com/careers",
+        "inventory_url": "https://prometeia.wd3.myworkdayjobs.com/Prometeia_External_Career_Portal",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday dynamic paging/load-more",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the Prometeia External Career Portal on Workday, filter target locations and enumerate all displayed requisitions before applying role exclusions.",
+        "fallback": "Use Prometeia's corporate Careers page and official Workday job detail links for confirmation."
+      },
+      "limitations": [
+        "Workday is JavaScript-driven and no stable unauthenticated feed was independently validated."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Simon-Kucher",
+      "batch": "JW2",
+      "ats": {
+        "family": "Cornerstone OnDemand (CSOD)",
+        "tenant": "simon-kucher / careersite 6",
+        "career_site": "https://www.simon-kucher.com/en/careers",
+        "inventory_url": "https://simon-kucher.csod.com/ux/ats/careersite/6/home/?c=simon-kucher",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "CSOD client-rendered search/paging",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the official Simon-Kucher CSOD careersite, filter target locations and exhaust all search pages/result windows.",
+        "fallback": "Use Simon-Kucher's corporate careers page, which links to the CSOD inventory, to recover navigation and confirm roles."
+      },
+      "limitations": [
+        "The CSOD board is client-rendered and the complete total/page set is not reliably visible to the crawler."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Porsche Consulting",
+      "batch": "JW2",
+      "ats": {
+        "family": "Porsche Career Portal / custom e-recruiting",
+        "tenant": null,
+        "career_site": "https://www.porsche-consulting.com/italy/it/carriera",
+        "inventory_url": "https://jobs.porsche.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_parent_inventory_with_org_filter",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Parent Porsche job search with organization/country/location filters; complete total is not consistently exposed to crawler",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use jobs.porsche.com and filter Organization to Porsche Consulting plus target country/location; enumerate all result pages available and retain only Porsche Consulting entities.",
+        "fallback": "Use Porsche Consulting Italy careers pages to confirm that the parent Porsche inventory is the current application route."
+      },
+      "limitations": [
+        "The Porsche jobs portal covers multiple Porsche entities, so organization filtering is mandatory.",
+        "The underlying ATS vendor was not identified with sufficient confidence."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "AlixPartners",
+      "batch": "JW2",
+      "ats": {
+        "family": "Greenhouse + AlixPartners custom career front-end",
+        "tenant": "alixpartners",
+        "career_site": "https://www.alixpartners.com/careers/",
+        "inventory_url": "https://www.alixpartners.com/careers/job-search/",
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/alixpartners/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_public_job_board_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Greenhouse Job Board API returns all published board jobs and meta.total in one list response",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query the Greenhouse Job Board API using board token alixpartners; filter returned office/location data for targets and reconcile with AlixPartners' official job-search page.",
+        "fallback": "Use the AlixPartners custom job-search and direct Greenhouse-backed job pages."
+      },
+      "limitations": [
+        "The API URL is constructed from the verified Greenhouse board token and Greenhouse's official unauthenticated Job Board API specification; the session URL-safety layer prevented a direct raw endpoint fetch."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Alvarez & Marsal",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom Alvarez & Marsal career front-end (Workday application backend observed)",
+        "tenant": "alvarezandmarsal (Workday tenant observed)",
+        "career_site": "https://careers.alvarezandmarsal.com/",
+        "inventory_url": "https://careers.alvarezandmarsal.com/search/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Numbered/path-based search pages with explicit result ranges and totals",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use A&M's official search/jobs inventory, scope by country/city and enumerate every page until the displayed result total is exhausted.",
+        "fallback": "Use current official role details and, where they route there, the observed Workday application pages."
+      },
+      "limitations": [
+        "The custom front-end is the completeness source; the Workday backend is noted for routing but should not be relied on as the sole inventory unless revalidated in the run."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "LSC Lifesciences Consultants",
+      "batch": "JW2",
+      "ats": {
+        "family": "Teamtailor",
+        "tenant": "careers.consultingls.com",
+        "career_site": "https://careers.consultingls.com/",
+        "inventory_url": "https://careers.consultingls.com/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_complete_board",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "London"
+        ],
+        "pagination": "All published cards rendered on the Teamtailor board; verify displayed total equals enumerated card count",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the Teamtailor /jobs board, apply Country/Location/Role filters, and verify the displayed total against the full card list before role-fit filtering.",
+        "fallback": "Use individual LSC Teamtailor job pages for confirmation."
+      },
+      "limitations": [
+        "Target locations only appear as filter values when there is at least one published role in that location."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Glovo",
+      "batch": "JW2",
+      "ats": {
+        "family": "SmartRecruiters (shared DeliveryHero tenant) + Glovo custom front-end",
+        "tenant": "DeliveryHero",
+        "career_site": "https://careers.glovoapp.com/",
+        "inventory_url": "https://careers.glovoapp.com/careers/",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/DeliveryHero/postings"
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "shared_parent_public_api_with_brand_partition_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "SmartRecruiters public Posting API uses limit/offset; Glovo custom front-end adds brand-specific presentation",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Glovo's official careers inventory and cross-check against the DeliveryHero SmartRecruiters Posting API; paginate the parent feed completely, then retain only postings unambiguously identified as Glovo and target-location matches.",
+        "fallback": "Use current Glovo job-detail pages and matching SmartRecruiters DeliveryHero postings for confirmation."
+      },
+      "limitations": [
+        "The SmartRecruiters companyIdentifier is shared with Delivery Hero, so the parent API alone does not prove that every DeliveryHero posting belongs to Glovo or that every Glovo posting can be isolated by a stable public brand field.",
+        "Do not treat the entire DeliveryHero feed as Glovo inventory."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Gruppo Excellence",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom",
+        "tenant": null,
+        "career_site": "https://gruppoexcellence.com/careers",
+        "inventory_url": "https://gruppoexcellence.com/careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_single_page_inventory_with_technical_limit",
+        "location_filter_supported": false,
+        "locations": [
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "No stable pagination discovered; openings are published on the official careers page",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Parse every vacancy card published on the official Gruppo Excellence Careers page and read the location from each card; deduplicate by title/detail URL.",
+        "fallback": "Use the official vacancy detail/application page for each discovered role and keep coverage STRONG rather than VERIFIED if the page structure changes."
+      },
+      "limitations": [
+        "No independent ATS vendor or structured public feed was identified.",
+        "No explicit machine-verifiable total was found, so completeness depends on the careers page exposing every opening."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Be Shaping the Future",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom",
+        "tenant": null,
+        "career_site": "https://www.be-tse.it/careers/",
+        "inventory_url": "https://www.be-tse.it/it/jobs/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_filtered_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Custom Nation/Sector-filtered list; total/pagination not reliably exposed",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the official /it/jobs inventory, filter Nation/Sector and inspect every resulting card for city/location; enumerate all visible results before applying Job Watch fit rules.",
+        "fallback": "Use Be's official career/job detail pages for confirmation."
+      },
+      "limitations": [
+        "No underlying ATS vendor or structured public feed was identified with sufficient confidence.",
+        "City-level filtering is less explicit than nation/sector filtering."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Arthur D. Little",
+      "batch": "JW2",
+      "ats": {
+        "family": "iCIMS",
+        "tenant": "careerswe-adlittle",
+        "career_site": "https://www.adlittle.com/en/careers",
+        "inventory_url": "https://careerswe-adlittle.icims.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "iCIMS client-rendered search/pagination within the Western Europe board",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the Arthur D. Little Western Europe iCIMS board and its location search/facets for Milan/Rome/London, then enumerate all pages/results exposed.",
+        "fallback": "Use the ADL corporate Careers page to enter the correct regional iCIMS inventory and confirm individual roles."
+      },
+      "limitations": [
+        "The regional iCIMS board is the relevant scope; the crawler did not expose an exact complete total/page count.",
+        "Do not mix roles from other ADL regional iCIMS tenants when proving Western Europe coverage."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "OC&C Strategy Consultants",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom recruitment portal (ASP.NET-style)",
+        "tenant": null,
+        "career_site": "https://www.occstrategy.com/en/careers/",
+        "inventory_url": "https://careers.occstrategy.com/vacancies/vacancy-search-results.aspx",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Numbered pages with Next/Last and explicit vacancy count",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use OC&C's official vacancy search, apply Position/Location filters and enumerate pages 1..Last; verify unique vacancy count equals the portal total.",
+        "fallback": "Use OC&C's corporate Careers page, which explicitly directs candidates to the vacancy portal."
+      },
+      "limitations": [
+        "The ATS vendor behind the custom portal was not identified, but the official inventory itself is enumerable."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "FTI Consulting",
+      "batch": "JW2",
+      "ats": {
+        "family": "Workday",
+        "tenant": "fticonsulting / FTIConsultingCareers (wd108)",
+        "career_site": "https://www.fticonsulting.com/careers",
+        "inventory_url": "https://fticonsulting.wd108.myworkdayjobs.com/FTIConsultingCareers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_ats_inventory_with_technical_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday dynamic paging/load-more",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the FTIConsultingCareers Workday board, filter target locations and enumerate every displayed result/requisition.",
+        "fallback": "Use FTI's corporate careers page and current official Workday role details for confirmation."
+      },
+      "limitations": [
+        "Workday is JavaScript-driven and no stable public structured feed was independently validated."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Bolt",
+      "batch": "JW2",
+      "ats": {
+        "family": "Greenhouse-backed custom Bolt careers front-end",
+        "tenant": null,
+        "career_site": "https://bolt.eu/en/careers/",
+        "inventory_url": "https://bolt.eu/en/careers/positions/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_paginated_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Explicit page= pagination plus team/location filters; continue until the last page/no further unique roles",
+        "total_count_available": false,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use Bolt's official positions page, set location/team filters and enumerate page=1..N until no further unique job IDs/gh_jid values appear; then apply Job Watch role rules.",
+        "fallback": "Use the official Bolt role-detail view generated from the same positions inventory."
+      },
+      "limitations": [
+        "The front-end exposes Greenhouse-style gh_jid identifiers, but a canonical public Greenhouse board token was not verified, so no public API is declared.",
+        "The site may show a rounded '250+' global count rather than an exact total; completeness is established by exhausting pagination."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Flix",
+      "batch": "JW2",
+      "ats": {
+        "family": "Greenhouse + Flix custom career front-end",
+        "tenant": "flix",
+        "career_site": "https://flix.careers/",
+        "inventory_url": "https://flix.careers/jobs/",
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/flix/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_public_job_board_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Greenhouse Job Board API returns all published jobs and meta.total; custom careers page also exposes a full jobs count/list",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query the Greenhouse Job Board API for token flix and filter structured office/location data for targets; reconcile total and roles with flix.careers/jobs.",
+        "fallback": "Enumerate Flix's official jobs page if the API is temporarily inaccessible."
+      },
+      "limitations": [
+        "The API URL is constructed from the verified Greenhouse board token and Greenhouse's official unauthenticated Job Board API specification; the session URL-safety layer prevented a direct raw endpoint fetch."
+      ],
+      "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "FREENOW",
+      "batch": "JW2",
+      "ats": {
+        "family": "Greenhouse",
+        "tenant": "freenow",
+        "career_site": "https://www.free-now.com/career/",
+        "inventory_url": "https://job-boards.greenhouse.io/freenow",
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/freenow/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_public_job_board_api_and_complete_board",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Greenhouse hosted board renders the complete published list; API returns all jobs with meta.total",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the Greenhouse Job Board API for token freenow, filter by office/location, and reconcile the returned total against the hosted Greenhouse board.",
+        "fallback": "Use https://job-boards.greenhouse.io/freenow directly; its Department and Office filters operate on the complete published list."
+      },
+      "limitations": [
+        "Displayed totals can change between crawls as roles open/close; always use the current run total.",
+        "The API URL is constructed from the verified board token and Greenhouse's official unauthenticated Job Board API specification; the session URL-safety layer prevented a direct raw endpoint fetch."
+      ],
+      "last_mapped": "2026-09-14"
+    }
+  ]
+}
