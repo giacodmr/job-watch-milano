@@ -11,7 +11,8 @@ ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 TIMEOUT = 30
 MAX_PAGES = 100
-TARGET_LOCATION_TERMS = ("milan","milano","rome","roma","london","italy","italia")
+COLLECTOR_VERSION = "1.1"
+TARGET_LOCATION_RE = re.compile(r"(?<!\\w)(milan|milano|rome|roma|london)(?!\\w)", re.I)
 OPEN_STATUSES = {"NEW","STILL_OPEN","UPDATED"}
 
 session = requests.Session()
@@ -45,8 +46,10 @@ def html_to_text(v):
     s=re.sub(r"\s+"," ",s).strip(); return s or None
 
 def location_matches(location):
-    if not location: return False
-    t=location.casefold(); return any(x in t for x in TARGET_LOCATION_TERMS)
+    """Match only target cities, not substrings such as Roma inside Romagna."""
+    if not location:
+        return False
+    return bool(TARGET_LOCATION_RE.search(str(location)))
 
 def fingerprint(job):
     fields={k:job.get(k) for k in ("title","location","department","team","employment_type","description","url")}
@@ -175,7 +178,12 @@ def choose(company):
     return None
 
 def previous_index(path):
-    prev=read_json(path,{}) or {}; idx={}
+    prev=read_json(path,{}) or {}
+    # Reset the baseline whenever collector semantics change.
+    # This prevents old false positives from being emitted as fake CLOSED jobs.
+    if prev.get("version") != COLLECTOR_VERSION:
+        return {}
+    idx={}
     for c in prev.get("companies",[]):
         name=c.get("company")
         for j in c.get("jobs",[]):
@@ -224,15 +232,23 @@ def collect_batch(batch):
                               "target_jobs_count":sum(1 for j in current if j.get("status") in OPEN_STATUSES),
                               "source_url":result.get("source_url"),"reason":result.get("reason"),"jobs":current})
         time.sleep(0.1)
-    payload={"version":"1.0","batch":mapping.get("batch") or batch.upper(),"batch_name":mapping.get("batch_name"),"generated_at":utc_now(),
+    payload={"version":COLLECTOR_VERSION,"batch":mapping.get("batch") or batch.upper(),"batch_name":mapping.get("batch_name"),"generated_at":utc_now(),
              "collector_scope":["Lever","Ashby","Greenhouse","SmartRecruiters"],
+             "location_scope":["Milan","Milano","Rome","Roma","London"],
              "coverage_note":"VERIFIED means the structured public inventory was exhausted/reconciled in this run. Unsupported ATS remain NOT_CHECKED for ChatGPT fallback.",
              "summary":summary,"companies":companies_out}
     write_json(out,payload); return payload
 
 def main():
     for batch in BATCHES:
-        r=collect_batch(batch); print(batch.upper(),json.dumps(r["summary"],ensure_ascii=False))
+        r=collect_batch(batch)
+        print(batch.upper(), json.dumps(r["summary"], ensure_ascii=False))
+        for company in r.get("companies", []):
+            if company.get("coverage") == "FAILED":
+                print(
+                    f"  FAILED | {company.get('company')} | "
+                    f"{company.get('collector')} | {company.get('reason')}"
+                )
     return 0
 
 if __name__=="__main__": raise SystemExit(main())
