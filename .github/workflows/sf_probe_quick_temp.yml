@@ -1,0 +1,64 @@
+name: Quick SuccessFactors probe
+
+on:
+  push:
+    branches: [ats-successfactors-v17]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Probe public pages
+        run: |
+          python - <<'PY'
+          import re, json, requests
+          urls = {
+            'EY':'https://careers.ey.com/ey/search/',
+            'Capgemini':'https://jobs.capgemini.com/viewalljobs/',
+            'Worldline':'https://jobs.worldline.com/viewalljobs/',
+            'Terna-root':'https://jobs.terna.it/',
+            'Terna-search':'https://jobs.terna.it/search/',
+            'ENGIE-root':'https://jobs.engie.com/',
+            'ENGIE-search':'https://jobs.engie.com/search/',
+            'Pirelli-root':'https://jobs.pirelli.com/',
+            'Pirelli-search':'https://jobs.pirelli.com/search/',
+            'Heineken-root':'https://careers.theheinekencompany.com/',
+            'Heineken-Italy':'https://careers.theheinekencompany.com/Italy/',
+            'Heineken-search':'https://careers.theheinekencompany.com/search/',
+            'Moncler-root':'https://jobs.moncler.com/',
+            'Moncler-search':'https://jobs.moncler.com/search/',
+          }
+          pats = [
+            r'Results?\s+\d+\s*[-–—]\s*\d+\s+of\s+[\d,. ]+',
+            r'Showing\s+\d+\s+(?:to|[-–—])\s+\d+\s+of\s+[\d,. ]+',
+            r'j2w\.SearchResults\.init\s*\([^;]{0,1200}',
+            r'apiEndpoint\s*:\s*["\'][^"\']+',
+            r'searchQuery\s*:\s*["\'][^"\']*',
+            r'data-per-page=["\']\d+',
+            r'(?:jobCount|totalCount|totalResults|numFound)[^<\n]{0,140}',
+          ]
+          for name,url in urls.items():
+            out={'name':name,'url':url}
+            try:
+              r=requests.get(url,timeout=15,headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'})
+              text=r.text
+              out.update(status=r.status_code,final=r.url,length=len(text),job_paths=len(re.findall(r'/job/',text,re.I)))
+              matches=[]
+              for p in pats:
+                matches += [re.sub(r'\s+',' ',m)[:1400] for m in re.findall(p,text,re.I|re.S)[:4]]
+              out['matches']=matches[:20]
+              out['search_links']=re.findall(r'href=["\']([^"\']*(?:/search/|/viewalljobs/)[^"\']*)["\']',text,re.I)[:12]
+              out['go_links']=re.findall(r'href=["\']([^"\']*/go/[^"\']*)["\']',text,re.I)[:8]
+              out['job_links']=re.findall(r'href=["\']([^"\']*/job/[^"\']*)["\']',text,re.I)[:5]
+            except Exception as e:
+              out['error']=type(e).__name__+': '+str(e)
+            print('PROBE '+json.dumps(out,ensure_ascii=False))
+          PY
