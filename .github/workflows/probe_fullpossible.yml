@@ -15,61 +15,41 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Test Axpo with existing Teamtailor collector
+      - name: Probe Axpo Teamtailor numbered paging
         shell: python
-        continue-on-error: true
         run: |
-          import json, os, sys, traceback
+          import os,sys,json,re
+          from urllib.parse import urlparse
           sys.path.insert(0,os.getcwd())
           import collector
-          try:
-              m=json.load(open('ats_mapping_jw3.json'))
-              c=next(x for x in m['companies'] if x['company']=='Axpo')
-              r=collector.collect_teamtailor(c)
-              print('AXPO_RESULT',json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False))
-              print('AXPO_TARGET_JOBS',len(r.get('jobs') or []))
-              print('AXPO_SAMPLE',json.dumps((r.get('jobs') or [])[:3],ensure_ascii=False))
-          except Exception as e:
-              print('AXPO_ERROR',type(e).__name__,str(e)); traceback.print_exc()
-      - name: Discover and reconcile Nadara and Richemont Workday inventories
+          for lang_url in ('https://careers.axpo.com/jobs','https://careers.axpo.com/it/jobs'):
+              print('BASE',lang_url)
+              all_ids=[]; totals=[]
+              for page in (1,2,3,22,23,24):
+                  u=lang_url+f'?page={page}'
+                  try:
+                      text,final=collector.get_html(u)
+                      p=collector.TeamtailorPageParser(final); p.feed(text); p.close()
+                      total=collector.teamtailor_total(p.visible_text)
+                      ids=[x.get('source_id') for x in p.jobs if x.get('source_id')]
+                      print('PAGE',page,'TOTAL',total,'JOBS',len(ids),'UNIQUE',len(set(ids)),'FIRST',ids[:2],'LAST',ids[-2:])
+                      print('COUNT_SNIPS',[m.group(0) for m in re.finditer(r'.{0,30}(?:jobs?|offerte).{0,30}',p.visible_text,re.I)][:8])
+                      totals.append(total); all_ids += ids
+                  except Exception as e: print('PAGE_ERROR',page,type(e).__name__,str(e))
+              print('COMBINED_UNIQUE',len(set(all_ids)),'TOTAL_VALUES',totals)
+      - name: Test Nadara using existing Workday collector with corrected mapping in memory
         shell: python
         run: |
-          import html, json, re, urllib.request
-          from urllib.parse import urlparse, unquote
-          headers={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,application/xhtml+xml,*/*'}
-          def get(url):
-              req=urllib.request.Request(url,headers=headers)
-              with urllib.request.urlopen(req,timeout=30) as r: return r.read().decode('utf-8','replace'),r.geturl()
-          def workday_links(page):
-              text=html.unescape(page).replace('\\/','/')
-              vals=[]
-              for u in re.findall(r'https://[A-Za-z0-9.-]+\.myworkdayjobs\.com[^"\'<> \\]*',text,re.I):
-                  u=u.rstrip('.,);]')
-                  if u not in vals: vals.append(u)
-              return vals
-          def site_candidates(links):
-              out=[]
-              for u in links:
-                  p=urlparse(u); parts=[unquote(x) for x in p.path.split('/') if x]
-                  while parts and re.fullmatch(r'[a-z]{2}(?:-[A-Z]{2})?',parts[0]): parts.pop(0)
-                  if parts:
-                      key=(p.netloc,parts[0])
-                      if key not in out: out.append(key)
-              return out
-          def cxs(host,site):
-              tenant=host.split('.')[0]; url=f'https://{host}/wday/cxs/{tenant}/{site}/jobs'
-              payload=json.dumps({'appliedFacets':{},'limit':20,'offset':0,'searchText':''}).encode()
-              req=urllib.request.Request(url,data=payload,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json','Content-Type':'application/json','Referer':f'https://{host}/{site}','Origin':f'https://{host}'},method='POST')
-              try:
-                  with urllib.request.urlopen(req,timeout=30) as r: data=json.load(r)
-                  return {'url':url,'total':data.get('total'),'first':[(x.get('title'),x.get('locationsText'),x.get('externalPath')) for x in (data.get('jobPostings') or [])[:2]]}
-              except Exception as e: return {'url':url,'error':f'{type(e).__name__}: {e}'}
-          for name,url in [('Nadara','https://nadara.com/work-with-us'),('Richemont','https://careers.richemont.com/en/jobs/')]:
-              try:
-                  page,final=get(url); links=workday_links(page); print(name,'WORKDAY_LINKS',links[:40])
-                  candidates=site_candidates(links); print(name,'SITE_CANDIDATES',candidates)
-                  for host,site in candidates[:10]: print(name,'CXS',json.dumps(cxs(host,site),ensure_ascii=False))
-                  for pat in (r'Showing\s+\d+\s+of\s+([\d,]+)\s+roles',r'Displaying\s+\d+\s+to\s+\d+\s+of\s+([\d,]+)\s+matching jobs',r'([\d,]+)\s+matching jobs'):
-                      vals=re.findall(pat,page,re.I)
-                      if vals: print(name,'PUBLIC_TOTAL',vals[:10])
-              except Exception as e: print(name,'ERROR',type(e).__name__,str(e))
+          import os,sys,json
+          sys.path.insert(0,os.getcwd())
+          import collector
+          m=json.load(open('ats_mapping_jw3.json'))
+          c=next(x for x in m['companies'] if x['company']=='Nadara')
+          c=json.loads(json.dumps(c))
+          c['ats']['family']='Workday'
+          c['ats']['tenant']='nadara / wd3'
+          c['ats']['inventory_url']='https://nadara.wd3.myworkdayjobs.com/External'
+          r=collector.collect_workday(c)
+          print('NADARA_RESULT',json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False))
+          print('NADARA_TARGET_JOBS',len(r.get('jobs') or []))
+          print('NADARA_SAMPLE',json.dumps((r.get('jobs') or [])[:5],ensure_ascii=False))
