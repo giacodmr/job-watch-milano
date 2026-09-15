@@ -1,4 +1,4 @@
-name: Diagnose Job Watch NOT_CHECKED
+name: Clean v1.4 experimental scaffolding
 
 on:
   push:
@@ -12,21 +12,25 @@ permissions:
   contents: write
 
 jobs:
-  diagnose:
+  cleanup:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build NOT_CHECKED report
-        run: python coverage_report.py > not_checked_report.txt
+      - name: Remove experimental files
+        run: rm -f collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py collector_v14f.py collector_v14g.py finalize_v14.py not_checked_report.txt
 
-      - name: Commit report
+      - name: Commit cleanup
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add not_checked_report.txt
-          git commit -m "Add NOT_CHECKED diagnostic report" || exit 0
+          git add -u
+          if git diff --cached --quiet; then
+            echo "Nothing to clean."
+            exit 0
+          fi
+          git commit -m "Remove v1.4 experimental scaffolding"
           git push
