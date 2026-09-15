@@ -1,4 +1,4 @@
-name: Validate Oracle v1.6
+name: Diagnose Oracle v1.6 stability
 
 on:
   push:
@@ -7,16 +7,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: job-watch-oracle-v16-diag
   cancel-in-progress: true
 
 jobs:
-  validate:
+  diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
     steps:
       - name: Check out branch
         uses: actions/checkout@v4
@@ -29,89 +29,8 @@ jobs:
       - name: Install requests
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Apply Oracle v1.6 hardening
-        run: python oracle_v16_patch.py
-
       - name: Syntax check
-        run: python -m py_compile collector.py coverage_report.py
+        run: python -m py_compile collector.py oracle_diag_v16.py
 
-      - name: Validate American Express directly
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          import collector
-
-          target = None
-          for batch in ("jw1", "jw2", "jw3", "jw4"):
-              data = json.loads(Path(f"ats_mapping_{batch}.json").read_text(encoding="utf-8"))
-              for company in data.get("companies", []):
-                  if company.get("company") == "American Express":
-                      target = company
-                      break
-              if target:
-                  break
-          assert target, "American Express mapping missing"
-          result = collector.collect_oracle(target)
-          print("AMEX_DIRECT", {k: result.get(k) for k in ("coverage", "collector", "inventory_count", "source_url")})
-          assert result.get("coverage") == "VERIFIED", result
-          assert result.get("collector") == "oracle_recruiting_cloud_ce_stable_metadata_v16", result
-          assert int(result.get("inventory_count") or 0) > 0, result
-          PY
-
-      - name: Run full collector
-        run: python collector.py
-
-      - name: Validate release invariants
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          totals = {"companies_total": 0, "VERIFIED": 0, "FAILED": 0, "NOT_CHECKED": 0}
-          amex = None
-          unilever = None
-          for batch in ("jw1", "jw2", "jw3", "jw4"):
-              data = json.loads(Path(f"current_jobs_{batch}.json").read_text(encoding="utf-8"))
-              assert data.get("version") == "1.6", (batch, data.get("version"))
-              for key in totals:
-                  totals[key] += int(data["summary"].get(key, 0))
-              for company in data.get("companies", []):
-                  if company.get("company") == "American Express":
-                      amex = company
-                  if company.get("company") == "Unilever":
-                      unilever = company
-          print("TOTALS", totals)
-          print("AMEX", amex and {k: amex.get(k) for k in ("coverage", "inventory_count", "collector", "reason")})
-          assert totals["companies_total"] == 182, totals
-          assert totals["FAILED"] == 0, totals
-          assert totals["VERIFIED"] >= 77, totals
-          assert amex and amex.get("coverage") == "VERIFIED", amex
-          assert amex.get("collector") == "oracle_recruiting_cloud_ce_stable_metadata_v16", amex
-          assert unilever and unilever.get("coverage") == "NOT_CHECKED", unilever
-          PY
-
-      - name: Coverage report
-        run: python coverage_report.py
-
-      - name: Remove temporary development scaffolding
-        shell: bash
-        run: |
-          rm -f oracle_diag_v16.py oracle_v16_patch.py
-          rm -f .github/workflows/dev_oracle_v16.yml
-          rm -rf __pycache__
-
-      - name: Commit validated Oracle v1.6 state
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "Harden Oracle inventory collection v1.6"
-          git push
+      - name: Probe stable American Express snapshots
+        run: python oracle_diag_v16.py
