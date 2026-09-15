@@ -11,42 +11,61 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check requests
-      - name: Exhaust Axpo Teamtailor aggregate board
+      - name: Probe OC&C Eploy inventory contract
         shell: python
         run: |
-          import os,sys,re,html
-          from urllib.parse import urljoin,urlparse,unquote
-          sys.path.insert(0,os.getcwd())
-          import collector
-          base='https://careers.axpo.com/jobs'
-          all_keys=[]; expected=None; hosts={}
-          for page in range(1,30):
-              text,final=collector.get_html(base+f'?page={page}')
-              p=collector.TeamtailorPageParser(final); p.feed(text); p.close()
-              total=collector.teamtailor_total(p.visible_text)
-              if page==1: expected=total
-              elif total not in (None,expected): raise SystemExit(f'total changed {expected}->{total} page={page}')
-              raw=html.unescape(text)
-              rows=[]
-              for href in re.findall(r'href=["\']([^"\']+)["\']',raw,re.I):
-                  u=urljoin(final,href); pu=urlparse(u)
-                  m=re.search(r'/jobs/(\d+)(?:[-/]|$)',unquote(pu.path),re.I)
-                  if not m: continue
-                  host=pu.netloc.casefold()
-                  # Teamtailor aggregates can link subsidiary boards on another Teamtailor custom domain.
-                  key=(host,m.group(1))
-                  if key not in rows: rows.append(key)
-              print('PAGE',page,'TOTAL',total,'CARDS',len(rows),'HOSTS',sorted({h for h,_ in rows}))
-              if not rows:
-                  print('STOP_EMPTY_PAGE',page); break
-              all_keys.extend(rows)
-              for h,_ in rows: hosts[h]=hosts.get(h,0)+1
-              if len(set(all_keys))>=expected: break
-          unique=set(all_keys)
-          print('EXPECTED',expected,'SEEN',len(all_keys),'UNIQUE',len(unique),'DUPLICATES',len(all_keys)-len(unique))
-          print('HOST_DISTRIBUTION',sorted(hosts.items(),key=lambda x:(-x[1],x[0])))
-          if expected is None or len(unique)!=expected: raise SystemExit('Axpo aggregate did not reconcile')
+          import re, urllib.request, html
+          from urllib.parse import urljoin,urlparse,parse_qs
+          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0'}
+          def get(u):
+              with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r: return r.read().decode('utf-8','replace'),r.geturl()
+          base='https://careers.occstrategy.com/vacancies/vacancy-search-results.aspx'
+          first,final=get(base)
+          text=html.unescape(first)
+          print('TOTALS',re.findall(r'\b(\d+)\s+Vacanc(?:y|ies)\b',text,re.I))
+          print('PAGE_STATUS',re.findall(r'Page:\s*(\d+)\s+of\s+(\d+)',re.sub(r'<[^>]+>',' ',text),re.I))
+          pagers=[]
+          for href,label in re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>',text,re.I|re.S):
+              lab=re.sub(r'<[^>]+>',' ',label).strip()
+              if lab in {'1','2','Next','Last'} or 'page' in href.lower(): pagers.append((lab,urljoin(final,html.unescape(href))))
+          print('PAGERS',pagers[:30])
+          urls=[]
+          for candidate in [final]+[u for _,u in pagers]:
+              if candidate in urls: continue
+              urls.append(candidate); page,_=get(candidate); decoded=html.unescape(page)
+              jobs=[]
+              for href,title in re.findall(r'<a[^>]+href=["\']([^"\']*/vacancies/(\d+)/[^"\']+)["\'][^>]*>(.*?)</a>',decoded,re.I|re.S):
+                  pass
+              pairs=[]
+              for m in re.finditer(r'href=["\']([^"\']*/vacancies/(\d+)/[^"\']+)["\']',decoded,re.I):
+                  u=urljoin(candidate,html.unescape(m.group(1))); key=m.group(2)
+                  if (key,u) not in pairs: pairs.append((key,u))
+              print('EPLOY_PAGE',candidate,'JOBS',len(pairs),'IDS',[x[0] for x in pairs])
+      - name: Probe Imperial Brands counted pages
+        shell: python
+        run: |
+          import re, urllib.request, html
+          from urllib.parse import urljoin,urlparse
+          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0'}
+          def get(u):
+              with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r: return r.read().decode('utf-8','replace'),r.geturl()
+          base='https://jobs.impbrands.com/jobs/search'
+          all_urls=[]; expected=None
+          for n in range(1,6):
+              page,final=get(base+f'?page={n}')
+              plain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',html.unescape(page)))
+              m=re.search(r'Displaying\s+(?:all\s+)?(?:\d+\s*[-–]\s*\d+\s+of\s+)?(\d+)\s+(?:in total|entries)',plain,re.I)
+              if not m:
+                  m=re.search(r'Displaying\s+\d+\s*[-–]\s*\d+\s+of\s+(\d+)\s+in total',plain,re.I)
+              total=int(m.group(1)) if m else None
+              if expected is None and total is not None: expected=total
+              links=[]
+              for href in re.findall(r'href=["\']([^"\']+)["\']',page,re.I):
+                  u=urljoin(final,html.unescape(href)); p=urlparse(u)
+                  if p.netloc.casefold()==urlparse(final).netloc.casefold() and re.match(r'^/jobs/[^/?#]+$',p.path) and p.path!='/jobs/search':
+                      if u not in links: links.append(u)
+              print('IMPERIAL_PAGE',n,'TOTAL',total,'JOBS',len(links),'FIRST',links[:2],'LAST',links[-2:])
+              if not links: break
+              all_urls += links
+              if expected is not None and len(set(all_urls))>=expected: break
+          print('IMPERIAL_RECONCILE','expected=',expected,'seen=',len(all_urls),'unique=',len(set(all_urls)),'dups=',len(all_urls)-len(set(all_urls)))
