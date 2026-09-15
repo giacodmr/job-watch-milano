@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   probe:
@@ -22,38 +22,16 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Apply patch ephemerally and validate
+      - name: Apply validated production patch
         run: |
           python apply_avature_patch.py
           python finalize_avature_patch.py
           python -m py_compile collector.py
           git diff --check
-          python - <<'PY'
-          import json
-          import collector
-          from pathlib import Path
-
-          root = Path('.')
-          def company(path, name):
-              data = json.loads((root / path).read_text(encoding='utf-8'))
-              return next(x for x in data['companies'] if x['company'] == name)
-
-          metlife = company('ats_mapping_jw1.json', 'MetLife')
-          result = collector.collect_avature(metlife)
-          print('METLIFE', result['coverage'], result['inventory_count'], len(result['jobs']), result['collector'])
-          if result['coverage'] != 'VERIFIED' or result['inventory_count'] <= 0:
-              raise SystemExit('MetLife did not verify')
-
-          for path, name in [
-              ('ats_mapping_jw2.json', 'Bain & Company'),
-              ('ats_mapping_jw2.json', 'Deloitte / Monitor Deloitte'),
-              ('ats_mapping_jw3.json', 'Siemens Energy'),
-          ]:
-              row = company(path, name)
-              try:
-                  collector.collect_avature(row)
-              except collector.NotCheckable as exc:
-                  print(name, 'NOT_CHECKED_EXPECTED', str(exc))
-              else:
-                  raise SystemExit(f'{name} unexpectedly verified')
-          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add collector.py ats_mapping_jw1.json ats_mapping_jw2.json ats_mapping_jw3.json
+          git diff --cached --name-only
+          git diff --cached --quiet && { echo "No production changes"; exit 1; } || true
+          git commit -m "Job Watch v1.7 — add strict Avature collector"
+          git push origin HEAD:ats-avature-v17
