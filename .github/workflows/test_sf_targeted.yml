@@ -6,6 +6,7 @@ on:
       - successfactors-v15
     paths:
       - collector_sf_v15.py
+      - collector_sf_v15b.py
       - .github/workflows/test_sf_targeted.yml
   workflow_dispatch:
 
@@ -25,7 +26,7 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          import collector_sf_v15 as exp
+          import collector_sf_v15b as exp
 
           targets = {
               "Intesa Sanpaolo",
