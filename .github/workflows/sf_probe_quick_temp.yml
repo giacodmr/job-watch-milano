@@ -31,8 +31,7 @@ jobs:
           base_headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'}
 
           def add_legacy(url):
-            p=urlsplit(url)
-            q=dict(parse_qsl(p.query,keep_blank_values=True)); q['unified']='legacy'
+            p=urlsplit(url); q=dict(parse_qsl(p.query,keep_blank_values=True)); q['unified']='legacy'
             return urlunsplit((p.scheme,p.netloc,p.path,urlencode(q),p.fragment))
 
           def list_candidates(obj,path='$'):
@@ -49,36 +48,37 @@ jobs:
           for name,url in sites.items():
             print('\n===',name,'===')
             s=requests.Session(); s.headers.update(base_headers)
-            page_url=add_legacy(url)
-            r=s.get(page_url,timeout=20)
-            print('PAGE',r.status_code,r.url,'len',len(r.text))
-            r.raise_for_status(); text=r.text
-            assert "xweb/rmk-jobs-search" in text, 'no rmk-jobs-search widget evidence'
-            locale_m=re.search(r'var\s+appParams\s*=\s*\{.*?\blocale\s*:\s*["\']([^"\']+)',text,re.I|re.S)
-            assert locale_m, 'locale not found'; locale=locale_m.group(1)
-            scripts=re.findall(r'<script\b[^>]*\bsrc=["\']([^"\']+)["\']',text,re.I)
-            mgr=[urljoin(r.url,x.replace('&amp;','&')) for x in scripts if 'j2w.searchManager' in x]
+            normal=s.get(url,timeout=20); normal.raise_for_status()
+            assert "xweb/rmk-jobs-search" in normal.text, 'normal page lacks rmk-jobs-search evidence'
+            scripts=re.findall(r'<script\b[^>]*\bsrc=["\']([^"\']+)["\']',normal.text,re.I)
+            mgr=[urljoin(normal.url,x.replace('&amp;','&')) for x in scripts if 'j2w.searchManager' in x]
             assert len(mgr)==1, f'unexpected searchManager assets {mgr}'
             js=s.get(mgr[0],timeout=20); js.raise_for_status()
             endpoint_m=re.search(r'type\s*:\s*["\']POST["\']\s*,\s*url\s*:\s*["\']([^"\']+)["\']',js.text,re.I)
             assert endpoint_m, 'public searchManager does not evidence POST endpoint'
-            endpoint=urljoin(r.url,endpoint_m.group(1))
-            assert urlparse(endpoint).netloc.casefold()==urlparse(r.url).netloc.casefold(), 'endpoint changed host'
+            endpoint=urljoin(normal.url,endpoint_m.group(1))
+            assert urlparse(endpoint).netloc.casefold()==urlparse(normal.url).netloc.casefold(), 'endpoint changed host'
             for required in ('keywords','locale','location','pageNumber','sortBy'):
               assert required in js.text, f'missing payload field evidence {required}'
-            print('CONTRACT',json.dumps({'locale':locale,'asset':mgr[0],'endpoint':endpoint},ensure_ascii=False))
-            totals=[]; pages=[]
+
+            page_url=add_legacy(url)
+            r=s.get(page_url,timeout=20); r.raise_for_status(); text=r.text
+            locale_m=re.search(r'var\s+appParams\s*=\s*\{.*?\blocale\s*:\s*["\']([^"\']+)',text,re.I|re.S)
+            if not locale_m:
+              locale_m=re.search(r'\bcurrentLocale\s*:\s*["\']([^"\']+)',text,re.I)
+            assert locale_m, 'locale not found'; locale=locale_m.group(1)
+            print('CONTRACT',json.dumps({'locale':locale,'asset':mgr[0],'endpoint':endpoint,'normal_len':len(normal.text),'legacy_len':len(text)},ensure_ascii=False))
+
+            totals=[]
             for n in (0,1,2):
               payload={'keywords':'','locale':locale,'location':'','pageNumber':n,'sortBy':'recent'}
               pr=s.post(endpoint,json=payload,timeout=25,headers={'Referer':r.url,'Accept':'application/json, text/plain, */*'})
               print('POST_STATUS',n,pr.status_code,pr.headers.get('content-type'),'len',len(pr.text))
-              pr.raise_for_status()
-              data=pr.json()
+              pr.raise_for_status(); data=pr.json()
               total=data.get('totalJobs') if isinstance(data,dict) else None
               totals.append(total)
               cands=list_candidates(data)
               print('POST_SUMMARY',n,json.dumps({'top_keys':sorted(data.keys()) if isinstance(data,dict) else type(data).__name__,'totalJobs':total,'list_candidates':cands[:15]},ensure_ascii=False))
-              print('POST_SAMPLE',n,json.dumps(data,ensure_ascii=False,default=str)[:6000])
-              pages.append(data)
+              print('POST_SAMPLE',n,json.dumps(data,ensure_ascii=False,default=str)[:7000])
             assert len(set(totals))==1 and isinstance(totals[0],int), f'unstable/noninteger totals {totals}'
           PY
