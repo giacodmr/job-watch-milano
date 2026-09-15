@@ -22,29 +22,36 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
-          import json
+          import json, re
 
           p=Path('collector.py')
           s=p.read_text()
-          s=s.replace('from urllib.parse import parse_qs, unquote, urljoin, urlparse', 'from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse')
-          s=s.replace('''class TeamtailorPageParser(HTMLParser):
-              def __init__(self, base_url: str):
-                  super().__init__(convert_charrefs=True)
-                  self.base_url = base_url
-                  self.visible_parts = []'''.replace('              ','    '), '''class TeamtailorPageParser(HTMLParser):
-              def __init__(self, base_url: str, allow_external_jobs: bool = False):
-                  super().__init__(convert_charrefs=True)
-                  self.base_url = base_url
-                  self.allow_external_jobs = allow_external_jobs
-                  self.visible_parts = []'''.replace('              ','    '))
-          old='''        if p.netloc.casefold() != urlparse(self.base_url).netloc.casefold():
+          old_import='from urllib.parse import parse_qs, unquote, urljoin, urlparse'
+          new_import='from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse'
+          if old_import not in s and new_import not in s:
+              raise SystemExit('urllib import anchor not found')
+          s=s.replace(old_import,new_import,1)
+
+          s,n=re.subn(
+              r'class TeamtailorPageParser\(HTMLParser\):\n    def __init__\(self, base_url: str\):\n        super\(\).__init__\(convert_charrefs=True\)\n        self\.base_url = base_url\n',
+              'class TeamtailorPageParser(HTMLParser):\n    def __init__(self, base_url: str, allow_external_jobs: bool = False):\n        super().__init__(convert_charrefs=True)\n        self.base_url = base_url\n        self.allow_external_jobs = allow_external_jobs\n',
+              s,
+              count=1,
+          )
+          if n != 1:
+              raise SystemExit(f'Teamtailor init replacement count={n}')
+
+          old_anchor='''        p = urlparse(absolute)
+                  if p.netloc.casefold() != urlparse(self.base_url).netloc.casefold():
                       return
                   m = TT_JOB_PATH_RE.search(unquote(p.path))
                   if not m:
                       return
                   self._finish_current()
-                  self.current = {"source_id": m.group(1), "url": absolute, "title_parts": [], "context_parts": []}'''.replace('                  ','')
-          new='''        base_host = urlparse(self.base_url).netloc.casefold()
+                  self.current = {"source_id": m.group(1), "url": absolute, "title_parts": [], "context_parts": []}
+          '''.replace('          ','')
+          new_anchor='''        p = urlparse(absolute)
+                  base_host = urlparse(self.base_url).netloc.casefold()
                   job_host = p.netloc.casefold()
                   if not self.allow_external_jobs and job_host != base_host:
                       return
@@ -53,43 +60,16 @@ jobs:
                       return
                   self._finish_current()
                   source_id = m.group(1) if job_host == base_host else f"{job_host}:{m.group(1)}"
-                  self.current = {"source_id": source_id, "url": absolute, "title_parts": [], "context_parts": []}'''.replace('                  ','')
-          if old not in s:
-              raise SystemExit('Teamtailor parser anchor block not found')
-          s=s.replace(old,new,1)
-          old_fn='''def collect_teamtailor(company):
-              name = company.get("company")
-              ats = company.get("ats") or {}
-              inventory = clean_text(ats.get("inventory_url"))
-              if not inventory:
-                  raise CollectorError("Teamtailor inventory URL missing")
-              try:
-                  page_html, final_url = get_html(inventory)
-              except Exception as e:
-                  raise NotCheckable(f"Teamtailor public board could not be read safely: {e}") from e
-              parser = TeamtailorPageParser(final_url)
-              parser.feed(page_html)
-              parser.close()
-              expected = teamtailor_total(parser.visible_text)
-              if expected is None:
-                  raise NotCheckable("Teamtailor board does not expose one reconcilable public job total")
-              unique = {}
-              for raw in parser.jobs:
-                  sid = clean_text(raw.get("source_id"))
-                  url = clean_text(raw.get("url"))
-                  title = clean_text(raw.get("title"))
-                  if sid and url and title:
-                      unique[sid] = raw
-              if len(unique) != expected:
-                  raise NotCheckable(f"Teamtailor board count mismatch: retrieved={len(unique)}, total={expected}")
-              jobs = []
-              for sid, raw in unique.items():
-                  loc = teamtailor_location(raw.get("context_parts") or [])
-                  if not location_matches(loc):
-                      continue
-                  jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
-              return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": final_url}
+                  self.current = {"source_id": source_id, "url": absolute, "title_parts": [], "context_parts": []}
           '''.replace('          ','')
+          if old_anchor not in s:
+              raise SystemExit('Teamtailor job-anchor block not found')
+          s=s.replace(old_anchor,new_anchor,1)
+
+          start=s.find('def collect_teamtailor(company):\n')
+          end=s.find('\ndef oracle_family(company):\n',start)
+          if start < 0 or end < 0:
+              raise SystemExit(f'Teamtailor function anchors missing start={start} end={end}')
           new_fn='''def teamtailor_page_url(url: str, page: int):
               parsed = urlparse(url)
               query = parse_qs(parsed.query, keep_blank_values=True)
@@ -100,9 +80,11 @@ jobs:
           def collect_teamtailor(company):
               name = company.get("company")
               ats = company.get("ats") or {}
+              family = (clean_text(ats.get("family")) or "").casefold()
               inventory = clean_text(ats.get("inventory_url"))
               if not inventory:
                   raise CollectorError("Teamtailor inventory URL missing")
+              allow_external_jobs = "aggregate" in family
               unique = {}
               expected = None
               first_final_url = None
@@ -114,7 +96,7 @@ jobs:
                       raise NotCheckable(f"Teamtailor public board could not be read safely: {e}") from e
                   if first_final_url is None:
                       first_final_url = final_url
-                  parser = TeamtailorPageParser(final_url, allow_external_jobs=True)
+                  parser = TeamtailorPageParser(final_url, allow_external_jobs=allow_external_jobs)
                   parser.feed(page_html)
                   parser.close()
                   page_total = teamtailor_total(parser.visible_text)
@@ -147,15 +129,15 @@ jobs:
                   jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
               return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": first_final_url or inventory}
           '''.replace('          ','')
-          if old_fn not in s:
-              raise SystemExit('collect_teamtailor block not found')
-          s=s.replace(old_fn,new_fn,1)
+          s=s[:start]+new_fn+s[end:]
           p.write_text(s)
 
           mp=Path('ats_mapping_jw3.json')
           data=json.loads(mp.read_text())
+          found=set()
           for c in data['companies']:
               if c['company']=='Axpo':
+                  found.add('Axpo')
                   c['ats']['family']='Teamtailor aggregate public board'
                   c['ats']['tenant']='Axpo Group / multi-board'
                   c['ats']['inventory_url']='https://careers.axpo.com/jobs'
@@ -166,6 +148,7 @@ jobs:
                   c['job_watch_method']['primary']='Enumerate the official Axpo Teamtailor aggregate board across every numbered page and reconcile host-qualified stable job IDs to the exact public total.'
                   c['limitations']=['Axpo aggregates several subsidiary Teamtailor boards; complete enumeration must retain cross-domain job links and reconcile them to the aggregate public total.']
               elif c['company']=='Nadara':
+                  found.add('Nadara')
                   c['ats']['family']='Workday'
                   c['ats']['tenant']='nadara / wd3'
                   c['ats']['inventory_url']='https://nadara.wd3.myworkdayjobs.com/External'
@@ -175,12 +158,15 @@ jobs:
                   c['verification']['full_inventory_possible']=True
                   c['job_watch_method']['primary']='Enumerate the official Nadara Workday External site through the public CXS endpoint and reconcile every requisition to total.'
                   c['limitations']=['Nadara official careers page links directly to the Workday External inventory; same-run public careers count and Workday CXS total reconciled exactly.']
+          if found != {'Axpo','Nadara'}:
+              raise SystemExit(f'JW3 mapping targets missing: {found}')
           mp.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
       - name: Validate targeted collectors
         shell: python
         run: |
-          import json,os,sys
+          import json,os,sys,py_compile
           sys.path.insert(0,os.getcwd())
+          py_compile.compile('collector.py',doraise=True)
           import collector
           m=json.load(open('ats_mapping_jw3.json'))
           for name,fn in [('Axpo',collector.collect_teamtailor),('Nadara',collector.collect_workday)]:
@@ -188,8 +174,6 @@ jobs:
               r=fn(c)
               print(name,json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False),'target_jobs=',len(r.get('jobs') or []))
               if r.get('coverage')!='VERIFIED': raise SystemExit(f'{name} not verified')
-          import py_compile
-          py_compile.compile('collector.py',doraise=True)
       - name: Commit validated production changes
         run: |
           git config user.name 'github-actions[bot]'
