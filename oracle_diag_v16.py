@@ -5,7 +5,7 @@ from pathlib import Path
 import collector
 
 TARGET = "American Express"
-LIMITS = (25, 50, 100, 250, 500, 1000)
+WIDE_LIMIT = 500
 
 
 def load_company():
@@ -17,7 +17,7 @@ def load_company():
     raise SystemExit(f"{TARGET} not found")
 
 
-def fetch_page(host, site, limit, offset=0):
+def fetch_page(host, site, limit, offset=0, expand=False):
     endpoint = f"https://{host}/hcmRestApi/resources/latest/recruitingCEJobRequisitions"
     finder = f"findReqs;siteNumber={site},limit={limit},offset={offset}"
     headers = {
@@ -25,29 +25,43 @@ def fetch_page(host, site, limit, offset=0):
         "Ora-Irc-Language": "en",
         "REST-Framework-Version": "1",
     }
-    r = collector.get_session().get(
-        endpoint,
-        params={
-            "onlyData": "true",
-            "expand": "requisitionList.secondaryLocations",
-            "finder": finder,
-        },
-        headers=headers,
-        timeout=collector.TIMEOUT,
+    params = {"onlyData": "true", "finder": finder}
+    if expand:
+        params["expand"] = "requisitionList.secondaryLocations"
+    r = collector.get_session().get(endpoint, params=params, headers=headers, timeout=collector.TIMEOUT)
+    print(
+        f"HTTP host={host} limit={limit} offset={offset} expand={expand} "
+        f"status={r.status_code} bytes={len(r.content)}"
     )
-    print(f"HTTP host={host} limit={limit} offset={offset} status={r.status_code} bytes={len(r.content)}")
     r.raise_for_status()
-    data = r.json()
-    root = collector.oracle_extract_root(data)
+    root = collector.oracle_extract_root(r.json())
     page = root.get("requisitionList") or []
     ids = [collector.oracle_source_id(x) for x in page if isinstance(x, dict)]
     ids = [x for x in ids if x]
-    total = root.get("TotalJobsCount")
+    total = int(root.get("TotalJobsCount"))
     print(
         f"  total={total} page_len={len(page)} unique_ids={len(set(ids))} "
-        f"first={ids[:3]} last={ids[-3:]} root_keys={sorted(root.keys())}"
+        f"first={ids[:3]} last={ids[-3:]}"
     )
-    return int(total), set(ids), root, r.url
+    return total, set(ids), page, r.url
+
+
+def compare(label, left, right):
+    lt, li, _, _ = left
+    rt, ri, _, _ = right
+    print(
+        label,
+        {
+            "same_total": lt == rt,
+            "same_ids": li == ri,
+            "left_count": len(li),
+            "right_count": len(ri),
+            "total_left": lt,
+            "total_right": rt,
+            "left_only": len(li - ri),
+            "right_only": len(ri - li),
+        },
+    )
 
 
 def main():
@@ -60,48 +74,43 @@ def main():
     print("hosts", hosts)
 
     selected = None
+    baseline = None
     for host in hosts:
         try:
-            total, ids, root, url = fetch_page(host, site, 25, 0)
+            baseline = fetch_page(host, site, 25, 0, expand=False)
             selected = host
-            print("selected_host", host)
+            print("selected_host", selected)
             break
         except Exception as e:
             print("host_error", host, type(e).__name__, str(e))
     if not selected:
         raise SystemExit("No usable Oracle host")
 
-    for limit in LIMITS:
-        print(f"\n=== LIMIT {limit} ===")
-        try:
-            a_total, a_ids, a_root, _ = fetch_page(selected, site, limit, 0)
-            b_total, b_ids, b_root, _ = fetch_page(selected, site, limit, 0)
-            print(
-                "  repeat",
-                {
-                    "same_total": a_total == b_total,
-                    "same_ids": a_ids == b_ids,
-                    "a_count": len(a_ids),
-                    "b_count": len(b_ids),
-                    "total_a": a_total,
-                    "total_b": b_total,
-                },
-            )
-            if a_total > len(a_ids):
-                next_offset = len(a_ids)
-                if next_offset:
-                    c_total, c_ids, c_root, _ = fetch_page(selected, site, limit, next_offset)
-                    print(
-                        "  page2",
-                        {
-                            "offset": next_offset,
-                            "total": c_total,
-                            "count": len(c_ids),
-                            "overlap": len(a_ids & c_ids),
-                        },
-                    )
-        except Exception as e:
-            print("  ERROR", type(e).__name__, str(e))
+    print("\n=== WIDE SNAPSHOT WITHOUT EXPAND ===")
+    a = fetch_page(selected, site, WIDE_LIMIT, 0, expand=False)
+    b = fetch_page(selected, site, WIDE_LIMIT, 0, expand=False)
+    compare("wide_noexpand_repeat", a, b)
+
+    total, ids, _, _ = a
+    if len(ids) != total:
+        print("WIDE_NOT_EXHAUSTIVE", {"retrieved": len(ids), "total": total})
+        if ids:
+            c = fetch_page(selected, site, WIDE_LIMIT, len(ids), expand=False)
+            print("next_page_overlap", len(ids & c[1]))
+        return
+
+    print("WIDE_EXHAUSTIVE_NOEXPAND", total)
+    print("\n=== WIDE SNAPSHOT WITH LOCATIONS ===")
+    c = fetch_page(selected, site, WIDE_LIMIT, 0, expand=True)
+    d = fetch_page(selected, site, WIDE_LIMIT, 0, expand=True)
+    compare("wide_expand_repeat", c, d)
+    ct, ci, cpage, _ = c
+    if len(ci) == ct and c[0] == d[0] and c[1] == d[1]:
+        missing_locations = 0
+        for raw in cpage:
+            if isinstance(raw, dict) and not collector.oracle_location(raw):
+                missing_locations += 1
+        print("WIDE_EXPAND_STABLE_EXHAUSTIVE", {"total": ct, "missing_locations": missing_locations})
 
 
 if __name__ == "__main__":
