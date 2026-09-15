@@ -3,6 +3,11 @@ from pathlib import Path
 
 path = Path("collector.py")
 text = path.read_text(encoding="utf-8")
+marker = "A same-host form action is stronger evidence of the actual search inventory"
+if marker in text:
+    print("SuccessFactors search-form priority already applied")
+    raise SystemExit(0)
+
 old = '''_find_sf_search_url_v14 = find_sf_search_url
 
 def find_sf_search_url(base: str, parser: SFPageParser) -> str | None:
