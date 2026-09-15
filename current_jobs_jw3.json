@@ -2,7 +2,7 @@
   "version": "1.4",
   "batch": "JW3",
   "batch_name": "Energy, Infrastructure & Industrial",
-  "generated_at": "2026-09-15T07:07:43Z",
+  "generated_at": "2026-09-15T07:24:32Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -11,7 +11,8 @@
     "Workday CXS",
     "SAP SuccessFactors / jobs2web",
     "Workable",
-    "Oracle Recruiting Cloud / Oracle HCM Candidate Experience"
+    "Oracle Recruiting Cloud / Oracle HCM Candidate Experience",
+    "Teamtailor public career board"
   ],
   "location_scope": [
     "Milan",
@@ -24,13 +25,13 @@
   "summary": {
     "companies_total": 40,
     "collector_supported": 12,
-    "VERIFIED": 5,
-    "FAILED": 1,
+    "VERIFIED": 6,
+    "FAILED": 0,
     "NOT_CHECKED": 34,
     "target_jobs_open": 144,
     "NEW": 0,
-    "STILL_OPEN": 118,
-    "UPDATED": 26,
+    "STILL_OPEN": 144,
+    "UPDATED": 0,
     "CLOSED": 0,
     "UNKNOWN": 0
   },
@@ -39,12 +40,12 @@
       "company": "Eni",
       "mapping_level": "STRONG",
       "ats_family": "Oracle Recruiting Cloud (inferred from CX_* career paths)",
-      "coverage": "FAILED",
+      "coverage": "NOT_CHECKED",
       "collector": "collect_oracle",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.eni.com/it-IT/sites/CX_1001",
-      "reason": "CollectorError: Oracle Candidate Experience request failure on jobs.eni.com: HTTPSConnectionPool(host='jobs.eni.com', port=443): Max retries exceeded with url: /hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=findReqs%3BsiteNumber%3DCX_1001%2Climit%3D25%2Coffset%3D0 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)')))",
+      "reason": "NotCheckable: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified",
       "jobs": []
     },
     {
@@ -65,7 +66,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 612,
+      "inventory_count": 613,
       "target_jobs_count": 34,
       "source_url": "https://prysmiangroup.wd3.myworkdayjobs.com/wday/cxs/prysmiangroup/Careers/jobs",
       "reason": null,
@@ -84,7 +85,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
           "fingerprint": "a9bbc863fe6237b2",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-31244",
@@ -100,7 +101,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
           "fingerprint": "bf9742f55803d663",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
@@ -116,7 +117,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
           "fingerprint": "5a8d37802c9fd7f6",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-35718",
@@ -132,7 +133,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
           "fingerprint": "eb2e43edf41cf2a8",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milan-IT/Logistics-Specialist_R-35647-1",
@@ -148,7 +149,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
           "fingerprint": "b08467408f1931b7",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-36305",
@@ -164,7 +165,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
           "fingerprint": "0acfd050a085a548",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-36495",
@@ -180,7 +181,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
           "fingerprint": "69483d17b84f33c7",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-36304",
@@ -196,7 +197,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
           "fingerprint": "c60246f26a3ac33b",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-36463",
@@ -212,7 +213,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
           "fingerprint": "c8507c1d3221b867",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
@@ -228,7 +229,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
           "fingerprint": "af56278bbd85eed3",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-33315",
@@ -244,7 +245,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Offshore-Superintendent_R-33315",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Offshore-Superintendent_R-33315",
           "fingerprint": "82eb7e911158608a",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-33713",
@@ -260,7 +261,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
           "fingerprint": "633d2243dff3c88b",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milan-IT/Logistic-Buyer_R-35039-1",
@@ -276,7 +277,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
           "fingerprint": "6e5ac5193a0f045b",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-35564",
@@ -292,7 +293,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
           "fingerprint": "b645bb03c26b1336",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-35799",
@@ -308,7 +309,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
           "fingerprint": "fe7dd7e9472f67e9",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-32341",
@@ -324,7 +325,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
           "fingerprint": "02dc280de25a79ce",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-29783",
@@ -340,7 +341,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
           "fingerprint": "4aeb2a62aaf574fc",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-33763",
@@ -356,7 +357,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
           "fingerprint": "5fd83367a518d4d6",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-24735",
@@ -372,7 +373,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
           "fingerprint": "0d17ca10a7aca88c",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-34833",
@@ -388,7 +389,7 @@
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
           "fingerprint": "198bb8b61be73a02",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "R-32290",
@@ -709,7 +710,7 @@
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
           "fingerprint": "70e816e02d2934ce",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
@@ -725,7 +726,7 @@
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
           "fingerprint": "b8f5f9168551c268",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
@@ -741,7 +742,7 @@
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
           "fingerprint": "6d63d775057f0514",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
@@ -757,7 +758,7 @@
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
           "fingerprint": "31dabef096d53ca2",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milano-Energy-House/Procurement-Specialist_JR000210",
@@ -773,7 +774,7 @@
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
           "fingerprint": "631ff8aa20fb2b75",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
@@ -789,7 +790,7 @@
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
           "fingerprint": "ac587ee0a89bdbb2",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "8811",
@@ -1931,7 +1932,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.eon.com/italia/go/italia-tutte-le-posizioni/3727301/",
-      "reason": "NotCheckable: No same-host exhaustive /search/ or /viewalljobs/ link exposed by portal",
+      "reason": "NotCheckable: SuccessFactors inventory was exhaustive but location metadata could not be extracted safely",
       "jobs": []
     },
     {
@@ -2684,12 +2685,12 @@
       "company": "Acea",
       "mapping_level": "FULL",
       "ats_family": "SAP SuccessFactors / jobs2web (inferred from portal pattern)",
-      "coverage": "NOT_CHECKED",
-      "collector": "collect_successfactors",
-      "inventory_count": null,
+      "coverage": "VERIFIED",
+      "collector": "successfactors_jobs2web_metadata",
+      "inventory_count": 11,
       "target_jobs_count": 0,
       "source_url": "https://jobs.acea.it/",
-      "reason": "NotCheckable: No same-host exhaustive /search/ or /viewalljobs/ link exposed by portal",
+      "reason": null,
       "jobs": []
     },
     {
