@@ -1,4 +1,4 @@
-name: Probe Imperial Clinch cards
+name: Probe Imperial target IDs
 on:
   push:
     branches: [ats-fullpossible-v17]
@@ -8,35 +8,50 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
-      - name: Inspect job card metadata
+      - name: Enumerate target cards and stable IDs
         shell: python
         run: |
           import html, re, urllib.request
+          from urllib.parse import urljoin,urlparse
           H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,*/*'}
-          u='https://jobs.impbrands.com/jobs/search'
-          with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r:
-              body=html.unescape(r.read().decode('utf-8','replace'))
-          needles=[
-            'brand-ambassador-promoter-emilia-romagna-marche-contratto-a-tempo-determinato',
-            'business-planning-commercial-insights-senior-analyst-contratto-a-tempo-determinato',
-            'crm-business-intelligence-coordinator-rome-italy',
-          ]
-          for needle in needles:
-              p=body.lower().find(needle.lower())
-              print('\nNEEDLE',needle,'POS',p)
-              if p>=0:
-                  print(body[max(0,p-2500):p+3500])
-          print('\n--- requisition ids / location-ish attributes ---')
-          for pat in (
-              r'data-[^=\s]+=["\'][^"\']+["\']',
-              r'\b[A-Z]{2}\d{5}\b',
-              r'Rome, Italy',
-              r'Milan[^<]{0,80}Italy',
-          ):
-              vals=[]
-              for m in re.finditer(pat,body,re.I):
-                  v=m.group(0)
-                  if v not in vals: vals.append(v)
-              print('PATTERN',pat,'COUNT',len(vals),'SAMPLE',vals[:40])
+          def get(u):
+              with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r:
+                  return html.unescape(r.read().decode('utf-8','replace')),r.geturl()
+          base='https://jobs.impbrands.com/jobs/search'
+          targets=[]; expected=None; seen=set()
+          for page in range(1,10):
+              body,final=get(base if page==1 else base+f'?page={page}')
+              plain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',body))
+              m=re.search(r'Displaying\s+(\d+)\s*[-–]\s*(\d+)\s+of\s+(\d+)\s+in total',plain,re.I)
+              if not m: raise SystemExit('count missing')
+              total=int(m.group(3)); expected=expected or total
+              if total!=expected: raise SystemExit('total changed')
+              for row in re.findall(r'<tr[^>]+role=["\']link["\'][^>]*>(.*?)</tr>',body,re.I|re.S):
+                  um=re.search(r'data-job-url=["\']([^"\']+)',row,re.I)
+                  tm=re.search(r'class=["\'][^"\']*job-search-results-title[^"\']*["\'][^>]*>.*?<a[^>]*>(.*?)</a>',row,re.I|re.S)
+                  locs=[re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',x)).strip() for x in re.findall(r'<li[^>]+aria-label=["\']Location:[^"\']+["\'][^>]*>(.*?)</li>',row,re.I|re.S)]
+                  if not um or not tm or not locs: raise SystemExit('card metadata missing')
+                  u=urljoin(final,um.group(1)); title=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',tm.group(1))).strip(); loc=' | '.join(locs)
+                  if u in seen: raise SystemExit('duplicate URL')
+                  seen.add(u)
+                  if re.search(r'\b(?:Milan|Milano|Rome|Roma|London)\b',loc,re.I): targets.append((title,loc,u))
+              if len(seen)>=expected: break
+          print('RECONCILE',expected,len(seen),'TARGETS',len(targets))
+          if len(seen)!=expected: raise SystemExit('not reconciled')
+          ids=[]
+          for title,loc,u in targets:
+              body,final=get(u)
+              # Print candidate IDs and the raw markup around the selected requisition identifier.
+              cands=[]
+              for pat in (r'\b[A-Z]{2}\d{5}\b',r'\b[A-Z]{2,5}-?\d{4,8}\b',r'Job\s*(?:ID|Id|id)[^A-Za-z0-9]{0,20}([A-Za-z0-9_-]+)'):
+                  for m in re.finditer(pat,body,re.I):
+                      v=m.group(1) if m.groups() else m.group(0)
+                      if v not in cands: cands.append(v)
+              print('TARGET',repr(title),'|',loc,'|',u,'| IDS',cands[:20])
+              if cands:
+                  p=body.find(cands[0]); print('ID_SNIP',repr(body[max(0,p-800):p+1200]))
+                  ids.append(cands[0])
+          print('TARGET_IDS',ids,'UNIQUE',len(set(ids)))
+          if len(ids)!=len(targets) or len(set(ids))!=len(ids): raise SystemExit('stable IDs missing or duplicate')
