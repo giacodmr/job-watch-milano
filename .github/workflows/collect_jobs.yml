@@ -1,23 +1,13 @@
-name: Collect Job Watch vacancies
+name: Finalize Job Watch collector v1.4
 
 on:
   push:
     branches:
       - ats-oracle-v14
     paths:
-      - collector_v14.py
-      - collector_v14b.py
-      - collector_v14c.py
-      - collector_v14d.py
-      - collector_v14e.py
-      - collector_v14f.py
-      - collector_v14g.py
-      - coverage_report.py
+      - finalize_v14.py
       - .github/workflows/collect_jobs.yml
   workflow_dispatch:
-  schedule:
-    - cron: "30 6 * * *"
-      timezone: "Europe/Rome"
 
 permissions:
   contents: write
@@ -27,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  collect:
+  finalize:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -43,30 +33,53 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Syntax check
-        run: python -m py_compile collector.py collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py collector_v14f.py collector_v14g.py coverage_report.py
+      - name: Build standalone v1.4
+        run: python finalize_v14.py
 
-      - name: Report NOT_CHECKED before collection
-        run: python coverage_report.py
+      - name: Syntax check standalone collector
+        run: python -m py_compile collector.py
 
-      - name: Collect public ATS inventories
-        run: python collector_v14g.py
+      - name: Collect with standalone v1.4
+        run: python collector.py
 
-      - name: Report NOT_CHECKED after collection
-        run: python coverage_report.py
+      - name: Validate release invariants
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
 
-      - name: Commit updated vacancy snapshots
+          verified = failed = not_checked = 0
+          unilever = None
+          for batch in ("jw1", "jw2", "jw3", "jw4"):
+              data = json.loads(Path(f"current_jobs_{batch}.json").read_text(encoding="utf-8"))
+              s = data["summary"]
+              verified += s["VERIFIED"]
+              failed += s["FAILED"]
+              not_checked += s["NOT_CHECKED"]
+              if data.get("version") != "1.4":
+                  raise SystemExit(f"{batch}: expected version 1.4, got {data.get('version')}")
+              for company in data.get("companies", []):
+                  if company.get("company") == "Unilever":
+                      unilever = company
+          print({"VERIFIED": verified, "FAILED": failed, "NOT_CHECKED": not_checked})
+          if failed != 0:
+              raise SystemExit(f"Release blocked: FAILED={failed}")
+          if verified < 69:
+              raise SystemExit(f"Release blocked: VERIFIED regressed to {verified}")
+          if not unilever or unilever.get("coverage") != "NOT_CHECKED":
+              raise SystemExit(f"Release blocked: Unilever must remain NOT_CHECKED, got {unilever}")
+          PY
+
+      - name: Remove experimental wrappers
+        run: rm -f collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py collector_v14f.py collector_v14g.py finalize_v14.py
+
+      - name: Commit standalone v1.4 release candidate
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "Update Job Watch vacancy snapshots"
+          git add collector.py ats_mapping_jw1.json ats_mapping_jw2.json ats_mapping_jw3.json ats_mapping_jw4.json .github/workflows/collect_jobs.yml current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+          git add -u collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py collector_v14f.py collector_v14g.py finalize_v14.py
+          git commit -m "Finalize standalone Job Watch collector v1.4"
           git push
