@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import hashlib
 import json
 from pathlib import Path
 
@@ -8,7 +7,7 @@ import collector
 TARGET = "American Express"
 PAGE_LIMIT = 200
 SORT_BY = "POSTING_DATES_DESC"
-SNAPSHOTS = 8
+OFFSETS = (0, 198, 199, 200, 201, 398, 399, 400, 401)
 
 
 def load_company():
@@ -22,10 +21,7 @@ def load_company():
 
 def fetch_page(host, site, offset):
     endpoint = f"https://{host}/hcmRestApi/resources/latest/recruitingCEJobRequisitions"
-    finder = (
-        f"findReqs;siteNumber={site},limit={PAGE_LIMIT},offset={offset},"
-        f"sortBy={SORT_BY}"
-    )
+    finder = f"findReqs;siteNumber={site},limit={PAGE_LIMIT},offset={offset},sortBy={SORT_BY}"
     headers = {
         "Accept": "application/vnd.oracle.adf.resourcecollection+json, application/json",
         "Ora-Irc-Language": "en",
@@ -46,15 +42,11 @@ def fetch_page(host, site, offset):
     page = root.get("requisitionList")
     if not isinstance(page, list):
         raise RuntimeError("requisitionList missing")
-    ids = []
-    for raw in page:
-        if not isinstance(raw, dict):
-            continue
-        sid = collector.oracle_source_id(raw)
-        if not sid:
-            raise RuntimeError("stable public ID missing")
-        ids.append(sid)
-    total = int(root.get("TotalJobsCount"))
+    ids = tuple(
+        collector.oracle_source_id(raw)
+        for raw in page
+        if isinstance(raw, dict) and collector.oracle_source_id(raw)
+    )
     print(
         "PAGE",
         {
@@ -62,54 +54,14 @@ def fetch_page(host, site, offset):
             "root_offset": root.get("Offset"),
             "root_limit": root.get("Limit"),
             "root_sort": root.get("SortBy"),
-            "total": total,
+            "total": int(root.get("TotalJobsCount")),
             "rows": len(page),
             "unique": len(set(ids)),
-            "first": ids[:2],
-            "last": ids[-2:],
+            "first": ids[:3],
+            "last": ids[-3:],
         },
     )
-    return total, page, ids
-
-
-def enumerate_snapshot(host, site):
-    expected = None
-    rows = []
-    seen = set()
-    offset = 0
-    for page_index in range(10):
-        total, page, ids = fetch_page(host, site, offset)
-        if expected is None:
-            expected = total
-        elif total != expected:
-            raise RuntimeError(f"TOTAL_CHANGED:{expected}->{total}")
-        overlap = seen.intersection(ids)
-        if overlap:
-            raise RuntimeError(f"PAGE_OVERLAP:{len(overlap)}")
-        for raw, sid in zip(page, ids):
-            if sid not in seen:
-                seen.add(sid)
-                rows.append(raw)
-        if len(rows) == expected:
-            break
-        if len(rows) > expected:
-            raise RuntimeError(f"OVERFLOW:{len(rows)}>{expected}")
-        if not page:
-            raise RuntimeError(f"STOPPED_EARLY:{len(rows)}/{expected}")
-        offset += len(page)
-    else:
-        raise RuntimeError("PAGE_LIMIT_EXCEEDED")
-    if len(rows) != expected:
-        raise RuntimeError(f"COUNT_MISMATCH:{len(rows)}/{expected}")
-    ordered_ids = tuple(sorted(seen))
-    digest = hashlib.sha256("\n".join(ordered_ids).encode()).hexdigest()[:16]
-    missing_location = sum(1 for raw in rows if not collector.oracle_location(raw))
-    return {
-        "total": expected,
-        "ids": ordered_ids,
-        "hash": digest,
-        "missing_location": missing_location,
-    }
+    return int(root.get("TotalJobsCount")), ids
 
 
 def main():
@@ -124,8 +76,8 @@ def main():
     selected = None
     for host in hosts:
         try:
-            total, page, ids = fetch_page(host, site, 0)
-            if page and ids:
+            total, ids = fetch_page(host, site, 0)
+            if ids:
                 selected = host
                 break
         except Exception as e:
@@ -134,36 +86,42 @@ def main():
         raise SystemExit("No usable Oracle backend host")
     print("selected_host", selected)
 
-    previous = None
-    stable_pairs = 0
-    for index in range(1, SNAPSHOTS + 1):
+    pages = {}
+    totals = {}
+    for offset in OFFSETS:
         try:
-            snap = enumerate_snapshot(selected, site)
-            same_as_previous = bool(
-                previous
-                and previous["total"] == snap["total"]
-                and previous["ids"] == snap["ids"]
-            )
+            total, ids = fetch_page(selected, site, offset)
+            totals[offset] = total
+            pages[offset] = set(ids)
+        except Exception as e:
+            print("OFFSET_ERROR", offset, type(e).__name__, str(e))
+
+    print("TOTALS", totals)
+    base = pages.get(0, set())
+    second_candidates = (198, 199, 200, 201)
+    tail_candidates = (398, 399, 400, 401)
+    expected_values = set(totals.values())
+    expected = next(iter(expected_values)) if len(expected_values) == 1 else None
+    print("EXPECTED_STABLE_TOTAL", expected)
+
+    for second in second_candidates:
+        for tail in tail_candidates:
+            if second not in pages or tail not in pages:
+                continue
+            p1, p2 = pages[second], pages[tail]
+            union = base | p1 | p2
             print(
-                "SNAPSHOT",
+                "COMBO",
                 {
-                    "n": index,
-                    "total": snap["total"],
-                    "hash": snap["hash"],
-                    "missing_location": snap["missing_location"],
-                    "same_as_previous": same_as_previous,
+                    "offsets": (0, second, tail),
+                    "unique": len(union),
+                    "expected": expected,
+                    "overlap_0_2": len(base & p1),
+                    "overlap_2_3": len(p1 & p2),
+                    "overlap_0_3": len(base & p2),
+                    "exact": expected is not None and len(union) == expected,
                 },
             )
-            if same_as_previous:
-                stable_pairs += 1
-                print("STABLE_PAIR_FOUND", {"n": index, "total": snap["total"], "hash": snap["hash"]})
-                break
-            previous = snap
-        except Exception as e:
-            print("SNAPSHOT_ERROR", {"n": index, "error": f"{type(e).__name__}: {e}"})
-            previous = None
-
-    print("RESULT", {"stable_pairs": stable_pairs})
 
 
 if __name__ == "__main__":
