@@ -15,41 +15,38 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Probe Axpo Teamtailor numbered paging
+      - name: Exhaust Axpo Teamtailor aggregate board
         shell: python
         run: |
-          import os,sys,json,re
-          from urllib.parse import urlparse
+          import os,sys,re,html
+          from urllib.parse import urljoin,urlparse,unquote
           sys.path.insert(0,os.getcwd())
           import collector
-          for lang_url in ('https://careers.axpo.com/jobs','https://careers.axpo.com/it/jobs'):
-              print('BASE',lang_url)
-              all_ids=[]; totals=[]
-              for page in (1,2,3,22,23,24):
-                  u=lang_url+f'?page={page}'
-                  try:
-                      text,final=collector.get_html(u)
-                      p=collector.TeamtailorPageParser(final); p.feed(text); p.close()
-                      total=collector.teamtailor_total(p.visible_text)
-                      ids=[x.get('source_id') for x in p.jobs if x.get('source_id')]
-                      print('PAGE',page,'TOTAL',total,'JOBS',len(ids),'UNIQUE',len(set(ids)),'FIRST',ids[:2],'LAST',ids[-2:])
-                      print('COUNT_SNIPS',[m.group(0) for m in re.finditer(r'.{0,30}(?:jobs?|offerte).{0,30}',p.visible_text,re.I)][:8])
-                      totals.append(total); all_ids += ids
-                  except Exception as e: print('PAGE_ERROR',page,type(e).__name__,str(e))
-              print('COMBINED_UNIQUE',len(set(all_ids)),'TOTAL_VALUES',totals)
-      - name: Test Nadara using existing Workday collector with corrected mapping in memory
-        shell: python
-        run: |
-          import os,sys,json
-          sys.path.insert(0,os.getcwd())
-          import collector
-          m=json.load(open('ats_mapping_jw3.json'))
-          c=next(x for x in m['companies'] if x['company']=='Nadara')
-          c=json.loads(json.dumps(c))
-          c['ats']['family']='Workday'
-          c['ats']['tenant']='nadara / wd3'
-          c['ats']['inventory_url']='https://nadara.wd3.myworkdayjobs.com/External'
-          r=collector.collect_workday(c)
-          print('NADARA_RESULT',json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False))
-          print('NADARA_TARGET_JOBS',len(r.get('jobs') or []))
-          print('NADARA_SAMPLE',json.dumps((r.get('jobs') or [])[:5],ensure_ascii=False))
+          base='https://careers.axpo.com/jobs'
+          all_keys=[]; expected=None; hosts={}
+          for page in range(1,30):
+              text,final=collector.get_html(base+f'?page={page}')
+              p=collector.TeamtailorPageParser(final); p.feed(text); p.close()
+              total=collector.teamtailor_total(p.visible_text)
+              if page==1: expected=total
+              elif total not in (None,expected): raise SystemExit(f'total changed {expected}->{total} page={page}')
+              raw=html.unescape(text)
+              rows=[]
+              for href in re.findall(r'href=["\']([^"\']+)["\']',raw,re.I):
+                  u=urljoin(final,href); pu=urlparse(u)
+                  m=re.search(r'/jobs/(\d+)(?:[-/]|$)',unquote(pu.path),re.I)
+                  if not m: continue
+                  host=pu.netloc.casefold()
+                  # Teamtailor aggregates can link subsidiary boards on another Teamtailor custom domain.
+                  key=(host,m.group(1))
+                  if key not in rows: rows.append(key)
+              print('PAGE',page,'TOTAL',total,'CARDS',len(rows),'HOSTS',sorted({h for h,_ in rows}))
+              if not rows:
+                  print('STOP_EMPTY_PAGE',page); break
+              all_keys.extend(rows)
+              for h,_ in rows: hosts[h]=hosts.get(h,0)+1
+              if len(set(all_keys))>=expected: break
+          unique=set(all_keys)
+          print('EXPECTED',expected,'SEEN',len(all_keys),'UNIQUE',len(unique),'DUPLICATES',len(all_keys)-len(unique))
+          print('HOST_DISTRIBUTION',sorted(hosts.items(),key=lambda x:(-x[1],x[0])))
+          if expected is None or len(unique)!=expected: raise SystemExit('Axpo aggregate did not reconcile')
