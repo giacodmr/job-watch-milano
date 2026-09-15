@@ -9,6 +9,7 @@ on:
       - collector_v14b.py
       - collector_v14c.py
       - collector_v14d.py
+      - collector_v14e.py
       - coverage_report.py
       - .github/workflows/collect_jobs.yml
   workflow_dispatch:
@@ -41,13 +42,13 @@ jobs:
         run: python -m pip install --disable-pip-version-check requests
 
       - name: Syntax check
-        run: python -m py_compile collector.py collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py coverage_report.py
+        run: python -m py_compile collector.py collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py coverage_report.py
 
       - name: Report NOT_CHECKED before collection
         run: python coverage_report.py
 
       - name: Collect public ATS inventories
-        run: python collector_v14d.py
+        run: python collector_v14e.py
 
       - name: Report NOT_CHECKED after collection
         run: python coverage_report.py
