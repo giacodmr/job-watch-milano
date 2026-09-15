@@ -8,23 +8,65 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Candidate inventory
+      - name: Probe vendor signatures and public count markers
+        shell: python
         run: |
-          python - <<'PY'
-          import json
+          import json, re, urllib.request, urllib.error
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from urllib.parse import urlparse
+
+          urls=[]
+          excluded={'Amazon','American Express'}
           for b in ('jw1','jw2','jw3','jw4'):
-              m=json.load(open('ats_mapping_'+b+'.json'))
-              c=json.load(open('current_jobs_'+b+'.json'))
-              coverage={x['company']:x.get('coverage') for x in c['companies']}
+              m=json.load(open(f'ats_mapping_{b}.json'))
+              c=json.load(open(f'current_jobs_{b}.json'))
+              cov={x['company']:x.get('coverage') for x in c['companies']}
               for x in m['companies']:
-                  v=x.get('verification',{})
-                  a=x.get('ats',{})
-                  f=str(a.get('family') or '')
-                  if (v.get('level')=='FULL' or v.get('full_inventory_possible') is True) and coverage.get(x['company'])=='NOT_CHECKED':
-                      if x['company'] in ('Amazon','American Express') or any(k in f.lower() for k in ('successfactors','avature','oracle')):
-                          continue
-                      print(b.upper(), '|', x['company'], '|', f, '| tenant=',a.get('tenant'),'| inventory=',a.get('inventory_url'),'| feed=',a.get('public_api_or_feed'),'| total=',v.get('total_count_available'))
-          PY
+                  v=x.get('verification') or {}; a=x.get('ats') or {}; fam=str(a.get('family') or '')
+                  if not (v.get('level')=='FULL' or v.get('full_inventory_possible') is True) or cov.get(x['company'])!='NOT_CHECKED': continue
+                  if x['company'] in excluded or any(k in fam.lower() for k in ('successfactors','avature','oracle')): continue
+                  if a.get('inventory_url'): urls.append((x['company'],a['inventory_url']))
+
+          markers=('workday','myworkdayjobs','talentbrew','tbcdn','radancy','phenom','greenhouse','smartrecruiters','teamtailor','icims','taleo','successfactors','avature','workable','lever','ashby','eightfold','cornerstone','yello','recsolu','adp','oracle')
+          headers={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,application/xhtml+xml,*/*'}
+          def probe(item):
+              name,url=item
+              try:
+                  req=urllib.request.Request(url,headers=headers)
+                  with urllib.request.urlopen(req,timeout=25) as r:
+                      body=r.read(1500000).decode('utf-8','replace'); final=r.geturl(); status=r.status
+              except urllib.error.HTTPError as e:
+                  body=e.read(500000).decode('utf-8','replace'); final=e.geturl(); status=e.code
+              except Exception as e:
+                  return name, {'url':url,'error':f'{type(e).__name__}: {e}'}
+              low=body.lower()
+              hits=[m for m in markers if m in low or m in final.lower()]
+              counts=[]
+              for pat in (r'([\d,.]+)\s+jobs?\s+found',r'showing\s+\d+\s+(?:to|-)\s+\d+\s+of\s+([\d,.]+)',r'([\d,.]+)\s+open\s+(?:roles|jobs)',r'"total"\s*:\s*(\d+)',r'"totalcount"\s*:\s*(\d+)'):
+                  counts += re.findall(pat,body,re.I)[:5]
+              hosts=[]
+              for src in re.findall(r'(?:src|href)=["\'](https?://[^"\']+)',body,re.I):
+                  h=urlparse(src).netloc.lower()
+                  if h and h not in hosts and h!=urlparse(final).netloc.lower(): hosts.append(h)
+              return name, {'url':url,'status':status,'final':final,'bytes':len(body),'markers':hits,'count_markers':counts[:12],'external_hosts':hosts[:20]}
+
+          with ThreadPoolExecutor(max_workers=6) as pool:
+              futs=[pool.submit(probe,x) for x in urls]
+              for f in as_completed(futs):
+                  name,res=f.result(); print(name,'|',json.dumps(res,ensure_ascii=False,sort_keys=True))
+      - name: Probe Unilever Workday CXS versus public careers count
+        shell: python
+        run: |
+          import json, re, urllib.request
+          headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'}
+          url='https://unilever.wd3.myworkdayjobs.com/wday/cxs/unilever/Unilever_Experienced_Professionals/jobs'
+          req=urllib.request.Request(url,data=json.dumps({'appliedFacets':{},'limit':20,'offset':0,'searchText':''}).encode(),headers={**headers,'Content-Type':'application/json'},method='POST')
+          with urllib.request.urlopen(req,timeout=30) as r:
+              data=json.load(r)
+          print('UNILEVER_WORKDAY_TOTAL',data.get('total'),'FIRST',[(x.get('title'),x.get('locationsText'),x.get('externalPath')) for x in (data.get('jobPostings') or [])[:3]])
+          req=urllib.request.Request('https://careers.unilever.com/en/search_jobs',headers={'User-Agent':'Mozilla/5.0'})
+          with urllib.request.urlopen(req,timeout=30) as r: html=r.read().decode('utf-8','replace')
+          print('UNILEVER_PUBLIC_COUNTS',re.findall(r'([\d,]+)\s+Jobs?\s+Found',html,re.I)[:10])
