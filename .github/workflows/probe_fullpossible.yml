@@ -22,7 +22,7 @@ jobs:
                   return html.unescape(r.read().decode('utf-8','replace')),r.geturl()
           def component(body,cls):
               vals=[]
-              pat=rf'<li[^>]*class=["\'][^"\']*\b{re.escape(cls)}\b[^"\']*["\'][^>]*>(.*?)</li>'
+              pat=rf'<li[^>]*class=["\'][^"\']*{re.escape(cls)}[^"\']*["\'][^>]*>(.*?)</li>'
               for block in re.findall(pat,body,re.I|re.S):
                   m=re.search(r'<span[^>]*>(.*?)</span>',block,re.I|re.S)
                   text=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',m.group(1) if m else block)).strip()
@@ -38,10 +38,9 @@ jobs:
               if total!=expected or lo!=len(rows)+1: raise SystemExit('paging changed')
               page_rows=[]
               for attrs,row in re.findall(r'<tr\b([^>]*)>(.*?)</tr>',body,re.I|re.S):
-                  if not re.search(r'\bclass=["\'][^"\']*\bjob-search-results-row\b',attrs,re.I): continue
-                  um=re.search(r'\bdata-job-url=["\']([^"\']+)',attrs,re.I)
-                  if not um: raise SystemExit('job row missing URL')
-                  page_rows.append(urljoin(final,html.unescape(um.group(1))))
+                  tm=re.search(r'<td[^>]*class=["\'][^"\']*job-search-results-title[^"\']*["\'][^>]*>.*?<a[^>]*href=["\']([^"\']+)["\']',row,re.I|re.S)
+                  if not tm: continue
+                  page_rows.append(urljoin(final,html.unescape(tm.group(1))))
               print('PAGE',page,'RANGE',lo,hi,'CARDS',len(page_rows))
               if len(page_rows)!=hi-lo+1: raise SystemExit('card/range mismatch')
               rows+=page_rows
