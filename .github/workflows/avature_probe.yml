@@ -5,7 +5,7 @@ on:
     branches: [ats-avature-v17]
     paths:
       - '.github/workflows/avature_probe.yml'
-      - 'bain_probe.py'
+      - 'bain_missing_probe.py'
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,4 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests beautifulsoup4
-      - name: Validate full Bain inventory with structured subtitle location
-        run: |
-          sed -i "s/locel=art.select_one('.list-item-location')/locel=art.select_one('.list-item-location') or art.select_one('.article__header__text__subtitle')/" bain_probe.py
-          python bain_probe.py
+      - run: python bain_missing_probe.py
