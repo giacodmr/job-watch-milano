@@ -1,22 +1,24 @@
-name: Validate SuccessFactors collector v1.5 tile pagination
+name: Validate full Job Watch collector v1.5
 
 on:
   push:
     branches:
       - ats-successfactors-v15
     paths:
-      - sf_patch_v15c.py
-      - sf_validate.py
       - .github/workflows/collect_jobs.yml
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: job-watch-collector-v15-test
+  cancel-in-progress: false
+
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -29,24 +31,67 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Apply tile pagination patch
-        run: python sf_patch_v15c.py
-
       - name: Syntax check
-        run: python -m py_compile collector.py sf_validate.py
+        run: python -m py_compile collector.py coverage_report.py
 
-      - name: Validate targeted SuccessFactors portals
-        run: python sf_validate.py
+      - name: Collect all 182 companies
+        run: python collector.py
 
-      - name: Persist collector candidate
+      - name: Validate release invariants
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          totals = {"VERIFIED": 0, "FAILED": 0, "NOT_CHECKED": 0}
+          wanted = {
+              "Intesa Sanpaolo", "Swiss Re", "Italgas", "E.ON Italia",
+              "Mundys", "Bolton Group", "Boehringer Ingelheim",
+          }
+          status = {}
+          unilever = None
+          for batch in ("jw1", "jw2", "jw3", "jw4"):
+              data = json.loads(Path(f"current_jobs_{batch}.json").read_text(encoding="utf-8"))
+              if data.get("version") != "1.5":
+                  raise SystemExit(f"{batch}: expected v1.5, got {data.get('version')}")
+              summary = data["summary"]
+              for key in totals:
+                  totals[key] += summary[key]
+              for company in data.get("companies", []):
+                  name = company.get("company")
+                  if name in wanted:
+                      status[name] = {
+                          "coverage": company.get("coverage"),
+                          "collector": company.get("collector"),
+                          "inventory_count": company.get("inventory_count"),
+                          "target_jobs_count": company.get("target_jobs_count"),
+                          "reason": company.get("reason"),
+                      }
+                  if name == "Unilever":
+                      unilever = company
+          print("TOTAL", json.dumps(totals, ensure_ascii=False))
+          print("V15_TARGETS", json.dumps(status, ensure_ascii=False, sort_keys=True))
+          if totals["FAILED"] != 0:
+              raise SystemExit(f"Release blocked: FAILED={totals['FAILED']}")
+          if totals["VERIFIED"] < 73:
+              raise SystemExit(f"Release blocked: VERIFIED unexpectedly regressed to {totals['VERIFIED']}")
+          if not unilever or unilever.get("coverage") != "NOT_CHECKED":
+              raise SystemExit("Release blocked: Unilever must remain NOT_CHECKED")
+          PY
+
+      - name: Coverage report
+        run: python coverage_report.py
+
+      - name: Persist validated snapshots
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add collector.py
+          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
           if git diff --cached --quiet; then
-            echo "No collector changes."
+            echo "No snapshot changes."
             exit 0
           fi
-          git commit -m "Add evidenced SuccessFactors tile pagination v1.5"
+          git commit -m "Validate Job Watch collector v1.5 snapshots"
           git push
