@@ -13,8 +13,8 @@
   },
   "summary": {
     "companies_analyzed": 54,
-    "FULL": 25,
-    "STRONG": 21,
+    "FULL": 28,
+    "STRONG": 18,
     "PARTIAL": 8,
     "OPAQUE": 0
   },
@@ -1758,8 +1758,8 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_avature_search_portal",
+        "level": "FULL",
+        "method": "official_avature_searchjobs_exact_reconciliation",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1767,18 +1767,21 @@
           "Rome",
           "London"
         ],
-        "pagination": "SearchJobs pages; jobRecordsPerPage/listFilterMode parameters observed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Server-rendered SearchJobs inventory; tenant-fixed page size 6; zero-based jobOffset; numeric stable JobDetail ID.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the Avature SearchJobs inventory, increase jobRecordsPerPage when supported, apply location filters, and iterate all result pages.",
-        "fallback": "Use MetLife country careers pages to rediscover the metlifecareers.com SearchJobs portal."
+        "primary": "Enumerate the official Avature SearchJobs inventory across every jobOffset page; require exact range/total reconciliation, unique stable IDs, stable reread, and structured list-item-location metadata.",
+        "fallback": "If the public SearchJobs contract is capped, unstable, blocked, or loses structured location metadata, return NOT_CHECKED rather than infer completeness."
       },
       "limitations": [
-        "Avature parameters/paging are visible, but an authoritative total-count contract or public feed was not independently verified."
+        "Validated from GitHub Actions on 2026-09-15: 462 declared results, 462 result articles, 462 unique stable IDs across 77 pages, no overlap/gap, and stable first page/total on reread.",
+        "Avature emits both /JobDetail/<slug>/<id> and /JobDetail/<id>; the stable ID is the numeric final path segment.",
+        "jobRecordsPerPage is tenant-fixed at 6 on this portal; larger requested sizes are ignored, so exhaustive enumeration follows jobOffset.",
+        "Location is structurally exposed on each result card as list-item-location."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     }
   ]
 }

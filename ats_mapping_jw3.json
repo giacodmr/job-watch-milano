@@ -1258,8 +1258,8 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "FULL",
-        "method": "official_inventory",
+        "level": "STRONG",
+        "method": "official_avature_inventory_capped_nonreconcilable",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1267,18 +1267,21 @@
           "Rome",
           "London"
         ],
-        "pagination": "20 per page / result pages",
-        "total_count_available": true,
-        "full_inventory_possible": true
+        "pagination": "Server-rendered Jobs inventory; tenant-fixed page size 20; zero-based folderOffset; numeric stable FolderDetail ID.",
+        "total_count_available": false,
+        "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use jobs.siemens-energy.com search, filter country/city/function and exhaust result pages.",
-        "fallback": "Fallback to direct Avature-backed requisition URLs by requisition number."
+        "primary": "Use the official Siemens Energy Avature Jobs inventory only for discovery; do not claim exhaustive coverage while the global legend is capped or pages overlap.",
+        "fallback": "Keep NOT_CHECKED unless a future public contract exposes an exact stable total and gap-free unique-ID enumeration."
       },
       "limitations": [
-        "Public search is branded; application/login may move to Avature, but vacancy inventory is readable without authentication."
+        "Live GitHub Actions probe on 2026-09-15 exposed only a capped global legend (1-20 of 999+), not an exact total.",
+        "folderRecordsPerPage remained fixed at 20 even when larger values were requested.",
+        "Live paging showed a repeated stable requisition ID within the first 60 displayed positions, so gap-free global enumeration was not demonstrated.",
+        "Detail pages expose structured Country / State-Province-County / City location data, but that does not repair the global completeness failure."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Hitachi Energy",
@@ -1313,5 +1316,12 @@
       ],
       "last_mapped": "2026-09-14"
     }
-  ]
+  ],
+  "summary": {
+    "companies_analyzed": 40,
+    "FULL": 17,
+    "STRONG": 13,
+    "PARTIAL": 9,
+    "OPAQUE": 1
+  }
 }

@@ -7,9 +7,9 @@
   "last_mapped": "2026-09-14",
   "summary": {
     "companies_analyzed": 40,
-    "FULL": 18,
+    "FULL": 19,
     "STRONG": 18,
-    "PARTIAL": 4,
+    "PARTIAL": 3,
     "OPAQUE": 0
   },
   "notes": [
@@ -64,14 +64,14 @@
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_ats_search_partial",
+        "method": "official_avature_tenant_exact_but_company_scope_segmented",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome"
         ],
-        "pagination": "Avature search pages/filters, but the inventory returned HTTP 406 to this crawler",
-        "total_count_available": false,
+        "pagination": "Deloitte Central Mediterranean Avature tenant: page size 6, zero-based jobOffset, exact total and numeric stable JobDetail IDs.",
+        "total_count_available": true,
         "full_inventory_possible": false
       },
       "job_watch_method": {
@@ -79,10 +79,11 @@
         "fallback": "Use Deloitte Italy official careers/job pages and exact-title web discovery for individual roles; London must be checked on the UK member-firm career inventory separately."
       },
       "limitations": [
-        "The Avature inventory returned HTTP 406 to the available crawler, preventing a complete enumeration.",
-        "Deloitte career inventories are segmented by member firm/country; the Italy inventory does not prove London coverage."
+        "Deloitte Central Mediterranean Avature was technically reconciled on 2026-09-15: 395 declared results and 395 unique stable IDs through the last page with stable reread.",
+        "That tenant is a regional/member-firm inventory and does not prove the complete Deloitte / Monitor Deloitte public company inventory, including UK/London roles.",
+        "Company-level coverage therefore remains NOT_CHECKED despite the tenant-level enumeration proof."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "EY / EY-Parthenon",
@@ -378,31 +379,33 @@
         "family": "Avature (white-label Bain career flow)",
         "tenant": "bain",
         "career_site": "https://www.bain.com/careers/",
-        "inventory_url": "https://www.bain.com/careers/find-a-role/",
+        "inventory_url": "https://careers.bain.com/jobs/SearchJobs",
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_search_partial",
+        "level": "STRONG",
+        "method": "official_avature_exact_inventory_location_incomplete",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Dynamic/white-label job search; complete page count is not reliably exposed",
-        "total_count_available": false,
+        "pagination": "Server-rendered SearchJobs inventory; tenant-fixed page size 10; zero-based folderOffset; numeric stable FolderDetail ID.",
+        "total_count_available": true,
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use Bain's Find a Role interface with office/location filters and follow only official Bain/Avature job links; treat the run as PARTIAL unless all result pages can be enumerated.",
-        "fallback": "Use careers.bain.com official job-detail/folder pages to confirm individual openings."
+        "primary": "Use the official Bain Avature SearchJobs inventory for discovery; do not claim VERIFIED while any enumerated requisition lacks structured public location metadata.",
+        "fallback": "Keep NOT_CHECKED until every public requisition has a structurally determinable location or an exact target-location facet can itself be reconciled."
       },
       "limitations": [
-        "The public role finder is heavily dynamic and the underlying Avature inventory is not exposed as a stable enumerable endpoint to these tools.",
-        "Do not infer absence of a Milan/Rome/London role from a generic Bain careers page."
+        "Validated from GitHub Actions on 2026-09-15: 281 declared results, 281 result cards, 281 unique stable FolderDetail IDs across 29 contiguous pages, with stable total and first page on reread.",
+        "279 of 281 cards exposed location in the explicit article__header__text__subtitle field.",
+        "Requisitions 102466 and 100635 exposed no location in the result card; their public detail pages exposed Job Title, Job ID, Work Areas and Employment Type but no structured location field.",
+        "Because target locations cannot be determined structurally for the complete inventory, company coverage remains NOT_CHECKED despite exact global enumeration."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Amazon",
