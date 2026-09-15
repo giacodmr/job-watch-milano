@@ -1,0 +1,36 @@
+name: Diagnose Yello v1.6
+
+on:
+  push:
+    branches:
+      - ats-yello-v16
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: job-watch-yello-v16-diag
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install requests
+        run: python -m pip install --disable-pip-version-check requests
+
+      - name: Syntax check
+        run: python -m py_compile yello_diag_v16.py
+
+      - name: Probe Kearney Yello board
+        run: python yello_diag_v16.py
