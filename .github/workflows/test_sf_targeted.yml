@@ -5,6 +5,7 @@ on:
     branches:
       - successfactors-v15
     paths:
+      - collector_sf_v15.py
       - .github/workflows/test_sf_targeted.yml
   workflow_dispatch:
 
@@ -18,7 +19,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Test path-paginated SuccessFactors boards
+      - name: Test representative SuccessFactors boards
         shell: bash
         run: |
           python - <<'PY'
@@ -26,7 +27,13 @@ jobs:
           from pathlib import Path
           import collector_sf_v15 as exp
 
-          targets = {"Intesa Sanpaolo", "Worldline", "Swiss Re", "Boehringer Ingelheim"}
+          targets = {
+              "Intesa Sanpaolo",
+              "Worldline",
+              "Swiss Re",
+              "E.ON Italia",
+              "Boehringer Ingelheim",
+          }
           companies = {}
           for batch in ("jw1", "jw2", "jw3", "jw4"):
               data = json.loads(Path(f"ats_mapping_{batch}.json").read_text())
