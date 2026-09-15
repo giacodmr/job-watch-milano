@@ -9,52 +9,16 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe Bolt page and scripts
-        shell: python
+      - name: Inspect Bolt positions bundle and paging
         run: |
-          import re, urllib.request, urllib.error
-          from urllib.parse import urljoin
-
-          headers = {"User-Agent":"Mozilla/5.0 job-watch-probe/1.0","Accept":"text/html,application/json,*/*"}
-          def get(url):
-              req=urllib.request.Request(url,headers=headers)
-              try:
-                  with urllib.request.urlopen(req,timeout=30) as r:
-                      b=r.read().decode('utf-8','replace')
-                      print('GET',url,'->',r.status,'final=',r.geturl(),'len=',len(b),'ct=',r.headers.get('content-type'))
-                      return b
-              except urllib.error.HTTPError as e:
-                  b=e.read().decode('utf-8','replace')
-                  print('GET',url,'-> HTTP',e.code,'len=',len(b),'final=',e.geturl())
-                  return b
-              except Exception as e:
-                  print('GET',url,'-> ERROR',type(e).__name__,str(e))
-                  return ''
-
-          base='https://bolt.eu/en/careers/positions/'
-          html=get(base)
-          print('PAGE_IDS', sorted(set(re.findall(r'gh_jid[^0-9]{0,20}(\d+)',html,re.I)))[:20])
-          scripts=[]
-          for src in re.findall(r'<script[^>]+src=["\']([^"\']+)',html,re.I):
-              u=urljoin(base,src)
-              if u not in scripts: scripts.append(u)
-          print('SCRIPTS',len(scripts))
-          for u in scripts:
-              body=get(u)
-              low=body.lower()
-              if any(x in low for x in ('greenhouse','gh_jid','grnhse','boards-api','job_board')):
-                  print('SCRIPT_MATCH',u)
-                  for needle in ('greenhouse','gh_jid','grnhse','boards-api','job_board'):
-                      p=low.find(needle)
-                      if p>=0: print('SNIP',needle,repr(body[max(0,p-400):p+1200]))
-
-          for u in (
-              'https://boards.greenhouse.io/embed/job_app?token=8556029002',
-              'https://job-boards.greenhouse.io/embed/job_app?token=8556029002',
-              'https://boards-api.greenhouse.io/v1/boards/bolt/jobs',
-          ):
-              body=get(u)
-              low=body.lower()
-              for needle in ('greenhouse','board','company','bolt','8556029002'):
-                  p=low.find(needle)
-                  if p>=0: print('EMBED_SNIP',needle,repr(body[max(0,p-300):p+900]))
+          set -euo pipefail
+          JS='https://assets.careers-v3.bolt.eu/3.9.108/_next/static/chunks/app/%5Blang%5D/careers/positions/page-cc4fa43219ea1678.js'
+          curl -LfsS "$JS" -o /tmp/positions.js
+          echo '--- bundle markers ---'
+          grep -Eo '.{0,300}(api|jobs|positions|career|total|page).{0,800}' /tmp/positions.js | head -120 || true
+          echo '--- page counts ---'
+          for n in 1 2 20 24 25 26 30; do
+            curl -LfsS "https://bolt.eu/en/careers/positions/?page=$n" -o "/tmp/p$n.html"
+            printf 'page=%s apply=%s view=%s bytes=%s\n' "$n" "$(grep -o 'Apply now' "/tmp/p$n.html" | wc -l)" "$(grep -o 'View role' "/tmp/p$n.html" | wc -l)" "$(wc -c < "/tmp/p$n.html")"
+            grep -Eo 'gh_jid[^&"< ]*' "/tmp/p$n.html" | head -5 || true
+          done
