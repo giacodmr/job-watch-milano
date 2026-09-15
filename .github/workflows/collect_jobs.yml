@@ -1,23 +1,21 @@
-name: Validate SuccessFactors collector v1.5
+name: Probe SuccessFactors pagination controls
 
 on:
   push:
     branches:
       - ats-successfactors-v15
     paths:
-      - sf_patch_v15.py
-      - sf_patch_v15b.py
-      - sf_validate.py
+      - sf_pagination_probe.py
       - .github/workflows/collect_jobs.yml
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  validate:
+  probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -30,27 +28,8 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Apply v1.5 patches
-        shell: bash
-        run: |
-          python sf_patch_v15.py
-          python sf_patch_v15b.py
-
       - name: Syntax check
-        run: python -m py_compile collector.py sf_validate.py
+        run: python -m py_compile collector.py sf_pagination_probe.py
 
-      - name: Validate targeted SuccessFactors portals
-        run: python sf_validate.py
-
-      - name: Persist collector candidate
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add collector.py
-          if git diff --cached --quiet; then
-            echo "No collector changes."
-            exit 0
-          fi
-          git commit -m "Refine SuccessFactors inventory discovery v1.5"
-          git push
+      - name: Probe pagination controls
+        run: python sf_pagination_probe.py
