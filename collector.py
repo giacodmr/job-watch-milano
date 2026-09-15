@@ -1645,5 +1645,880 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     return payload
 
 
+# === JOB WATCH V1.5 SUCCESSFACTORS HARDENING ===
+# Generic Career Site Builder / jobs2web hardening. VERIFIED still requires
+# exact reconciliation of the complete public inventory. No company-specific
+# endpoint or pagination hardcode is used here.
+
+SF_MAX_PAGES = 500
+SF_RANGE_PATTERNS = (
+    re.compile(r"\bResults?\s+(\d+)\s*[-–—]\s*(\d+)\s+of\s+([\d.,\s]+)\b", re.I),
+    re.compile(r"\bRisultati\s+(\d+)\s*[-–—]\s*(\d+)\s+(?:di|su)\s+([\d.,\s]+)\b", re.I),
+    re.compile(r"\bErgebnisse\s+(\d+)\s*[-–—]\s*(\d+)\s+von\s+([\d.,\s]+)\b", re.I),
+    re.compile(r"\bShowing\s+(\d+)\s+(?:to|[-–—])\s+(\d+)\s+of\s+([\d.,\s]+)\s+Jobs?\b", re.I),
+    re.compile(r"\bVisualizzazione\s+da\s+(\d+)\s+a\s+(\d+)\s+di\s+([\d.,\s]+)\s+offert[ae]\b", re.I),
+    re.compile(r"\bAffichage\s+de\s+(\d+)\s+[àa]\s+(\d+)\s+sur\s+([\d.,\s]+)\b", re.I),
+    re.compile(r"\b(?:Es\s+werden\s+)?(\d+)\s+bis\s+(\d+)\s+von\s+([\d.,\s]+)\s+(?:Stellen|Jobs?)\b", re.I),
+)
+SF_SINGLE_TOTAL_PATTERNS = (
+    re.compile(r"\bShowing\s+(\d+)\s+Jobs?\b", re.I),
+    re.compile(r"\bVisualizzazione\s+di\s+(\d+)\s+(?:lavor[oi]|offert[ae])\b", re.I),
+    re.compile(r"\bAffichage\s+de\s+(\d+)\s+(?:emploi|emplois|offres?)\b", re.I),
+)
+SF_LOCATION_LABELS = {
+    "location", "luogo", "località", "localita", "standort", "ubicación", "ubicacion", "ubicazione",
+}
+SF_CITY_LABELS = {"city", "città", "citta", "stadt", "ville", "ciudad"}
+SF_COUNTRY_LABELS = {
+    "country", "country/region", "country / region", "paese", "paese/regione", "paese / regione",
+    "land", "pays", "país", "pais",
+}
+SF_DATE_LABELS = {
+    "date", "posting date", "data", "data di pubblicazione", "datum", "date de publication",
+    "fecha", "fecha de publicación",
+}
+SF_ALL_FIELD_LABELS = SF_LOCATION_LABELS | SF_CITY_LABELS | SF_COUNTRY_LABELS | SF_DATE_LABELS | {
+    "title", "titolo", "job title", "società", "societa", "company", "azienda", "function", "funzione",
+    "department", "dipartimento", "experience", "esperienza",
+}
+
+
+def _sf_int(value):
+    digits = re.sub(r"\D", "", str(value or ""))
+    return int(digits) if digits else None
+
+
+def parse_sf_range(text: str):
+    for pat in SF_RANGE_PATTERNS:
+        m = pat.search(text or "")
+        if not m:
+            continue
+        start, end, total = (_sf_int(m.group(1)), _sf_int(m.group(2)), _sf_int(m.group(3)))
+        if start is not None and end is not None and total is not None and 0 < start <= end <= total:
+            return start, end, total
+    for pat in SF_SINGLE_TOTAL_PATTERNS:
+        m = pat.search(text or "")
+        if m:
+            total = _sf_int(m.group(1))
+            if total is not None and total >= 0:
+                return (1, total, total) if total else (0, 0, 0)
+    if any(p.search(text or "") for p in SF_ZERO_PATTERNS):
+        return 0, 0, 0
+    return None
+
+
+_parse_sf_total_v14 = parse_sf_total
+def parse_sf_total(text: str):
+    page_range = parse_sf_range(text)
+    if page_range is not None:
+        return page_range[2]
+    return _parse_sf_total_v14(text)
+
+
+_SFPageParserV14 = SFPageParser
+class SFPageParser(_SFPageParserV14):
+    # Retain the v1.4 parser and add token positions around anchors.
+    def handle_starttag(self, tag, attrs):
+        super().handle_starttag(tag, attrs)
+        if tag.casefold() == "a" and self._anchor is not None:
+            self._anchor["start_index"] = len(self.text_parts)
+
+    def handle_endtag(self, tag):
+        if tag.casefold() == "a" and self._anchor is not None:
+            self._anchor["end_index"] = len(self.text_parts)
+        super().handle_endtag(tag)
+
+
+def _sf_norm_label(value):
+    s = clean_text(value)
+    if not s:
+        return ""
+    s = html.unescape(s).strip().casefold()
+    s = re.sub(r"[\s:：]+$", "", s)
+    return re.sub(r"\s+", " ", s)
+
+
+def _sf_labeled_value(tokens, labels):
+    labels = {_sf_norm_label(x) for x in labels}
+    all_labels = {_sf_norm_label(x) for x in SF_ALL_FIELD_LABELS}
+    for i, token in enumerate(tokens):
+        raw = clean_text(token)
+        if not raw:
+            continue
+        norm = _sf_norm_label(raw)
+        if norm in labels:
+            for candidate in tokens[i + 1:i + 4]:
+                value = clean_text(candidate)
+                if value and _sf_norm_label(value) not in all_labels:
+                    return value
+        for label in labels:
+            m = re.match(rf"^{re.escape(label)}\s*[:：]\s*(.+)$", raw, re.I)
+            if m:
+                value = clean_text(m.group(1))
+                if value:
+                    return value
+    return None
+
+
+def parse_sf_cards(base: str, parser: SFPageParser) -> dict[str, dict]:
+    records = []
+    seen = set()
+    for anchor in parser.anchors:
+        u = normalize_abs_url(base, anchor.get("href"))
+        if not u or not same_host(base, u) or "/job/" not in urlparse(u).path.casefold() or u in seen:
+            continue
+        seen.add(u)
+        records.append(
+            {
+                "url": u,
+                "title": clean_text(anchor.get("text")) or clean_text(anchor.get("title")),
+                "start": int(anchor.get("start_index") or 0),
+                "end": int(anchor.get("end_index") or anchor.get("start_index") or 0),
+            }
+        )
+
+    found = {}
+    for i, record in enumerate(records):
+        stop = records[i + 1]["start"] if i + 1 < len(records) else len(parser.text_parts)
+        stop = min(stop, record["end"] + 120)
+        tokens = parser.text_parts[record["end"]:stop]
+        direct_location = _sf_labeled_value(tokens, SF_LOCATION_LABELS)
+        city = _sf_labeled_value(tokens, SF_CITY_LABELS)
+        country = _sf_labeled_value(tokens, SF_COUNTRY_LABELS)
+        location = direct_location
+        if not location and city:
+            location = ", ".join(x for x in (city, country) if x)
+        date_value = _sf_labeled_value(tokens, SF_DATE_LABELS)
+        if date_value and not DATEISH_RE.search(date_value):
+            date_value = None
+        found[record["url"]] = {
+            "url": record["url"],
+            "title": record["title"],
+            "location": clean_text(location),
+            "published_at": clean_text(date_value),
+        }
+    return found
+
+
+_merge_sf_page_jobs_v14 = merge_sf_page_jobs
+def merge_sf_page_jobs(base: str, parser: SFPageParser) -> list[dict]:
+    rows = {item["url"]: item for item in _merge_sf_page_jobs_v14(base, parser)}
+    cards = parse_sf_cards(base, parser)
+    ordered = []
+    seen = set()
+    for u, title in sf_job_anchors(base, parser):
+        if u in seen:
+            continue
+        seen.add(u)
+        row = rows.get(u) or {}
+        card = cards.get(u) or {}
+        ordered.append(
+            {
+                "url": u,
+                "title": row.get("title") or card.get("title") or title,
+                "location": row.get("location") or card.get("location"),
+                "published_at": row.get("published_at") or card.get("published_at"),
+            }
+        )
+    return ordered
+
+
+def sf_page_offset(url: str) -> int:
+    p = urlparse(url)
+    try:
+        vals = parse_qs(p.query).get("startrow") or []
+        if vals:
+            return max(0, int(vals[0]))
+    except (TypeError, ValueError):
+        pass
+    parts = [unquote(x) for x in p.path.split("/") if x]
+    lowered = [x.casefold() for x in parts]
+    for marker in ("search", "viewalljobs"):
+        if marker in lowered:
+            idx = lowered.index(marker)
+            if idx + 1 < len(parts) and re.fullmatch(r"\d+", parts[idx + 1]):
+                return int(parts[idx + 1])
+    if "go" in lowered:
+        idx = lowered.index("go")
+        numeric_after_go = [(j, int(parts[j])) for j in range(idx + 1, len(parts)) if re.fullmatch(r"\d+", parts[j])]
+        if len(numeric_after_go) >= 2:
+            return numeric_after_go[-1][1]
+    return 0
+
+
+def sf_startrow(url: str) -> int:
+    return sf_page_offset(url)
+
+
+def _sf_inventoryish(url: str) -> bool:
+    path = urlparse(url).path.casefold()
+    return is_sf_search_path(url) or "/go/" in path
+
+
+def find_sf_next_url(base: str, parser: SFPageParser, visited: set[str]) -> str | None:
+    current_offset = sf_page_offset(base)
+    candidates = []
+    explicit = []
+    for anchor in parser.anchors:
+        u = normalize_abs_url(base, anchor.get("href"))
+        if not u or not same_host(base, u) or u in visited:
+            continue
+        offset = sf_page_offset(u)
+        text = " ".join(
+            x for x in (
+                clean_text(anchor.get("text")),
+                clean_text(anchor.get("title")),
+                clean_text(anchor.get("aria_label")),
+            ) if x
+        ).casefold()
+        rel = (clean_text(anchor.get("rel")) or "").casefold()
+        if offset > current_offset and _sf_inventoryish(u):
+            candidates.append((offset, u))
+        if ("next" in text or "successiv" in text or "weiter" in text or "suivant" in text or "next" in rel):
+            if offset > current_offset and _sf_inventoryish(u):
+                explicit.append((offset, u))
+    if explicit:
+        explicit.sort(key=lambda x: x[0])
+        return explicit[0][1]
+    if candidates:
+        candidates.sort(key=lambda x: x[0])
+        return candidates[0][1]
+    return None
+
+
+def _sf_query_candidate(url: str, offset: int):
+    from urllib.parse import parse_qsl, urlencode, urlunparse
+    p = urlparse(url)
+    query = dict(parse_qsl(p.query, keep_blank_values=True))
+    query["startrow"] = str(offset)
+    return urlunparse((p.scheme, p.netloc, p.path, p.params, urlencode(query), p.fragment))
+
+
+def _sf_path_candidate(url: str, offset: int):
+    from urllib.parse import urlunparse
+    p = urlparse(url)
+    parts = [unquote(x) for x in p.path.split("/") if x]
+    lowered = [x.casefold() for x in parts]
+    for marker in ("search", "viewalljobs"):
+        if marker in lowered:
+            idx = lowered.index(marker)
+            if idx + 1 < len(parts) and re.fullmatch(r"\d+", parts[idx + 1]):
+                parts[idx + 1] = str(offset)
+            else:
+                parts.insert(idx + 1, str(offset))
+            path = "/" + "/".join(parts) + "/"
+            return urlunparse((p.scheme, p.netloc, path, p.params, p.query, p.fragment))
+    if "go" in lowered:
+        idx = lowered.index("go")
+        numeric_after_go = [j for j in range(idx + 1, len(parts)) if re.fullmatch(r"\d+", parts[j])]
+        if numeric_after_go:
+            if len(numeric_after_go) >= 2:
+                parts[numeric_after_go[-1]] = str(offset)
+            else:
+                parts.append(str(offset))
+            path = "/" + "/".join(parts) + "/"
+            return urlunparse((p.scheme, p.netloc, path, p.params, p.query, p.fragment))
+    return None
+
+
+def _sf_parser(html_text: str):
+    parser = SFPageParser()
+    parser.feed(html_text)
+    return parser
+
+
+def _sf_fetch_validated_next(current_url, parser, expected_total, visited):
+    actual = find_sf_next_url(current_url, parser, visited)
+    current_range = parse_sf_range(parser.visible_text)
+    candidates = []
+    if actual:
+        candidates.append(actual)
+    if current_range is not None:
+        _start, end, total = current_range
+        if total == expected_total and end < total:
+            for candidate in (_sf_query_candidate(current_url, end), _sf_path_candidate(current_url, end)):
+                if candidate and candidate not in candidates:
+                    candidates.append(candidate)
+
+    for candidate in candidates:
+        if not candidate or candidate in visited or not same_host(current_url, candidate):
+            continue
+        html_text, final_url = sf_get_html(candidate)
+        if final_url in visited or not same_host(current_url, final_url):
+            continue
+        next_parser = _sf_parser(html_text)
+        page_total = parse_sf_total(next_parser.visible_text)
+        if page_total is not None and page_total != expected_total:
+            raise NotCheckable(f"SuccessFactors total changed during pagination: {expected_total}->{page_total}")
+        next_range = parse_sf_range(next_parser.visible_text)
+        if current_range is not None and next_range is not None:
+            cur_start, cur_end, _ = current_range
+            nxt_start, nxt_end, nxt_total = next_range
+            if nxt_total != expected_total or nxt_start != cur_end + 1 or nxt_end <= cur_end or nxt_start <= cur_start:
+                continue
+        elif candidate != actual:
+            continue
+        return html_text, final_url, next_parser
+    return None
+
+
+def sf_get_html(url: str) -> tuple[str, str]:
+    # Runner/network restrictions are NOT_CHECKED, not collector bugs.
+    try:
+        return get_html(url)
+    except requests.exceptions.SSLError as e:
+        raise NotCheckable(
+            "SuccessFactors public inventory is not safely enumerable because TLS validation failed"
+        ) from e
+    except requests.HTTPError as e:
+        status = e.response.status_code if e.response is not None else None
+        raise NotCheckable(
+            f"SuccessFactors public inventory not enumerable from runner (HTTP {status or 'error'})"
+        ) from e
+    except requests.RequestException as e:
+        raise NotCheckable(f"SuccessFactors public inventory request unavailable from runner: {e}") from e
+
+
+def _collect_successfactors_once(company):
+    name = company.get("company")
+    ats = company.get("ats", {})
+    inventory = clean_text(ats.get("inventory_url"))
+    if not inventory:
+        raise NotCheckable("SuccessFactors inventory URL missing")
+
+    html_text, current_url = sf_get_html(inventory)
+    parser = _sf_parser(html_text)
+    initial_jobs = merge_sf_page_jobs(current_url, parser)
+    expected_total = parse_sf_total(parser.visible_text)
+
+    if expected_total is None or (expected_total > 0 and not initial_jobs):
+        discovered = find_sf_search_url(current_url, parser)
+        if discovered and discovered != current_url:
+            html_text, current_url = sf_get_html(discovered)
+            parser = _sf_parser(html_text)
+            initial_jobs = merge_sf_page_jobs(current_url, parser)
+            expected_total = parse_sf_total(parser.visible_text)
+
+    if expected_total is None:
+        raise NotCheckable("SuccessFactors page does not expose a reconcilable inventory total")
+    if expected_total > 0 and not initial_jobs:
+        raise NotCheckable(
+            f"SuccessFactors inventory exposes total={expected_total} but no stable public job links"
+        )
+
+    visited: set[str] = set()
+    inventory_jobs: dict[str, dict] = {}
+    page_count = 0
+
+    while True:
+        page_count += 1
+        if page_count > SF_MAX_PAGES:
+            raise NotCheckable("SuccessFactors inventory exceeds safe exhaustive-page limit")
+        visited.add(current_url)
+        page_total = parse_sf_total(parser.visible_text)
+        if page_total is not None and page_total != expected_total:
+            raise NotCheckable(f"SuccessFactors total changed during pagination: {expected_total}->{page_total}")
+
+        before = len(inventory_jobs)
+        for item in merge_sf_page_jobs(current_url, parser):
+            inventory_jobs[item["url"]] = item
+
+        if len(inventory_jobs) == expected_total:
+            break
+        if len(inventory_jobs) > expected_total:
+            raise NotCheckable(
+                f"SuccessFactors reconciliation overflow: retrieved={len(inventory_jobs)}, total={expected_total}"
+            )
+        if len(inventory_jobs) == before and before:
+            raise NotCheckable(
+                f"SuccessFactors pagination made no inventory progress: retrieved={len(inventory_jobs)}, total={expected_total}"
+            )
+
+        nxt = _sf_fetch_validated_next(current_url, parser, expected_total, visited)
+        if not nxt:
+            raise NotCheckable(
+                f"SuccessFactors inventory not exhaustible: retrieved={len(inventory_jobs)}, total={expected_total}"
+            )
+        html_text, current_url, parser = nxt
+
+    if len(inventory_jobs) != expected_total:
+        raise NotCheckable(
+            f"SuccessFactors reconciliation mismatch: retrieved={len(inventory_jobs)}, total={expected_total}"
+        )
+
+    missing_location = [x for x in inventory_jobs.values() if not clean_text(x.get("location"))]
+    if missing_location:
+        raise NotCheckable(
+            f"SuccessFactors inventory reconciled but location metadata is incomplete: "
+            f"missing={len(missing_location)}, total={expected_total}"
+        )
+
+    jobs = []
+    for raw in inventory_jobs.values():
+        loc = clean_text(raw.get("location"))
+        if not location_matches(loc):
+            continue
+        jobs.append(
+            compact_job(
+                name,
+                sf_job_source_id(raw["url"]),
+                title=raw.get("title"),
+                location=loc,
+                published_at=raw.get("published_at"),
+                canonical=raw.get("url"),
+                apply_url=raw.get("url"),
+            )
+        )
+
+    return {
+        "coverage": "VERIFIED",
+        "collector": "successfactors_jobs2web_metadata_v15",
+        "inventory_count": len(inventory_jobs),
+        "jobs": jobs,
+        "source_url": inventory,
+    }
+
+
+def collect_successfactors(company):
+    last_error = None
+    for attempt in range(2):
+        try:
+            return _collect_successfactors_once(company)
+        except NotCheckable as e:
+            message = str(e).casefold()
+            retryable = any(
+                token in message
+                for token in (
+                    "total changed",
+                    "reconciliation mismatch",
+                    "reconciliation overflow",
+                    "pagination made no inventory progress",
+                )
+            )
+            if not retryable or attempt:
+                raise
+            last_error = e
+    raise NotCheckable(f"SuccessFactors inventory remained unstable after retry: {last_error}")
+
+
+_collect_batch_v14 = collect_batch
+def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
+    payload = _collect_batch_v14(batch, workers=workers)
+    payload["version"] = "1.5"
+    write_json(ROOT / f"current_jobs_{batch}.json", payload)
+    return payload
+
+# === JOB WATCH V1.5 SUCCESSFACTORS STRICT INVENTORY ===
+# Tighten discovery and add Career Site Builder tile pagination. A mapped /go/
+# URL is acceptable when the mapping itself points there and the page proves a
+# total + inventory. Discovery from a generic landing page is restricted to an
+# evidenced same-host /search/ or /viewalljobs/ endpoint; arbitrary category
+# /go/ links are never promoted to exhaustive inventory automatically.
+
+SF_MAX_PAGES = MAX_PAGES
+SF_TILE_INIT_RE = re.compile(r"j2w\.SearchResults\.init\s*\(\s*\{(.*?)\}\s*\)\s*;?", re.I | re.S)
+SF_TILE_PER_PAGE_RE = re.compile(r'data-per-page=["\'](\d+)["\']', re.I)
+
+_SFPageParser_pre_strict = SFPageParser
+class SFPageParser(_SFPageParser_pre_strict):
+    FIELD_ID_RE = re.compile(r"^job-(\d+)-desktop-section-([A-Za-z0-9_-]+)-(label|value)$", re.I)
+
+    def __init__(self):
+        super().__init__()
+        self.form_actions = []
+        self.card_fields = {}
+        self._sf_field_capture = None
+
+    def handle_starttag(self, tag, attrs):
+        a = self._attrs(attrs)
+        if tag.casefold() == "form" and a.get("action"):
+            self.form_actions.append(a.get("action"))
+        if self._sf_field_capture is not None:
+            self._sf_field_capture["depth"] += 1
+        else:
+            field_id = a.get("id")
+            m = self.FIELD_ID_RE.match(field_id or "")
+            if m:
+                self._sf_field_capture = {
+                    "job_id": m.group(1),
+                    "field": m.group(2).casefold(),
+                    "kind": m.group(3).casefold(),
+                    "depth": 1,
+                    "text": [],
+                }
+        super().handle_starttag(tag, attrs)
+
+    def handle_data(self, data):
+        if self._sf_field_capture is not None:
+            s = clean_text(data)
+            if s:
+                self._sf_field_capture["text"].append(s)
+        super().handle_data(data)
+
+    def handle_endtag(self, tag):
+        super().handle_endtag(tag)
+        if self._sf_field_capture is None:
+            return
+        self._sf_field_capture["depth"] -= 1
+        if self._sf_field_capture["depth"] > 0:
+            return
+        cap = self._sf_field_capture
+        value = clean_text(" ".join(cap.get("text") or []))
+        if value:
+            fields = self.card_fields.setdefault(cap["job_id"], {})
+            fields.setdefault(cap["field"], {})[cap["kind"]] = value
+        self._sf_field_capture = None
+
+
+def _sf_card_values(parser, job_url):
+    return getattr(parser, "card_fields", {}).get(str(sf_job_source_id(job_url)), {}) or {}
+
+
+def _sf_card_location(parser, job_url):
+    fields = _sf_card_values(parser, job_url)
+    primary, secondary = [], []
+    for field, pair in fields.items():
+        value = clean_text((pair or {}).get("value"))
+        label = clean_text((pair or {}).get("label")) or ""
+        if not value:
+            continue
+        key = f"{field} {label}".casefold()
+        if any(token in key for token in ("location", "località", "localita", "luogo", "city", "città", "citta", "stadt", "ville", "ciudad")):
+            primary.append(value)
+        elif any(token in key for token in ("country", "paese", "region", "regione", "land", "pays", "país", "pais")):
+            secondary.append(value)
+    out = []
+    for value in primary + secondary:
+        if value not in out:
+            out.append(value)
+    return " | ".join(out) if out else None
+
+
+def _sf_card_date(parser, job_url):
+    for field, pair in _sf_card_values(parser, job_url).items():
+        value = clean_text((pair or {}).get("value"))
+        label = clean_text((pair or {}).get("label")) or ""
+        key = f"{field} {label}".casefold()
+        if value and any(token in key for token in ("date", "data", "datum", "posting", "publication", "fecha")):
+            return value
+    return None
+
+
+_merge_sf_page_jobs_pre_strict = merge_sf_page_jobs
+def merge_sf_page_jobs(base: str, parser: SFPageParser) -> list[dict]:
+    jobs = _merge_sf_page_jobs_pre_strict(base, parser)
+    for job in jobs:
+        if not clean_text(job.get("location")):
+            job["location"] = _sf_card_location(parser, job["url"])
+        if not clean_text(job.get("published_at")):
+            job["published_at"] = _sf_card_date(parser, job["url"])
+    return jobs
+
+
+def _sf_load_page_strict(url: str):
+    html_text, final_url = sf_get_html(url)
+    parser = SFPageParser()
+    parser.feed(html_text)
+    return html_text, final_url, parser
+
+
+def _sf_is_exhaustive_search_path(url: str) -> bool:
+    path = urlparse(url).path.casefold().rstrip("/")
+    return path.endswith("/search") or path.endswith("/viewalljobs") or "/search/" in (path + "/") or "/viewalljobs/" in (path + "/")
+
+
+def _sf_find_exhaustive_search_url(base: str, parser: SFPageParser) -> str | None:
+    candidates = []
+    # Form actions are stronger evidence than navigation links.
+    for action in getattr(parser, "form_actions", []) or []:
+        u = normalize_abs_url(base, clean_text(action))
+        if u and same_host(base, u) and _sf_is_exhaustive_search_path(u) and is_unfiltered_search_url(u):
+            candidates.append((0, u))
+    for anchor in parser.anchors:
+        u = normalize_abs_url(base, anchor.get("href"))
+        if u and same_host(base, u) and _sf_is_exhaustive_search_path(u) and is_unfiltered_search_url(u):
+            candidates.append((1, u))
+    if not candidates:
+        return None
+    dedup = {}
+    for priority, u in candidates:
+        dedup[u] = min(priority, dedup.get(u, priority))
+    return sorted(dedup, key=lambda u: (dedup[u], 0 if not urlparse(u).query else 1, len(urlparse(u).path), len(u)))[0]
+
+
+def _sf_prepare_inventory_strict(company):
+    ats = company.get("ats", {})
+    inventory = clean_text(ats.get("inventory_url"))
+    if not inventory:
+        raise NotCheckable("SuccessFactors inventory URL missing")
+
+    page_html, current_url, parser = _sf_load_page_strict(inventory)
+    jobs = merge_sf_page_jobs(current_url, parser)
+    total = parse_sf_total(parser.visible_text)
+
+    # Trust a mapped URL (including mapped /go/) only when it proves an inventory.
+    if total is not None and (total == 0 or jobs):
+        return page_html, current_url, parser, jobs, total
+
+    discovered = _sf_find_exhaustive_search_url(current_url, parser)
+    if not discovered or discovered == current_url:
+        if total is not None and total > 0 and not jobs:
+            raise NotCheckable(f"SuccessFactors inventory exposes total={total} but no stable public job links")
+        raise NotCheckable("No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal")
+
+    d_html, d_url, d_parser = _sf_load_page_strict(discovered)
+    d_jobs = merge_sf_page_jobs(d_url, d_parser)
+    d_total = parse_sf_total(d_parser.visible_text)
+    if d_total is None:
+        raise NotCheckable("Evidenced SuccessFactors search page has no reconcilable inventory total")
+    if d_total > 0 and not d_jobs:
+        raise NotCheckable(f"SuccessFactors search exposes total={d_total} but no stable public job links")
+    return d_html, d_url, d_parser, d_jobs, d_total
+
+
+def _sf_require_complete_locations(inventory_jobs, expected_total):
+    missing = [u for u, item in inventory_jobs.items() if not clean_text(item.get("location"))]
+    if missing:
+        raise NotCheckable(
+            f"SuccessFactors inventory reconciled but location metadata is incomplete: missing={len(missing)}, total={expected_total}"
+        )
+
+
+def _sf_finish_verified(name, inventory_jobs, source_url, collector_name):
+    expected_total = len(inventory_jobs)
+    _sf_require_complete_locations(inventory_jobs, expected_total)
+    jobs = []
+    for raw in inventory_jobs.values():
+        loc = clean_text(raw.get("location"))
+        if not location_matches(loc):
+            continue
+        jobs.append(compact_job(
+            name,
+            sf_job_source_id(raw["url"]),
+            title=raw.get("title"),
+            location=loc,
+            published_at=raw.get("published_at"),
+            canonical=raw.get("url"),
+            apply_url=raw.get("url"),
+        ))
+    return {
+        "coverage": "VERIFIED",
+        "collector": collector_name,
+        "inventory_count": expected_total,
+        "jobs": jobs,
+        "source_url": source_url,
+    }
+
+
+def _collect_successfactors_paged_strict(company):
+    name = company.get("company")
+    page_html, current_url, parser, first_jobs, expected_total = _sf_prepare_inventory_strict(company)
+    source_url = current_url
+    if expected_total == 0:
+        return {
+            "coverage": "VERIFIED",
+            "collector": "successfactors_jobs2web_metadata_v15",
+            "inventory_count": 0,
+            "jobs": [],
+            "source_url": source_url,
+        }
+
+    visited = set()
+    inventory_jobs = {}
+    page_count = 0
+    while True:
+        page_count += 1
+        if page_count > SF_MAX_PAGES:
+            raise NotCheckable("SuccessFactors inventory exceeds safe exhaustive-page limit")
+        visited.add(current_url)
+        page_total = parse_sf_total(parser.visible_text)
+        if page_total is not None and page_total != expected_total:
+            raise NotCheckable(f"SuccessFactors total changed during pagination: {expected_total}->{page_total}")
+        before = len(inventory_jobs)
+        for item in merge_sf_page_jobs(current_url, parser):
+            inventory_jobs[item["url"]] = item
+        if len(inventory_jobs) == expected_total:
+            break
+        if len(inventory_jobs) > expected_total:
+            raise NotCheckable(f"SuccessFactors reconciliation overflow: retrieved={len(inventory_jobs)}, total={expected_total}")
+        if len(inventory_jobs) == before and before:
+            raise NotCheckable(f"SuccessFactors pagination repeated a page: retrieved={len(inventory_jobs)}, total={expected_total}")
+        nxt = _sf_fetch_validated_next(current_url, parser, expected_total, visited)
+        if not nxt:
+            raise NotCheckable(f"SuccessFactors inventory not exhaustible: retrieved={len(inventory_jobs)}, total={expected_total}")
+        page_html, current_url, parser = nxt
+
+    # Stable-total check after enumeration.
+    _final_html, _final_url, final_parser = _sf_load_page_strict(source_url)
+    final_total = parse_sf_total(final_parser.visible_text)
+    if final_total != expected_total:
+        raise NotCheckable(f"SuccessFactors total changed during enumeration: {expected_total}->{final_total}")
+    return _sf_finish_verified(name, inventory_jobs, source_url, "successfactors_jobs2web_metadata_v15")
+
+
+def sf_tile_config(page_html: str, base_url: str):
+    blocks = SF_TILE_INIT_RE.findall(page_html)
+    if len(blocks) != 1:
+        return None
+    block = blocks[0]
+    endpoint_m = re.search(r'\bapiEndpoint\s*:\s*["\']([^"\']+)["\']', block, re.I)
+    query_m = re.search(r'\bsearchQuery\s*:\s*["\']([^"\']*)["\']', block, re.I)
+    per_m = SF_TILE_PER_PAGE_RE.search(page_html)
+    if not endpoint_m or not query_m or not per_m:
+        return None
+    endpoint = clean_text(endpoint_m.group(1))
+    query = html.unescape(query_m.group(1)).strip()
+    if not endpoint or not re.fullmatch(r"[A-Za-z0-9_-]+", endpoint) or "startrow=" in query.casefold():
+        return None
+    try:
+        per_page = int(per_m.group(1))
+    except (TypeError, ValueError):
+        return None
+    if per_page <= 0 or per_page > 100:
+        return None
+
+    brand = ""
+    brand_matches = re.findall(r"[\"']brand[\"']\s*:\s*[\"']([^\"']*)[\"']", page_html, re.I)
+    if brand_matches:
+        unique_brands = {clean_text(x) or "" for x in brand_matches}
+        if len(unique_brands) != 1:
+            return None
+        brand = next(iter(unique_brands))
+    if brand:
+        if not SAFE_TENANT_RE.fullmatch(brand):
+            return None
+        endpoint_url = urljoin(base_url, f"/{brand}/{endpoint}/")
+    else:
+        endpoint_url = urljoin(base_url, f"/{endpoint}/")
+    if not same_host(base_url, endpoint_url):
+        return None
+    return {"endpoint": endpoint_url, "query": query, "per_page": per_page}
+
+
+def sf_tile_url(config: dict, startrow: int) -> str:
+    from urllib.parse import parse_qsl, urlencode, urlunparse
+    p = urlparse(config["endpoint"])
+    pairs = parse_qsl(config["query"].lstrip("?"), keep_blank_values=True)
+    pairs = [(k, v) for k, v in pairs if k.casefold() != "startrow"]
+    pairs.append(("startrow", str(int(startrow))))
+    return urlunparse((p.scheme, p.netloc, p.path, p.params, urlencode(pairs), p.fragment))
+
+
+def _collect_successfactors_tile_strict(company):
+    name = company.get("company")
+    page_html, source_url, parser, first_jobs, expected_total = _sf_prepare_inventory_strict(company)
+    if expected_total == 0:
+        return {
+            "coverage": "VERIFIED",
+            "collector": "successfactors_jobs2web_tile_metadata_v15",
+            "inventory_count": 0,
+            "jobs": [],
+            "source_url": source_url,
+        }
+    if not first_jobs:
+        raise NotCheckable("SuccessFactors tile inventory exposes no initial public requisitions")
+    config = sf_tile_config(page_html, source_url)
+    if not config:
+        raise NotCheckable("SuccessFactors tile pagination contract is not safely evidenced by the public page")
+
+    inventory_jobs = {item["url"]: item for item in first_jobs}
+    startrow = config["per_page"]
+    pages = 1
+    while len(inventory_jobs) < expected_total:
+        pages += 1
+        if pages > SF_MAX_PAGES:
+            raise NotCheckable("SuccessFactors tile inventory exceeds safe exhaustive-page limit")
+        url = sf_tile_url(config, startrow)
+        try:
+            r = get_session().get(url, headers={"Accept": "text/html; charset=UTF-8"}, timeout=TIMEOUT)
+            if r.status_code in {401, 403, 404, 406, 410, 429, 500, 502, 503, 504}:
+                raise NotCheckable(f"SuccessFactors tile endpoint unavailable: HTTP {r.status_code}")
+            r.raise_for_status()
+        except requests.exceptions.SSLError as e:
+            raise NotCheckable("SuccessFactors tile endpoint TLS validation failed") from e
+        except requests.RequestException as e:
+            raise NotCheckable(f"SuccessFactors tile endpoint request unavailable: {e}") from e
+        page_parser = SFPageParser()
+        page_parser.feed(r.text)
+        page_jobs = merge_sf_page_jobs(source_url, page_parser)
+        if not page_jobs:
+            raise NotCheckable(f"SuccessFactors tile pagination stopped early: retrieved={len(inventory_jobs)}, total={expected_total}")
+        before = len(inventory_jobs)
+        for item in page_jobs:
+            inventory_jobs[item["url"]] = item
+        if len(inventory_jobs) == before:
+            raise NotCheckable(f"SuccessFactors tile pagination repeated a page: retrieved={len(inventory_jobs)}, total={expected_total}")
+        if len(inventory_jobs) > expected_total:
+            raise NotCheckable(f"SuccessFactors tile reconciliation overflow: retrieved={len(inventory_jobs)}, total={expected_total}")
+        startrow += config["per_page"]
+
+    if len(inventory_jobs) != expected_total:
+        raise NotCheckable(f"SuccessFactors tile reconciliation mismatch: retrieved={len(inventory_jobs)}, total={expected_total}")
+    _final_html, _final_url, final_parser = _sf_load_page_strict(source_url)
+    final_total = parse_sf_total(final_parser.visible_text)
+    if final_total != expected_total:
+        raise NotCheckable(f"SuccessFactors tile total changed during enumeration: {expected_total}->{final_total}")
+    return _sf_finish_verified(name, inventory_jobs, source_url, "successfactors_jobs2web_tile_metadata_v15")
+
+
+def collect_successfactors(company):
+    last_error = None
+    for attempt in range(2):
+        try:
+            return _collect_successfactors_paged_strict(company)
+        except NotCheckable as paged_error:
+            last_error = paged_error
+            message = str(paged_error).casefold()
+            if any(token in message for token in ("inventory not exhaustible", "pagination repeated a page")):
+                try:
+                    return _collect_successfactors_tile_strict(company)
+                except NotCheckable as tile_error:
+                    last_error = tile_error
+                    tmsg = str(tile_error).casefold()
+                    retryable = any(token in tmsg for token in ("total changed", "reconciliation", "stopped early", "repeated a page"))
+                    if retryable and attempt == 0:
+                        continue
+                    raise
+            retryable = any(token in message for token in ("total changed", "reconciliation", "repeated a page"))
+            if retryable and attempt == 0:
+                continue
+            raise
+    raise NotCheckable(f"SuccessFactors inventory remained unstable after retry: {last_error}")
+
+# === JOB WATCH V1.5 SUCCESSFACTORS CONSERVATIVE METADATA ===
+# Do not use proximity/token heuristics for location. Start from the v1.4
+# table parser and add only the explicit Career Site Builder field-id metadata.
+# This deliberately prefers NOT_CHECKED over a false location match.
+def merge_sf_page_jobs(base: str, parser: SFPageParser) -> list[dict]:
+    jobs = _merge_sf_page_jobs_v14(base, parser)
+    for job in jobs:
+        if not clean_text(job.get("location")):
+            job["location"] = _sf_card_location(parser, job["url"])
+        if not clean_text(job.get("published_at")):
+            job["published_at"] = _sf_card_date(parser, job["url"])
+    return jobs
+
+# === JOB WATCH V1.5 SUCCESSFACTORS UNFILTERED SEARCH HELPER ===
+def is_unfiltered_search_url(url: str) -> bool:
+    """Accept only a demonstrably unfiltered inventory/search URL.
+
+    Empty keyword plus sort controls are benign. A non-zero startrow, a
+    non-empty keyword, or any other facet/filter parameter is not suitable as
+    the starting point for an exhaustive inventory proof.
+    """
+    p = urlparse(url)
+    params = parse_qs(p.query, keep_blank_values=True)
+    allowed = {"q", "startrow", "sortcolumn", "sortdirection"}
+    for key, values in params.items():
+        k = key.casefold()
+        if k not in allowed:
+            return False
+        cleaned = [clean_text(v) or "" for v in values]
+        if k == "q" and any(cleaned):
+            return False
+        if k == "startrow" and any(v not in ("", "0") for v in cleaned):
+            return False
+    return True
+
 if __name__ == "__main__":
     raise SystemExit(main())
