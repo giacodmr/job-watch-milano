@@ -11,62 +11,64 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Probe vendor signatures and public count markers
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check requests
+      - name: Test Axpo with existing Teamtailor collector
         shell: python
         run: |
-          import json, re, urllib.request, urllib.error
-          from concurrent.futures import ThreadPoolExecutor, as_completed
-          from urllib.parse import urlparse
-
-          urls=[]
-          excluded={'Amazon','American Express'}
-          for b in ('jw1','jw2','jw3','jw4'):
-              m=json.load(open(f'ats_mapping_{b}.json'))
-              c=json.load(open(f'current_jobs_{b}.json'))
-              cov={x['company']:x.get('coverage') for x in c['companies']}
-              for x in m['companies']:
-                  v=x.get('verification') or {}; a=x.get('ats') or {}; fam=str(a.get('family') or '')
-                  if not (v.get('level')=='FULL' or v.get('full_inventory_possible') is True) or cov.get(x['company'])!='NOT_CHECKED': continue
-                  if x['company'] in excluded or any(k in fam.lower() for k in ('successfactors','avature','oracle')): continue
-                  if a.get('inventory_url'): urls.append((x['company'],a['inventory_url']))
-
-          markers=('workday','myworkdayjobs','talentbrew','tbcdn','radancy','phenom','greenhouse','smartrecruiters','teamtailor','icims','taleo','successfactors','avature','workable','lever','ashby','eightfold','cornerstone','yello','recsolu','adp','oracle')
+          import json, collector
+          m=json.load(open('ats_mapping_jw3.json'))
+          c=next(x for x in m['companies'] if x['company']=='Axpo')
+          r=collector.collect_teamtailor(c)
+          print('AXPO_RESULT',json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False))
+          print('AXPO_TARGET_JOBS',len(r.get('jobs') or []))
+          print('AXPO_SAMPLE',json.dumps((r.get('jobs') or [])[:3],ensure_ascii=False))
+      - name: Discover and reconcile Nadara and Richemont Workday inventories
+        shell: python
+        run: |
+          import html, json, re, urllib.request, urllib.error
+          from urllib.parse import urlparse, unquote
           headers={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,application/xhtml+xml,*/*'}
-          def probe(item):
-              name,url=item
+          def get(url):
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  return r.read().decode('utf-8','replace'),r.geturl()
+          def workday_links(page):
+              text=html.unescape(page).replace('\\/','/')
+              vals=[]
+              for u in re.findall(r'https://[A-Za-z0-9.-]+\.myworkdayjobs\.com[^"\'<> \\]*',text,re.I):
+                  u=u.rstrip('.,);]')
+                  if u not in vals: vals.append(u)
+              return vals
+          def site_candidates(links):
+              out=[]
+              for u in links:
+                  p=urlparse(u)
+                  parts=[unquote(x) for x in p.path.split('/') if x]
+                  while parts and re.fullmatch(r'[a-z]{2}(?:-[A-Z]{2})?',parts[0]): parts.pop(0)
+                  if parts:
+                      key=(p.netloc,parts[0])
+                      if key not in out: out.append(key)
+              return out
+          def cxs(host,site):
+              tenant=host.split('.')[0]
+              url=f'https://{host}/wday/cxs/{tenant}/{site}/jobs'
+              payload=json.dumps({'appliedFacets':{},'limit':20,'offset':0,'searchText':''}).encode()
+              req=urllib.request.Request(url,data=payload,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json','Content-Type':'application/json','Referer':f'https://{host}/{site}','Origin':f'https://{host}'},method='POST')
               try:
-                  req=urllib.request.Request(url,headers=headers)
-                  with urllib.request.urlopen(req,timeout=25) as r:
-                      body=r.read(1500000).decode('utf-8','replace'); final=r.geturl(); status=r.status
-              except urllib.error.HTTPError as e:
-                  body=e.read(500000).decode('utf-8','replace'); final=e.geturl(); status=e.code
+                  with urllib.request.urlopen(req,timeout=30) as r: data=json.load(r)
+                  return {'url':url,'total':data.get('total'),'first':[(x.get('title'),x.get('locationsText'),x.get('externalPath')) for x in (data.get('jobPostings') or [])[:2]]}
               except Exception as e:
-                  return name, {'url':url,'error':f'{type(e).__name__}: {e}'}
-              low=body.lower()
-              hits=[m for m in markers if m in low or m in final.lower()]
-              counts=[]
-              for pat in (r'([\d,.]+)\s+jobs?\s+found',r'showing\s+\d+\s+(?:to|-)\s+\d+\s+of\s+([\d,.]+)',r'([\d,.]+)\s+open\s+(?:roles|jobs)',r'"total"\s*:\s*(\d+)',r'"totalcount"\s*:\s*(\d+)'):
-                  counts += re.findall(pat,body,re.I)[:5]
-              hosts=[]
-              for src in re.findall(r'(?:src|href)=["\'](https?://[^"\']+)',body,re.I):
-                  h=urlparse(src).netloc.lower()
-                  if h and h not in hosts and h!=urlparse(final).netloc.lower(): hosts.append(h)
-              return name, {'url':url,'status':status,'final':final,'bytes':len(body),'markers':hits,'count_markers':counts[:12],'external_hosts':hosts[:20]}
-
-          with ThreadPoolExecutor(max_workers=6) as pool:
-              futs=[pool.submit(probe,x) for x in urls]
-              for f in as_completed(futs):
-                  name,res=f.result(); print(name,'|',json.dumps(res,ensure_ascii=False,sort_keys=True))
-      - name: Probe Unilever Workday CXS versus public careers count
-        shell: python
-        run: |
-          import json, re, urllib.request
-          headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'}
-          url='https://unilever.wd3.myworkdayjobs.com/wday/cxs/unilever/Unilever_Experienced_Professionals/jobs'
-          req=urllib.request.Request(url,data=json.dumps({'appliedFacets':{},'limit':20,'offset':0,'searchText':''}).encode(),headers={**headers,'Content-Type':'application/json'},method='POST')
-          with urllib.request.urlopen(req,timeout=30) as r:
-              data=json.load(r)
-          print('UNILEVER_WORKDAY_TOTAL',data.get('total'),'FIRST',[(x.get('title'),x.get('locationsText'),x.get('externalPath')) for x in (data.get('jobPostings') or [])[:3]])
-          req=urllib.request.Request('https://careers.unilever.com/en/search_jobs',headers={'User-Agent':'Mozilla/5.0'})
-          with urllib.request.urlopen(req,timeout=30) as r: html=r.read().decode('utf-8','replace')
-          print('UNILEVER_PUBLIC_COUNTS',re.findall(r'([\d,]+)\s+Jobs?\s+Found',html,re.I)[:10])
+                  return {'url':url,'error':f'{type(e).__name__}: {e}'}
+          for name,url in [('Nadara','https://nadara.com/work-with-us'),('Richemont','https://careers.richemont.com/en/jobs/')]:
+              page,final=get(url)
+              links=workday_links(page)
+              print(name,'WORKDAY_LINKS',links[:30])
+              candidates=site_candidates(links)
+              print(name,'SITE_CANDIDATES',candidates)
+              for host,site in candidates[:10]: print(name,'CXS',json.dumps(cxs(host,site),ensure_ascii=False))
+              for pat in (r'Showing\s+\d+\s+of\s+([\d,]+)\s+roles',r'Displaying\s+\d+\s+to\s+\d+\s+of\s+([\d,]+)\s+matching jobs',r'([\d,]+)\s+matching jobs'):
+                  vals=re.findall(pat,page,re.I)
+                  if vals: print(name,'PUBLIC_TOTAL_PATTERN',pat,vals[:10])
