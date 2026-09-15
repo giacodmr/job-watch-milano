@@ -11,55 +11,62 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 6
     steps:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Probe public pages
+      - name: Inspect dynamic search contracts
         run: |
           python - <<'PY'
           import re, json, requests
-          urls = {
-            'EY':'https://careers.ey.com/ey/search/',
-            'Capgemini':'https://jobs.capgemini.com/viewalljobs/',
-            'Worldline':'https://jobs.worldline.com/viewalljobs/',
-            'Terna-root':'https://jobs.terna.it/',
-            'Terna-search':'https://jobs.terna.it/search/',
-            'ENGIE-root':'https://jobs.engie.com/',
-            'ENGIE-search':'https://jobs.engie.com/search/',
-            'Pirelli-root':'https://jobs.pirelli.com/',
-            'Pirelli-search':'https://jobs.pirelli.com/search/',
-            'Heineken-root':'https://careers.theheinekencompany.com/',
-            'Heineken-Italy':'https://careers.theheinekencompany.com/Italy/',
-            'Heineken-search':'https://careers.theheinekencompany.com/search/',
-            'Moncler-root':'https://jobs.moncler.com/',
-            'Moncler-search':'https://jobs.moncler.com/search/',
+          from urllib.parse import urljoin, urlparse
+
+          sites = {
+            'Terna':'https://jobs.terna.it/search/',
+            'ENGIE':'https://jobs.engie.com/search/',
+            'Pirelli':'https://jobs.pirelli.com/search/',
           }
-          pats = [
-            r'Results?\s+\d+\s*[-–—]\s*\d+\s+of\s+[\d,. ]+',
-            r'Showing\s+\d+\s+(?:to|[-–—])\s+\d+\s+of\s+[\d,. ]+',
-            r'j2w\.SearchResults\.init\s*\([^;]{0,1200}',
-            r'apiEndpoint\s*:\s*["\'][^"\']+',
-            r'searchQuery\s*:\s*["\'][^"\']*',
-            r'data-per-page=["\']\d+',
-            r'(?:jobCount|totalCount|totalResults|numFound)[^<\n]{0,140}',
-          ]
-          for name,url in urls.items():
-            out={'name':name,'url':url}
-            try:
-              r=requests.get(url,timeout=15,headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'})
-              text=r.text
-              out.update(status=r.status_code,final=r.url,length=len(text),job_paths=len(re.findall(r'/job/',text,re.I)))
-              matches=[]
-              for p in pats:
-                matches += [re.sub(r'\s+',' ',m)[:1400] for m in re.findall(p,text,re.I|re.S)[:4]]
-              out['matches']=matches[:20]
-              out['search_links']=re.findall(r'href=["\']([^"\']*(?:/search/|/viewalljobs/)[^"\']*)["\']',text,re.I)[:12]
-              out['go_links']=re.findall(r'href=["\']([^"\']*/go/[^"\']*)["\']',text,re.I)[:8]
-              out['job_links']=re.findall(r'href=["\']([^"\']*/job/[^"\']*)["\']',text,re.I)[:5]
-            except Exception as e:
-              out['error']=type(e).__name__+': '+str(e)
-            print('PROBE '+json.dumps(out,ensure_ascii=False))
+          headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'}
+          signal = re.compile(r'(?i)(?:apiEndpoint|searchQuery|graphql|jobsearch|searchjobs|jobssearch|jobresults|unified.{0,30}model|startrow|pageSize|pageNumber|totalCount|totalResults|numFound|requisition|jobCard|\/api\/|\/rest\/|odata|searchResult)')
+          urlish = re.compile(r'''(?i)(?:https?:)?//[^"'<>\s]+|/[A-Za-z0-9_.~!$&()*+,;=:@%/?#-]{3,}''')
+
+          for name,url in sites.items():
+            print('\n===',name,'===')
+            r=requests.get(url,timeout=20,headers=headers)
+            print('PAGE',r.status_code,r.url,'len',len(r.text))
+            text=r.text
+            inline=[]
+            for m in signal.finditer(text):
+              frag=re.sub(r'\s+',' ',text[max(0,m.start()-180):min(len(text),m.end()+260)])
+              if frag not in inline: inline.append(frag)
+            print('INLINE_SIGNALS',json.dumps(inline[:30],ensure_ascii=False))
+            scripts=re.findall(r'<script\b[^>]*\bsrc=["\']([^"\']+)["\']',text,re.I)
+            print('SCRIPTS',json.dumps(scripts,ensure_ascii=False))
+            checked=0
+            for src in scripts:
+              absu=urljoin(r.url,src)
+              host=urlparse(absu).netloc.casefold()
+              if not (host==urlparse(r.url).netloc.casefold() or 'successfactors.com' in host or 'successfactors.eu' in host):
+                continue
+              try:
+                sr=requests.get(absu,timeout=15,headers=headers)
+                if sr.status_code>=400 or len(sr.text)>8_000_000: continue
+                checked+=1
+                hits=[]
+                for m in signal.finditer(sr.text):
+                  frag=re.sub(r'\s+',' ',sr.text[max(0,m.start()-160):min(len(sr.text),m.end()+320)])
+                  if frag not in hits: hits.append(frag)
+                  if len(hits)>=20: break
+                if hits:
+                  endpoints=[]
+                  for raw in urlish.findall(sr.text):
+                    if signal.search(raw) and raw not in endpoints:
+                      endpoints.append(raw)
+                    if len(endpoints)>=20: break
+                  print('ASSET',absu,'status',sr.status_code,'len',len(sr.text),'HITS',json.dumps(hits,ensure_ascii=False),'URLS',json.dumps(endpoints,ensure_ascii=False))
+              except Exception as e:
+                print('ASSET_ERROR',absu,type(e).__name__,str(e))
+            print('ASSETS_CHECKED',checked)
           PY
