@@ -63,7 +63,7 @@ def collect_successfactors(company):
         parser = base.SFPageParser()
         parser.feed(html_text)
 
-    expected_total = base.parse_sf_total(parser.visible_text)
+    visible_total = base.parse_sf_total(parser.visible_text)
     cfg = tile_config(parser.visible_text)
     first_jobs = base.merge_sf_page_jobs(current_url, parser)
 
@@ -71,11 +71,13 @@ def collect_successfactors(company):
     if not cfg or not getattr(parser, "tile_jobs", None):
         return _orig_collect_successfactors(company)
 
-    if expected_total is None:
-        raise base.NotCheckable("SuccessFactors tile page does not expose a reconcilable inventory total")
-    if cfg["total"] != expected_total:
+    # jobRecordsFound is the public Career Site Builder total used by the site's own
+    # "More Search Results" JavaScript. Treat it as the machine-readable total when
+    # a localized/visual result label is absent; if both totals exist they must agree.
+    expected_total = cfg["total"]
+    if visible_total is not None and visible_total != expected_total:
         raise base.NotCheckable(
-            f"SuccessFactors tile config total mismatch: page={expected_total}, config={cfg['total']}"
+            f"SuccessFactors tile config total mismatch: page={visible_total}, config={expected_total}"
         )
 
     inventory_jobs = {x["url"]: x for x in first_jobs}
