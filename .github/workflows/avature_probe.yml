@@ -5,8 +5,6 @@ on:
     branches: [ats-avature-v17]
     paths:
       - '.github/workflows/avature_probe.yml'
-      - 'apply_avature_patch.py'
-      - 'finalize_avature_patch.py'
   workflow_dispatch:
 
 permissions:
@@ -15,23 +13,65 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Apply validated production patch
+      - name: Full 182-company regression run
         run: |
-          python apply_avature_patch.py
-          python finalize_avature_patch.py
           python -m py_compile collector.py
+          mkdir -p /tmp/jobwatch-baseline
+          cp current_jobs_jw*.json /tmp/jobwatch-baseline/
+          python collector.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('.')
+          base = Path('/tmp/jobwatch-baseline')
+          totals = {'companies': 0, 'verified': 0, 'failed': 0, 'not_checked': 0}
+          regressions = []
+          for batch in ('jw1','jw2','jw3','jw4'):
+              old = json.loads((base / f'current_jobs_{batch}.json').read_text(encoding='utf-8'))
+              new = json.loads((root / f'current_jobs_{batch}.json').read_text(encoding='utf-8'))
+              old_by = {x['company']: x for x in old['companies']}
+              new_by = {x['company']: x for x in new['companies']}
+              for name, row in old_by.items():
+                  if row.get('coverage') == 'VERIFIED' and new_by.get(name, {}).get('coverage') != 'VERIFIED':
+                      regressions.append((batch, name, new_by.get(name, {}).get('coverage'), new_by.get(name, {}).get('reason')))
+              s = new['summary']
+              print(batch.upper(), 'VERSION', new.get('version'), 'TOTAL', s['companies_total'], 'VERIFIED', s['VERIFIED'], 'FAILED', s['FAILED'], 'NOT_CHECKED', s['NOT_CHECKED'], 'TARGET_JOBS', s['target_jobs_open'])
+              totals['companies'] += s['companies_total']
+              totals['verified'] += s['VERIFIED']
+              totals['failed'] += s['FAILED']
+              totals['not_checked'] += s['NOT_CHECKED']
+              if new.get('version') != '1.7':
+                  raise SystemExit(f'{batch}: output version is not 1.7')
+          print('TOTALS', totals)
+          print('REGRESSIONS', regressions)
+          if totals['companies'] != 182:
+              raise SystemExit(f"company total changed: {totals['companies']}")
+          if totals['failed'] != 0:
+              raise SystemExit(f"FAILED must be zero: {totals['failed']}")
+          if regressions:
+              raise SystemExit(f'Existing VERIFIED regressions: {regressions}')
+          if totals['verified'] < 78:
+              raise SystemExit(f"Expected at least 78 VERIFIED after MetLife promotion, got {totals['verified']}")
+          if totals['verified'] + totals['failed'] + totals['not_checked'] != 182:
+              raise SystemExit('coverage summary does not reconcile to 182')
+          PY
           git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add collector.py ats_mapping_jw1.json ats_mapping_jw2.json ats_mapping_jw3.json
-          git diff --cached --name-only
-          git diff --cached --quiet && { echo "No production changes"; exit 1; } || true
-          git commit -m "Job Watch v1.7 — add strict Avature collector"
-          git push origin HEAD:ats-avature-v17
+          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit."
+          else
+            git commit -m "Update Job Watch vacancy snapshots for Avature v1.7"
+            git push origin HEAD:ats-avature-v17
+          fi
