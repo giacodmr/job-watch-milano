@@ -17,56 +17,68 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Inspect dynamic search contracts
+      - name: Probe evidenced dynamic jobs service
         run: |
           python - <<'PY'
           import re, json, requests
-          from urllib.parse import urljoin, urlparse
+          from urllib.parse import urljoin, urlparse, urlencode, urlsplit, urlunsplit, parse_qsl
 
           sites = {
             'Terna':'https://jobs.terna.it/search/',
             'ENGIE':'https://jobs.engie.com/search/',
             'Pirelli':'https://jobs.pirelli.com/search/',
           }
-          headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'}
-          signal = re.compile(r'(?i)(?:apiEndpoint|searchQuery|graphql|jobsearch|searchjobs|jobssearch|jobresults|unified.{0,30}model|startrow|pageSize|pageNumber|totalCount|totalResults|numFound|requisition|jobCard|\/api\/|\/rest\/|odata|searchResult)')
-          urlish = re.compile(r'''(?i)(?:https?:)?//[^"'<>\s]+|/[A-Za-z0-9_.~!$&()*+,;=:@%/?#-]{3,}''')
+          base_headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'}
+
+          def add_legacy(url):
+            p=urlsplit(url)
+            q=dict(parse_qsl(p.query,keep_blank_values=True)); q['unified']='legacy'
+            return urlunsplit((p.scheme,p.netloc,p.path,urlencode(q),p.fragment))
+
+          def list_candidates(obj,path='$'):
+            out=[]
+            if isinstance(obj,dict):
+              for k,v in obj.items():
+                if isinstance(v,list) and v and all(isinstance(x,dict) for x in v):
+                  out.append((path+'.'+str(k),len(v),sorted(v[0].keys())))
+                out += list_candidates(v,path+'.'+str(k))
+            elif isinstance(obj,list):
+              for i,v in enumerate(obj[:3]): out += list_candidates(v,path+f'[{i}]')
+            return out
 
           for name,url in sites.items():
             print('\n===',name,'===')
-            r=requests.get(url,timeout=20,headers=headers)
+            s=requests.Session(); s.headers.update(base_headers)
+            page_url=add_legacy(url)
+            r=s.get(page_url,timeout=20)
             print('PAGE',r.status_code,r.url,'len',len(r.text))
-            text=r.text
-            inline=[]
-            for m in signal.finditer(text):
-              frag=re.sub(r'\s+',' ',text[max(0,m.start()-180):min(len(text),m.end()+260)])
-              if frag not in inline: inline.append(frag)
-            print('INLINE_SIGNALS',json.dumps(inline[:30],ensure_ascii=False))
+            r.raise_for_status(); text=r.text
+            assert "xweb/rmk-jobs-search" in text, 'no rmk-jobs-search widget evidence'
+            locale_m=re.search(r'var\s+appParams\s*=\s*\{.*?\blocale\s*:\s*["\']([^"\']+)',text,re.I|re.S)
+            assert locale_m, 'locale not found'; locale=locale_m.group(1)
             scripts=re.findall(r'<script\b[^>]*\bsrc=["\']([^"\']+)["\']',text,re.I)
-            print('SCRIPTS',json.dumps(scripts,ensure_ascii=False))
-            checked=0
-            for src in scripts:
-              absu=urljoin(r.url,src)
-              host=urlparse(absu).netloc.casefold()
-              if not (host==urlparse(r.url).netloc.casefold() or 'successfactors.com' in host or 'successfactors.eu' in host):
-                continue
-              try:
-                sr=requests.get(absu,timeout=15,headers=headers)
-                if sr.status_code>=400 or len(sr.text)>8_000_000: continue
-                checked+=1
-                hits=[]
-                for m in signal.finditer(sr.text):
-                  frag=re.sub(r'\s+',' ',sr.text[max(0,m.start()-160):min(len(sr.text),m.end()+320)])
-                  if frag not in hits: hits.append(frag)
-                  if len(hits)>=20: break
-                if hits:
-                  endpoints=[]
-                  for raw in urlish.findall(sr.text):
-                    if signal.search(raw) and raw not in endpoints:
-                      endpoints.append(raw)
-                    if len(endpoints)>=20: break
-                  print('ASSET',absu,'status',sr.status_code,'len',len(sr.text),'HITS',json.dumps(hits,ensure_ascii=False),'URLS',json.dumps(endpoints,ensure_ascii=False))
-              except Exception as e:
-                print('ASSET_ERROR',absu,type(e).__name__,str(e))
-            print('ASSETS_CHECKED',checked)
+            mgr=[urljoin(r.url,x.replace('&amp;','&')) for x in scripts if 'j2w.searchManager' in x]
+            assert len(mgr)==1, f'unexpected searchManager assets {mgr}'
+            js=s.get(mgr[0],timeout=20); js.raise_for_status()
+            endpoint_m=re.search(r'type\s*:\s*["\']POST["\']\s*,\s*url\s*:\s*["\']([^"\']+)["\']',js.text,re.I)
+            assert endpoint_m, 'public searchManager does not evidence POST endpoint'
+            endpoint=urljoin(r.url,endpoint_m.group(1))
+            assert urlparse(endpoint).netloc.casefold()==urlparse(r.url).netloc.casefold(), 'endpoint changed host'
+            for required in ('keywords','locale','location','pageNumber','sortBy'):
+              assert required in js.text, f'missing payload field evidence {required}'
+            print('CONTRACT',json.dumps({'locale':locale,'asset':mgr[0],'endpoint':endpoint},ensure_ascii=False))
+            totals=[]; pages=[]
+            for n in (0,1,2):
+              payload={'keywords':'','locale':locale,'location':'','pageNumber':n,'sortBy':'recent'}
+              pr=s.post(endpoint,json=payload,timeout=25,headers={'Referer':r.url,'Accept':'application/json, text/plain, */*'})
+              print('POST_STATUS',n,pr.status_code,pr.headers.get('content-type'),'len',len(pr.text))
+              pr.raise_for_status()
+              data=pr.json()
+              total=data.get('totalJobs') if isinstance(data,dict) else None
+              totals.append(total)
+              cands=list_candidates(data)
+              print('POST_SUMMARY',n,json.dumps({'top_keys':sorted(data.keys()) if isinstance(data,dict) else type(data).__name__,'totalJobs':total,'list_candidates':cands[:15]},ensure_ascii=False))
+              print('POST_SAMPLE',n,json.dumps(data,ensure_ascii=False,default=str)[:6000])
+              pages.append(data)
+            assert len(set(totals))==1 and isinstance(totals[0],int), f'unstable/noninteger totals {totals}'
           PY
