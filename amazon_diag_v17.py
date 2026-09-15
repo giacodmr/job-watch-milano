@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 import requests
 
 API = "https://www.amazon.jobs/en/search.json"
 TIMEOUT = 45
 PAGE = 100
-WORKERS = 10
+WORKERS = 4
+RETRIES = 4
 CHECK_FACETS = ["category", "schedule_type_id", "employee_class", "job_function_id", "normalized_country_code"]
 
 
@@ -16,9 +18,21 @@ def session():
 
 
 def get(s, params):
-    r = s.get(API, params=params, timeout=TIMEOUT)
-    r.raise_for_status()
-    return r.json()
+    last = None
+    for attempt in range(RETRIES):
+        try:
+            r = s.get(API, params=params, timeout=TIMEOUT)
+            r.raise_for_status()
+            ctype = (r.headers.get("content-type") or "").casefold()
+            if "json" not in ctype:
+                raise RuntimeError(f"non-json HTTP {r.status_code} content-type={ctype} bytes={len(r.content)}")
+            return r.json()
+        except (requests.RequestException, ValueError, RuntimeError) as exc:
+            last = exc
+            if attempt + 1 >= RETRIES:
+                break
+            time.sleep(1.0 * (attempt + 1))
+    raise RuntimeError(f"Amazon request remained unavailable after retries: {last}")
 
 
 def flat(data, name):
