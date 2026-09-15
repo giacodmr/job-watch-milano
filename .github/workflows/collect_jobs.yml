@@ -44,30 +44,22 @@ jobs:
 
           path = Path("collector.py")
           text = path.read_text(encoding="utf-8")
-          old = '''_collect_workday_v13 = collect_workday
-          def collect_workday(company):
-              last_error = None
-              for _attempt in range(2):
-                  try:
-                      return _collect_workday_v13(company)
-                  except CollectorError as e:
-                      message = str(e).casefold()
-                      if "pagination safety limit" in message:
-                          raise NotCheckable(f"Workday inventory exceeds safe exhaustive-page limit: {e}") from e
-                      if "paging stopped early" not in message and "count mismatch" not in message:
-                          raise
-                      last_error = e
-              raise NotCheckable(f"Workday inventory changed during enumeration after retry: {last_error}")
-          '''
-          new = '''_collect_workday_v13 = collect_workday
+          start_marker = "_collect_workday_v13 = collect_workday"
+          end_marker = "_collect_smartrecruiters_v13 = collect_smartrecruiters"
+          start = text.find(start_marker)
+          end = text.find(end_marker, start + len(start_marker)) if start >= 0 else -1
+          if start < 0 or end < 0:
+              raise SystemExit("Workday v1.4 block delimiters not found")
+          replacement = '''_collect_workday_v13 = collect_workday
+
           def collect_workday(company):
               last_error = None
               for _attempt in range(2):
                   try:
                       return _collect_workday_v13(company)
                   except requests.exceptions.JSONDecodeError as e:
-                      # Workday occasionally serves a transient HTML/empty response with HTTP 200.
-                      # Retry the whole inventory so completeness is still proven from one coherent walk.
+                      # Workday can transiently return HTML/empty content with HTTP 200.
+                      # Retry the whole inventory so VERIFIED still represents one coherent walk.
                       last_error = e
                       continue
                   except CollectorError as e:
@@ -80,10 +72,10 @@ jobs:
               if isinstance(last_error, requests.exceptions.JSONDecodeError):
                   raise NotCheckable(f"Workday returned non-JSON inventory data after retry: {last_error}")
               raise NotCheckable(f"Workday inventory changed during enumeration after retry: {last_error}")
+
+
           '''
-          if old not in text:
-              raise SystemExit("Expected Workday v1.4 block not found")
-          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          path.write_text(text[:start] + replacement + text[end:], encoding="utf-8")
           PY
 
       - name: Syntax check standalone collector
