@@ -1,4 +1,4 @@
-name: Probe Imperial Brands inventory
+name: Probe Imperial Clinch cards
 on:
   push:
     branches: [ats-fullpossible-v17]
@@ -8,89 +8,35 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
-      - name: Probe Imperial Brands pages and Clinch markers
+      - name: Inspect job card metadata
         shell: python
         run: |
-          import html, json, re, urllib.request
-          from urllib.parse import urljoin, urlparse, parse_qs
-
-          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,application/xhtml+xml,*/*'}
-          def get(url):
-              req=urllib.request.Request(url,headers=H)
-              with urllib.request.urlopen(req,timeout=30) as r:
-                  body=r.read().decode('utf-8','replace')
-                  print('GET',url,'->',r.status,'final=',r.geturl(),'bytes=',len(body))
-                  return body,r.geturl()
-
-          base='https://jobs.impbrands.com/jobs/search'
-          body,final=get(base)
-          decoded=html.unescape(body).replace('\\/','/')
-          plain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',decoded))
+          import html, re, urllib.request
+          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,*/*'}
+          u='https://jobs.impbrands.com/jobs/search'
+          with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r:
+              body=html.unescape(r.read().decode('utf-8','replace'))
+          needles=[
+            'brand-ambassador-promoter-emilia-romagna-marche-contratto-a-tempo-determinato',
+            'business-planning-commercial-insights-senior-analyst-contratto-a-tempo-determinato',
+            'crm-business-intelligence-coordinator-rome-italy',
+          ]
+          for needle in needles:
+              p=body.lower().find(needle.lower())
+              print('\nNEEDLE',needle,'POS',p)
+              if p>=0:
+                  print(body[max(0,p-2500):p+3500])
+          print('\n--- requisition ids / location-ish attributes ---')
           for pat in (
-              r'Displaying\s+(\d+)\s*[-–]\s*(\d+)\s+of\s+(\d+)\s+in total',
-              r'Displaying\s+all\s+(\d+)\s+entries',
-              r'(\d+)\s+jobs?\s+found',
+              r'data-[^=\s]+=["\'][^"\']+["\']',
+              r'\b[A-Z]{2}\d{5}\b',
+              r'Rome, Italy',
+              r'Milan[^<]{0,80}Italy',
           ):
-              print('COUNT_PATTERN',pat,re.findall(pat,plain,re.I)[:10])
-
-          pagers=[]
-          for href,label in re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>',decoded,re.I|re.S):
-              lab=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',label)).strip()
-              u=urljoin(final,href)
-              if 'page=' in u.lower() or lab.casefold() in {'next','previous','1','2','3','4','5'}:
-                  if (lab,u) not in pagers: pagers.append((lab,u))
-          print('PAGERS',pagers[:50])
-
-          for needle in ('clinchtalent','clinch','api/','graphql','jobs/search','jobsearch','searchjobs','totalCount','total_count'):
-              low=decoded.lower(); pos=low.find(needle.lower())
-              if pos>=0: print('SNIP',needle,repr(decoded[max(0,pos-500):pos+1800]))
-          urls=[]
-          for u in re.findall(r'https?://[^"\'<> ]+',decoded):
-              if any(k in u.lower() for k in ('clinch','api','jobs')) and u not in urls: urls.append(u)
-          print('RELATED_URLS',urls[:100])
-
-          # Determine actual job-detail URL shape from page 1.
-          samehost=urlparse(final).netloc.casefold()
-          joblinks=[]
-          for href in re.findall(r'href=["\']([^"\']+)["\']',decoded,re.I):
-              u=urljoin(final,href); p=urlparse(u)
-              if p.netloc.casefold()!=samehost: continue
-              if p.path.startswith('/jobs/') and p.path.rstrip('/')!='/jobs/search':
-                  if u not in joblinks: joblinks.append(u)
-          print('PAGE1_JOBLINKS',len(joblinks),joblinks[:5],joblinks[-5:])
-          for u in joblinks[:2]:
-              detail,_=get(u); dplain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',html.unescape(detail)))
-              for label in ('Location','Job ID','Requisition','Contract','Job Family'):
-                  p=dplain.casefold().find(label.casefold())
-                  if p>=0: print('DETAIL_SNIP',label,repr(dplain[max(0,p-160):p+500]))
-
-          # Exhaust numbered pages using pager-discovered URL form if available, else ?page=N.
-          all_links=[]; expected=None
-          for page in range(1,10):
-              u=base if page==1 else base+f'?page={page}'
-              pagebody,pagefinal=get(u)
-              pagehtml=html.unescape(pagebody)
-              pageplain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',pagehtml))
-              m=re.search(r'Displaying\s+(\d+)\s*[-–]\s*(\d+)\s+of\s+(\d+)\s+in total',pageplain,re.I)
-              if m:
-                  lo,hi,total=map(int,m.groups())
-                  if expected is None: expected=total
-                  print('PAGE_RANGE',page,lo,hi,total)
-              else:
-                  m=re.search(r'Displaying\s+all\s+(\d+)\s+entries',pageplain,re.I)
-                  if m:
-                      total=int(m.group(1)); expected=expected or total; print('PAGE_ALL',page,total)
-              links=[]
-              for href in re.findall(r'href=["\']([^"\']+)["\']',pagehtml,re.I):
-                  x=urljoin(pagefinal,href); p=urlparse(x)
-                  if p.netloc.casefold()==urlparse(pagefinal).netloc.casefold() and p.path.startswith('/jobs/') and p.path.rstrip('/')!='/jobs/search':
-                      if x not in links: links.append(x)
-              print('PAGE_JOBS',page,len(links),'FIRST',links[:2],'LAST',links[-2:])
-              if not links: break
-              all_links.extend(links)
-              if expected is not None and len(set(all_links))>=expected: break
-          print('RECONCILE','expected=',expected,'seen=',len(all_links),'unique=',len(set(all_links)),'duplicates=',len(all_links)-len(set(all_links)))
-          if expected is None or len(set(all_links))!=expected:
-              raise SystemExit('Imperial inventory did not reconcile exactly')
+              vals=[]
+              for m in re.finditer(pat,body,re.I):
+                  v=m.group(0)
+                  if v not in vals: vals.append(v)
+              print('PATTERN',pat,'COUNT',len(vals),'SAMPLE',vals[:40])
