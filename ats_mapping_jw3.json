@@ -469,10 +469,10 @@
       "company": "Axpo",
       "batch": "JW3",
       "ats": {
-        "family": "custom career platform",
-        "tenant": "careers.axpo.com",
+        "family": "Teamtailor aggregate public board",
+        "tenant": "Axpo Group / multi-board",
         "career_site": "https://www.axpo.com/it/it/carriere.html",
-        "inventory_url": "https://careers.axpo.com/it/jobs",
+        "inventory_url": "https://careers.axpo.com/jobs",
         "public_api_or_feed": null
       },
       "verification": {
@@ -485,16 +485,16 @@
           "Rome",
           "London"
         ],
-        "pagination": "filterable inventory / client-side pages",
+        "pagination": "20 per page / numbered pages",
         "total_count_available": true,
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use careers.axpo.com/jobs; filter Country=Italy then location, and capture the displayed result count plus all returned jobs.",
+        "primary": "Enumerate the official Axpo Teamtailor aggregate board across every numbered page and reconcile host-qualified stable job IDs to the exact public total.",
         "fallback": "Fallback to company/country query parameters on the same portal."
       },
       "limitations": [
-        "Underlying vendor not confirmed, but official inventory exposes counts and filters."
+        "Axpo aggregates several subsidiary Teamtailor boards; complete enumeration must retain cross-domain job links and reconcile them to the aggregate public total."
       ],
       "last_mapped": "2026-09-14"
     },
@@ -1153,11 +1153,11 @@
       "company": "Nadara",
       "batch": "JW3",
       "ats": {
-        "family": "embedded first-party jobs inventory (vendor unconfirmed)",
-        "tenant": "unknown",
+        "family": "Workday",
+        "tenant": "nadara / wd3",
         "career_site": "https://nadara.com/work-with-us",
-        "inventory_url": "https://nadara.com/work-with-us",
-        "public_api_or_feed": null
+        "inventory_url": "https://nadara.wd3.myworkdayjobs.com/External",
+        "public_api_or_feed": "https://nadara.wd3.myworkdayjobs.com/wday/cxs/nadara/External/jobs"
       },
       "verification": {
         "level": "FULL",
@@ -1168,16 +1168,16 @@
           "Milan",
           "London"
         ],
-        "pagination": "20 initially / View more",
+        "pagination": "Workday CXS offset pagination",
         "total_count_available": true,
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use Nadara's official Available roles list, repeatedly 'View more jobs' until the displayed total is exhausted; then filter by location.",
+        "primary": "Enumerate the official Nadara Workday External site through the public CXS endpoint and reconcile every requisition to total.",
         "fallback": "Fallback to direct Nadara role detail pages."
       },
       "limitations": [
-        "Vendor not identified, but official page exposes total roles and deterministic load-more behavior."
+        "Nadara official careers page links directly to the Workday External inventory; same-run public careers count and Workday CXS total reconciled exactly."
       ],
       "last_mapped": "2026-09-14"
     },

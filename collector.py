@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, unquote, urljoin, urlparse
+from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -1293,9 +1293,10 @@ def collect_smartrecruiters(company):
 
 
 class TeamtailorPageParser(HTMLParser):
-    def __init__(self, base_url: str):
+    def __init__(self, base_url: str, allow_external_jobs: bool = False):
         super().__init__(convert_charrefs=True)
         self.base_url = base_url
+        self.allow_external_jobs = allow_external_jobs
         self.visible_parts = []
         self.jobs = []
         self.current = None
@@ -1322,13 +1323,16 @@ class TeamtailorPageParser(HTMLParser):
             return
         absolute = urljoin(self.base_url, href)
         p = urlparse(absolute)
-        if p.netloc.casefold() != urlparse(self.base_url).netloc.casefold():
+        base_host = urlparse(self.base_url).netloc.casefold()
+        job_host = p.netloc.casefold()
+        if not self.allow_external_jobs and job_host != base_host:
             return
         m = TT_JOB_PATH_RE.search(unquote(p.path))
         if not m:
             return
         self._finish_current()
-        self.current = {"source_id": m.group(1), "url": absolute, "title_parts": [], "context_parts": []}
+        source_id = m.group(1) if job_host == base_host else f"{job_host}:{m.group(1)}"
+        self.current = {"source_id": source_id, "url": absolute, "title_parts": [], "context_parts": []}
         self.in_job_anchor = True
 
     def handle_endtag(self, tag):
@@ -1336,14 +1340,14 @@ class TeamtailorPageParser(HTMLParser):
             self.in_job_anchor = False
 
     def handle_data(self, data):
-        s = clean_text(data)
-        if not s:
+        value = clean_text(data)
+        if not value:
             return
-        self.visible_parts.append(s)
+        self.visible_parts.append(value)
         if self.current is not None:
-            self.current["context_parts"].append(s)
+            self.current["context_parts"].append(value)
             if self.in_job_anchor:
-                self.current["title_parts"].append(s)
+                self.current["title_parts"].append(value)
 
     def close(self):
         super().close()
@@ -1369,29 +1373,55 @@ def teamtailor_location(parts):
     return min(candidates, key=len) if candidates else None
 
 
+def teamtailor_page_url(url: str, page: int):
+    parsed = urlparse(url)
+    query = parse_qs(parsed.query, keep_blank_values=True)
+    query["page"] = [str(page)]
+    return parsed._replace(query=urlencode(query, doseq=True)).geturl()
+
+
 def collect_teamtailor(company):
     name = company.get("company")
     ats = company.get("ats") or {}
+    family = (clean_text(ats.get("family")) or "").casefold()
     inventory = clean_text(ats.get("inventory_url"))
     if not inventory:
         raise CollectorError("Teamtailor inventory URL missing")
-    try:
-        page_html, final_url = get_html(inventory)
-    except Exception as e:
-        raise NotCheckable(f"Teamtailor public board could not be read safely: {e}") from e
-    parser = TeamtailorPageParser(final_url)
-    parser.feed(page_html)
-    parser.close()
-    expected = teamtailor_total(parser.visible_text)
-    if expected is None:
-        raise NotCheckable("Teamtailor board does not expose one reconcilable public job total")
+    allow_external_jobs = "aggregate" in family
     unique = {}
-    for raw in parser.jobs:
-        sid = clean_text(raw.get("source_id"))
-        url = clean_text(raw.get("url"))
-        title = clean_text(raw.get("title"))
-        if sid and url and title:
-            unique[sid] = raw
+    expected = None
+    first_final_url = None
+    for page in range(1, MAX_PAGES + 1):
+        page_url = inventory if page == 1 else teamtailor_page_url(inventory, page)
+        try:
+            page_html, final_url = get_html(page_url)
+        except Exception as e:
+            raise NotCheckable(f"Teamtailor public board could not be read safely: {e}") from e
+        if first_final_url is None:
+            first_final_url = final_url
+        parser = TeamtailorPageParser(final_url, allow_external_jobs=allow_external_jobs)
+        parser.feed(page_html)
+        parser.close()
+        page_total = teamtailor_total(parser.visible_text)
+        if page == 1:
+            expected = page_total
+            if expected is None:
+                raise NotCheckable("Teamtailor board does not expose one reconcilable public job total")
+        elif page_total != expected:
+            raise NotCheckable(f"Teamtailor public total changed during pagination: expected={expected}, page_total={page_total}")
+        before = len(unique)
+        for raw in parser.jobs:
+            sid = clean_text(raw.get("source_id"))
+            url = clean_text(raw.get("url"))
+            title = clean_text(raw.get("title"))
+            if sid and url and title:
+                unique[sid] = raw
+        if len(unique) > expected:
+            raise NotCheckable(f"Teamtailor board exceeded public total: retrieved={len(unique)}, total={expected}")
+        if len(unique) == expected:
+            break
+        if len(unique) == before:
+            raise NotCheckable(f"Teamtailor paging stopped before public total: retrieved={len(unique)}, total={expected}, page={page}")
     if len(unique) != expected:
         raise NotCheckable(f"Teamtailor board count mismatch: retrieved={len(unique)}, total={expected}")
     jobs = []
@@ -1400,7 +1430,7 @@ def collect_teamtailor(company):
         if not location_matches(loc):
             continue
         jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
-    return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": final_url}
+    return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": first_final_url or inventory}
 
 
 def oracle_family(company):
