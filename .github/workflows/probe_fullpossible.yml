@@ -1,341 +1,63 @@
-name: Apply Imperial Clinch collector
+name: Probe Imperial stable ID coverage
 on:
   push:
     branches: [ats-fullpossible-v17]
     paths: [.github/workflows/probe_fullpossible.yml]
 permissions:
-  contents: write
+  contents: read
 jobs:
-  apply:
+  probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ats-fullpossible-v17
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check requests
-      - name: Patch Clinch collector and Imperial mapping
+      - name: Reconcile all Clinch stable identifiers
         shell: python
         run: |
-          from pathlib import Path
-          import json, textwrap
-
-          p=Path('collector.py')
-          s=p.read_text()
-          anchor='_choose_v15 = choose\ndef choose(company):\n'
-          if anchor not in s:
-              raise SystemExit('Yello choose anchor missing')
-          clinch=textwrap.dedent(r'''
-              CLINCH_SCOPE_NAME = "clinch_counted_public_inventory"
-              CLINCH_RANGE_RE = re.compile(
-                  r"\bDisplaying\s+([\d,]+)\s*[-–]\s*([\d,]+)\s+of\s+([\d,]+)\s+in\s+total\b",
-                  re.I,
-              )
-              CLINCH_ALL_RE = re.compile(r"\bDisplaying\s+all\s+([\d,]+)\s+entries\b", re.I)
-
-
-              def clinch_family(company) -> bool:
-                  family = (clean_text((company.get("ats") or {}).get("family")) or "").casefold()
-                  return "clinch" in family
-
-
-              def _clinch_int(value):
-                  return int(str(value).replace(",", ""))
-
-
-              def _clinch_count_range(page_html: str):
-                  text = html_to_text(page_html) or ""
-                  ranged = CLINCH_RANGE_RE.findall(text)
-                  all_rows = CLINCH_ALL_RE.findall(text)
-                  if len(ranged) == 1 and not all_rows:
-                      lo, hi, total = (_clinch_int(x) for x in ranged[0])
-                  elif len(all_rows) == 1 and not ranged:
-                      total = _clinch_int(all_rows[0])
-                      lo, hi = (1, total) if total else (0, 0)
-                  else:
-                      raise NotCheckable("Clinch board does not expose one strict public result range/total")
-                  if total < 0 or lo < 0 or hi < lo or hi > total:
-                      raise NotCheckable(f"Clinch board exposes an invalid result range: {lo}-{hi} of {total}")
-                  return lo, hi, total
-
-
-              def _clinch_field(row_html: str, class_name: str):
-                  m = re.search(
-                      rf'<td[^>]*class=["\'][^"\']*\b{re.escape(class_name)}\b[^"\']*["\'][^>]*>(.*?)</td>',
-                      row_html,
-                      re.I | re.S,
-                  )
-                  return html_to_text(m.group(1)) if m else None
-
-
-              def _clinch_rows(page_html: str, base_url: str):
-                  rows = []
-                  base_host = urlparse(base_url).netloc.casefold()
-                  for attrs, body in re.findall(r"<tr\b([^>]*)>(.*?)</tr>", page_html, re.I | re.S):
-                      if not re.search(r"\brole=[\"\']link[\"\']", attrs, re.I):
-                          continue
-                      um = re.search(r"\bdata-job-url=[\"\']([^\"\']+)[\"\']", attrs, re.I)
-                      if not um:
-                          raise NotCheckable("Clinch result row lacks data-job-url")
-                      url = urljoin(base_url, html.unescape(um.group(1)))
-                      parsed = urlparse(url)
-                      if parsed.netloc.casefold() != base_host or not parsed.path.casefold().startswith("/jobs/") or parsed.path.casefold().rstrip("/") == "/jobs/search":
-                          raise NotCheckable("Clinch result row points outside the evidenced job inventory")
-                      tm = re.search(
-                          r'<td[^>]*class=["\'][^"\']*\bjob-search-results-title\b[^"\']*["\'][^>]*>.*?<a[^>]*>(.*?)</a>',
-                          body,
-                          re.I | re.S,
-                      )
-                      title = html_to_text(tm.group(1)) if tm else None
-                      locations = []
-                      for value in re.findall(r'<li[^>]*aria-label=["\']Location:\s*([^"\']+)["\'][^>]*>', body, re.I | re.S):
-                          loc = clean_text(html.unescape(value))
-                          if loc and loc not in locations:
-                              locations.append(loc)
-                      if not title or not locations:
-                          raise NotCheckable("Clinch result row lacks structured title/location metadata")
-                      rows.append(
-                          {
-                              "url": url,
-                              "title": title,
-                              "locations": locations,
-                              "location": " | ".join(locations),
-                              "employment_type": _clinch_field(body, "job-search-results-dropdown_field_1"),
-                              "department": _clinch_field(body, "job-search-results-dropdown_field_3"),
-                          }
-                      )
-                  return rows
-
-
-              def _clinch_page_url(url: str, page: int):
-                  parsed = urlparse(url)
-                  query = parse_qs(parsed.query, keep_blank_values=True)
-                  query["page"] = [str(page)]
-                  return parsed._replace(query=urlencode(query, doseq=True)).geturl()
-
-
-              def _clinch_component_values(page_html: str, component_class: str):
-                  values = []
-                  pattern = rf'<li[^>]*class=["\'][^"\']*\b{re.escape(component_class)}\b[^"\']*["\'][^>]*>(.*?)</li>'
-                  for block in re.findall(pattern, page_html, re.I | re.S):
-                      m = re.search(r"<span[^>]*>(.*?)</span>", block, re.I | re.S)
-                      value = html_to_text(m.group(1)) if m else html_to_text(block)
-                      if value and value not in values:
-                          values.append(value)
-                  return values
-
-
-              def _clinch_detail(row: dict):
-                  try:
-                      detail_html, final_url = get_html(row["url"])
-                  except Exception as e:
-                      raise NotCheckable(f"Clinch job detail could not be read safely: {e}") from e
-                  if urlparse(final_url).netloc.casefold() != urlparse(row["url"]).netloc.casefold():
-                      raise NotCheckable("Clinch job detail redirected outside the evidenced board")
-                  req_ids = _clinch_component_values(detail_html, "job-component-requisition-identifier")
-                  if len(req_ids) != 1 or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{2,79}", req_ids[0]):
-                      raise NotCheckable(f"Clinch detail does not expose one stable requisition ID: {row['url']}")
-                  detail_locations = _clinch_component_values(detail_html, "job-component-location")
-                  expected_locations = {x.casefold() for x in row.get("locations") or []}
-                  actual_locations = {x.casefold() for x in detail_locations}
-                  if not expected_locations or actual_locations != expected_locations:
-                      raise NotCheckable(f"Clinch listing/detail location metadata mismatch for requisition {req_ids[0]}")
-                  out = dict(row)
-                  out["source_id"] = req_ids[0]
-                  out["url"] = final_url
-                  return out
-
-
-              def _collect_clinch_once(company):
-                  name = company.get("company")
-                  ats = company.get("ats") or {}
-                  inventory = clean_text(ats.get("inventory_url"))
-                  if not inventory:
-                      raise NotCheckable("Clinch inventory URL missing")
-
-                  expected = None
-                  source_url = None
-                  inventory_rows = {}
-                  first_page_urls = None
-                  for page in range(1, MAX_PAGES + 1):
-                      page_url = inventory if page == 1 else _clinch_page_url(inventory, page)
-                      try:
-                          page_html, final_url = get_html(page_url)
-                      except Exception as e:
-                          raise NotCheckable(f"Clinch public inventory could not be read safely: {e}") from e
-                      if source_url is None:
-                          source_url = final_url
-                      lo, hi, total = _clinch_count_range(page_html)
-                      if expected is None:
-                          expected = total
-                      elif total != expected:
-                          raise NotCheckable(f"Clinch public total changed during pagination: {expected}->{total}")
-                      rows = _clinch_rows(page_html, final_url)
-                      if len(rows) != hi - lo + 1:
-                          raise NotCheckable(f"Clinch page range/card mismatch: range={lo}-{hi}, cards={len(rows)}")
-                      if lo != len(inventory_rows) + 1:
-                          raise NotCheckable(f"Clinch pagination is not contiguous: next={lo}, retrieved={len(inventory_rows)}")
-                      page_urls = [row["url"] for row in rows]
-                      if len(set(page_urls)) != len(page_urls):
-                          raise NotCheckable("Clinch page contains duplicate job URLs")
-                      if page == 1:
-                          first_page_urls = set(page_urls)
-                      for row in rows:
-                          if row["url"] in inventory_rows:
-                              raise NotCheckable(f"Clinch pagination repeated job URL: {row['url']}")
-                          inventory_rows[row["url"]] = row
-                      if len(inventory_rows) == expected:
-                          if hi != expected:
-                              raise NotCheckable("Clinch inventory count reached total before final public range")
-                          break
-                      if hi >= expected or not rows:
-                          raise NotCheckable(f"Clinch inventory stopped before total: retrieved={len(inventory_rows)}, total={expected}")
-                  else:
-                      raise NotCheckable("Clinch inventory exceeds safe exhaustive-page limit")
-
-                  if expected is None or len(inventory_rows) != expected:
-                      raise NotCheckable(f"Clinch reconciliation mismatch: retrieved={len(inventory_rows)}, total={expected}")
-
-                  detailed = {}
-                  for row in inventory_rows.values():
-                      item = _clinch_detail(row)
-                      sid = item["source_id"]
-                      if sid in detailed:
-                          raise NotCheckable(f"Clinch inventory repeated stable requisition ID {sid}")
-                      detailed[sid] = item
-                  if len(detailed) != expected:
-                      raise NotCheckable(f"Clinch stable-ID reconciliation mismatch: ids={len(detailed)}, total={expected}")
-
-                  # Re-read the first page after detail enumeration to reject live board changes.
-                  final_html, final_url = get_html(source_url)
-                  final_lo, final_hi, final_total = _clinch_count_range(final_html)
-                  final_rows = _clinch_rows(final_html, final_url)
-                  if final_total != expected or final_lo != 1 or set(x["url"] for x in final_rows) != first_page_urls:
-                      raise NotCheckable("Clinch board changed during enumeration")
-
-                  jobs = []
-                  for row in detailed.values():
-                      if not location_matches(row.get("location")):
-                          continue
-                      jobs.append(
-                          compact_job(
-                              name,
-                              row["source_id"],
-                              title=row.get("title"),
-                              location=row.get("location"),
-                              department=row.get("department"),
-                              employment_type=row.get("employment_type"),
-                              canonical=row.get("url"),
-                              apply_url=row.get("url"),
-                          )
-                      )
-                  return {
-                      "coverage": "VERIFIED",
-                      "collector": "clinch_counted_public_inventory_v17",
-                      "inventory_count": expected,
-                      "jobs": jobs,
-                      "source_url": source_url,
-                  }
-
-
-              def collect_clinch(company):
-                  last_error = None
-                  for attempt in range(2):
-                      try:
-                          return _collect_clinch_once(company)
-                      except NotCheckable as e:
-                          last_error = e
-                          retryable = any(
-                              token in str(e).casefold()
-                              for token in (
-                                  "changed during enumeration",
-                                  "total changed during pagination",
-                                  "pagination repeated",
-                              )
-                          )
-                          if not retryable or attempt:
-                              raise
-                  raise NotCheckable(f"Clinch inventory remained unstable after retry: {last_error}")
-
-
-          ''').lstrip()
-          s=s.replace(anchor,clinch+anchor,1)
-          old='''_choose_v15 = choose
-          def choose(company):
-              if yello_family(company):
-                  return collect_yello
-              return _choose_v15(company)
-          '''.replace('          ','')
-          new='''_choose_v15 = choose
-          def choose(company):
-              if yello_family(company):
-                  return collect_yello
-              if clinch_family(company):
-                  return collect_clinch
-              return _choose_v15(company)
-          '''.replace('          ','')
-          if old not in s: raise SystemExit('choose block missing')
-          s=s.replace(old,new,1)
-          s=s.replace('payload["version"] = "1.6"','payload["version"] = "1.7"',1)
-          old_scope='''    if YELLO_SCOPE_NAME not in scope:
-                  scope.append(YELLO_SCOPE_NAME)
-              payload["collector_scope"] = scope
-          '''.replace('          ','')
-          new_scope='''    if YELLO_SCOPE_NAME not in scope:
-                  scope.append(YELLO_SCOPE_NAME)
-              if CLINCH_SCOPE_NAME not in scope:
-                  scope.append(CLINCH_SCOPE_NAME)
-              payload["collector_scope"] = scope
-          '''.replace('          ','')
-          if old_scope not in s: raise SystemExit('scope block missing')
-          s=s.replace(old_scope,new_scope,1)
-          p.write_text(s)
-
-          mp=Path('ats_mapping_jw4.json')
-          data=json.loads(mp.read_text())
-          found=False
-          for c in data['companies']:
-              if c['company']!='Imperial Brands': continue
-              found=True
-              c['ats'].update({
-                  'family':'Clinch Talent counted public board',
-                  'tenant':'Imperial Brands',
-                  'inventory_url':'https://jobs.impbrands.com/jobs/search',
-                  'public_api_or_feed':None,
-              })
-              c['verification'].update({
-                  'pagination':'30 results per page; deterministic ?page=N pages',
-                  'total_count_available':True,
-                  'full_inventory_possible':True,
-              })
-              c['job_watch_method']['primary']='Enumerate every page of the official Clinch Talent inventory, reconcile every card and stable requisition ID to the exact public total, and use the structured listing/detail location metadata for target filtering.'
-              c['limitations']=['No separate public JSON API/feed is required: the official Clinch board exposes an exact total, contiguous numbered pages, structured location metadata, canonical job URLs, and stable requisition identifiers on detail pages.']
-          if not found: raise SystemExit('Imperial Brands mapping missing')
-          mp.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
-      - name: Validate Imperial collector
-        shell: python
-        run: |
-          import json,os,sys,py_compile
-          sys.path.insert(0,os.getcwd())
-          py_compile.compile('collector.py',doraise=True)
-          import collector
-          m=json.load(open('ats_mapping_jw4.json'))
-          c=next(x for x in m['companies'] if x['company']=='Imperial Brands')
-          r=collector.collect_clinch(c)
-          print('IMPERIAL_RESULT',json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False))
-          print('IMPERIAL_TARGET_JOBS',len(r.get('jobs') or []))
-          print('IMPERIAL_JOBS',json.dumps(r.get('jobs') or [],ensure_ascii=False))
-          if r.get('coverage')!='VERIFIED' or r.get('inventory_count')<=0:
-              raise SystemExit('Imperial not verified')
-      - name: Commit validated production changes
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add collector.py ats_mapping_jw4.json
-          git diff --cached --check
-          git commit -m 'Job Watch v1.7: verify Imperial Brands Clinch inventory'
-          git push origin HEAD:ats-fullpossible-v17
+          import html,re,urllib.request
+          from urllib.parse import urljoin,urlparse
+          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0','Accept':'text/html,*/*'}
+          UUID_RE=re.compile(r'([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$',re.I)
+          def get(u):
+              with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r:
+                  return html.unescape(r.read().decode('utf-8','replace')),r.geturl()
+          def component(body,cls):
+              vals=[]
+              pat=rf'<li[^>]*class=["\'][^"\']*\b{re.escape(cls)}\b[^"\']*["\'][^>]*>(.*?)</li>'
+              for block in re.findall(pat,body,re.I|re.S):
+                  m=re.search(r'<span[^>]*>(.*?)</span>',block,re.I|re.S)
+                  text=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',m.group(1) if m else block)).strip()
+                  if text and text not in vals: vals.append(text)
+              return vals
+          base='https://jobs.impbrands.com/jobs/search'; rows=[]; expected=None
+          for page in range(1,10):
+              body,final=get(base if page==1 else base+f'?page={page}')
+              plain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',body))
+              m=re.search(r'Displaying\s+(\d+)\s*[-–]\s*(\d+)\s+of\s+(\d+)\s+in total',plain,re.I)
+              if not m: raise SystemExit('count missing')
+              lo,hi,total=map(int,m.groups()); expected=expected or total
+              if total!=expected or lo!=len(rows)+1: raise SystemExit('paging changed')
+              page_rows=[]
+              for attrs,row in re.findall(r'<tr\b([^>]*)>(.*?)</tr>',body,re.I|re.S):
+                  if not re.search(r'\brole=["\']link["\']',attrs,re.I): continue
+                  um=re.search(r'\bdata-job-url=["\']([^"\']+)',attrs,re.I)
+                  if not um: raise SystemExit('missing URL')
+                  page_rows.append(urljoin(final,html.unescape(um.group(1))))
+              if len(page_rows)!=hi-lo+1: raise SystemExit('card/range mismatch')
+              rows+=page_rows
+              if len(rows)==expected: break
+          if len(rows)!=expected or len(set(rows))!=expected: raise SystemExit('inventory mismatch')
+          ids={}; sources={'requisition':0,'uuid':0}; missing=[]
+          for u in rows:
+              body,final=get(u)
+              req=component(body,'job-component-requisition-identifier')
+              uuid=UUID_RE.search(urlparse(final).path.rstrip('/'))
+              if len(req)==1:
+                  sid='req:'+req[0]; source='requisition'
+              elif not req and uuid:
+                  sid='uuid:'+uuid.group(1).lower(); source='uuid'
+              else:
+                  missing.append((u,req,uuid.group(1) if uuid else None)); continue
+              if sid in ids: raise SystemExit(f'duplicate stable ID {sid}')
+              ids[sid]=u; sources[source]+=1
+          print('IMPERIAL_STABLE_ID_COVERAGE','total=',expected,'ids=',len(ids),'sources=',sources,'missing=',missing)
+          if missing or len(ids)!=expected: raise SystemExit('stable ID coverage incomplete')
