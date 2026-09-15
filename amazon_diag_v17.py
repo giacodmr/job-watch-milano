@@ -6,8 +6,9 @@ import requests
 API = "https://www.amazon.jobs/en/search.json"
 TIMEOUT = 45
 PAGE = 100
-WORKERS = 4
+WORKERS = 7
 RETRIES = 4
+SNAPSHOT_ATTEMPTS = 3
 CHECK_FACETS = ["category", "schedule_type_id", "employee_class", "job_function_id", "normalized_country_code"]
 
 
@@ -31,7 +32,7 @@ def get(s, params):
             last = exc
             if attempt + 1 >= RETRIES:
                 break
-            time.sleep(1.0 * (attempt + 1))
+            time.sleep(0.75 * (attempt + 1))
     raise RuntimeError(f"Amazon request remained unavailable after retries: {last}")
 
 
@@ -54,10 +55,10 @@ def snapshot():
     sums={f:sum(v.values()) for f,v in facets.items()}
     print("SNAPSHOT", {"hits":d.get("hits"),"sums":sums,"category_values":len(facets["category"]),"category_max":max(facets["category"].values())})
     if len(set(sums.values())) != 1:
-        raise SystemExit(f"independent facet sums disagree: {sums}")
+        raise RuntimeError(f"independent facet sums disagree: {sums}")
     total=next(iter(sums.values()))
     if total <= 10000:
-        raise SystemExit(f"expected uncapped facet total >10000, got {total}")
+        raise RuntimeError(f"expected uncapped facet total >10000, got {total}")
     return total, facets
 
 
@@ -81,41 +82,63 @@ def collect_category(name, expected):
         offset += len(rows)
     if len(seen) != expected:
         raise RuntimeError(f"{name}: reconciled {len(seen)} != {expected}")
-    print("CATEGORY_OK", name, expected)
     return name, seen
 
 
-def main():
+def enumerate_once(attempt):
     total, facets = snapshot()
     categories=facets["category"]
     if any(v >= 10000 for v in categories.values()):
-        raise SystemExit("category partition contains capped bucket")
+        raise RuntimeError("category partition contains capped bucket")
+    print("ATTEMPT_START", attempt, {"total": total, "categories": len(categories)})
 
-    results={}; union={}; memberships={}
+    results={}; union={}; memberships={}; errors=[]
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
         futures={ex.submit(collect_category,name,count):(name,count) for name,count in categories.items()}
         for fut in as_completed(futures):
             name,count=futures[fut]
-            _name,rows=fut.result(); results[name]=len(rows)
+            try:
+                _name,rows=fut.result()
+            except Exception as exc:
+                errors.append(f"{name}: {exc}")
+                continue
+            results[name]=len(rows)
+            print("CATEGORY_OK", name, len(rows))
             for jid,job in rows.items():
                 memberships.setdefault(jid,[]).append(name)
                 union.setdefault(jid,job)
+    if errors:
+        raise RuntimeError("; ".join(errors[:5]))
 
     summed=sum(results.values())
     overlaps={jid:names for jid,names in memberships.items() if len(names)>1}
-    print("ENUMERATION", {"categories":len(results),"summed":summed,"unique":len(union),"expected_total":total,"overlap_count":len(overlaps),"overlap_sample":list(overlaps.items())[:5]})
+    print("ENUMERATION", {"categories":len(results),"summed":summed,"unique":len(union),"expected_total":total,"overlap_count":len(overlaps)})
     if summed != total:
-        raise SystemExit(f"category retrieved sum {summed} != total {total}")
+        raise RuntimeError(f"category retrieved sum {summed} != total {total}")
     if overlaps:
-        raise SystemExit(f"category partition overlaps: {len(overlaps)}")
+        raise RuntimeError(f"category partition overlaps: {len(overlaps)}")
     if len(union) != total:
-        raise SystemExit(f"global unique reconciliation mismatch {len(union)} != {total}")
+        raise RuntimeError(f"global unique reconciliation mismatch {len(union)} != {total}")
 
     total2, facets2=snapshot()
     if total2 != total or facets2["category"] != categories:
-        raise SystemExit(f"inventory changed during enumeration: {total}->{total2}")
-
+        raise RuntimeError(f"inventory changed during enumeration: {total}->{total2}")
     print("AMAZON_GLOBAL_EXHAUSTIVE_OK", total)
+    return total
+
+
+def main():
+    last=None
+    for attempt in range(1, SNAPSHOT_ATTEMPTS + 1):
+        try:
+            enumerate_once(attempt)
+            return
+        except Exception as exc:
+            last=exc
+            print("ATTEMPT_REJECTED", attempt, repr(exc))
+            if attempt < SNAPSHOT_ATTEMPTS:
+                time.sleep(2)
+    raise SystemExit(f"Amazon inventory did not remain stable for an exhaustive snapshot: {last}")
 
 
 if __name__ == "__main__":
