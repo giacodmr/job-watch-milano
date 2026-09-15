@@ -13,14 +13,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Test representative SuccessFactors boards
+      - name: Test all practical SuccessFactors boards except EY
         shell: bash
         run: |
           python - <<'PY'
@@ -32,7 +32,16 @@ jobs:
               "Intesa Sanpaolo",
               "Worldline",
               "Swiss Re",
+              "Capgemini Invent",
+              "Terna",
+              "Italgas",
               "E.ON Italia",
+              "ENGIE Italia",
+              "Mundys",
+              "Pirelli",
+              "Heineken Italia",
+              "Moncler Group",
+              "Bolton Group",
               "Boehringer Ingelheim",
           }
           companies = {}
@@ -44,8 +53,11 @@ jobs:
           missing = targets - companies.keys()
           if missing:
               raise SystemExit(f"Missing mappings: {sorted(missing)}")
+          verified = 0
           for name in sorted(targets):
               result, supported = exp.base.collect_company(companies[name])
+              if result.get("coverage") == "VERIFIED":
+                  verified += 1
               print(json.dumps({
                   "company": name,
                   "supported": supported,
@@ -56,4 +68,5 @@ jobs:
                   "reason": result.get("reason"),
                   "source_url": result.get("source_url"),
               }, ensure_ascii=False))
+          print(json.dumps({"targeted_successfactors_verified": verified, "tested": len(targets)}))
           PY
