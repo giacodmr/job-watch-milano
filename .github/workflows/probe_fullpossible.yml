@@ -1,4 +1,4 @@
-name: Probe Bolt Greenhouse
+name: Probe FULL-possible ATS
 on:
   push:
     branches: [ats-fullpossible-v17]
@@ -9,16 +9,45 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Bolt positions bundle and paging
+      - uses: actions/checkout@v4
+      - name: List remaining FULL-possible NOT_CHECKED candidates
+        shell: python
         run: |
-          set -euo pipefail
-          JS='https://assets.careers-v3.bolt.eu/3.9.108/_next/static/chunks/app/%5Blang%5D/careers/positions/page-cc4fa43219ea1678.js'
-          curl -LfsS "$JS" -o /tmp/positions.js
-          echo '--- bundle markers ---'
-          grep -Eo '.{0,300}(api|jobs|positions|career|total|page).{0,800}' /tmp/positions.js | head -120 || true
-          echo '--- page counts ---'
-          for n in 1 2 20 24 25 26 30; do
-            curl -LfsS "https://bolt.eu/en/careers/positions/?page=$n" -o "/tmp/p$n.html"
-            printf 'page=%s apply=%s view=%s bytes=%s\n' "$n" "$(grep -o 'Apply now' "/tmp/p$n.html" | wc -l)" "$(grep -o 'View role' "/tmp/p$n.html" | wc -l)" "$(wc -c < "/tmp/p$n.html")"
-            grep -Eo 'gh_jid[^&"< ]*' "/tmp/p$n.html" | head -5 || true
-          done
+          import json
+          excluded_companies = {'Amazon', 'American Express'}
+          rows=[]
+          for batch in ('jw1','jw2','jw3','jw4'):
+              mapping=json.load(open(f'ats_mapping_{batch}.json',encoding='utf-8'))
+              current=json.load(open(f'current_jobs_{batch}.json',encoding='utf-8'))
+              cur={x['company']:x for x in current.get('companies',[])}
+              for c in mapping.get('companies',[]):
+                  v=c.get('verification') or {}
+                  if not (v.get('level')=='FULL' or v.get('full_inventory_possible') is True):
+                      continue
+                  x=cur.get(c.get('company')) or {}
+                  if x.get('coverage')!='NOT_CHECKED':
+                      continue
+                  ats=c.get('ats') or {}
+                  family=str(ats.get('family') or '')
+                  if c.get('company') in excluded_companies:
+                      continue
+                  if any(s in family.casefold() for s in ('successfactors','avature','oracle recruiting cloud','oracle hcm')):
+                      continue
+                  rows.append({
+                    'batch':batch.upper(), 'company':c.get('company'), 'level':v.get('level'),
+                    'full_possible':v.get('full_inventory_possible'), 'family':family,
+                    'tenant':ats.get('tenant'), 'inventory':ats.get('inventory_url'),
+                    'feed':ats.get('public_api_or_feed'), 'method':v.get('method'),
+                    'total':v.get('total_count_available'), 'collector':x.get('collector'),
+                    'reason':x.get('reason')
+                  })
+          print('CANDIDATE_COUNT',len(rows))
+          for r in rows:
+              print(json.dumps(r,ensure_ascii=False,sort_keys=True))
+      - name: Inspect Bolt serialized inventory markers
+        run: |
+          curl -LfsS 'https://bolt.eu/en/careers/positions/' -o /tmp/bolt.html
+          echo '--- exact count-ish markers ---'
+          grep -Eo '.{0,180}(pageCount|totalCount|totalJobs|jobCount|parsedJobs|uniqueLocations|uniqueTeams).{0,500}' /tmp/bolt.html | head -80 || true
+          echo '--- likely API/feed URLs in careers assets ---'
+          grep -Eo 'https?[^" ]+' /tmp/bolt.html | grep -Ei '(api|career|job|position)' | head -100 || true
