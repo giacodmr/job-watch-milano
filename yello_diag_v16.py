@@ -17,134 +17,107 @@ class BoardParser(HTMLParser):
         super().__init__()
         self.anchors = []
         self.text = []
-
     def handle_starttag(self, tag, attrs):
-        if tag.lower() == "a":
-            self.anchors.append(dict(attrs))
-
+        if tag.lower() == "a": self.anchors.append(dict(attrs))
     def handle_data(self, data):
         s = " ".join(data.split())
-        if s:
-            self.text.append(s)
+        if s: self.text.append(s)
 
 
 def get(session, url, params=None):
-    r = session.get(
-        url,
-        params=params,
-        timeout=TIMEOUT,
-        headers={
-            "User-Agent": "job-watch-milano/yello-diagnostic",
-            "Accept": "application/json, text/html, */*",
-            "X-Requested-With": "XMLHttpRequest",
-        },
-    )
+    r = session.get(url, params=params, timeout=TIMEOUT, headers={
+        "User-Agent": "job-watch-milano/yello-diagnostic",
+        "Accept": "application/json, text/html, */*",
+        "X-Requested-With": "XMLHttpRequest",
+    })
     print("HTTP", r.status_code, len(r.content), r.url, r.headers.get("content-type"))
     r.raise_for_status()
     return r
 
 
-def job_ids(fragment):
+def strip_tags(value):
+    if value is None: return ""
+    value = re.sub(r"<[^>]+>", " ", value)
+    return " ".join(htmlmod.unescape(value).split())
+
+
+def parse_cards(fragment, base, expected_board):
     fragment = htmlmod.unescape(fragment or "")
-    return re.findall(r'href=["\']/jobs/([^?"\']+)\?job_board_id=([^&"\']+)', fragment, re.I)
+    cards = []
+    for block in re.findall(r'<li[^>]*class=["\'][^"\']*search-results__item[^"\']*["\'][^>]*>(.*?)</li>', fragment, re.I | re.S):
+        m = re.search(r'<a[^>]*class=["\'][^"\']*search-results__req_title[^"\']*["\'][^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', block, re.I | re.S)
+        if not m: continue
+        u = urljoin(base, htmlmod.unescape(m.group(1)))
+        q = parse_qs(urlparse(u).query)
+        bid = (q.get("job_board_id") or [None])[0]
+        sid = urlparse(u).path.rstrip("/").split("/")[-1]
+        spans = [strip_tags(x) for x in re.findall(r'<span[^>]*>(.*?)</span>', block, re.I | re.S)]
+        cards.append({
+            "id": sid,
+            "board_id": bid,
+            "url": u,
+            "title": strip_tags(m.group(2)),
+            "employment_type": spans[0] if len(spans) > 0 else "",
+            "region": spans[1] if len(spans) > 1 else "",
+            "location": spans[2] if len(spans) > 2 else "",
+            "spans": spans,
+        })
+    return cards
 
 
 def main():
     s = requests.Session()
     r = get(s, BOARD)
-    p = BoardParser()
-    p.feed(r.text)
+    p = BoardParser(); p.feed(r.text)
     visible = " ".join(p.text)
     totals = [int(x.replace(",", "")) for x in re.findall(r"\b([\d,]+)\s+Results\b", visible, re.I)]
     expected = totals[0] if totals else None
-
-    first_jobs = []
+    board_ids = []
     for a in p.anchors:
         href = a.get("href")
-        if not href:
-            continue
+        if not href: continue
         u = urljoin(r.url, href)
-        if "/jobs/" in urlparse(u).path:
-            q = parse_qs(urlparse(u).query)
-            board_id = (q.get("job_board_id") or [None])[0]
-            source_id = urlparse(u).path.rstrip("/").split("/")[-1]
-            if board_id and source_id:
-                first_jobs.append((source_id, board_id))
-    first_jobs = list(dict.fromkeys(first_jobs))
-    board_ids = sorted({x[1] for x in first_jobs})
-    print("BOARD_TOTAL", expected)
-    print("SSR_ROWS", len(first_jobs))
-    print("BOARD_IDS", board_ids)
-    if expected is None or len(board_ids) != 1:
-        raise SystemExit("Missing reconcilable total or unique board id")
-
+        if "/jobs/" not in urlparse(u).path: continue
+        bid = (parse_qs(urlparse(u).query).get("job_board_id") or [None])[0]
+        if bid: board_ids.append(bid)
+    board_ids = sorted(set(board_ids))
+    print("BOARD_TOTAL", expected, "BOARD_IDS", board_ids)
+    if expected is None or len(board_ids) != 1: raise SystemExit("Missing reconcilable total or unique board id")
     board_id = board_ids[0]
     search = f"https://kearney.recsolu.com/job_boards/{board_id}/search"
-    all_ids = []
-    page = 1
-    while page <= 50:
-        params = {
-            "query": "",
-            "filters": "[]",
-            "page_number": page,
-            "job_board_tab_identifier": TAB,
-        }
-        rr = get(s, search, params=params)
+
+    cards = []
+    for page in range(1, 51):
+        rr = get(s, search, params={"query":"", "filters":"[]", "page_number":page, "job_board_tab_identifier":TAB})
         data = rr.json()
-        pairs = job_ids(data.get("html"))
-        ids = [sid for sid, bid in pairs if bid == board_id]
-        print(
-            "PAGE",
-            json.dumps(
-                {
-                    "page": page,
-                    "keys": sorted(data.keys()),
-                    "rows": len(ids),
-                    "unique_page": len(set(ids)),
-                    "more_requisitions": data.get("more_requisitions"),
-                    "query": data.get("query"),
-                    "filters": data.get("filters"),
-                    "text_filters": data.get("text_filters"),
-                    "first": ids[:2],
-                    "last": ids[-2:],
-                },
-                ensure_ascii=False,
-            ),
-        )
-        if len(ids) != len(set(ids)):
-            raise SystemExit(f"Duplicate IDs inside page {page}")
-        all_ids.extend(ids)
-        if not data.get("more_requisitions"):
-            break
-        if not ids:
-            raise SystemExit(f"No rows while more_requisitions=true on page {page}")
-        page += 1
+        page_cards = parse_cards(data.get("html"), rr.url, board_id)
+        print("PAGE", page, "rows", len(page_cards), "more", data.get("more_requisitions"))
+        cards.extend(page_cards)
+        if not data.get("more_requisitions"): break
+    ids = [x["id"] for x in cards]
+    print("RECONCILE", {"raw":len(ids), "unique":len(set(ids)), "expected":expected, "exact":len(ids)==len(set(ids))==expected})
+    if len(ids) != len(set(ids)) or len(ids) != expected: raise SystemExit("Inventory mismatch")
 
-    uniq = set(all_ids)
-    print(
-        "RECONCILE",
-        {
-            "pages": page,
-            "raw_rows": len(all_ids),
-            "unique_ids": len(uniq),
-            "expected": expected,
-            "duplicates_across_pages": len(all_ids) - len(uniq),
-            "exact": len(uniq) == expected and len(all_ids) == expected,
-        },
-    )
-    if len(uniq) != expected or len(all_ids) != expected:
-        raise SystemExit("Yello inventory did not reconcile exactly")
+    missing = [x for x in cards if not x["location"]]
+    targets = [x for x in cards if re.search(r"(?<!\w)(milan|milano|rome|roma|london)(?!\w)", x["location"], re.I)]
+    print("TARGET_CARDS", len(targets), [(x["title"], x["location"]) for x in targets])
+    print("MISSING_LOCATION", len(missing), [(x["id"], x["title"], x["region"], x["url"]) for x in missing])
 
-    # Repeat once to prove deterministic exhaustive inventory, allowing a live
-    # total change only by rejecting the run rather than guessing.
-    r2 = get(s, BOARD)
-    p2 = BoardParser(); p2.feed(r2.text)
+    for x in missing[:20]:
+        rr = get(s, x["url"])
+        text = strip_tags(rr.text)
+        snippets = []
+        low = text.lower()
+        for needle in ("office location", "location", "norway", "milan", "rome", "london"):
+            pos = low.find(needle)
+            if pos >= 0:
+                snippets.append(text[max(0,pos-120):pos+320])
+        print("DETAIL", x["id"], x["title"], "SNIPPETS", snippets[:8])
+
+    r2 = get(s, BOARD); p2 = BoardParser(); p2.feed(r2.text)
     totals2 = [int(x.replace(",", "")) for x in re.findall(r"\b([\d,]+)\s+Results\b", " ".join(p2.text), re.I)]
     print("TOTAL_RECHECK", totals2)
-    if not totals2 or totals2[0] != expected:
-        raise SystemExit(f"Yello total changed during enumeration: {expected}->{totals2[0] if totals2 else None}")
-    print("YELLO_EXHAUSTIVE_OK", expected)
+    if not totals2 or totals2[0] != expected: raise SystemExit("Total changed during enumeration")
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()
