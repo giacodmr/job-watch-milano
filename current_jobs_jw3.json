@@ -1,8 +1,8 @@
 {
-  "version": "1.3",
+  "version": "1.4",
   "batch": "JW3",
   "batch_name": "Energy, Infrastructure & Industrial",
-  "generated_at": "2026-09-15T04:46:28Z",
+  "generated_at": "2026-09-15T08:52:22Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -10,7 +10,9 @@
     "SmartRecruiters",
     "Workday CXS",
     "SAP SuccessFactors / jobs2web",
-    "Workable"
+    "Workable",
+    "Oracle Recruiting Cloud / Oracle HCM Candidate Experience",
+    "Teamtailor public career board"
   ],
   "location_scope": [
     "Milan",
@@ -22,14 +24,14 @@
   "coverage_note": "VERIFIED means the structured/public inventory was exhausted and reconciled in this run. A recognized but non-exhaustible portal remains NOT_CHECKED; request/runtime failures on a valid structured method are FAILED.",
   "summary": {
     "companies_total": 40,
-    "collector_supported": 11,
-    "VERIFIED": 5,
+    "collector_supported": 13,
+    "VERIFIED": 7,
     "FAILED": 0,
-    "NOT_CHECKED": 35,
-    "target_jobs_open": 144,
-    "NEW": 0,
-    "STILL_OPEN": 141,
-    "UPDATED": 3,
+    "NOT_CHECKED": 33,
+    "target_jobs_open": 145,
+    "NEW": 1,
+    "STILL_OPEN": 144,
+    "UPDATED": 0,
     "CLOSED": 0,
     "UNKNOWN": 0
   },
@@ -39,11 +41,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Oracle Recruiting Cloud (inferred from CX_* career paths)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "collect_oracle",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.eni.com/it-IT/sites/CX_1001",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "NotCheckable: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified",
       "jobs": []
     },
     {
@@ -51,11 +53,11 @@
       "mapping_level": "STRONG",
       "ats_family": "enterprise career portal (vendor unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.enel.com/it_IT/careers/JobOpeningsItaly",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -64,11 +66,27 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 611,
-      "target_jobs_count": 34,
+      "inventory_count": 615,
+      "target_jobs_count": 35,
       "source_url": "https://prysmiangroup.wd3.myworkdayjobs.com/wday/cxs/prysmiangroup/Careers/jobs",
       "reason": null,
       "jobs": [
+        {
+          "source_id": "R-36559",
+          "company": "Prysmian",
+          "title": "Planning & Controlling Intern",
+          "location": "Milan, IT",
+          "department": null,
+          "team": null,
+          "employment_type": "Intern (Fixed Term) (Trainee)",
+          "published_at": "Posted Today",
+          "updated_at": null,
+          "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Planning---Controlling-Intern_R-36559",
+          "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Planning---Controlling-Intern_R-36559",
+          "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Planning---Controlling-Intern_R-36559",
+          "fingerprint": "39560837032dc31c",
+          "status": "NEW"
+        },
         {
           "source_id": "R-31243",
           "company": "Prysmian",
@@ -77,12 +95,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
-          "fingerprint": "3402001731764f26",
+          "fingerprint": "a9bbc863fe6237b2",
           "status": "STILL_OPEN"
         },
         {
@@ -93,12 +111,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
-          "fingerprint": "5c3372049869ff3b",
+          "fingerprint": "bf9742f55803d663",
           "status": "STILL_OPEN"
         },
         {
@@ -109,12 +127,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
-          "fingerprint": "bb4fd181bd48648d",
+          "fingerprint": "5a8d37802c9fd7f6",
           "status": "STILL_OPEN"
         },
         {
@@ -125,12 +143,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
-          "fingerprint": "f5682f08973d51de",
+          "fingerprint": "eb2e43edf41cf2a8",
           "status": "STILL_OPEN"
         },
         {
@@ -141,12 +159,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
-          "fingerprint": "a98c6c7c184999d7",
+          "fingerprint": "b08467408f1931b7",
           "status": "STILL_OPEN"
         },
         {
@@ -157,12 +175,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
-          "fingerprint": "03b2a0ba39affa44",
+          "fingerprint": "0acfd050a085a548",
           "status": "STILL_OPEN"
         },
         {
@@ -173,12 +191,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
-          "fingerprint": "32a1d6fcf20ea9e7",
+          "fingerprint": "69483d17b84f33c7",
           "status": "STILL_OPEN"
         },
         {
@@ -189,12 +207,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
-          "fingerprint": "02d50e68567215f4",
+          "fingerprint": "c60246f26a3ac33b",
           "status": "STILL_OPEN"
         },
         {
@@ -205,12 +223,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
-          "fingerprint": "c38b086367e191fd",
+          "fingerprint": "c8507c1d3221b867",
           "status": "STILL_OPEN"
         },
         {
@@ -221,12 +239,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 5 Days Ago",
+          "published_at": "Posted 6 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
-          "fingerprint": "61a508d3501791c8",
+          "fingerprint": "af56278bbd85eed3",
           "status": "STILL_OPEN"
         },
         {
@@ -237,12 +255,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 5 Days Ago",
+          "published_at": "Posted 6 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Offshore-Superintendent_R-33315",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Offshore-Superintendent_R-33315",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Offshore-Superintendent_R-33315",
-          "fingerprint": "88385f1804d254c4",
+          "fingerprint": "82eb7e911158608a",
           "status": "STILL_OPEN"
         },
         {
@@ -253,12 +271,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
-          "fingerprint": "d943f84dc2cb092b",
+          "fingerprint": "633d2243dff3c88b",
           "status": "STILL_OPEN"
         },
         {
@@ -269,12 +287,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
-          "fingerprint": "b456205db46cf558",
+          "fingerprint": "6e5ac5193a0f045b",
           "status": "STILL_OPEN"
         },
         {
@@ -285,12 +303,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
-          "fingerprint": "e507fb90644400a1",
+          "fingerprint": "b645bb03c26b1336",
           "status": "STILL_OPEN"
         },
         {
@@ -301,12 +319,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 13 Days Ago",
+          "published_at": "Posted 14 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
-          "fingerprint": "950282b3fcc2d8fc",
+          "fingerprint": "fe7dd7e9472f67e9",
           "status": "STILL_OPEN"
         },
         {
@@ -317,12 +335,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 13 Days Ago",
+          "published_at": "Posted 14 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
-          "fingerprint": "5f973bc4d8cb65bc",
+          "fingerprint": "02dc280de25a79ce",
           "status": "STILL_OPEN"
         },
         {
@@ -333,12 +351,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 13 Days Ago",
+          "published_at": "Posted 14 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
-          "fingerprint": "2d9200a684572195",
+          "fingerprint": "4aeb2a62aaf574fc",
           "status": "STILL_OPEN"
         },
         {
@@ -349,12 +367,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 14 Days Ago",
+          "published_at": "Posted 15 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
-          "fingerprint": "2bef2d6186e7ac9f",
+          "fingerprint": "5fd83367a518d4d6",
           "status": "STILL_OPEN"
         },
         {
@@ -365,12 +383,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 18 Days Ago",
+          "published_at": "Posted 19 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
-          "fingerprint": "58aca585838ebc1a",
+          "fingerprint": "0d17ca10a7aca88c",
           "status": "STILL_OPEN"
         },
         {
@@ -381,12 +399,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 21 Days Ago",
+          "published_at": "Posted 22 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
-          "fingerprint": "2d31d82ce6864c7e",
+          "fingerprint": "198bb8b61be73a02",
           "status": "STILL_OPEN"
         },
         {
@@ -620,11 +638,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "custom / enterprise ATS (unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.leonardo.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -632,11 +650,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "custom",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.sanlorenzoyacht.com/it/people/careers",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -644,11 +662,11 @@
       "mapping_level": "STRONG",
       "ats_family": "enterprise career site (unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.gruppoa2a.it/it/carriere/opportunita-lavoro-nostre-career-areas",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -702,12 +720,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 5 Days Ago",
+          "published_at": "Posted 6 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
-          "fingerprint": "09b1bd8affb5ff57",
+          "fingerprint": "70e816e02d2934ce",
           "status": "STILL_OPEN"
         },
         {
@@ -718,12 +736,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 10 Days Ago",
+          "published_at": "Posted 11 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
-          "fingerprint": "41685086540d6c1a",
+          "fingerprint": "b8f5f9168551c268",
           "status": "STILL_OPEN"
         },
         {
@@ -734,12 +752,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
-          "fingerprint": "d200446fe16215d1",
+          "fingerprint": "6d63d775057f0514",
           "status": "STILL_OPEN"
         },
         {
@@ -750,12 +768,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
-          "fingerprint": "2e16939d19259565",
+          "fingerprint": "31dabef096d53ca2",
           "status": "STILL_OPEN"
         },
         {
@@ -766,12 +784,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 13 Days Ago",
+          "published_at": "Posted 14 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
-          "fingerprint": "cdbb94981778de81",
+          "fingerprint": "631ff8aa20fb2b75",
           "status": "STILL_OPEN"
         },
         {
@@ -782,12 +800,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 14 Days Ago",
+          "published_at": "Posted 15 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
-          "fingerprint": "585508cc79a4798e",
+          "fingerprint": "ac587ee0a89bdbb2",
           "status": "STILL_OPEN"
         },
         {
@@ -1181,11 +1199,11 @@
       "mapping_level": "STRONG",
       "ats_family": "custom recruitment portal",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://edison.join-us.it/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1193,11 +1211,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "enterprise career portal (unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.mairetecnimont.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1206,7 +1224,7 @@
       "ats_family": "SAP SuccessFactors / Career Site Builder (inferred from portal pattern)",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 236,
+      "inventory_count": 238,
       "target_jobs_count": 39,
       "source_url": "https://jobs.webuildgroup.com/",
       "reason": null,
@@ -1225,7 +1243,7 @@
           "url": "https://jobs.webuildgroup.com/job/Roma-Compliance-Analyst/1261642801/",
           "apply_url": "https://jobs.webuildgroup.com/job/Roma-Compliance-Analyst/1261642801/",
           "fingerprint": "30dbc997a6f29f5a",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "1261636701",
@@ -1241,7 +1259,7 @@
           "url": "https://jobs.webuildgroup.com/job/Roma-Internal-Audit-Analyst/1261636701/",
           "apply_url": "https://jobs.webuildgroup.com/job/Roma-Internal-Audit-Analyst/1261636701/",
           "fingerprint": "bcd51a7d8f973746",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "1255465001",
@@ -1257,7 +1275,7 @@
           "url": "https://jobs.webuildgroup.com/job/Milano-Facility-Management-Analyst/1255465001/",
           "apply_url": "https://jobs.webuildgroup.com/job/Milano-Facility-Management-Analyst/1255465001/",
           "fingerprint": "e1c8f5cf92f2d745",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "1268956601",
@@ -1842,11 +1860,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "custom recruiting portals",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.gruppotim.it/it/gruppo/lavora-con-noi.html",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1854,11 +1872,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "LinkedIn-mediated / official portal transition",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.fastwebvodafone.it/lavora-con-noi/job-opportunities/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1866,11 +1884,11 @@
       "mapping_level": "STRONG",
       "ats_family": "custom",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://corporate.iliad.it/lavorare-in-iliad",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1890,11 +1908,11 @@
       "mapping_level": "FULL",
       "ats_family": "custom career platform",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.axpo.com/it/jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1914,11 +1932,11 @@
       "mapping_level": "STRONG",
       "ats_family": "enterprise recruitment portal (vendor unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.statkraft.com/careers/job-opportunities/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1930,7 +1948,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.eon.com/italia/go/italia-tutte-le-posizioni/3727301/",
-      "reason": "NotCheckable: No same-host exhaustive /search/ or /viewalljobs/ link exposed by portal",
+      "reason": "NotCheckable: SuccessFactors inventory was exhaustive but location metadata could not be extracted safely",
       "jobs": []
     },
     {
@@ -1950,11 +1968,11 @@
       "mapping_level": "FULL",
       "ats_family": "custom first-party listing",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://gruppo.sorgenia.it/posizioni-aperte",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1962,11 +1980,11 @@
       "mapping_level": "STRONG",
       "ats_family": "enterprise global jobs portal (vendor unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.rwe.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1974,11 +1992,11 @@
       "mapping_level": "STRONG",
       "ats_family": "custom / enterprise global employment channel",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.iberdrola.com/careers/careers-iberdrola",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1986,11 +2004,11 @@
       "mapping_level": "OPAQUE",
       "ats_family": "custom first-party job board",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.saipem.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1998,11 +2016,11 @@
       "mapping_level": "STRONG",
       "ats_family": "global custom career platform",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.totalenergies.com/en",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2010,11 +2028,11 @@
       "mapping_level": "STRONG",
       "ats_family": "global enterprise career portal",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.shell.com/careers.html",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2022,11 +2040,11 @@
       "mapping_level": "FULL",
       "ats_family": "custom first-party inventory",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.alpiq.com/career/open-jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2683,12 +2701,12 @@
       "company": "Acea",
       "mapping_level": "FULL",
       "ats_family": "SAP SuccessFactors / jobs2web (inferred from portal pattern)",
-      "coverage": "NOT_CHECKED",
-      "collector": "collect_successfactors",
-      "inventory_count": null,
+      "coverage": "VERIFIED",
+      "collector": "successfactors_jobs2web_metadata",
+      "inventory_count": 11,
       "target_jobs_count": 0,
       "source_url": "https://jobs.acea.it/",
-      "reason": "NotCheckable: No same-host exhaustive /search/ or /viewalljobs/ link exposed by portal",
+      "reason": null,
       "jobs": []
     },
     {
@@ -2708,11 +2726,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "new/migrated enterprise platform (unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.autostrade.it/it/persone/entra-nel-team",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2720,11 +2738,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "custom / enterprise recruiting portal",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.fsitaliane.it/it/persone/lavora-con-noi.html",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2732,11 +2750,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "subsidiary career portal (Mundys ecosystem)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.adr.it/lavorare-in-adr",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2744,11 +2762,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "custom",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.seamilano.eu/it/lavora-con-noi",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2756,11 +2774,11 @@
       "mapping_level": "STRONG",
       "ats_family": "custom first-party recruiting",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.erg.eu/it/lavorare-in-erg/entra-nella-squadra",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2768,23 +2786,23 @@
       "mapping_level": "FULL",
       "ats_family": "embedded first-party jobs inventory (vendor unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://nadara.com/work-with-us",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
       "company": "GE Vernova",
       "mapping_level": "FULL",
-      "ats_family": "Phenom",
-      "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
-      "inventory_count": null,
+      "ats_family": "Workday",
+      "coverage": "VERIFIED",
+      "collector": "workday_cxs_metadata",
+      "inventory_count": 2119,
       "target_jobs_count": 0,
-      "source_url": "https://careers.gevernova.com/jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "source_url": "https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs",
+      "reason": null,
       "jobs": []
     },
     {
@@ -2792,11 +2810,11 @@
       "mapping_level": "STRONG",
       "ats_family": "branded global career portal (vendor unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.se.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2804,11 +2822,11 @@
       "mapping_level": "FULL",
       "ats_family": "Avature",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.siemens-energy.com/en_US/jobs/Jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -2816,11 +2834,11 @@
       "mapping_level": "FULL",
       "ats_family": "Hitachi global branded career portal (vendor unconfirmed)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.hitachi.com/search/hitachi-energy/jobs/in/country/italy",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     }
   ]
