@@ -8,46 +8,23 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: List remaining FULL-possible NOT_CHECKED candidates
-        shell: python
+      - name: Candidate inventory
         run: |
+          python - <<'PY'
           import json
-          excluded_companies = {'Amazon', 'American Express'}
-          rows=[]
-          for batch in ('jw1','jw2','jw3','jw4'):
-              mapping=json.load(open(f'ats_mapping_{batch}.json',encoding='utf-8'))
-              current=json.load(open(f'current_jobs_{batch}.json',encoding='utf-8'))
-              cur={x['company']:x for x in current.get('companies',[])}
-              for c in mapping.get('companies',[]):
-                  v=c.get('verification') or {}
-                  if not (v.get('level')=='FULL' or v.get('full_inventory_possible') is True):
-                      continue
-                  x=cur.get(c.get('company')) or {}
-                  if x.get('coverage')!='NOT_CHECKED':
-                      continue
-                  ats=c.get('ats') or {}
-                  family=str(ats.get('family') or '')
-                  if c.get('company') in excluded_companies:
-                      continue
-                  if any(s in family.casefold() for s in ('successfactors','avature','oracle recruiting cloud','oracle hcm')):
-                      continue
-                  rows.append({
-                    'batch':batch.upper(), 'company':c.get('company'), 'level':v.get('level'),
-                    'full_possible':v.get('full_inventory_possible'), 'family':family,
-                    'tenant':ats.get('tenant'), 'inventory':ats.get('inventory_url'),
-                    'feed':ats.get('public_api_or_feed'), 'method':v.get('method'),
-                    'total':v.get('total_count_available'), 'collector':x.get('collector'),
-                    'reason':x.get('reason')
-                  })
-          print('CANDIDATE_COUNT',len(rows))
-          for r in rows:
-              print(json.dumps(r,ensure_ascii=False,sort_keys=True))
-      - name: Inspect Bolt serialized inventory markers
-        run: |
-          curl -LfsS 'https://bolt.eu/en/careers/positions/' -o /tmp/bolt.html
-          echo '--- exact count-ish markers ---'
-          grep -Eo '.{0,180}(pageCount|totalCount|totalJobs|jobCount|parsedJobs|uniqueLocations|uniqueTeams).{0,500}' /tmp/bolt.html | head -80 || true
-          echo '--- likely API/feed URLs in careers assets ---'
-          grep -Eo 'https?[^" ]+' /tmp/bolt.html | grep -Ei '(api|career|job|position)' | head -100 || true
+          for b in ('jw1','jw2','jw3','jw4'):
+              m=json.load(open('ats_mapping_'+b+'.json'))
+              c=json.load(open('current_jobs_'+b+'.json'))
+              coverage={x['company']:x.get('coverage') for x in c['companies']}
+              for x in m['companies']:
+                  v=x.get('verification',{})
+                  a=x.get('ats',{})
+                  f=str(a.get('family') or '')
+                  if (v.get('level')=='FULL' or v.get('full_inventory_possible') is True) and coverage.get(x['company'])=='NOT_CHECKED':
+                      if x['company'] in ('Amazon','American Express') or any(k in f.lower() for k in ('successfactors','avature','oracle')):
+                          continue
+                      print(b.upper(), '|', x['company'], '|', f, '| tenant=',a.get('tenant'),'| inventory=',a.get('inventory_url'),'| feed=',a.get('public_api_or_feed'),'| total=',v.get('total_count_available'))
+          PY
