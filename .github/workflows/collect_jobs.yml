@@ -6,6 +6,7 @@ on:
       - ats-successfactors-v15
     paths:
       - sf_patch_v15.py
+      - sf_patch_v15b.py
       - sf_validate.py
       - .github/workflows/collect_jobs.yml
   workflow_dispatch:
@@ -29,8 +30,11 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests
 
-      - name: Apply generic v1.5 patch
-        run: python sf_patch_v15.py
+      - name: Apply v1.5 patches
+        shell: bash
+        run: |
+          python sf_patch_v15.py
+          python sf_patch_v15b.py
 
       - name: Syntax check
         run: python -m py_compile collector.py sf_validate.py
@@ -48,5 +52,5 @@ jobs:
             echo "No collector changes."
             exit 0
           fi
-          git commit -m "Apply generic SuccessFactors collector v1.5"
+          git commit -m "Refine SuccessFactors inventory discovery v1.5"
           git push
