@@ -58,4 +58,5 @@ jobs:
             exit 0
           fi
           git commit -m "Update Job Watch vacancy snapshots"
-          git push
+          git pull --rebase origin main
+          git push origin main
