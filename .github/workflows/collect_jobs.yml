@@ -7,7 +7,6 @@ on:
       - main
     paths:
       - ".job_watch_run"
-      - ".github/workflows/collect_jobs.yml"
   schedule:
     - cron: "30 6 * * *"
       timezone: "Europe/Rome"
