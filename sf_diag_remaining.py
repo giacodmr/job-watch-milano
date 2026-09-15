@@ -33,6 +33,7 @@ def snippets(text):
         r"searchQuery\s*:\s*['\"][^'\"]*['\"]",
         r"(?:totalJobs|totalResults|resultCount|jobCount)\s*[:=]\s*['\"]?\d+",
         r"data-per-page=['\"]\d+['\"]",
+        r"(?:ajax|api|search|job)[A-Za-z0-9_-]*(?:Url|URL|Endpoint)\s*[:=]\s*['\"][^'\"]+['\"]",
     ]
     found = []
     for pat in pats:
@@ -42,7 +43,17 @@ def snippets(text):
                 s = s[:500] + "..."
             if s not in found:
                 found.append(s)
-    return found[:20]
+    return found[:30]
+
+
+def raw_signals(page_html):
+    return {
+        "raw_job_path_count": len(re.findall(r"/job/", page_html, re.I)),
+        "raw_job_id_count": len(re.findall(r"\bjob(?:Id|ID|id)\b", page_html)),
+        "raw_startrow_count": len(re.findall(r"startrow", page_html, re.I)),
+        "raw_ajax_count": len(re.findall(r"ajax", page_html, re.I)),
+        "raw_searchresults_count": len(re.findall(r"SearchResults", page_html, re.I)),
+    }
 
 
 def inspect_url(label, url):
@@ -57,6 +68,7 @@ def inspect_url(label, url):
     tile = collector.sf_tile_config(page_html, final_url)
     print(f"  {label}: {final_url}")
     print(f"    total={total} range={rng} jobs={len(jobs)} tile={tile}")
+    print(f"    raw={raw_signals(page_html)}")
     forms = list(dict.fromkeys(getattr(parser, 'form_actions', []) or []))
     if forms:
         print(f"    forms={forms[:10]}")
@@ -68,23 +80,37 @@ def inspect_url(label, url):
             if any(x in p for x in ('/search', '/viewalljobs', '/go/', '/job/')):
                 inv_links.append(href)
     inv_links = list(dict.fromkeys(inv_links))
-    print(f"    inventory_links={inv_links[:15]}")
+    print(f"    inventory_links={inv_links[:20]}")
     for s in snippets(page_html):
         print(f"    snippet={s}")
-    if tile:
-        try:
-            for startrow in (0, tile['per_page']):
-                tile_url = collector.sf_tile_url(tile, startrow)
-                r = collector.get_session().get(tile_url, headers={"Accept": "text/html; charset=UTF-8"}, timeout=collector.TIMEOUT)
-                print(f"    tile[{startrow}] status={r.status_code} url={r.url} bytes={len(r.text)}")
-                p = collector.SFPageParser()
-                p.feed(r.text)
-                tj = collector.merge_sf_page_jobs(final_url, p)
-                print(f"      tile_jobs={len(tj)} tile_total={collector.parse_sf_total(p.visible_text)} tile_range={collector.parse_sf_range(p.visible_text)}")
-                if tj:
-                    print(f"      first_job={tj[0]}")
-        except Exception as e:
-            print(f"    tile_probe ERROR {type(e).__name__}: {e}")
+
+
+def trace_zurich(company):
+    print("\n--- ZURICH PAGINATION TRACE ---")
+    source = urljoin((company.get('ats') or {}).get('inventory_url') or '', '/search/')
+    try:
+        page_html, current_url, parser = collector._sf_load_page_strict(source)
+        expected = collector.parse_sf_total(parser.visible_text)
+        visited = set()
+        inventory = {}
+        for page_no in range(1, 40):
+            rng = collector.parse_sf_range(parser.visible_text)
+            rows = collector.merge_sf_page_jobs(current_url, parser)
+            missing = sum(1 for x in rows if not collector.clean_text(x.get('location')))
+            before = len(inventory)
+            for row in rows:
+                inventory[row['url']] = row
+            print(f"  page={page_no} url={current_url} range={rng} rows={len(rows)} missing_loc={missing} unique={len(inventory)}")
+            if expected is not None and len(inventory) >= expected:
+                break
+            visited.add(current_url)
+            nxt = collector._sf_fetch_validated_next(current_url, parser, expected, visited)
+            if not nxt:
+                print(f"  STOP no-next after page={page_no}, unique={len(inventory)}, expected={expected}")
+                break
+            page_html, current_url, parser = nxt
+    except Exception as e:
+        print(f"  TRACE ERROR {type(e).__name__}: {e}")
 
 
 def main():
@@ -108,6 +134,8 @@ def main():
                 continue
             seen.add(url)
             inspect_url(label, url)
+    if "Zurich" in found:
+        trace_zurich(found["Zurich"])
 
 
 if __name__ == "__main__":
