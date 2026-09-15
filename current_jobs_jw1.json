@@ -2,7 +2,7 @@
   "version": "1.4",
   "batch": "JW1",
   "batch_name": "Finance, Payments, Banking & Insurance",
-  "generated_at": "2026-09-15T07:47:56Z",
+  "generated_at": "2026-09-15T08:49:00Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -28,21 +28,21 @@
     "VERIFIED": 23,
     "FAILED": 0,
     "NOT_CHECKED": 31,
-    "target_jobs_open": 679,
-    "NEW": 0,
-    "STILL_OPEN": 678,
+    "target_jobs_open": 677,
+    "NEW": 2,
+    "STILL_OPEN": 674,
     "UPDATED": 1,
-    "CLOSED": 0,
+    "CLOSED": 4,
     "UNKNOWN": 0
   },
   "companies": [
     {
       "company": "Mastercard",
-      "mapping_level": "STRONG",
-      "ats_family": "Phenom front end / Workday backend (backend tenant not independently resolved)",
+      "mapping_level": "FULL",
+      "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1056,
+      "inventory_count": 1062,
       "target_jobs_count": 22,
       "source_url": "https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
       "reason": null,
@@ -407,7 +407,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 750,
+      "inventory_count": 749,
       "target_jobs_count": 38,
       "source_url": "https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
       "reason": null,
@@ -1027,11 +1027,11 @@
       "mapping_level": "FULL",
       "ats_family": "Oracle Recruiting Cloud / Oracle HCM",
       "coverage": "NOT_CHECKED",
-      "collector": "collect_oracle_resilient",
+      "collector": "collect_oracle",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.americanexpress.com/it/sites/CX_1/jobs",
-      "reason": "NotCheckable: Oracle inventory changed during enumeration after retry: Oracle pagination stopped early: retrieved=438, total=439",
+      "reason": "NotCheckable: Oracle inventory changed during enumeration after retry: Oracle pagination stopped early: retrieved=440, total=441",
       "jobs": []
     },
     {
@@ -1925,7 +1925,7 @@
       "ats_family": "Lever",
       "coverage": "VERIFIED",
       "collector": "lever_api_metadata",
-      "inventory_count": 43,
+      "inventory_count": 42,
       "target_jobs_count": 11,
       "source_url": "https://api.lever.co/v0/postings/qonto",
       "reason": null,
@@ -2126,8 +2126,8 @@
       "ats_family": "Greenhouse",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 8,
-      "target_jobs_count": 7,
+      "inventory_count": 9,
+      "target_jobs_count": 8,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/scalapaysrl/jobs",
       "reason": null,
       "jobs": [
@@ -2212,6 +2212,22 @@
           "status": "STILL_OPEN"
         },
         {
+          "source_id": "4973323101",
+          "company": "Scalapay",
+          "title": "Risk Data Scientist",
+          "location": "Milan, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": "2026-09-15T04:03:52-04:00",
+          "canonical_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4973323101",
+          "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4973323101",
+          "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4973323101",
+          "fingerprint": "82367494da685ef1",
+          "status": "NEW"
+        },
+        {
           "source_id": "4912683101",
           "company": "Scalapay",
           "title": "Sales Executive",
@@ -2251,8 +2267,8 @@
       "ats_family": "Workable",
       "coverage": "VERIFIED",
       "collector": "workable_public_jobs_metadata",
-      "inventory_count": 22,
-      "target_jobs_count": 17,
+      "inventory_count": 20,
+      "target_jobs_count": 16,
       "source_url": "https://www.workable.com/api/accounts/moneyfarm",
       "reason": null,
       "jobs": [
@@ -2286,22 +2302,6 @@
           "url": "https://apply.workable.com/j/90E66646C6/apply",
           "apply_url": "https://apply.workable.com/j/90E66646C6",
           "fingerprint": "9a9a2e12cbd1b809",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "E89DE22B70",
-          "company": "Moneyfarm",
-          "title": "Data Analyst",
-          "location": "Milan, Metropolitan City of Milan, Italy",
-          "department": "Technology",
-          "team": null,
-          "employment_type": "Full-time",
-          "published_at": "2026-07-21",
-          "updated_at": null,
-          "canonical_url": "https://apply.workable.com/j/E89DE22B70/apply",
-          "url": "https://apply.workable.com/j/E89DE22B70/apply",
-          "apply_url": "https://apply.workable.com/j/E89DE22B70",
-          "fingerprint": "af9d14ed19332370",
           "status": "STILL_OPEN"
         },
         {
@@ -2527,6 +2527,22 @@
           "apply_url": "https://apply.workable.com/j/32B82FA748",
           "fingerprint": "52c9d5404b6423ff",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "E89DE22B70",
+          "company": "Moneyfarm",
+          "title": "Data Analyst",
+          "location": "Milan, Metropolitan City of Milan, Italy",
+          "department": "Technology",
+          "team": null,
+          "employment_type": "Full-time",
+          "published_at": "2026-07-21",
+          "updated_at": null,
+          "canonical_url": "https://apply.workable.com/j/E89DE22B70/apply",
+          "url": "https://apply.workable.com/j/E89DE22B70/apply",
+          "apply_url": "https://apply.workable.com/j/E89DE22B70",
+          "fingerprint": "af9d14ed19332370",
+          "status": "CLOSED"
         }
       ]
     },
@@ -2536,7 +2552,7 @@
       "ats_family": "Greenhouse behind custom Adyen career site",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 223,
+      "inventory_count": 225,
       "target_jobs_count": 7,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/adyen/jobs",
       "reason": null,
@@ -3291,7 +3307,7 @@
       "ats_family": "SAP SuccessFactors Recruiting",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 793,
+      "inventory_count": 795,
       "target_jobs_count": 20,
       "source_url": "https://www.careers.zurich.com/",
       "reason": null,
@@ -3648,11 +3664,27 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 330,
-      "target_jobs_count": 52,
+      "inventory_count": 329,
+      "target_jobs_count": 51,
       "source_url": "https://hyperiongrp.wd3.myworkdayjobs.com/wday/cxs/hyperiongrp/Hyperion_External/jobs",
       "reason": null,
       "jobs": [
+        {
+          "source_id": "R0019282",
+          "company": "Howden",
+          "title": "Growth Execution Summer Internship 2027",
+          "location": "London - One Creechurch Place",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted Today",
+          "updated_at": null,
+          "canonical_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Growth-Execution-Summer-Internship-2027_R0019282",
+          "url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Growth-Execution-Summer-Internship-2027_R0019282",
+          "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Growth-Execution-Summer-Internship-2027_R0019282",
+          "fingerprint": "2d59b111cf5e4940",
+          "status": "STILL_OPEN"
+        },
         {
           "source_id": "R0019272",
           "company": "Howden",
@@ -3779,22 +3811,6 @@
           "url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Financial-Institutions---Advisory-Graduate-Programme-2027_R0019287",
           "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Financial-Institutions---Advisory-Graduate-Programme-2027_R0019287",
           "fingerprint": "31713a996fd8d804",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "R0019282",
-          "company": "Howden",
-          "title": "Growth Execution Summer Internship 2027",
-          "location": "London - One Creechurch Place",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted Today",
-          "updated_at": null,
-          "canonical_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Growth-Execution-Summer-Internship-2027_R0019282",
-          "url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Growth-Execution-Summer-Internship-2027_R0019282",
-          "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London---One-Creechurch-Place/Growth-Execution-Summer-Internship-2027_R0019282",
-          "fingerprint": "2d59b111cf5e4940",
           "status": "STILL_OPEN"
         },
         {
@@ -3971,22 +3987,6 @@
           "url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Internal-Auditor_R0019073-1",
           "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Internal-Auditor_R0019073-1",
           "fingerprint": "f819e67605f4997e",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "/job/London/Senior-Manager---Legal-Operations_R0019045-1",
-          "company": "Howden",
-          "title": "Senior Manager - Legal Operations",
-          "location": "London",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted 7 Days Ago",
-          "updated_at": null,
-          "canonical_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Manager---Legal-Operations_R0019045-1",
-          "url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Manager---Legal-Operations_R0019045-1",
-          "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Manager---Legal-Operations_R0019045-1",
-          "fingerprint": "518a9a7ee731bc01",
           "status": "STILL_OPEN"
         },
         {
@@ -4484,13 +4484,29 @@
           "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Reinsurance-Broker---Associate-Director_R0008616-1",
           "fingerprint": "157cd8cd2c1b5b82",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "/job/London/Senior-Manager---Legal-Operations_R0019045-1",
+          "company": "Howden",
+          "title": "Senior Manager - Legal Operations",
+          "location": "London",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted 7 Days Ago",
+          "updated_at": null,
+          "canonical_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Manager---Legal-Operations_R0019045-1",
+          "url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Manager---Legal-Operations_R0019045-1",
+          "apply_url": "https://hyperiongrp.wd3.myworkdayjobs.com/Hyperion_External/job/London/Senior-Manager---Legal-Operations_R0019045-1",
+          "fingerprint": "518a9a7ee731bc01",
+          "status": "CLOSED"
         }
       ]
     },
     {
       "company": "Wise",
       "mapping_level": "FULL",
-      "ats_family": "SmartRecruiters Attrax",
+      "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
       "inventory_count": 420,
@@ -4498,6 +4514,22 @@
       "source_url": "https://api.smartrecruiters.com/v1/companies/Wise/postings",
       "reason": null,
       "jobs": [
+        {
+          "source_id": "744000149531379",
+          "company": "Wise",
+          "title": "Senior Analytics Manager - Credit Risk",
+          "location": "London, gb",
+          "department": null,
+          "team": null,
+          "employment_type": "Full-time",
+          "published_at": "2026-09-15T08:23:17.931Z",
+          "updated_at": null,
+          "canonical_url": "https://api.smartrecruiters.com/v1/companies/Wise/postings/744000149531379",
+          "url": "https://api.smartrecruiters.com/v1/companies/Wise/postings/744000149531379",
+          "apply_url": null,
+          "fingerprint": "264cc6584743dba9",
+          "status": "NEW"
+        },
         {
           "source_id": "744000149314974",
           "company": "Wise",
@@ -6003,22 +6035,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "744000143315499",
-          "company": "Wise",
-          "title": "Staff Data Scientist - AML",
-          "location": "London, gb",
-          "department": null,
-          "team": null,
-          "employment_type": "Full-time",
-          "published_at": "2026-08-13T13:23:11.657Z",
-          "updated_at": null,
-          "canonical_url": "https://api.smartrecruiters.com/v1/companies/Wise/postings/744000143315499",
-          "url": "https://api.smartrecruiters.com/v1/companies/Wise/postings/744000143315499",
-          "apply_url": null,
-          "fingerprint": "ae71bb84f966e770",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "744000143252329",
           "company": "Wise",
           "title": "Procurement Lead - Marketing & Events",
@@ -7153,6 +7169,22 @@
           "apply_url": null,
           "fingerprint": "5460de2554fe8b53",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "744000143315499",
+          "company": "Wise",
+          "title": "Staff Data Scientist - AML",
+          "location": "London, gb",
+          "department": null,
+          "team": null,
+          "employment_type": "Full-time",
+          "published_at": "2026-08-13T13:23:11.657Z",
+          "updated_at": null,
+          "canonical_url": "https://api.smartrecruiters.com/v1/companies/Wise/postings/744000143315499",
+          "url": "https://api.smartrecruiters.com/v1/companies/Wise/postings/744000143315499",
+          "apply_url": null,
+          "fingerprint": "ae71bb84f966e770",
+          "status": "CLOSED"
         }
       ]
     },
@@ -7227,7 +7259,7 @@
       "ats_family": "Greenhouse embedded in SumUp careers",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 404,
+      "inventory_count": 401,
       "target_jobs_count": 22,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/sumup/jobs",
       "reason": null,
@@ -7725,7 +7757,7 @@
       "ats_family": "Greenhouse",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 631,
+      "inventory_count": 632,
       "target_jobs_count": 43,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs",
       "reason": null,
@@ -9408,7 +9440,7 @@
     {
       "company": "Euronext",
       "mapping_level": "FULL",
-      "ats_family": "Workday plus official Euronext paginated vacancy table",
+      "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
       "inventory_count": 160,
@@ -10192,7 +10224,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 617,
+      "inventory_count": 618,
       "target_jobs_count": 12,
       "source_url": "https://bbva.wd3.myworkdayjobs.com/wday/cxs/bbva/BBVA/jobs",
       "reason": null,
@@ -10393,12 +10425,12 @@
     },
     {
       "company": "ING Italia",
-      "mapping_level": "STRONG",
-      "ats_family": "Workday behind branded ING global careers",
+      "mapping_level": "FULL",
+      "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 705,
-      "target_jobs_count": 29,
+      "inventory_count": 701,
+      "target_jobs_count": 28,
       "source_url": "https://ing.wd3.myworkdayjobs.com/wday/cxs/ing/ICSGBLCOR/jobs",
       "reason": null,
       "jobs": [
@@ -10512,22 +10544,6 @@
           "url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/London/Loans-Agency-Specialist_REQ-10120588-2",
           "apply_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/London/Loans-Agency-Specialist_REQ-10120588-2",
           "fingerprint": "889c1a1d310e000a",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "REQ-10116606",
-          "company": "ING Italia",
-          "title": "Business Analyst Business Banking Digital Channels & Onboarding",
-          "location": "MILAN",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted 19 Days Ago",
-          "updated_at": null,
-          "canonical_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Business-Analyst-Business-Banking-Digital-Channels---Onboarding_REQ-10116606",
-          "url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Business-Analyst-Business-Banking-Digital-Channels---Onboarding_REQ-10116606",
-          "apply_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Business-Analyst-Business-Banking-Digital-Channels---Onboarding_REQ-10116606",
-          "fingerprint": "890d70f19e9e9ab9",
           "status": "STILL_OPEN"
         },
         {
@@ -10865,6 +10881,22 @@
           "apply_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Internship-Customer-Journey-Expert_REQ-10090756",
           "fingerprint": "10b549429106abaf",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "REQ-10116606",
+          "company": "ING Italia",
+          "title": "Business Analyst Business Banking Digital Channels & Onboarding",
+          "location": "MILAN",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted 19 Days Ago",
+          "updated_at": null,
+          "canonical_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Business-Analyst-Business-Banking-Digital-Channels---Onboarding_REQ-10116606",
+          "url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Business-Analyst-Business-Banking-Digital-Channels---Onboarding_REQ-10116606",
+          "apply_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Business-Analyst-Business-Banking-Digital-Channels---Onboarding_REQ-10116606",
+          "fingerprint": "890d70f19e9e9ab9",
+          "status": "CLOSED"
         }
       ]
     },
@@ -11447,9 +11479,9 @@
       "ats_family": "Oracle Cloud Recruiting / Oracle HCM",
       "coverage": "VERIFIED",
       "collector": "oracle_recruiting_cloud_ce_metadata",
-      "inventory_count": 697,
+      "inventory_count": 698,
       "target_jobs_count": 5,
-      "source_url": "https://fa-ewgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=findReqs%3BsiteNumber%3DCX_2001%2Climit%3D25%2Coffset%3D675",
+      "source_url": "https://fa-ewgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=findReqs%3BsiteNumber%3DCX_2001%2Climit%3D25%2Coffset%3D0",
       "reason": null,
       "jobs": [
         {

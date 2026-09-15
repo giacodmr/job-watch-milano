@@ -23,15 +23,15 @@
       "company": "Mastercard",
       "batch": "JW1",
       "ats": {
-        "family": "Phenom front end / Workday backend (backend tenant not independently resolved)",
+        "family": "Workday",
         "tenant": null,
         "career_site": "https://careers.mastercard.com/us/en",
-        "inventory_url": "https://careers.mastercard.com/us/en/search-results",
-        "public_api_or_feed": null
+        "inventory_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers",
+        "public_api_or_feed": "https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_inventory",
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -39,9 +39,9 @@
           "Rome",
           "London"
         ],
-        "pagination": "dynamic search / load-more behavior; exact backend paging not exposed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
         "primary": "Query the official Mastercard search-results inventory, apply location terms/facets for Italy, Milan/Milano, Rome/Roma and London, and exhaust all rendered results.",
@@ -50,7 +50,7 @@
       "limitations": [
         "Phenom JavaScript front end; Workday tenant/endpoints were not safely identified, so complete backend enumeration cannot be guaranteed."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Visa",
@@ -999,15 +999,15 @@
       "company": "Wise",
       "batch": "JW1",
       "ats": {
-        "family": "SmartRecruiters Attrax",
-        "tenant": "Wise careers / Attrax",
+        "family": "SmartRecruiters",
+        "tenant": "Wise",
         "career_site": "https://wise.jobs/",
-        "inventory_url": "https://wise.jobs/jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://jobs.smartrecruiters.com/Wise",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/Wise/postings"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory_with_count_and_pages",
+        "method": "smartrecruiters_public_posting_api",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1015,7 +1015,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "numbered pages; selectable 12/24/48 results per page",
+        "pagination": "SmartRecruiters limit/offset; exact totalFound reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -1026,7 +1026,7 @@
       "limitations": [
         "The exact SmartRecruiters company identifier/API endpoint was not independently mapped, so public_api_or_feed remains null."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Worldline",
@@ -1391,15 +1391,15 @@
       "company": "Euronext",
       "batch": "JW1",
       "ats": {
-        "family": "Workday plus official Euronext paginated vacancy table",
+        "family": "Workday",
         "tenant": "hrhub (wd3); career site Euronext_Career_Page",
         "career_site": "https://www.euronext.com/en/about/careers",
-        "inventory_url": "https://www.euronext.com/en/about/careers/open-positions",
-        "public_api_or_feed": null
+        "inventory_url": "https://hrhub.wd3.myworkdayjobs.com/Euronext_Career_Page",
+        "public_api_or_feed": "https://hrhub.wd3.myworkdayjobs.com/wday/cxs/hrhub/Euronext_Career_Page/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_paginated_inventory_plus_ats",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1407,7 +1407,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "numbered corporate pages (?page=...); Workday board also pageable",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -1418,7 +1418,7 @@
       "limitations": [
         "The corporate table is preferred for simple exhaustive enumeration; Workday is the application backend."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "BBVA Italy",
@@ -1457,24 +1457,24 @@
       "company": "ING Italia",
       "batch": "JW1",
       "ats": {
-        "family": "Workday behind branded ING global careers",
+        "family": "Workday",
         "tenant": "ing (wd3); at least one site slug ICSGBLCOR",
         "career_site": "https://careers.ing.com/it",
-        "inventory_url": "https://careers.ing.com/en/search-jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR",
+        "public_api_or_feed": "https://ing.wd3.myworkdayjobs.com/wday/cxs/ing/ICSGBLCOR/jobs"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_branded_inventory_with_workday_backend",
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Italy",
           "Milan",
           "London"
         ],
-        "pagination": "dynamic branded search; multiple Workday career-site paths may sit behind it",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
         "primary": "Use careers.ing.com search/location pages as the primary global inventory, filter country/city, and exhaust all displayed results.",
@@ -1484,7 +1484,7 @@
         "ING appears to span multiple Workday career-site paths, so one resolved Workday site slug cannot safely be treated as the entire global inventory.",
         "No single backend board/count was proven complete."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Crédit Agricole Italia",

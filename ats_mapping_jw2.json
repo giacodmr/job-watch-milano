@@ -279,22 +279,22 @@
       "company": "Roland Berger",
       "batch": "JW2",
       "ats": {
-        "family": "SmartRecruiters + Roland Berger custom career front-end",
+        "family": "SmartRecruiters",
         "tenant": "RolandBerger",
         "career_site": "https://www.rolandberger.com/en/Join/",
-        "inventory_url": "https://www.rolandberger.com/en/Join/All-Jobs/",
+        "inventory_url": "https://jobs.smartrecruiters.com/RolandBerger",
         "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/RolandBerger/postings"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_public_posting_api_plus_official_inventory",
+        "method": "smartrecruiters_public_posting_api",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "SmartRecruiters public Posting API uses limit/offset; continue until offset covers totalFound",
+        "pagination": "SmartRecruiters limit/offset; exact totalFound reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -305,7 +305,7 @@
       "limitations": [
         "The API URL is derived from the verified SmartRecruiters company identifier and SmartRecruiters' documented unauthenticated Posting API; the current session's URL-safety layer prevented a direct endpoint fetch."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Kearney",
@@ -600,24 +600,24 @@
       "company": "Cisco",
       "batch": "JW2",
       "ats": {
-        "family": "Phenom",
+        "family": "Workday",
         "tenant": null,
         "career_site": "https://careers.cisco.com/global/en",
-        "inventory_url": "https://careers.cisco.com/global/en/search-results",
-        "public_api_or_feed": null
+        "inventory_url": "https://cisco.wd5.myworkdayjobs.com/Cisco_Careers",
+        "public_api_or_feed": "https://cisco.wd5.myworkdayjobs.com/wday/cxs/cisco/Cisco_Careers/jobs"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_ats_inventory_with_technical_limit",
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Offset-style dynamic pagination (from=...)",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
         "primary": "Use Cisco's Phenom search-results page, apply target-location filters and advance through every offset until no new requisitions appear.",
@@ -627,28 +627,28 @@
         "The new Phenom search is client-rendered and does not consistently expose a complete total to the crawler.",
         "The database career URL points to the legacy jobs.cisco.com host, which now redirects to careers.cisco.com."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "ServiceNow",
       "batch": "JW2",
       "ats": {
-        "family": "SmartRecruiters + ServiceNow custom career front-end",
+        "family": "SmartRecruiters",
         "tenant": "ServiceNow",
         "career_site": "https://careers.servicenow.com/",
-        "inventory_url": "https://careers.servicenow.com/jobs/",
+        "inventory_url": "https://jobs.smartrecruiters.com/ServiceNow",
         "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_counted_inventory_plus_public_posting_api",
+        "method": "smartrecruiters_public_posting_api",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Official site uses numbered pages; SmartRecruiters Posting API uses limit/offset and returns totalFound",
+        "pagination": "SmartRecruiters limit/offset; exact totalFound reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -659,28 +659,28 @@
       "limitations": [
         "The API URL is based on the verified SmartRecruiters company identifier and vendor-documented public Posting API; the session URL-safety layer prevented a direct raw endpoint fetch."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Salesforce",
       "batch": "JW2",
       "ats": {
-        "family": "Workday + Salesforce custom career front-end",
+        "family": "Workday",
         "tenant": "salesforce / External_Career_Site (wd12)",
         "career_site": "https://www.salesforce.com/company/careers/",
-        "inventory_url": "https://www.salesforce.com/company/careers/jobs/",
-        "public_api_or_feed": null
+        "inventory_url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site",
+        "public_api_or_feed": "https://salesforce.wd12.myworkdayjobs.com/wday/cxs/salesforce/External_Career_Site/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_paginated_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Numbered pages with explicit result count/range; enumerate through the last page",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -691,7 +691,7 @@
       "limitations": [
         "The repository's old careers.salesforce.com/en/jobs/ URL is obsolete/redirected; use salesforce.com/company/careers/jobs/."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Booking.com",
@@ -956,22 +956,22 @@
       "company": "Alvarez & Marsal",
       "batch": "JW2",
       "ats": {
-        "family": "Custom Alvarez & Marsal career front-end (Workday application backend observed)",
+        "family": "Workday",
         "tenant": "alvarezandmarsal (Workday tenant observed)",
         "career_site": "https://careers.alvarezandmarsal.com/",
-        "inventory_url": "https://careers.alvarezandmarsal.com/search/jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://alvarezandmarsal.wd1.myworkdayjobs.com/alvarezandmarsal",
+        "public_api_or_feed": "https://alvarezandmarsal.wd1.myworkdayjobs.com/wday/cxs/alvarezandmarsal/alvarezandmarsal/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_paginated_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Numbered/path-based search pages with explicit result ranges and totals",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -982,7 +982,7 @@
       "limitations": [
         "The custom front-end is the completeness source; the Workday backend is noted for routing but should not be relied on as the sole inventory unless revalidated in the run."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "LSC Lifesciences Consultants",

@@ -499,15 +499,15 @@
       "company": "Roche",
       "batch": "JW4",
       "ats": {
-        "family": "Custom Roche careers frontend + Workday candidate backend",
+        "family": "Workday",
         "tenant": null,
         "career_site": "https://careers.roche.com/global/en/",
-        "inventory_url": "https://careers.roche.com/global/en/search-results",
-        "public_api_or_feed": null
+        "inventory_url": "https://roche.wd3.myworkdayjobs.com/roche-ext",
+        "public_api_or_feed": "https://roche.wd3.myworkdayjobs.com/wday/cxs/roche/roche-ext/jobs"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_inventory_dynamic",
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "location_filter_mode": "location search/facets",
         "locations": [
@@ -516,9 +516,9 @@
           "Rome",
           "London"
         ],
-        "pagination": "dynamic search result pages",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
         "primary": "Use the official inventory/career search with its location filters and enumerate every result the UI exposes. Where a count is visible, reconcile against it. Because a client-side/dynamic layer prevents a fully reproducible inventory walk, treat the company as VERIFIED only if the current run can independently confirm complete traversal; otherwise keep coverage PARTIAL.",
@@ -528,21 +528,21 @@
         "Client-side JavaScript/dynamic search state prevents a mathematically guaranteed full inventory traversal with current tools.",
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Sanofi",
       "batch": "JW4",
       "ats": {
-        "family": "Custom Sanofi careers frontend + Workday backend",
+        "family": "Workday",
         "tenant": "sanofi",
         "career_site": "https://jobs.sanofi.com/",
-        "inventory_url": "https://jobs.sanofi.com/en/search_jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://sanofi.wd3.myworkdayjobs.com/SanofiCareers",
+        "public_api_or_feed": "https://sanofi.wd3.myworkdayjobs.com/wday/cxs/sanofi/SanofiCareers/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "location_filter_mode": "country/city/location search",
         "locations": [
@@ -551,7 +551,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "numbered/dynamic result pages with count",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -563,7 +563,7 @@
         "The application backend/vendor is not fully exposed; completeness is established from the official inventory itself, not from an ATS API.",
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Nestlé Italia",
@@ -1055,15 +1055,15 @@
       "company": "Johnson & Johnson",
       "batch": "JW4",
       "ats": {
-        "family": "Custom J&J careers frontend + Workday backend",
+        "family": "Workday",
         "tenant": "jj",
         "career_site": "https://www.careers.jnj.com/",
-        "inventory_url": "https://www.careers.jnj.com/en/jobs/",
-        "public_api_or_feed": null
+        "inventory_url": "https://jj.wd5.myworkdayjobs.com/JJ",
+        "public_api_or_feed": "https://jj.wd5.myworkdayjobs.com/wday/cxs/jj/JJ/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "location_filter_mode": "country/location search and dedicated country pages",
         "locations": [
@@ -1072,7 +1072,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "official result pages/location pages with counts",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -1084,7 +1084,7 @@
         "The application backend/vendor is not fully exposed; completeness is established from the official inventory itself, not from an ATS API.",
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Danone",
@@ -1267,15 +1267,15 @@
       "company": "Diageo",
       "batch": "JW4",
       "ats": {
-        "family": "Custom Diageo careers frontend + Workday backend",
+        "family": "Workday",
         "tenant": "diageo",
         "career_site": "https://www.diageo.com/en/careers",
-        "inventory_url": "https://www.diageo.com/en/careers/search-and-apply",
-        "public_api_or_feed": null
+        "inventory_url": "https://diageo.wd3.myworkdayjobs.com/Diageo_Careers",
+        "public_api_or_feed": "https://diageo.wd3.myworkdayjobs.com/wday/cxs/diageo/Diageo_Careers/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "location_filter_mode": "country/region, town/city, business-area and job-type facets",
         "locations": [
@@ -1284,7 +1284,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "Previous / numbered pages / Next with visible total",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -1296,7 +1296,7 @@
         "The application backend/vendor is not fully exposed; completeness is established from the official inventory itself, not from an ATS API.",
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Pernod Ricard",
@@ -1471,15 +1471,15 @@
       "company": "Novartis",
       "batch": "JW4",
       "ats": {
-        "family": "Custom Novartis career search + Workday backend",
+        "family": "Workday",
         "tenant": "novartis",
         "career_site": "https://www.novartis.com/careers",
-        "inventory_url": "https://www.novartis.com/careers/career-search",
-        "public_api_or_feed": null
+        "inventory_url": "https://novartis.wd3.myworkdayjobs.com/Novartis_Careers",
+        "public_api_or_feed": "https://novartis.wd3.myworkdayjobs.com/wday/cxs/novartis/Novartis_Careers/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "location_filter_mode": "country/location filters",
         "locations": [
@@ -1488,7 +1488,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "`page` + `items_per_page`; visible result count",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -1500,7 +1500,7 @@
         "The application backend/vendor is not fully exposed; completeness is established from the official inventory itself, not from an ATS API.",
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Pfizer",

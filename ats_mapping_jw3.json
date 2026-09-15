@@ -1185,15 +1185,15 @@
       "company": "GE Vernova",
       "batch": "JW3",
       "ats": {
-        "family": "Phenom",
+        "family": "Workday",
         "tenant": "careers.gevernova.com",
         "career_site": "https://careers.gevernova.com/",
-        "inventory_url": "https://careers.gevernova.com/jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://gevernova.wd5.myworkdayjobs.com/Vernova_ExternalSite",
+        "public_api_or_feed": "https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1201,7 +1201,7 @@
           "Rome",
           "London"
         ],
-        "pagination": "10 per page / numbered or offset pages",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
@@ -1212,7 +1212,7 @@
       "limitations": [
         "Phenom feed attribution is visible in indexed job URLs; inventory exposes facet counts and total jobs."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-15"
     },
     {
       "company": "Schneider Electric",
