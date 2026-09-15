@@ -34,6 +34,7 @@ jobs:
           python successfactors_v15_patch.py
           python successfactors_v15_safety_patch.py
           python successfactors_v15_parser_fix.py
+          python successfactors_v15_missing_helper_fix.py
 
       - name: Syntax check
         run: python -m py_compile collector.py
@@ -77,6 +78,7 @@ jobs:
           rm successfactors_v15_patch.py
           rm successfactors_v15_safety_patch.py
           rm successfactors_v15_parser_fix.py
+          rm successfactors_v15_missing_helper_fix.py
           rm .github/workflows/dev_successfactors_v15.yml
 
       - name: Commit validated collector and snapshots
