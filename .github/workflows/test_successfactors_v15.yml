@@ -6,6 +6,7 @@ on:
       - successfactors-v15
     paths:
       - collector_sf_v15.py
+      - collector_sf_v15b.py
       - .github/workflows/test_successfactors_v15.yml
   workflow_dispatch:
 
@@ -34,10 +35,10 @@ jobs:
         run: python -m pip install --disable-pip-version-check requests
 
       - name: Syntax check
-        run: python -m py_compile collector.py collector_sf_v15.py coverage_report.py
+        run: python -m py_compile collector.py collector_sf_v15.py collector_sf_v15b.py coverage_report.py
 
       - name: Run full collector with SuccessFactors hardening
-        run: python collector_sf_v15.py
+        run: python collector_sf_v15b.py
 
       - name: Coverage report
         run: python coverage_report.py
@@ -55,7 +56,7 @@ jobs:
               for k in totals:
                   totals[k] += data["summary"][k]
               for c in data.get("companies", []):
-                  if c.get("collector") == "collect_successfactors" or c.get("collector") == "successfactors_jobs2web_metadata":
+                  if c.get("collector") in {"collect_successfactors", "successfactors_jobs2web_metadata"}:
                       sf.append((batch, c.get("company"), c.get("coverage"), c.get("inventory_count"), c.get("reason")))
           print("TOTALS", totals)
           print("SUCCESSFACTORS")
@@ -63,6 +64,8 @@ jobs:
               print(" | ".join(str(x) for x in row))
           if totals["FAILED"] != 0:
               raise SystemExit(f"FAILED={totals['FAILED']}")
+          if totals["VERIFIED"] < 72:
+              raise SystemExit(f"VERIFIED regressed below validated v1.5 floor: {totals['VERIFIED']}")
           PY
 
       - name: Commit test snapshots
@@ -76,4 +79,5 @@ jobs:
             exit 0
           fi
           git commit -m "Test SuccessFactors v1.5 coverage"
+          git pull --rebase origin successfactors-v15
           git push
