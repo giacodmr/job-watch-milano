@@ -1,0 +1,52 @@
+name: Temporary SuccessFactors target validation
+on:
+  push:
+    branches: [ats-successfactors-v17]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ats-successfactors-v17
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check requests
+      - name: Validate SuccessFactors targets
+        run: |
+          python - <<'PY'
+          import json
+          import collector
+          wanted = {
+              'EY / EY-Parthenon','Capgemini Invent','Worldline','Terna',
+              'ENGIE Italia','Pirelli','Heineken Italia','Moncler Group','Zurich'
+          }
+          companies = {}
+          for batch in ('jw1','jw2','jw3','jw4'):
+              data = collector.read_json(collector.ROOT / f'ats_mapping_{batch}.json', {}) or {}
+              for c in data.get('companies', []):
+                  if c.get('company') in wanted:
+                      companies[c['company']] = c
+          assert wanted <= set(companies), wanted - set(companies)
+          results = {}
+          for name in sorted(wanted):
+              try:
+                  r = collector.collect_successfactors(companies[name])
+                  results[name] = {'coverage': r.get('coverage'), 'collector': r.get('collector'), 'inventory_count': r.get('inventory_count'), 'target_jobs': len(r.get('jobs') or [])}
+              except collector.NotCheckable as e:
+                  results[name] = {'coverage': 'NOT_CHECKED', 'reason': str(e)}
+              except Exception as e:
+                  results[name] = {'coverage': 'FAILED', 'reason': f'{type(e).__name__}: {e}'}
+              print('TARGET', name, json.dumps(results[name], ensure_ascii=False), flush=True)
+          assert results['EY / EY-Parthenon']['coverage'] == 'VERIFIED' and int(results['EY / EY-Parthenon']['inventory_count']) > 6250
+          assert results['Terna']['coverage'] == 'VERIFIED' and int(results['Terna']['inventory_count']) == 4
+          assert results['Zurich']['coverage'] == 'VERIFIED'
+          for name in ('Capgemini Invent','Worldline','ENGIE Italia','Pirelli','Heineken Italia','Moncler Group'):
+              assert results[name]['coverage'] == 'NOT_CHECKED', (name, results[name])
+          assert all(v['coverage'] != 'FAILED' for v in results.values())
+          PY
