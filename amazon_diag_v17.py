@@ -1,28 +1,24 @@
 #!/usr/bin/env python3
-import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 
 API = "https://www.amazon.jobs/en/search.json"
-TIMEOUT = 30
-FACETS = [
-    "category",
-    "schedule_type_id",
-    "employee_class",
-    "job_function_id",
-    "business_category",
-    "is_manager",
-    "is_intern",
-    "normalized_country_code",
-]
+TIMEOUT = 45
+PAGE = 100
+WORKERS = 10
+CHECK_FACETS = ["category", "schedule_type_id", "employee_class", "job_function_id", "normalized_country_code"]
 
 
-def get(session, params, label):
-    r = session.get(API, params=params, timeout=TIMEOUT, headers={"User-Agent":"job-watch-milano/amazon-diagnostic","Accept":"application/json"})
-    print("HTTP", label, r.status_code, len(r.content), r.url)
+def session():
+    s = requests.Session()
+    s.headers.update({"User-Agent":"job-watch-milano/amazon-diagnostic","Accept":"application/json"})
+    return s
+
+
+def get(s, params):
+    r = s.get(API, params=params, timeout=TIMEOUT)
     r.raise_for_status()
-    d = r.json()
-    print("RESULT", label, "hits", d.get("hits"), "jobs", len(d.get("jobs") or []))
-    return d
+    return r.json()
 
 
 def flat(data, name):
@@ -31,41 +27,81 @@ def flat(data, name):
         if isinstance(item, dict):
             for k, v in item.items():
                 try: out[str(k)] = int(v)
-                except Exception: pass
+                except (TypeError, ValueError): pass
     return out
 
 
-def main():
-    s = requests.Session()
+def snapshot():
+    s = session()
     params=[("offset","0"),("result_limit","1"),("sort","recent")]
-    for f in FACETS: params.append(("facets[]",f))
-    d=get(s,params,"GLOBAL_FACETS")
+    for f in CHECK_FACETS: params.append(("facets[]",f))
+    d=get(s,params)
+    facets={f:flat(d,f) for f in CHECK_FACETS}
+    sums={f:sum(v.values()) for f,v in facets.items()}
+    print("SNAPSHOT", {"hits":d.get("hits"),"sums":sums,"category_values":len(facets["category"]),"category_max":max(facets["category"].values())})
+    if len(set(sums.values())) != 1:
+        raise SystemExit(f"independent facet sums disagree: {sums}")
+    total=next(iter(sums.values()))
+    if total <= 10000:
+        raise SystemExit(f"expected uncapped facet total >10000, got {total}")
+    return total, facets
 
-    facet_data={}
-    for f in FACETS:
-        vals=flat(d,f)
-        facet_data[f]=vals
-        ordered=sorted(vals.items(),key=lambda x:(-x[1],x[0]))
-        print("FACET",f,{"values":len(vals),"sum":sum(vals.values()),"max":ordered[:15]})
 
-    # Test likely exhaustive partition facets: each value must be individually queryable.
-    tests=[]
-    for f in ("category","schedule_type_id","employee_class","job_function_id"):
-        vals=facet_data[f]
-        if vals:
-            name,count=sorted(vals.items(),key=lambda x:-x[1])[0]
-            tests.append((f,name,count))
-    for f,name,count in tests:
-        p=[("offset","0"),("result_limit","10"),("sort","recent"),(f+"[]",name)]
-        x=get(s,p,"FILTER_"+f)
-        print("FILTER_CHECK",f,{"value":name,"facet_count":count,"hits":x.get("hits"),"sample_ids":[str(j.get("id")) for j in (x.get("jobs") or [])[:3]],"request":x.get("job_posting_search_request")})
+def collect_category(name, expected):
+    s=session(); seen={}; offset=0
+    while offset < expected:
+        d=get(s,[("offset",str(offset)),("result_limit",str(PAGE)),("sort","recent"),("category[]",name)])
+        hits=int(d.get("hits") or 0)
+        if hits != expected:
+            raise RuntimeError(f"{name}: total changed {expected}->{hits} at offset {offset}")
+        rows=d.get("jobs") or []
+        if not rows:
+            raise RuntimeError(f"{name}: no rows before expected total at offset {offset}")
+        for job in rows:
+            jid=str(job.get("id") or "").strip()
+            if not jid:
+                raise RuntimeError(f"{name}: missing id")
+            if jid in seen:
+                raise RuntimeError(f"{name}: duplicate id {jid}")
+            seen[jid]=job
+        offset += len(rows)
+    if len(seen) != expected:
+        raise RuntimeError(f"{name}: reconciled {len(seen)} != {expected}")
+    print("CATEGORY_OK", name, expected)
+    return name, seen
 
-    # Also inspect category facet specifically within USA: if counts sum to exact USA country
-    # count and every category is below 10k, it can solve the USA cap independently.
-    up=[("offset","0"),("result_limit","1"),("sort","recent"),("normalized_country_code[]","USA"),("facets[]","category"),("facets[]","schedule_type_id"),("facets[]","employee_class"),("facets[]","job_function_id")]
-    u=get(s,up,"USA_FACETS")
-    for f in ("category","schedule_type_id","employee_class","job_function_id"):
-        vals=flat(u,f); ordered=sorted(vals.items(),key=lambda x:(-x[1],x[0])); print("USA_FACET",f,{"values":len(vals),"sum":sum(vals.values()),"max":ordered[:15]})
+
+def main():
+    total, facets = snapshot()
+    categories=facets["category"]
+    if any(v >= 10000 for v in categories.values()):
+        raise SystemExit("category partition contains capped bucket")
+
+    results={}; union={}; memberships={}
+    with ThreadPoolExecutor(max_workers=WORKERS) as ex:
+        futures={ex.submit(collect_category,name,count):(name,count) for name,count in categories.items()}
+        for fut in as_completed(futures):
+            name,count=futures[fut]
+            _name,rows=fut.result(); results[name]=len(rows)
+            for jid,job in rows.items():
+                memberships.setdefault(jid,[]).append(name)
+                union.setdefault(jid,job)
+
+    summed=sum(results.values())
+    overlaps={jid:names for jid,names in memberships.items() if len(names)>1}
+    print("ENUMERATION", {"categories":len(results),"summed":summed,"unique":len(union),"expected_total":total,"overlap_count":len(overlaps),"overlap_sample":list(overlaps.items())[:5]})
+    if summed != total:
+        raise SystemExit(f"category retrieved sum {summed} != total {total}")
+    if overlaps:
+        raise SystemExit(f"category partition overlaps: {len(overlaps)}")
+    if len(union) != total:
+        raise SystemExit(f"global unique reconciliation mismatch {len(union)} != {total}")
+
+    total2, facets2=snapshot()
+    if total2 != total or facets2["category"] != categories:
+        raise SystemExit(f"inventory changed during enumeration: {total}->{total2}")
+
+    print("AMAZON_GLOBAL_EXHAUSTIVE_OK", total)
 
 
 if __name__ == "__main__":
