@@ -2,105 +2,54 @@
 import json
 import re
 from html.parser import HTMLParser
-from urllib.parse import urljoin, urlparse
-
+from urllib.parse import urljoin
 import requests
 
-SEARCH = "https://www.amazon.jobs/en/search"
-JSON_ENDPOINTS = [
-    "https://www.amazon.jobs/en/search.json",
-    "https://www.amazon.jobs/en/search.json/",
-]
-TIMEOUT = 30
-
-
-class PageParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.scripts = []
-        self.links = []
-        self.text = []
-    def handle_starttag(self, tag, attrs):
-        a = dict(attrs)
-        if tag.lower() == "script" and a.get("src"):
-            self.scripts.append(a["src"])
-        if tag.lower() == "a" and a.get("href"):
-            self.links.append(a["href"])
-    def handle_data(self, data):
-        s = " ".join(data.split())
-        if s:
-            self.text.append(s)
-
-
-def get(s, url, params=None, accept="*/*"):
-    r = s.get(
-        url,
-        params=params,
-        timeout=TIMEOUT,
-        headers={
-            "User-Agent": "job-watch-milano/amazon-diagnostic",
-            "Accept": accept,
-        },
-    )
-    print("HTTP", r.status_code, len(r.content), r.url, r.headers.get("content-type"))
-    return r
-
-
-def summarize_json(data):
-    if isinstance(data, dict):
-        print("JSON_KEYS", sorted(data.keys()))
-        for key in ("hits", "total", "total_count", "count", "number_of_results", "jobs", "results", "content"):
-            if key in data:
-                value = data[key]
-                if isinstance(value, list):
-                    print("FIELD", key, "list_len", len(value))
-                    if value:
-                        print("FIRST_ITEM_KEYS", sorted(value[0].keys()) if isinstance(value[0], dict) else type(value[0]).__name__)
-                        print("FIRST_ITEM", json.dumps(value[0], ensure_ascii=False)[:1200])
-                else:
-                    print("FIELD", key, repr(value)[:500])
-    else:
-        print("JSON_TYPE", type(data).__name__)
-
-
+SEARCH="https://www.amazon.jobs/en/search"; API="https://www.amazon.jobs/en/search.json"; TIMEOUT=30
+class P(HTMLParser):
+    def __init__(self): super().__init__(); self.scripts=[]
+    def handle_starttag(self,tag,attrs):
+        a=dict(attrs)
+        if tag.lower()=="script" and a.get("src"): self.scripts.append(a["src"])
+def get(s,url,params=None,accept="*/*"):
+    r=s.get(url,params=params,timeout=TIMEOUT,headers={"User-Agent":"job-watch-milano/amazon-diagnostic","Accept":accept}); print("HTTP",r.status_code,len(r.content),r.url,r.headers.get("content-type")); r.raise_for_status(); return r
+def contexts(label,text,needles,radius=650,limit=80):
+    low=text.lower(); seen=set(); n=0
+    for needle in needles:
+        start=0
+        while True:
+            i=low.find(needle.lower(),start)
+            if i<0: break
+            sn=re.sub(r"\s+"," ",text[max(0,i-radius):min(len(text),i+len(needle)+radius)])
+            if sn not in seen:
+                seen.add(sn); print(label,needle,sn); n+=1
+                if n>=limit:return
+            start=i+len(needle)
+def summary(tag,data):
+    print(tag,"HITS",data.get("hits"),"JOBS",len(data.get("jobs") or []),"ERROR",data.get("error"))
+    print(tag,"REQUEST",json.dumps(data.get("job_posting_search_request"),ensure_ascii=False,sort_keys=True)[:6000])
+    facets=data.get("facets")
+    print(tag,"FACETS_TYPE",type(facets).__name__)
+    print(tag,"FACETS",json.dumps(facets,ensure_ascii=False)[:12000])
+    jobs=data.get("jobs") or []
+    print(tag,"JOB_SAMPLE",[(x.get("id"),x.get("city"),x.get("state"),x.get("country_code"),x.get("location"),x.get("normalized_location")) for x in jobs[:5]])
 def main():
-    s = requests.Session()
-    r = get(s, SEARCH, accept="text/html,application/xhtml+xml")
-    print("SEARCH_HEAD", re.sub(r"\s+", " ", r.text[:1000]))
-    if r.ok:
-        p = PageParser(); p.feed(r.text)
-        visible = " ".join(p.text)
-        print("VISIBLE_COUNT_HINTS", re.findall(r".{0,100}(?:results|jobs).{0,100}", visible, re.I)[:20])
-        print("JOB_LINK_COUNT", len({urljoin(r.url, x) for x in p.links if "/en/jobs/" in urljoin(r.url, x)}))
-        print("SCRIPTS", [urljoin(r.url, x) for x in p.scripts])
-        for needle in ("search.json", "result_limit", "offset", "loc_query", "base_query", "radius"):
-            low = r.text.lower(); pos = low.find(needle)
-            if pos >= 0:
-                print("HTML_CONTEXT", needle, re.sub(r"\s+", " ", r.text[max(0,pos-400):pos+800]))
-
-    probes = [
-        {},
-        {"offset": 0, "result_limit": 10},
-        {"offset": 10, "result_limit": 10},
-        {"base_query": "", "loc_query": "Milan, Italy", "offset": 0, "result_limit": 10},
-        {"base_query": "", "loc_query": "Rome, Italy", "offset": 0, "result_limit": 10},
-        {"base_query": "", "loc_query": "London, United Kingdom", "offset": 0, "result_limit": 10},
+    s=requests.Session(); page=get(s,SEARCH,accept="text/html,application/xhtml+xml"); p=P(); p.feed(page.text)
+    scripts=[urljoin(page.url,x) for x in p.scripts]; print("SCRIPTS",scripts)
+    for src in scripts:
+        if "/bundles/search/" not in src: continue
+        js=get(s,src).text
+        contexts("JS",js,["search.json","result_limit","offset","base_query","loc_query","country","city","state","radius","latitude","longitude","facets","normalized_location","job_category","business_category"],radius=900,limit=120)
+    base=get(s,API,{"offset":0,"result_limit":10},"application/json").json(); summary("BASE",base)
+    probes=[
+      ("COUNTRY_ITA",[("country[]","ITA")]),("COUNTRY_GBR",[("country[]","GBR")]),
+      ("CITY_MILAN",[("city[]","Milan")]),("CITY_ROME",[("city[]","Rome")]),("CITY_LONDON",[("city[]","London")]),
+      ("CITY_MILANO",[("city[]","Milano")]),("LOC_MILAN",[("location[]","Milan")]),
+      ("NORM_MILAN",[("normalized_location[]","Milan, Italy")]),
+      ("LATLON_MILAN",[("latitude","45.4642"),("longitude","9.1900"),("radius","24km")]),
     ]
-    for endpoint in JSON_ENDPOINTS:
-        print("ENDPOINT", endpoint)
-        for params in probes:
-            rr = get(s, endpoint, params=params, accept="application/json,text/plain,*/*")
-            if not rr.ok:
-                print("ERROR_BODY", rr.text[:500])
-                continue
-            try:
-                data = rr.json()
-            except Exception as e:
-                print("JSON_ERROR", type(e).__name__, str(e), re.sub(r"\s+", " ", rr.text[:700]))
-                continue
-            print("PARAMS", params)
-            summarize_json(data)
-
-
-if __name__ == "__main__":
-    main()
+    for tag,pairs in probes:
+        params=[("offset","0"),("result_limit","10")]+pairs
+        try: d=get(s,API,params,"application/json").json(); summary(tag,d)
+        except Exception as e: print(tag,"ERROR",type(e).__name__,str(e))
+if __name__=="__main__":main()
