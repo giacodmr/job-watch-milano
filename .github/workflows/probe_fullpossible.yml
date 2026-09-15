@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Fetch Bolt careers integration markers
         run: |
+          echo 'probe-v2'
           curl -LfsS 'https://bolt.eu/en/careers/positions/' -o /tmp/bolt.html
           echo '--- greenhouse markers ---'
           grep -Eio '.{0,160}(greenhouse|gh_jid|grnhse|job_board).{0,320}' /tmp/bolt.html | head -80 || true
