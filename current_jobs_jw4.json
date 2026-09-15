@@ -1,8 +1,8 @@
 {
-  "version": "1.3",
+  "version": "1.4",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "generated_at": "2026-09-15T04:47:20Z",
+  "generated_at": "2026-09-15T07:08:41Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -10,7 +10,8 @@
     "SmartRecruiters",
     "Workday CXS",
     "SAP SuccessFactors / jobs2web",
-    "Workable"
+    "Workable",
+    "Oracle Recruiting Cloud / Oracle HCM Candidate Experience"
   ],
   "location_scope": [
     "Milan",
@@ -22,16 +23,16 @@
   "coverage_note": "VERIFIED means the structured/public inventory was exhausted and reconciled in this run. A recognized but non-exhaustible portal remains NOT_CHECKED; request/runtime failures on a valid structured method are FAILED.",
   "summary": {
     "companies_total": 48,
-    "collector_supported": 21,
+    "collector_supported": 22,
     "VERIFIED": 16,
-    "FAILED": 0,
-    "NOT_CHECKED": 32,
-    "target_jobs_open": 298,
-    "NEW": 0,
-    "STILL_OPEN": 297,
-    "UPDATED": 1,
+    "FAILED": 1,
+    "NOT_CHECKED": 31,
+    "target_jobs_open": 313,
+    "NEW": 26,
+    "STILL_OPEN": 226,
+    "UPDATED": 61,
     "CLOSED": 0,
-    "UNKNOWN": 0
+    "UNKNOWN": 11
   },
   "companies": [
     {
@@ -40,7 +41,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 4690,
+      "inventory_count": 4688,
       "target_jobs_count": 39,
       "source_url": "https://careers.essilorluxottica.com/search/",
       "reason": null,
@@ -1305,11 +1306,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "Custom Coca-Cola HBC career search; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://it.coca-colahellenic.com/en/working-with-us/search-and-apply",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -1318,7 +1319,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 524,
+      "inventory_count": 522,
       "target_jobs_count": 9,
       "source_url": "https://jobs.ferrero.com/search/",
       "reason": null,
@@ -1487,7 +1488,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 202,
+      "inventory_count": 201,
       "target_jobs_count": 55,
       "source_url": "https://jobs.pradagroup.com/search/",
       "reason": null,
@@ -1813,22 +1814,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1423902133",
-          "company": "Prada Group",
-          "title": "Digital Applications Product Manager",
-          "location": "Prada Group Milano, IT CRM & Omnichannel",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.pradagroup.com/job/Milano-Digital-Applications-Product-Manager/1423902133/",
-          "url": "https://jobs.pradagroup.com/job/Milano-Digital-Applications-Product-Manager/1423902133/",
-          "apply_url": "https://jobs.pradagroup.com/job/Milano-Digital-Applications-Product-Manager/1423902133/",
-          "fingerprint": "9c3a4c73ca324967",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1423800433",
           "company": "Prada Group",
           "title": "PRADA Stock Assistant, Milano",
@@ -1858,6 +1843,22 @@
           "url": "https://jobs.pradagroup.com/job/Milano-PRADA-GROUP-Windows-Creative-Intern/1423917133/",
           "apply_url": "https://jobs.pradagroup.com/job/Milano-PRADA-GROUP-Windows-Creative-Intern/1423917133/",
           "fingerprint": "a9a11fb13c7c050c",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1423902133",
+          "company": "Prada Group",
+          "title": "Digital Applications Product Manager",
+          "location": "Prada Group Milano, IT CRM & Omnichannel",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.pradagroup.com/job/Milano-Digital-Applications-Product-Manager/1423902133/",
+          "url": "https://jobs.pradagroup.com/job/Milano-Digital-Applications-Product-Manager/1423902133/",
+          "apply_url": "https://jobs.pradagroup.com/job/Milano-Digital-Applications-Product-Manager/1423902133/",
+          "fingerprint": "9c3a4c73ca324967",
           "status": "STILL_OPEN"
         },
         {
@@ -1909,22 +1910,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1433362133",
-          "company": "Prada Group",
-          "title": "Catering Supervisor",
-          "location": "Marchesi 1824 Milano, IT Food and Beverage",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
-          "url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
-          "apply_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
-          "fingerprint": "daf30e73da2f3810",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1433317633",
           "company": "Prada Group",
           "title": "VERSACE Shoes Product Intern",
@@ -1938,6 +1923,22 @@
           "url": "https://jobs.pradagroup.com/job/Milano-VERSACE-Shoes-Product-Intern/1433317633/",
           "apply_url": "https://jobs.pradagroup.com/job/Milano-VERSACE-Shoes-Product-Intern/1433317633/",
           "fingerprint": "2936c2e904e0da7b",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1433362133",
+          "company": "Prada Group",
+          "title": "Catering Supervisor",
+          "location": "Marchesi 1824 Milano, IT Food and Beverage",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
+          "url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
+          "apply_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
+          "fingerprint": "daf30e73da2f3810",
           "status": "STILL_OPEN"
         },
         {
@@ -2341,22 +2342,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1417437433",
-          "company": "Prada Group",
-          "title": "OTHER BRANDS E-Commerce Specialist",
-          "location": "Prada Group Milano, IT CRM & Omnichannel",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.pradagroup.com/job/Milano-OTHER-BRANDS-E-Commerce-Specialist/1417437433/",
-          "url": "https://jobs.pradagroup.com/job/Milano-OTHER-BRANDS-E-Commerce-Specialist/1417437433/",
-          "apply_url": "https://jobs.pradagroup.com/job/Milano-OTHER-BRANDS-E-Commerce-Specialist/1417437433/",
-          "fingerprint": "ddc951514833b061",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1417145933",
           "company": "Prada Group",
           "title": "MARCHESI 1824 - Bartender",
@@ -2371,6 +2356,22 @@
           "apply_url": "https://jobs.pradagroup.com/job/Milano-MARCHESI-1824-Bartender/1417145933/",
           "fingerprint": "41e0d50864f22c8b",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1417437433",
+          "company": "Prada Group",
+          "title": "OTHER BRANDS E-Commerce Specialist",
+          "location": "Prada Group Milano, IT CRM & Omnichannel",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.pradagroup.com/job/Milano-OTHER-BRANDS-E-Commerce-Specialist/1417437433/",
+          "url": "https://jobs.pradagroup.com/job/Milano-OTHER-BRANDS-E-Commerce-Specialist/1417437433/",
+          "apply_url": "https://jobs.pradagroup.com/job/Milano-OTHER-BRANDS-E-Commerce-Specialist/1417437433/",
+          "fingerprint": "ddc951514833b061",
+          "status": "STILL_OPEN"
         }
       ]
     },
@@ -2380,7 +2381,7 @@
       "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
-      "inventory_count": 1804,
+      "inventory_count": 1797,
       "target_jobs_count": 21,
       "source_url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings",
       "reason": null,
@@ -2727,13 +2728,414 @@
       "company": "Amplifon",
       "mapping_level": "STRONG",
       "ats_family": "Oracle Recruiting Cloud",
-      "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
-      "inventory_count": null,
-      "target_jobs_count": 0,
-      "source_url": "https://careers.amplifon.com/it/sites/CX_1/jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
-      "jobs": []
+      "coverage": "VERIFIED",
+      "collector": "oracle_recruiting_cloud_ce_metadata",
+      "inventory_count": 726,
+      "target_jobs_count": 25,
+      "source_url": "https://efuf.fa.em2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=findReqs%3BsiteNumber%3DCX_1%2Climit%3D25%2Coffset%3D725",
+      "reason": null,
+      "jobs": [
+        {
+          "source_id": "21163",
+          "company": "Amplifon",
+          "title": "Group Internal Audit Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-09-14",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/21163",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/21163",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/21163",
+          "fingerprint": "c46f06c77fd56614",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20638",
+          "company": "Amplifon",
+          "title": "Global IT Governance & Strategy Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-09-08",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20638",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20638",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20638",
+          "fingerprint": "aae2e034a36423b5",
+          "status": "NEW"
+        },
+        {
+          "source_id": "21152",
+          "company": "Amplifon",
+          "title": "Global Market Insights Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-09-10",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/21152",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/21152",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/21152",
+          "fingerprint": "e485e63dbdd5d21d",
+          "status": "NEW"
+        },
+        {
+          "source_id": "19836",
+          "company": "Amplifon",
+          "title": "Italy Business Planning Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-09-02",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/19836",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/19836",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/19836",
+          "fingerprint": "70302cedaa6908b1",
+          "status": "NEW"
+        },
+        {
+          "source_id": "21116",
+          "company": "Amplifon",
+          "title": "EMEA Pricing & Revenue Management Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-09-07",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/21116",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/21116",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/21116",
+          "fingerprint": "75ab35cd75a9c83e",
+          "status": "NEW"
+        },
+        {
+          "source_id": "13366",
+          "company": "Amplifon",
+          "title": "Una Laurea con Amplifon, A.A. 2026/2027",
+          "location": "Italy | Parma, Emilia Romagna, Italy | Torino, Piemonte, Italy | Padova, Veneto, Italy | Treviso, Veneto, Italy | Pisa, Toscana, Italy | Siena, Toscana, Italy | Roma, Lazio, Italy | Napoli, Campania, Italy | Bari, Puglia, Italy | Catania, Sicilia, Italy | Messina, Sicilia, Italy | Milano, Lombardia, Italy | Palermo, Sicilia, Italy | Verona, Veneto, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2025-12-17",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/13366",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/13366",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/13366",
+          "fingerprint": "769278ad324500ff",
+          "status": "NEW"
+        },
+        {
+          "source_id": "19604",
+          "company": "Amplifon",
+          "title": "Global Tax Sr Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-06-26",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/19604",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/19604",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/19604",
+          "fingerprint": "c9fbc78916ebe626",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20064",
+          "company": "Amplifon",
+          "title": "Italy Accounts Receivable Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-06-11",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20064",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20064",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20064",
+          "fingerprint": "1afb73e324f041ca",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20062",
+          "company": "Amplifon",
+          "title": "Italy Accounts Payable Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-06-10",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20062",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20062",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20062",
+          "fingerprint": "c0b0fa1bfe1cc86d",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20400",
+          "company": "Amplifon",
+          "title": "Italy IT Project Management Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-09",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20400",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20400",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20400",
+          "fingerprint": "7dfa2c9d542057b3",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20424",
+          "company": "Amplifon",
+          "title": "Global Cybersecurity Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-03",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20424",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20424",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20424",
+          "fingerprint": "8f25fcb1b998b87b",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20446",
+          "company": "Amplifon",
+          "title": "Global HR Talent Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-14",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20446",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20446",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20446",
+          "fingerprint": "b54b252acafcebf9",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20456",
+          "company": "Amplifon",
+          "title": "Global CRM Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-08",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20456",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20456",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20456",
+          "fingerprint": "435a24685e575dde",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20457",
+          "company": "Amplifon",
+          "title": "Global CRM & Customer Intelligence Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-08",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20457",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20457",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20457",
+          "fingerprint": "9f6910ba29f4f8b7",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20523",
+          "company": "Amplifon",
+          "title": "Italy Customer Operations Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-14",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20523",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20523",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20523",
+          "fingerprint": "75f3cb18d7276458",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20542",
+          "company": "Amplifon",
+          "title": "Global Cybersecurity Operations Manager",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-16",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20542",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20542",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20542",
+          "fingerprint": "313dc51f4cc7c185",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20603",
+          "company": "Amplifon",
+          "title": "Global Supply Chain Planning Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-21",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20603",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20603",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20603",
+          "fingerprint": "a10ff025f448d26a",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20642",
+          "company": "Amplifon",
+          "title": "Global Customer Intelligence & CRM Insights Manager",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-22",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20642",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20642",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20642",
+          "fingerprint": "53a3b6d7d29d37eb",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20695",
+          "company": "Amplifon",
+          "title": "Global Data Factory Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-07-27",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20695",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20695",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20695",
+          "fingerprint": "7cf7b0f83c2e6d99",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20745",
+          "company": "Amplifon",
+          "title": "Global Medical Lead Generation Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-08-05",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20745",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20745",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20745",
+          "fingerprint": "61177fe2489cc975",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20755",
+          "company": "Amplifon",
+          "title": "Global Indirect Procurement Retail Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-08-05",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20755",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20755",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20755",
+          "fingerprint": "147a6f0caa271d95",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20758",
+          "company": "Amplifon",
+          "title": "Country CRM Manager",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-08-06",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20758",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20758",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20758",
+          "fingerprint": "d207b01b529203ef",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20771",
+          "company": "Amplifon",
+          "title": "Global Master Data Transformation Curricular Internship",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-08-05",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20771",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20771",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20771",
+          "fingerprint": "764e8f90b13ce4c6",
+          "status": "NEW"
+        },
+        {
+          "source_id": "20794",
+          "company": "Amplifon",
+          "title": "General Accounting Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-08-05",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/20794",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/20794",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/20794",
+          "fingerprint": "87909125dc3a07f0",
+          "status": "NEW"
+        },
+        {
+          "source_id": "21011",
+          "company": "Amplifon",
+          "title": "Global Master Data & Product Data Specialist",
+          "location": "Milano, Lombardia, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "2026-08-27",
+          "updated_at": null,
+          "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/21011",
+          "url": "https://careers.amplifon.com/it/sites/CX_1/job/21011",
+          "apply_url": "https://careers.amplifon.com/it/sites/CX_1/job/21011",
+          "fingerprint": "84fc8fd238d283be",
+          "status": "NEW"
+        }
+      ]
     },
     {
       "company": "Sky Italia",
@@ -2754,13 +3156,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Finance-Commercial-Controller_R0056091",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Finance-Commercial-Controller_R0056091",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Finance-Commercial-Controller_R0056091",
-          "fingerprint": "64abaada41bdb78b",
-          "status": "STILL_OPEN"
+          "fingerprint": "c14b3bee4bac36cb",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058002",
@@ -2770,13 +3172,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE----Customer-Digital-Analyst_R0058002",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE----Customer-Digital-Analyst_R0058002",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE----Customer-Digital-Analyst_R0058002",
-          "fingerprint": "efc23eb29d06286b",
-          "status": "STILL_OPEN"
+          "fingerprint": "80c96016472f028a",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London-Brick-Lane/Service-Reliability-Engineer--GVMC-_R0056992-1",
@@ -2786,13 +3188,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brick-Lane/Service-Reliability-Engineer--GVMC-_R0056992-1",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brick-Lane/Service-Reliability-Engineer--GVMC-_R0056992-1",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brick-Lane/Service-Reliability-Engineer--GVMC-_R0056992-1",
-          "fingerprint": "94b9970f1d649940",
-          "status": "STILL_OPEN"
+          "fingerprint": "6b59476d6e7c6bea",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058073",
@@ -2802,13 +3204,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Trade-Marketing---Sky-Italia_R0058073",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Trade-Marketing---Sky-Italia_R0058073",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Trade-Marketing---Sky-Italia_R0058073",
-          "fingerprint": "cf3bfec85f49d930",
-          "status": "STILL_OPEN"
+          "fingerprint": "e12338239c0c2ef1",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0059134",
@@ -2818,13 +3220,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE--Digital-Acquisition---eCommerce-NOW_R0059134",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE--Digital-Acquisition---eCommerce-NOW_R0059134",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE--Digital-Acquisition---eCommerce-NOW_R0059134",
-          "fingerprint": "1a5b27340f410a96",
-          "status": "STILL_OPEN"
+          "fingerprint": "ef178bbc67e2363e",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0059177",
@@ -2834,13 +3236,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 5 Days Ago",
+          "published_at": "Posted 6 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Marketing---NOW---Sky-Italia_R0059177",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Marketing---NOW---Sky-Italia_R0059177",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Marketing---NOW---Sky-Italia_R0059177",
-          "fingerprint": "eeffa705ef2c1705",
-          "status": "STILL_OPEN"
+          "fingerprint": "712b0dbd4c5c4212",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London-Brick-Lane/Service-Reliability-Manager--GNSP-_R0051993-2",
@@ -2850,13 +3252,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brick-Lane/Service-Reliability-Manager--GNSP-_R0051993-2",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brick-Lane/Service-Reliability-Manager--GNSP-_R0051993-2",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brick-Lane/Service-Reliability-Manager--GNSP-_R0051993-2",
-          "fingerprint": "824c31cf0f513362",
-          "status": "STILL_OPEN"
+          "fingerprint": "c634f0dad4c91479",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058402",
@@ -2866,13 +3268,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE-Media-Planner---Sky-Italia_R0058402",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE-Media-Planner---Sky-Italia_R0058402",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE-Media-Planner---Sky-Italia_R0058402",
-          "fingerprint": "6ccd3ec554363beb",
-          "status": "STILL_OPEN"
+          "fingerprint": "cb948870aeccec45",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058401",
@@ -2882,13 +3284,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE---Media-Planner-Prodotti-Sky_R0058401",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE---Media-Planner-Prodotti-Sky_R0058401",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/STAGE---Media-Planner-Prodotti-Sky_R0058401",
-          "fingerprint": "8321ac172480f96d",
-          "status": "STILL_OPEN"
+          "fingerprint": "d3433386a58bb651",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058089",
@@ -2898,13 +3300,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 7 Days Ago",
+          "published_at": "Posted 8 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Organization---Strategic-Workforce-Planning_R0058089",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Organization---Strategic-Workforce-Planning_R0058089",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Organization---Strategic-Workforce-Planning_R0058089",
-          "fingerprint": "af55b398f443d2a9",
-          "status": "STILL_OPEN"
+          "fingerprint": "a30c0b5bcd301589",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058951",
@@ -2914,13 +3316,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 7 Days Ago",
+          "published_at": "Posted 8 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Social-Media-Specialist---Sky-Italia_R0058951",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Social-Media-Specialist---Sky-Italia_R0058951",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Social-Media-Specialist---Sky-Italia_R0058951",
-          "fingerprint": "827c826f6e942008",
-          "status": "STILL_OPEN"
+          "fingerprint": "f72860f698cb5c14",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0042233",
@@ -2930,13 +3332,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Senior-Key-Account-Management_R0042233",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Senior-Key-Account-Management_R0042233",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Senior-Key-Account-Management_R0042233",
-          "fingerprint": "da46926ee673b853",
-          "status": "STILL_OPEN"
+          "fingerprint": "2ec46d027a4488be",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0057199",
@@ -2946,13 +3348,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Financial-Accounting_R0057199",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Financial-Accounting_R0057199",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Financial-Accounting_R0057199",
-          "fingerprint": "079df9b6983f1e54",
-          "status": "STILL_OPEN"
+          "fingerprint": "b11a6af68ef85799",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058040",
@@ -2962,13 +3364,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Senior-Specialist--Organisation-Design-TEMPORARY_R0058040",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Senior-Specialist--Organisation-Design-TEMPORARY_R0058040",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Senior-Specialist--Organisation-Design-TEMPORARY_R0058040",
-          "fingerprint": "ed9ee4e13e5b855b",
-          "status": "STILL_OPEN"
+          "fingerprint": "8c26a10d320328a6",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London-Brentwood/Senior-Software-Engineer-QA---Entertainment-Release_R0044956-1",
@@ -2978,13 +3380,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brentwood/Senior-Software-Engineer-QA---Entertainment-Release_R0044956-1",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brentwood/Senior-Software-Engineer-QA---Entertainment-Release_R0044956-1",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/London-Brentwood/Senior-Software-Engineer-QA---Entertainment-Release_R0044956-1",
-          "fingerprint": "867891950da44491",
-          "status": "STILL_OPEN"
+          "fingerprint": "c0530f3d3d29fffe",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0057909",
@@ -2994,13 +3396,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 13 Days Ago",
+          "published_at": "Posted 14 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Finance-Business_R0057909",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Finance-Business_R0057909",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Finance-Business_R0057909",
-          "fingerprint": "d4b939b8fb5fd5c4",
-          "status": "STILL_OPEN"
+          "fingerprint": "1489f0dbe44cdfb2",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058383",
@@ -3010,13 +3412,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 14 Days Ago",
+          "published_at": "Posted 15 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Curriculare---Digital-Acquisition-Media_R0058383",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Curriculare---Digital-Acquisition-Media_R0058383",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Curriculare---Digital-Acquisition-Media_R0058383",
-          "fingerprint": "75234f51198df88c",
-          "status": "STILL_OPEN"
+          "fingerprint": "a3275d0552c875a1",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0058971",
@@ -3026,13 +3428,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 17 Days Ago",
+          "published_at": "Posted 18 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Bigger-Picture_R0058971",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Bigger-Picture_R0058971",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Bigger-Picture_R0058971",
-          "fingerprint": "15c6a98ecd94a396",
-          "status": "STILL_OPEN"
+          "fingerprint": "38dd5f6f17bc3782",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0057308",
@@ -3042,13 +3444,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 17 Days Ago",
+          "published_at": "Posted 18 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Customer-Marketing_R0057308",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Customer-Marketing_R0057308",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Customer-Marketing_R0057308",
-          "fingerprint": "7ef40e0ae4a36827",
-          "status": "STILL_OPEN"
+          "fingerprint": "7c7610b2dab0a23a",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0056463",
@@ -3058,13 +3460,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 19 Days Ago",
+          "published_at": "Posted 20 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager-Data-Scientist_R0056463",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager-Data-Scientist_R0056463",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager-Data-Scientist_R0056463",
-          "fingerprint": "d9bf21a01f5959cf",
-          "status": "STILL_OPEN"
+          "fingerprint": "6c3ff4523ca95f68",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0054864",
@@ -3074,13 +3476,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 20 Days Ago",
+          "published_at": "Posted 21 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Digital-Marketing_R0054864",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Digital-Marketing_R0054864",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage-Digital-Marketing_R0054864",
-          "fingerprint": "4375fa99af172251",
-          "status": "STILL_OPEN"
+          "fingerprint": "f319fae9d559acbc",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0055747",
@@ -3090,13 +3492,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 20 Days Ago",
+          "published_at": "Posted 21 Days Ago",
           "updated_at": null,
           "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Junior-Customer-Data-Platform--Personalization---MarTech_R0055747",
           "url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Junior-Customer-Data-Platform--Personalization---MarTech_R0055747",
           "apply_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Stage---Junior-Customer-Data-Platform--Personalization---MarTech_R0055747",
-          "fingerprint": "8428e19155fa746c",
-          "status": "STILL_OPEN"
+          "fingerprint": "fb878c311e7fae40",
+          "status": "UPDATED"
         },
         {
           "source_id": "R0055407",
@@ -3201,11 +3603,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom LVMH group careers platform",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.lvmh.com/en/join-us/our-job-offers",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3213,11 +3615,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Eightfold.ai (PCS)",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kering.com/careers",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3225,11 +3627,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom AstraZeneca careers frontend; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.astrazeneca.com/search-jobs/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3237,11 +3639,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom Roche careers frontend + Workday candidate backend",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.roche.com/global/en/search-results",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3249,11 +3651,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Sanofi careers frontend + Workday backend",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.sanofi.com/en/search_jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3261,11 +3663,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Nestlé careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.nestle.it/jobs/search-jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3273,11 +3675,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom PepsiCo careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pepsicojobs.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3286,8 +3688,8 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 433,
-      "target_jobs_count": 6,
+      "inventory_count": 432,
+      "target_jobs_count": 7,
       "source_url": "https://careers.reckitt.com/search/",
       "reason": null,
       "jobs": [
@@ -3305,7 +3707,23 @@
           "url": "https://careers.reckitt.com/job/Uxbridge-Senior-Communications-Business-Partner%2C-Supply-Chain-&-Legal-Grea-UB11-1JA/1427126533/",
           "apply_url": "https://careers.reckitt.com/job/Uxbridge-Senior-Communications-Business-Partner%2C-Supply-Chain-&-Legal-Grea-UB11-1JA/1427126533/",
           "fingerprint": "e9a088bda7f235b0",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1436958833",
+          "company": "Reckitt",
+          "title": "Intern Demand Planning",
+          "location": "Milano, Lombardia, IT, 20141 15 Sept 2026 Supply",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "15 Sept 2026",
+          "updated_at": null,
+          "canonical_url": "https://careers.reckitt.com/job/Milano-Intern-Demand-Planning-Lomb-20141/1436958833/",
+          "url": "https://careers.reckitt.com/job/Milano-Intern-Demand-Planning-Lomb-20141/1436958833/",
+          "apply_url": "https://careers.reckitt.com/job/Milano-Intern-Demand-Planning-Lomb-20141/1436958833/",
+          "fingerprint": "2d124a986b95b203",
+          "status": "NEW"
         },
         {
           "source_id": "1436046233",
@@ -3394,11 +3812,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://join.pmicareers.com/it/it/search-results",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3407,7 +3825,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 368,
+      "inventory_count": 369,
       "target_jobs_count": 0,
       "source_url": "https://jobs.jti.com/search/",
       "reason": null,
@@ -3418,11 +3836,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.impbrands.com/jobs/search",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3430,11 +3848,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom IKEA careers platform",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.ikea.com/en/search-jobs/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3443,7 +3861,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 243,
+      "inventory_count": 242,
       "target_jobs_count": 2,
       "source_url": "https://careers.avoltaworld.com/search/",
       "reason": null,
@@ -3487,11 +3905,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom L'Oréal careers frontend; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.loreal.com/en_US/jobs/SearchJobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3499,7 +3917,7 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Unilever careers frontend + Workday backend",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.unilever.com/en/search_jobs",
@@ -3523,11 +3941,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Richemont careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.richemont.com/en/jobs/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -3536,7 +3954,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1131,
+      "inventory_count": 1133,
       "target_jobs_count": 42,
       "source_url": "https://cc.wd3.myworkdayjobs.com/wday/cxs/cc/ChanelCareers/jobs",
       "reason": null,
@@ -3549,13 +3967,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant---John-Lewis-Oxford-Street_JOBREQ00116026",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant---John-Lewis-Oxford-Street_JOBREQ00116026",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant---John-Lewis-Oxford-Street_JOBREQ00116026",
-          "fingerprint": "5064d1add10b3c68",
-          "status": "STILL_OPEN"
+          "fingerprint": "d7c083ae1e3bc1a7",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fashion-Advisor--Walton-Street_JOBREQ00116995",
@@ -3565,13 +3983,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Walton-Street_JOBREQ00116995",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Walton-Street_JOBREQ00116995",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Walton-Street_JOBREQ00116995",
-          "fingerprint": "b4f527bb9bb46eb1",
-          "status": "STILL_OPEN"
+          "fingerprint": "eeb2fdc33a0fa41a",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Internship---Cyber-Transformation-Officer-GISEC_JOBREQ00115118",
@@ -3581,13 +3999,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Internship---Cyber-Transformation-Officer-GISEC_JOBREQ00115118",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Internship---Cyber-Transformation-Officer-GISEC_JOBREQ00115118",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Internship---Cyber-Transformation-Officer-GISEC_JOBREQ00115118",
-          "fingerprint": "178c8e1ce7755c8f",
-          "status": "STILL_OPEN"
+          "fingerprint": "e5b785709a12a294",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fragrance-Specialist---Covent-Garden_JOBREQ00112751",
@@ -3597,13 +4015,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Specialist---Covent-Garden_JOBREQ00112751",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Specialist---Covent-Garden_JOBREQ00112751",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Specialist---Covent-Garden_JOBREQ00112751",
-          "fingerprint": "5cee4f37dfe10972",
-          "status": "STILL_OPEN"
+          "fingerprint": "55461ad19bd7e041",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Makeup-Artist---Covent-Garden_JOBREQ00116023",
@@ -3613,13 +4031,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Makeup-Artist---Covent-Garden_JOBREQ00116023",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Makeup-Artist---Covent-Garden_JOBREQ00116023",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Makeup-Artist---Covent-Garden_JOBREQ00116023",
-          "fingerprint": "2b516d8988d5612d",
-          "status": "STILL_OPEN"
+          "fingerprint": "43a8ebd0ffe12119",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Client-Data-Manager_JOBREQ00116769",
@@ -3629,13 +4047,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Client-Data-Manager_JOBREQ00116769",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Client-Data-Manager_JOBREQ00116769",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Client-Data-Manager_JOBREQ00116769",
-          "fingerprint": "36bb25362d70f704",
-          "status": "STILL_OPEN"
+          "fingerprint": "be3545d980f93d0f",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Project-Manager--Omnichannel-Client-Data_JOBREQ00115732-1",
@@ -3645,13 +4063,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Project-Manager--Omnichannel-Client-Data_JOBREQ00115732-1",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Project-Manager--Omnichannel-Client-Data_JOBREQ00115732-1",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Project-Manager--Omnichannel-Client-Data_JOBREQ00115732-1",
-          "fingerprint": "f89de24b5aab604a",
-          "status": "STILL_OPEN"
+          "fingerprint": "7ee6dc84bda2b16e",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fragrance-Specialist---John-Lewis-Oxford-Street_JOBREQ00113118",
@@ -3661,13 +4079,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Specialist---John-Lewis-Oxford-Street_JOBREQ00113118",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Specialist---John-Lewis-Oxford-Street_JOBREQ00113118",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Specialist---John-Lewis-Oxford-Street_JOBREQ00113118",
-          "fingerprint": "219bb54ca6165314",
-          "status": "STILL_OPEN"
+          "fingerprint": "8538ae185e505d65",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---H-Beauty-Milton-Keynes_JOBREQ00116068",
@@ -3677,13 +4095,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---H-Beauty-Milton-Keynes_JOBREQ00116068",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---H-Beauty-Milton-Keynes_JOBREQ00116068",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---H-Beauty-Milton-Keynes_JOBREQ00116068",
-          "fingerprint": "6bc2f569a935b5fd",
-          "status": "STILL_OPEN"
+          "fingerprint": "9ff511394f54e8a1",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Account-Manager---John-Lewis-Stratford_JOBREQ00116034",
@@ -3693,13 +4111,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Account-Manager---John-Lewis-Stratford_JOBREQ00116034",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Account-Manager---John-Lewis-Stratford_JOBREQ00116034",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Account-Manager---John-Lewis-Stratford_JOBREQ00116034",
-          "fingerprint": "940f6ecaccb4bbf5",
-          "status": "STILL_OPEN"
+          "fingerprint": "14925fc75cc880a0",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Makeup-Artist---Selfridges-Oxford-Street_JOBREQ00116191",
@@ -3709,13 +4127,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Makeup-Artist---Selfridges-Oxford-Street_JOBREQ00116191",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Makeup-Artist---Selfridges-Oxford-Street_JOBREQ00116191",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Makeup-Artist---Selfridges-Oxford-Street_JOBREQ00116191",
-          "fingerprint": "7bcd9118d8940021",
-          "status": "STILL_OPEN"
+          "fingerprint": "495664a0fb5d020a",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fragrance-Expert---Harrods-Knightsbridge_JOBREQ00115966",
@@ -3725,13 +4143,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Expert---Harrods-Knightsbridge_JOBREQ00115966",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Expert---Harrods-Knightsbridge_JOBREQ00115966",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance-Expert---Harrods-Knightsbridge_JOBREQ00115966",
-          "fingerprint": "40334bcf73dd3a07",
-          "status": "STILL_OPEN"
+          "fingerprint": "641f1181c3d6e497",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Visual-Merchandising---Retail-Event-Coordinator_JOBREQ00116871",
@@ -3741,13 +4159,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Visual-Merchandising---Retail-Event-Coordinator_JOBREQ00116871",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Visual-Merchandising---Retail-Event-Coordinator_JOBREQ00116871",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Visual-Merchandising---Retail-Event-Coordinator_JOBREQ00116871",
-          "fingerprint": "2e3b93a45abd9d43",
-          "status": "STILL_OPEN"
+          "fingerprint": "baa10817af7a4782",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Account-Manager---John-Lewis-Oxford-Street_JOBREQ00116868",
@@ -3757,13 +4175,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Account-Manager---John-Lewis-Oxford-Street_JOBREQ00116868",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Account-Manager---John-Lewis-Oxford-Street_JOBREQ00116868",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Account-Manager---John-Lewis-Oxford-Street_JOBREQ00116868",
-          "fingerprint": "deeba9449550cecf",
-          "status": "STILL_OPEN"
+          "fingerprint": "7147e16073cb0ce6",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Client-Services-Co-Ordinator--Selfridges_JOBREQ00116864",
@@ -3773,13 +4191,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Client-Services-Co-Ordinator--Selfridges_JOBREQ00116864",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Client-Services-Co-Ordinator--Selfridges_JOBREQ00116864",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Client-Services-Co-Ordinator--Selfridges_JOBREQ00116864",
-          "fingerprint": "e1647307a8ee02f9",
-          "status": "STILL_OPEN"
+          "fingerprint": "0b497cf4d8f17954",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Part-Time-Sales-and-Service-Administrator--New-Bond-Street_JOBREQ00116807",
@@ -3789,13 +4207,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Sales-and-Service-Administrator--New-Bond-Street_JOBREQ00116807",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Sales-and-Service-Administrator--New-Bond-Street_JOBREQ00116807",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Sales-and-Service-Administrator--New-Bond-Street_JOBREQ00116807",
-          "fingerprint": "497947b9b92f51b1",
-          "status": "STILL_OPEN"
+          "fingerprint": "141ce0f34415ea0e",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Hospitality-Host--New-Bond-Street_JOBREQ00111322",
@@ -3805,13 +4223,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Hospitality-Host--New-Bond-Street_JOBREQ00111322",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Hospitality-Host--New-Bond-Street_JOBREQ00111322",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Hospitality-Host--New-Bond-Street_JOBREQ00111322",
-          "fingerprint": "67107276974ddf4b",
-          "status": "STILL_OPEN"
+          "fingerprint": "be804681a4e18df4",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Business-Process-Analyst---Global-O2C_JOBREQ00116858",
@@ -3821,13 +4239,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Business-Process-Analyst---Global-O2C_JOBREQ00116858",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Business-Process-Analyst---Global-O2C_JOBREQ00116858",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Business-Process-Analyst---Global-O2C_JOBREQ00116858",
-          "fingerprint": "2731bc1573a9ae99",
-          "status": "STILL_OPEN"
+          "fingerprint": "efbd5ad0be2384b9",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
@@ -3837,13 +4255,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 5 Days Ago",
+          "published_at": "Posted 6 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
-          "fingerprint": "9923a4c22caca099",
-          "status": "STILL_OPEN"
+          "fingerprint": "d2f7f0b408d13965",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/ERP-Ecosystem-Architect_JOBREQ00112915",
@@ -3853,13 +4271,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/ERP-Ecosystem-Architect_JOBREQ00112915",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/ERP-Ecosystem-Architect_JOBREQ00112915",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/ERP-Ecosystem-Architect_JOBREQ00112915",
-          "fingerprint": "36a6cd2a89839de5",
-          "status": "STILL_OPEN"
+          "fingerprint": "eb1802304fe869a6",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Milano/Fashion-Advisor-Temporary-Contract---BOUTIQUE-MILANO-SANT-ANDREA_JOBREQ00116551",
@@ -3869,13 +4287,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Fashion-Advisor-Temporary-Contract---BOUTIQUE-MILANO-SANT-ANDREA_JOBREQ00116551",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Fashion-Advisor-Temporary-Contract---BOUTIQUE-MILANO-SANT-ANDREA_JOBREQ00116551",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Fashion-Advisor-Temporary-Contract---BOUTIQUE-MILANO-SANT-ANDREA_JOBREQ00116551",
-          "fingerprint": "77427f357a54107b",
-          "status": "STILL_OPEN"
+          "fingerprint": "71abf7da48af1d7c",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Milano/Fashion-Advisor-Shoes-Corner-Rinascente---Temporary-Contract_JOBREQ00116759",
@@ -3885,13 +4303,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Fashion-Advisor-Shoes-Corner-Rinascente---Temporary-Contract_JOBREQ00116759",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Fashion-Advisor-Shoes-Corner-Rinascente---Temporary-Contract_JOBREQ00116759",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Fashion-Advisor-Shoes-Corner-Rinascente---Temporary-Contract_JOBREQ00116759",
-          "fingerprint": "6d5c2c5ffef6932e",
-          "status": "STILL_OPEN"
+          "fingerprint": "36ba866291fec2b7",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Roma/Beauty-Advisor-Intern_JOBREQ00116723",
@@ -3901,13 +4319,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Beauty-Advisor-Intern_JOBREQ00116723",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Beauty-Advisor-Intern_JOBREQ00116723",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Beauty-Advisor-Intern_JOBREQ00116723",
-          "fingerprint": "36b567960ae3220c",
-          "status": "STILL_OPEN"
+          "fingerprint": "ce18b88387754bfa",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Lead--Treasury-Accountant_JOBREQ00116729",
@@ -3917,13 +4335,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 7 Days Ago",
+          "published_at": "Posted 8 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Lead--Treasury-Accountant_JOBREQ00116729",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Lead--Treasury-Accountant_JOBREQ00116729",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Lead--Treasury-Accountant_JOBREQ00116729",
-          "fingerprint": "b90c0d20d269034b",
-          "status": "STILL_OPEN"
+          "fingerprint": "5520d8861a6182d0",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fragrance---Beauty-Sales-Consultant_JOBREQ00115937",
@@ -3933,13 +4351,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 10 Days Ago",
+          "published_at": "Posted 11 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant_JOBREQ00115937",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant_JOBREQ00115937",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant_JOBREQ00115937",
-          "fingerprint": "5c752619722186a7",
-          "status": "STILL_OPEN"
+          "fingerprint": "627e12f606b4d0ae",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fragrance---Beauty-Sales-Consultant---Selfridges-Oxford-Street_JOBREQ00111671",
@@ -3949,13 +4367,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant---Selfridges-Oxford-Street_JOBREQ00111671",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant---Selfridges-Oxford-Street_JOBREQ00111671",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fragrance---Beauty-Sales-Consultant---Selfridges-Oxford-Street_JOBREQ00111671",
-          "fingerprint": "3765519760377be5",
-          "status": "STILL_OPEN"
+          "fingerprint": "887ee73605bc4a0c",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Skincare-Specialist---Harrods-Knightsbridge_JOBREQ00115967",
@@ -3965,13 +4383,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Skincare-Specialist---Harrods-Knightsbridge_JOBREQ00115967",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Skincare-Specialist---Harrods-Knightsbridge_JOBREQ00115967",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Skincare-Specialist---Harrods-Knightsbridge_JOBREQ00115967",
-          "fingerprint": "4dbf6053d1ec58e0",
-          "status": "STILL_OPEN"
+          "fingerprint": "afdc01fe1ae2aded",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---Sephora-White-City_JOBREQ00116544",
@@ -3981,13 +4399,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---Sephora-White-City_JOBREQ00116544",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---Sephora-White-City_JOBREQ00116544",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---Sephora-White-City_JOBREQ00116544",
-          "fingerprint": "38a42ec650f74980",
-          "status": "STILL_OPEN"
+          "fingerprint": "c6291781fefbc567",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
@@ -3997,13 +4415,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 12 Days Ago",
+          "published_at": "Posted 13 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
-          "fingerprint": "b936e0328cec98f1",
-          "status": "STILL_OPEN"
+          "fingerprint": "c07cc51e9afee7f1",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/In-Store-Visual-Merchandiser--Heathrow_JOBREQ00115818",
@@ -4013,13 +4431,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 13 Days Ago",
+          "published_at": "Posted 14 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/In-Store-Visual-Merchandiser--Heathrow_JOBREQ00115818",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/In-Store-Visual-Merchandiser--Heathrow_JOBREQ00115818",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/In-Store-Visual-Merchandiser--Heathrow_JOBREQ00115818",
-          "fingerprint": "a6b624031bf2ada2",
-          "status": "STILL_OPEN"
+          "fingerprint": "f81bcece9b7900bc",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Senior-Process-Owner--Travel---Expense_JOBREQ00116299",
@@ -4029,13 +4447,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 20 Days Ago",
+          "published_at": "Posted 21 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Senior-Process-Owner--Travel---Expense_JOBREQ00116299",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Senior-Process-Owner--Travel---Expense_JOBREQ00116299",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Senior-Process-Owner--Travel---Expense_JOBREQ00116299",
-          "fingerprint": "6a0f13e9fb7f52d7",
-          "status": "STILL_OPEN"
+          "fingerprint": "b49f5c40c3d731f1",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Milano/Security--OHS---Office-Intern_JOBREQ00113627",
@@ -4045,13 +4463,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 20 Days Ago",
+          "published_at": "Posted 21 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Security--OHS---Office-Intern_JOBREQ00113627",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Security--OHS---Office-Intern_JOBREQ00113627",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Milano/Security--OHS---Office-Intern_JOBREQ00113627",
-          "fingerprint": "989cea80c48a8490",
-          "status": "STILL_OPEN"
+          "fingerprint": "f458210bd8ff6a7a",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/Roma/Stockist-Runner---Internship_JOBREQ00116284",
@@ -4061,13 +4479,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 20 Days Ago",
+          "published_at": "Posted 21 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Stockist-Runner---Internship_JOBREQ00116284",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Stockist-Runner---Internship_JOBREQ00116284",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Stockist-Runner---Internship_JOBREQ00116284",
-          "fingerprint": "d0c188fe209b2e29",
-          "status": "STILL_OPEN"
+          "fingerprint": "a1550fb302d490e9",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Tailor--Harrods_JOBREQ00116189",
@@ -4077,13 +4495,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 24 Days Ago",
+          "published_at": "Posted 25 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Tailor--Harrods_JOBREQ00116189",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Tailor--Harrods_JOBREQ00116189",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Tailor--Harrods_JOBREQ00116189",
-          "fingerprint": "1e04c8545cc195f9",
-          "status": "STILL_OPEN"
+          "fingerprint": "fde91322c004c58f",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/D365-Test-Manager_JOBREQ00113355",
@@ -4093,13 +4511,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 25 Days Ago",
+          "published_at": "Posted 26 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/D365-Test-Manager_JOBREQ00113355",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/D365-Test-Manager_JOBREQ00113355",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/D365-Test-Manager_JOBREQ00113355",
-          "fingerprint": "32d89a0f186ac05e",
-          "status": "STILL_OPEN"
+          "fingerprint": "7c1b3b525990b5cd",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fashion-Advisor--Heathrow-T3_JOBREQ00113715-1",
@@ -4109,13 +4527,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 26 Days Ago",
+          "published_at": "Posted 27 Days Ago",
           "updated_at": null,
           "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Heathrow-T3_JOBREQ00113715-1",
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Heathrow-T3_JOBREQ00113715-1",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Heathrow-T3_JOBREQ00113715-1",
-          "fingerprint": "986cdce5e75e6580",
-          "status": "STILL_OPEN"
+          "fingerprint": "98a4b331e182eb91",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/London/Fixed-Term-Contract-Team-Manager--Harrods-RTW_JOBREQ00116029-1",
@@ -4220,11 +4638,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pgcareers.com/global/en/search-results/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4232,11 +4650,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom J&J careers frontend + Workday backend",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.careers.jnj.com/en/jobs/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4244,11 +4662,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom Danone careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.danone.com/uki/en/jobs.html?countries=Italy",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4256,11 +4674,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom Henkel careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.henkel.com/careers/find-your-job-apply",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4268,11 +4686,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom/Radancy-style Mars careers frontend; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.mars.com/global/en/search-results",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4280,11 +4698,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "Custom Mondelēz careers search; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.mondelezinternational.com/careers/jobs/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4292,11 +4710,11 @@
       "mapping_level": "STRONG",
       "ats_family": "Custom Kraft Heinz careers frontend; application backend not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kraftheinz.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4304,11 +4722,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Diageo careers frontend + Workday backend",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.diageo.com/en/careers/search-and-apply",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4317,7 +4735,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 278,
+      "inventory_count": 276,
       "target_jobs_count": 1,
       "source_url": "https://pernodricard.wd3.myworkdayjobs.com/wday/cxs/pernodricard/pernod-ricard/jobs",
       "reason": null,
@@ -4330,13 +4748,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://pernodricard.wd3.myworkdayjobs.com/pernod-ricard/job/London/Senior-Legal-Counsel--FTC-up-to-12-months-_JR-054565",
           "url": "https://pernodricard.wd3.myworkdayjobs.com/pernod-ricard/job/London/Senior-Legal-Counsel--FTC-up-to-12-months-_JR-054565",
           "apply_url": "https://pernodricard.wd3.myworkdayjobs.com/pernod-ricard/job/London/Senior-Legal-Counsel--FTC-up-to-12-months-_JR-054565",
-          "fingerprint": "5ac931ca34093eff",
-          "status": "STILL_OPEN"
+          "fingerprint": "a40ed6cff58a83d4",
+          "status": "UPDATED"
         }
       ]
     },
@@ -4345,11 +4763,11 @@
       "mapping_level": "PARTIAL",
       "ats_family": "Custom Giorgio Armani careers portal; backend not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.giorgioarmani.com/",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4754,11 +5172,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Zegna Group careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.zegnagroup.com/?cngLanguage=ENG",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -4767,7 +5185,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 62,
+      "inventory_count": 63,
       "target_jobs_count": 21,
       "source_url": "https://jobs.valentino.com/search/",
       "reason": null,
@@ -5115,11 +5533,11 @@
       "mapping_level": "FULL",
       "ats_family": "Custom Novartis career search + Workday backend",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.novartis.com/careers/career-search",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
@@ -5128,7 +5546,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 575,
+      "inventory_count": 567,
       "target_jobs_count": 2,
       "source_url": "https://pfizer.wd1.myworkdayjobs.com/wday/cxs/pfizer/PfizerCareers/jobs",
       "reason": null,
@@ -5141,13 +5559,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 6 Days Ago",
+          "published_at": "Posted 7 Days Ago",
           "updated_at": null,
           "canonical_url": "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers/job/United-Kingdom---London---Apex/Research-Associate_4963111-2",
           "url": "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers/job/United-Kingdom---London---Apex/Research-Associate_4963111-2",
           "apply_url": "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers/job/United-Kingdom---London---Apex/Research-Associate_4963111-2",
-          "fingerprint": "50927eb633ac5814",
-          "status": "STILL_OPEN"
+          "fingerprint": "c6481146224e1dc9",
+          "status": "UPDATED"
         },
         {
           "source_id": "/job/United-Kingdom---London---Apex/Research-Associate-III--Peptide---Protein-Chemistry-_4963110-1",
@@ -5157,13 +5575,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 10 Days Ago",
+          "published_at": "Posted 11 Days Ago",
           "updated_at": null,
           "canonical_url": "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers/job/United-Kingdom---London---Apex/Research-Associate-III--Peptide---Protein-Chemistry-_4963110-1",
           "url": "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers/job/United-Kingdom---London---Apex/Research-Associate-III--Peptide---Protein-Chemistry-_4963110-1",
           "apply_url": "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers/job/United-Kingdom---London---Apex/Research-Associate-III--Peptide---Protein-Chemistry-_4963110-1",
-          "fingerprint": "da6989a498817875",
-          "status": "STILL_OPEN"
+          "fingerprint": "8cc92abd6e909cb1",
+          "status": "UPDATED"
         }
       ]
     },
@@ -5173,7 +5591,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata",
-      "inventory_count": 612,
+      "inventory_count": 611,
       "target_jobs_count": 0,
       "source_url": "https://jobs.bayer.com/search/",
       "reason": null,
@@ -5196,23 +5614,23 @@
       "mapping_level": "FULL",
       "ats_family": "Custom AbbVie careers platform; application ATS not conclusively identified",
       "coverage": "NOT_CHECKED",
-      "collector": "unsupported_or_unverified_v1_3",
+      "collector": "unsupported_or_unverified_v1_4",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.abbvie.com/en/jobs",
-      "reason": "ATS family/method is not safely enumerable by collector v1.3",
+      "reason": "ATS family/method is not safely enumerable by collector v1.4",
       "jobs": []
     },
     {
       "company": "MSD",
       "mapping_level": "STRONG",
       "ats_family": "Custom MSD careers frontend + Workday backend",
-      "coverage": "VERIFIED",
-      "collector": "workday_cxs_metadata",
-      "inventory_count": 1169,
-      "target_jobs_count": 11,
-      "source_url": "https://msd.wd5.myworkdayjobs.com/wday/cxs/msd/SearchJobs/jobs",
-      "reason": null,
+      "coverage": "FAILED",
+      "collector": "collect_workday",
+      "inventory_count": null,
+      "target_jobs_count": 0,
+      "source_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs",
+      "reason": "CollectorError: Workday paging stopped early: retrieved=1167, total=1168",
       "jobs": [
         {
           "source_id": "R417416",
@@ -5228,7 +5646,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Senior-Medical-Manager---Vaccines---Public-Health_R417416",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Senior-Medical-Manager---Vaccines---Public-Health_R417416",
           "fingerprint": "5dd559ff49681543",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R417440",
@@ -5244,7 +5662,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Medical-Scientific-Liaison--MSL----Oncology--Northwest-_R417440",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Medical-Scientific-Liaison--MSL----Oncology--Northwest-_R417440",
           "fingerprint": "7b644e3bc8fd8e47",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R415286",
@@ -5260,7 +5678,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Associate-Marketeer_R415286",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Associate-Marketeer_R415286",
           "fingerprint": "1268444fe2b549c9",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R415241",
@@ -5276,7 +5694,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Associate-Marketer--Oncology_R415241",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Associate-Marketer--Oncology_R415241",
           "fingerprint": "9a043b17bcc5dde1",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R416129",
@@ -5292,7 +5710,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Clinical-Research-Associate---North-West-England_R416129",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Clinical-Research-Associate---North-West-England_R416129",
           "fingerprint": "ae4d83c5d33b08a3",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R416910",
@@ -5308,7 +5726,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Stage-nella-funzione-di-Market-Access_R416910",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Stage-nella-funzione-di-Market-Access_R416910",
           "fingerprint": "6b1f49d3d3994b08",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "/job/GBR---London---London-Moorgate-WeWork/Regulatory-Affairs-Senior-Specialist_R413463-1",
@@ -5324,7 +5742,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Regulatory-Affairs-Senior-Specialist_R413463-1",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Regulatory-Affairs-Senior-Specialist_R413463-1",
           "fingerprint": "9df9c2918895d323",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R414381",
@@ -5340,7 +5758,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Team-Leader--HTA---Outcomes-Research--Associate-Director---up-to-18-months-Fixed-term-contract--FTC---Moorgate--London_R414381",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Team-Leader--HTA---Outcomes-Research--Associate-Director---up-to-18-months-Fixed-term-contract--FTC---Moorgate--London_R414381",
           "fingerprint": "006677e30b71dc4e",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R415601",
@@ -5356,7 +5774,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Epidemiology-Scientist_R415601",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Epidemiology-Scientist_R415601",
           "fingerprint": "134be59f1f4e87ef",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R410176",
@@ -5372,7 +5790,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Vaccine-Account-Manager-Calabria-e-Basilicata_R410176",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Vaccine-Account-Manager-Calabria-e-Basilicata_R410176",
           "fingerprint": "a4936a7131cc8ed9",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R410181",
@@ -5388,7 +5806,7 @@
           "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Vaccine-Account-Manager-Campania_R410181",
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Vaccine-Account-Manager-Campania_R410181",
           "fingerprint": "004d2f4690003777",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         }
       ]
     }
