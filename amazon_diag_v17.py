@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 import json
-import re
 import requests
 
 API = "https://www.amazon.jobs/en/search.json"
 TIMEOUT = 30
+FACETS = [
+    "category",
+    "schedule_type_id",
+    "employee_class",
+    "job_function_id",
+    "business_category",
+    "is_manager",
+    "is_intern",
+    "normalized_country_code",
+]
 
 
 def get(session, params, label):
@@ -13,7 +22,6 @@ def get(session, params, label):
     r.raise_for_status()
     d = r.json()
     print("RESULT", label, "hits", d.get("hits"), "jobs", len(d.get("jobs") or []))
-    print("REQUEST", label, json.dumps(d.get("job_posting_search_request"), sort_keys=True)[:5000])
     return d
 
 
@@ -29,35 +37,35 @@ def flat(data, name):
 
 def main():
     s = requests.Session()
-    g = get(s, [("offset","0"),("result_limit","1"),("sort","recent"),("facets[]","normalized_country_code"),("facets[]","normalized_location"),("facets[]","location")], "GLOBAL")
-    print("TOP_KEYS", sorted(g.keys()))
-    content = g.get("content")
-    print("CONTENT_TYPE", type(content).__name__, "LEN", len(content) if hasattr(content,"__len__") else None)
-    if isinstance(content, str):
-        print("CONTENT_PREVIEW", re.sub(r"\s+", " ", content)[:3000])
-        for pat in (r"[\"'](?:total|totalCount|count|hits)[\"']\s*[:=]\s*[\"']?([\d,]+)", r"([\d,]+)\s+(?:open\s+)?jobs?"):
-            print("CONTENT_TOTAL_MATCHES", pat, re.findall(pat, content, re.I)[:20])
-    countries = flat(g, "normalized_country_code")
-    print("COUNTRY_COUNT_USA", countries.get("USA"), "COUNTRIES", len(countries), "COUNTRY_SUM", sum(countries.values()))
+    params=[("offset","0"),("result_limit","1"),("sort","recent")]
+    for f in FACETS: params.append(("facets[]",f))
+    d=get(s,params,"GLOBAL_FACETS")
 
-    u = get(s, [("offset","0"),("result_limit","1"),("sort","recent"),("normalized_country_code[]","USA"),("facets[]","normalized_location"),("facets[]","location")], "USA")
-    norm = flat(u, "normalized_location")
-    raw = flat(u, "location")
-    print("USA_NORMALIZED_LOCATION_VALUES", len(norm), "TOP", sorted(norm.items(), key=lambda x:-x[1])[:5])
-    print("USA_RAW_LOCATION_VALUES", len(raw), "TOP", sorted(raw.items(), key=lambda x:-x[1])[:5])
+    facet_data={}
+    for f in FACETS:
+        vals=flat(d,f)
+        facet_data[f]=vals
+        ordered=sorted(vals.items(),key=lambda x:(-x[1],x[0]))
+        print("FACET",f,{"values":len(vals),"sum":sum(vals.values()),"max":ordered[:15]})
 
-    tests = [
-        ("RAW_BRACKETS", [("normalized_country_code[]","USA"),("location[]","US, WA, Seattle")]),
-        ("RAW_NO_BRACKETS", [("normalized_country_code[]","USA"),("location","US, WA, Seattle")]),
-        ("NORM_BRACKETS", [("normalized_country_code[]","USA"),("normalized_location[]","Seattle, Washington, USA")]),
-        ("NORM_NO_BRACKETS", [("normalized_country_code[]","USA"),("normalized_location","Seattle, Washington, USA")]),
-        ("STATE_CONTROL", [("normalized_country_code[]","USA"),("normalized_state_name[]","Washington")]),
-    ]
-    for label, extra in tests:
-        params=[("offset","0"),("result_limit","10"),("sort","recent")]+extra
-        d=get(s,params,label)
-        sample=[(j.get("id"),j.get("location"),j.get("normalized_location")) for j in (d.get("jobs") or [])[:3]]
-        print("SAMPLE",label,sample)
+    # Test likely exhaustive partition facets: each value must be individually queryable.
+    tests=[]
+    for f in ("category","schedule_type_id","employee_class","job_function_id"):
+        vals=facet_data[f]
+        if vals:
+            name,count=sorted(vals.items(),key=lambda x:-x[1])[0]
+            tests.append((f,name,count))
+    for f,name,count in tests:
+        p=[("offset","0"),("result_limit","10"),("sort","recent"),(f+"[]",name)]
+        x=get(s,p,"FILTER_"+f)
+        print("FILTER_CHECK",f,{"value":name,"facet_count":count,"hits":x.get("hits"),"sample_ids":[str(j.get("id")) for j in (x.get("jobs") or [])[:3]],"request":x.get("job_posting_search_request")})
+
+    # Also inspect category facet specifically within USA: if counts sum to exact USA country
+    # count and every category is below 10k, it can solve the USA cap independently.
+    up=[("offset","0"),("result_limit","1"),("sort","recent"),("normalized_country_code[]","USA"),("facets[]","category"),("facets[]","schedule_type_id"),("facets[]","employee_class"),("facets[]","job_function_id")]
+    u=get(s,up,"USA_FACETS")
+    for f in ("category","schedule_type_id","employee_class","job_function_id"):
+        vals=flat(u,f); ordered=sorted(vals.items(),key=lambda x:(-x[1],x[0])); print("USA_FACET",f,{"values":len(vals),"sum":sum(vals.values()),"max":ordered[:15]})
 
 
 if __name__ == "__main__":
