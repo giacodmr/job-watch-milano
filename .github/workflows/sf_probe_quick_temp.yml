@@ -11,129 +11,67 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 6
     steps:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check requests
-      - name: Exhaustively validate evidenced dynamic jobs service
+      - name: Inspect remaining dynamic contracts and supported sort controls
         run: |
           python - <<'PY'
-          import re, json, math, html, requests
-          from collections import Counter
-          from urllib.parse import urljoin, urlparse, urlencode, urlsplit, urlunsplit, parse_qsl
+          import re, json, requests
+          from urllib.parse import urljoin
 
           sites = {
-            'Terna':'https://jobs.terna.it/search/',
+            'Capgemini':'https://jobs.capgemini.com/search/',
+            'Worldline':'https://jobs.worldline.com/search/',
             'ENGIE':'https://jobs.engie.com/search/',
             'Pirelli':'https://jobs.pirelli.com/search/',
           }
-          base_headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'}
-
-          def add_legacy(url):
-            p=urlsplit(url); q=dict(parse_qsl(p.query,keep_blank_values=True)); q['unified']='legacy'
-            return urlunsplit((p.scheme,p.netloc,p.path,urlencode(q),p.fragment))
-
-          def post_page(s, endpoint, referer, locale, n):
-            payload={'keywords':'','locale':locale,'location':'','pageNumber':n,'sortBy':'recent'}
-            r=s.post(endpoint,json=payload,timeout=25,headers={'Referer':referer,'Accept':'application/json, text/plain, */*'})
-            r.raise_for_status(); data=r.json()
-            assert isinstance(data,dict) and isinstance(data.get('totalJobs'),int), f'bad response page {n}'
-            rows=data.get('jobSearchResult') or []
-            assert isinstance(rows,list), f'bad rows page {n}'
-            out=[]
-            for row in rows:
-              assert isinstance(row,dict) and isinstance(row.get('response'),dict), f'bad row page {n}'
-              out.append(row['response'])
-            return data['totalJobs'], out
-
-          def location_value(job):
-            v=job.get('jobLocationShort')
-            if isinstance(v,list):
-              vals=[str(x).strip() for x in v if str(x).strip()]
-              if vals: return ' | '.join(vals)
-            elif isinstance(v,str) and v.strip(): return v.strip()
-            coords=job.get('jobLocationShortWithCoordinates')
-            if isinstance(coords,list):
-              vals=[str(x.get('value') or '').strip() for x in coords if isinstance(x,dict) and str(x.get('value') or '').strip()]
-              if vals: return ' | '.join(vals)
-            v=job.get('cust_location')
-            if isinstance(v,str) and v.strip(): return v.strip()
-            return None
-
+          headers={'User-Agent':'Mozilla/5.0','Accept':'text/html,*/*'}
           for name,url in sites.items():
             print('\n===',name,'===')
-            s=requests.Session(); s.headers.update(base_headers)
-            normal=s.get(url,timeout=20); normal.raise_for_status()
-            assert 'xweb/rmk-jobs-search' in normal.text, 'normal page lacks rmk-jobs-search evidence'
-            scripts=re.findall(r'<script\b[^>]*\bsrc=["\']([^"\']+)["\']',normal.text,re.I)
-            mgr=[urljoin(normal.url,x.replace('&amp;','&')) for x in scripts if 'j2w.searchManager' in x]
-            assert len(mgr)==1, f'unexpected searchManager assets {mgr}'
-            js=s.get(mgr[0],timeout=20); js.raise_for_status()
+            s=requests.Session(); s.headers.update(headers)
+            try:
+              r=s.get(url,timeout=20); print('PAGE',r.status_code,r.url,'len',len(r.text)); r.raise_for_status()
+            except Exception as e:
+              print('PAGE_ERROR',type(e).__name__,str(e)); continue
+            text=r.text
+            scripts=re.findall(r'<script\b[^>]*\bsrc=["\']([^"\']+)["\']',text,re.I)
+            mgr=[urljoin(r.url,x.replace('&amp;','&')) for x in scripts if 'j2w.searchManager' in x]
+            print('WIDGET', 'xweb/rmk-jobs-search' in text, 'MANAGERS', json.dumps(mgr,ensure_ascii=False))
+            sort_fragments=[]
+            for m in re.finditer(r'(?i)sort(?:By|by|field|order)?',text):
+              frag=re.sub(r'\s+',' ',text[max(0,m.start()-180):min(len(text),m.end()+350)])
+              if frag not in sort_fragments: sort_fragments.append(frag)
+              if len(sort_fragments)>=15: break
+            print('HTML_SORT',json.dumps(sort_fragments,ensure_ascii=False))
+            if not mgr: continue
+            try:
+              js=s.get(mgr[0],timeout=20); js.raise_for_status()
+            except Exception as e:
+              print('JS_ERROR',type(e).__name__,str(e)); continue
             endpoint_m=re.search(r'type\s*:\s*["\']POST["\']\s*,\s*url\s*:\s*["\']([^"\']+)["\']',js.text,re.I)
-            assert endpoint_m, 'public searchManager does not evidence POST endpoint'
-            endpoint=urljoin(normal.url,endpoint_m.group(1))
-            assert urlparse(endpoint).netloc.casefold()==urlparse(normal.url).netloc.casefold(), 'endpoint changed host'
-            for required in ('keywords','locale','location','pageNumber','sortBy'):
-              assert required in js.text, f'missing payload field evidence {required}'
-
-            legacy=s.get(add_legacy(url),timeout=20); legacy.raise_for_status()
-            locale_m=re.search(r'var\s+appParams\s*=\s*\{.*?\blocale\s*:\s*["\']([^"\']+)',legacy.text,re.I|re.S)
-            if not locale_m: locale_m=re.search(r'\bcurrentLocale\s*:\s*["\']([^"\']+)',legacy.text,re.I)
-            assert locale_m, 'locale not found'; locale=locale_m.group(1)
-
-            total0, first=post_page(s,endpoint,legacy.url,locale,0)
-            page_size=len(first)
-            assert total0 >= 0 and (total0==0 or page_size>0)
-            pages=0 if total0==0 else math.ceil(total0/page_size)
-            assert pages <= 500, f'page count {pages} exceeds safety bound'
-            all_rows=[]; page_ids=[]; totals=[]
-            for n in range(pages):
-              total,rows=(total0,first) if n==0 else post_page(s,endpoint,legacy.url,locale,n)
-              totals.append(total)
-              ids=[]
-              for job in rows:
-                jid=str(job.get('id') or '').strip()
-                title=str(job.get('unifiedStandardTitle') or '').strip()
-                assert jid and title, f'missing id/title page {n}'
-                ids.append(jid); all_rows.append(job)
-              page_ids.append(ids)
-              expected=page_size if n < pages-1 else total0-page_size*(pages-1)
-              assert len(rows)==expected, f'page {n} rows={len(rows)} expected={expected}'
-            assert all(t==total0 for t in totals), f'total drift {set(totals)}'
-            ids=[str(j['id']).strip() for j in all_rows]
-            counts=Counter(ids); dups=sorted([i for i,c in counts.items() if c>1])
-            missing_location=[str(j['id']) for j in all_rows if not location_value(j)]
-
-            total_first2, first2=post_page(s,endpoint,legacy.url,locale,0)
-            total_last2,last2=(total_first2,first2) if pages<=1 else post_page(s,endpoint,legacy.url,locale,pages-1)
-            first2_ids=[str(j.get('id') or '').strip() for j in first2]
-            last2_ids=[str(j.get('id') or '').strip() for j in last2]
-            stable_edges=(total_first2==total0==total_last2 and first2_ids==page_ids[0] and last2_ids==page_ids[-1]) if pages else True
-
-            url_checks=[]
-            for job in all_rows[:2]:
-              jid=str(job['id']).strip(); slug=html.unescape(str(job.get('unifiedUrlTitle') or job.get('urlTitle') or '')).strip()
-              candidates=[
-                urljoin(normal.url,f'/job/{slug}/{jid}-{locale}/'),
-                urljoin(normal.url,f'/job/{slug}/{jid}/'),
-              ]
-              seen=[]
-              for cand in candidates:
-                try:
-                  rr=s.get(cand,timeout=15,allow_redirects=True)
-                  seen.append({'candidate':cand,'status':rr.status_code,'final':rr.url,'has_id':jid in rr.text})
-                except Exception as e:
-                  seen.append({'candidate':cand,'error':type(e).__name__+': '+str(e)})
-              url_checks.append(seen)
-
-            summary={
-              'endpoint':endpoint,'locale':locale,'total':total0,'page_size':page_size,'pages':pages,
-              'raw_rows':len(all_rows),'unique_ids':len(counts),'duplicates':dups[:20],
-              'missing_location_count':len(missing_location),'missing_location_sample':missing_location[:20],
-              'stable_edges':stable_edges,'first_ids':page_ids[0] if page_ids else [],'last_ids':page_ids[-1] if page_ids else [],
-              'url_checks':url_checks,
-            }
-            print('EXHAUSTIVE '+json.dumps(summary,ensure_ascii=False))
+            endpoint=urljoin(r.url,endpoint_m.group(1)) if endpoint_m else None
+            js_sort=[]
+            for m in re.finditer(r'(?i)sortBy',js.text):
+              frag=re.sub(r'\s+',' ',js.text[max(0,m.start()-280):min(len(js.text),m.end()+500)])
+              if frag not in js_sort: js_sort.append(frag)
+              if len(js_sort)>=15: break
+            string_values=sorted(set(re.findall(r'["\']([A-Za-z][A-Za-z0-9_-]{1,30})["\']', ''.join(js_sort))))
+            print('CONTRACT',json.dumps({'endpoint':endpoint,'js_sort_fragments':js_sort,'nearby_string_values':string_values},ensure_ascii=False))
+            # Probe only the publicly evidenced default payload when a modern service exists.
+            if endpoint and 'xweb/rmk-jobs-search' in text:
+              locale_m=re.search(r'\blocale\s*:\s*["\']([^"\']+)',text,re.I)
+              if locale_m:
+                locale=locale_m.group(1)
+                for n in (0,1):
+                  pr=s.post(endpoint,json={'keywords':'','locale':locale,'location':'','pageNumber':n,'sortBy':'recent'},timeout=20,headers={'Referer':r.url,'Accept':'application/json, text/plain, */*'})
+                  try: data=pr.json()
+                  except Exception: data={}
+                  ids=[]
+                  for row in (data.get('jobSearchResult') or []) if isinstance(data,dict) else []:
+                    if isinstance(row,dict) and isinstance(row.get('response'),dict): ids.append(str(row['response'].get('id') or ''))
+                  print('DEFAULT_PAGE',n,json.dumps({'status':pr.status_code,'totalJobs':data.get('totalJobs') if isinstance(data,dict) else None,'ids':ids},ensure_ascii=False))
           PY
