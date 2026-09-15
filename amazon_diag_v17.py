@@ -2,61 +2,51 @@
 import json
 import requests
 
-API = "https://www.amazon.jobs/en/search.json"
-TIMEOUT = 30
-
-
-def get(session, params):
-    r = session.get(API, params=params, timeout=TIMEOUT, headers={"User-Agent":"job-watch-milano/amazon-diagnostic","Accept":"application/json"})
-    print("HTTP", r.status_code, len(r.content), r.url)
-    if not r.ok:
-        print("BODY", r.text[:1500])
-    r.raise_for_status()
-    return r.json()
-
-
-def country_facets(data):
-    raw = (data.get("facets") or {}).get("normalized_country_code_facet") or []
-    out = {}
-    for item in raw:
-        if not isinstance(item, dict):
-            continue
-        for key, value in item.items():
-            try: out[str(key)] = int(value)
-            except Exception: pass
-    return out
-
-
-def ids(data):
-    return [str(x.get("id")) for x in (data.get("jobs") or []) if x.get("id")]
-
-
+API="https://www.amazon.jobs/en/search.json"; TIMEOUT=30
+FACETS=["normalized_state_name","normalized_city_name","normalized_location","location"]
+def get(s,params):
+ r=s.get(API,params=params,timeout=TIMEOUT,headers={"User-Agent":"job-watch-milano/amazon-diagnostic","Accept":"application/json"}); print("HTTP",r.status_code,len(r.content),r.url); r.raise_for_status(); return r.json()
+def flat(data,name):
+ raw=(data.get("facets") or {}).get(name+"_facet") or []; out={}
+ for item in raw:
+  if isinstance(item,dict):
+   for k,v in item.items():
+    try: out[str(k)]=int(v)
+    except: pass
+ return out
+def locs(job):
+ out=[]
+ for raw in job.get("locations") or []:
+  if isinstance(raw,str):
+   try: raw=json.loads(raw)
+   except: continue
+  if isinstance(raw,dict): out.append(raw)
+ return out
 def main():
-    s = requests.Session()
-    base = get(s, [("offset","0"),("result_limit","1"),("sort","recent"),("facets[]","normalized_country_code")])
-    countries = country_facets(base)
-    ordered = sorted(countries.items(), key=lambda x: (-x[1], x[0]))
-    print("GLOBAL_HITS", base.get("hits"))
-    print("COUNTRIES", len(ordered), ordered)
-    print("COUNTRY_COUNT_SUM", sum(countries.values()), "MAX", ordered[0] if ordered else None)
-
-    for offset in (9800, 9900, 9999, 10000, 10001, 10100, 12000, 15000):
-        try:
-            data = get(s, [("offset",str(offset)),("result_limit","100"),("sort","recent")])
-            print("OFFSET", offset, {"hits":data.get("hits"),"rows":len(data.get("jobs") or []),"ids":ids(data)[:3],"last":ids(data)[-3:]})
-        except Exception as e:
-            print("OFFSET_ERROR", offset, type(e).__name__, str(e))
-
-    # Test effective page size and exact facet-count echo on the largest countries.
-    for code, facet_count in ordered[:8]:
-        for limit in (100, 250, 500, 1000):
-            try:
-                data = get(s, [("offset","0"),("result_limit",str(limit)),("sort","recent"),("normalized_country_code[]",code)])
-                print("COUNTRY_LIMIT", code, {"facet_count":facet_count,"limit":limit,"hits":data.get("hits"),"rows":len(data.get("jobs") or []),"unique":len(set(ids(data)))})
-            except Exception as e:
-                print("COUNTRY_LIMIT_ERROR", code, limit, type(e).__name__, str(e))
-                break
-
-
-if __name__ == "__main__":
-    main()
+ s=requests.Session(); params=[("offset","0"),("result_limit","100"),("sort","recent"),("normalized_country_code[]","USA")]
+ for f in FACETS: params.append(("facets[]",f))
+ d=get(s,params); print("USA_HITS",d.get("hits"),"ROWS",len(d.get("jobs") or []))
+ for f in FACETS:
+  vals=flat(d,f); ordered=sorted(vals.items(),key=lambda x:(-x[1],x[0])); print("FACET",f,"COUNT",len(vals),"SUM",sum(vals.values()),"MAX",ordered[:20]);
+ # Validate the visible capped 10k in pages and count missing geography in that full visible window.
+ seen={}; missing_state=[]; missing_city=[]; missing_country=[]; expected=10000
+ for offset in range(0,expected,100):
+  data=get(s,[("offset",str(offset)),("result_limit","100"),("sort","recent"),("normalized_country_code[]","USA")])
+  rows=data.get("jobs") or []
+  if int(data.get("hits") or 0)!=expected: raise SystemExit(f"USA cap changed at {offset}: {data.get('hits')}")
+  for job in rows:
+   jid=str(job.get("id"));
+   if not jid or jid in seen: raise SystemExit(f"duplicate/missing id at {offset}: {jid}")
+   seen[jid]=job
+   js=locs(job)
+   us=[x for x in js if (x.get("normalizedCountryCode") or x.get("countryIso3a"))=="USA"]
+   if not us: missing_country.append(jid)
+   if us and not any(x.get("normalizedStateName") for x in us): missing_state.append(jid)
+   if us and not any(x.get("normalizedCityName") for x in us): missing_city.append(jid)
+ print("USA_VISIBLE_10K",{"unique":len(seen),"missing_country":len(missing_country),"missing_state":len(missing_state),"missing_city":len(missing_city),"missing_state_sample":missing_state[:10],"missing_city_sample":missing_city[:10]})
+ # Probe the largest state partitions to establish exact counts/pageability.
+ states=flat(d,"normalized_state_name")
+ for state,count in sorted(states.items(),key=lambda x:-x[1])[:15]:
+  x=get(s,[("offset","0"),("result_limit","100"),("sort","recent"),("normalized_country_code[]","USA"),("normalized_state_name[]",state)])
+  print("STATE",state,{"facet_count":count,"hits":x.get("hits"),"rows":len(x.get("jobs") or [])})
+if __name__=="__main__":main()
