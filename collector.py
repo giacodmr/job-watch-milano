@@ -1719,9 +1719,8 @@ SFPageParser = SFPageParserV15
 _find_sf_search_url_v14 = find_sf_search_url
 
 def find_sf_search_url(base: str, parser: SFPageParser) -> str | None:
-    existing = _find_sf_search_url_v14(base, parser)
-    if existing:
-        return existing
+    # A same-host form action is stronger evidence of the actual search inventory
+    # than navigation/category anchors on /viewalljobs/ landing pages.
     candidates = []
     for action in getattr(parser, "form_actions", []) or []:
         u = normalize_abs_url(base, clean_text(action))
@@ -1729,11 +1728,11 @@ def find_sf_search_url(base: str, parser: SFPageParser) -> str | None:
             continue
         if "/search/" in urlparse(u).path.casefold() or urlparse(u).path.casefold().endswith("/search"):
             candidates.append(u)
-    if not candidates:
-        return None
-    candidates = list(dict.fromkeys(candidates))
-    candidates.sort(key=lambda u: (0 if not urlparse(u).query else 1, len(urlparse(u).path), len(u)))
-    return candidates[0]
+    if candidates:
+        candidates = list(dict.fromkeys(candidates))
+        candidates.sort(key=lambda u: (0 if not urlparse(u).query else 1, len(urlparse(u).path), len(u)))
+        return candidates[0]
+    return _find_sf_search_url_v14(base, parser)
 
 _sf_startrow_v14 = sf_startrow
 
