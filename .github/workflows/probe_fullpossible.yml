@@ -1,71 +1,200 @@
-name: Probe FULL-possible ATS
+name: Apply validated FULL-possible fixes
 on:
   push:
     branches: [ats-fullpossible-v17]
     paths: [.github/workflows/probe_fullpossible.yml]
 permissions:
-  contents: read
+  contents: write
 jobs:
-  probe:
+  apply:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Probe OC&C Eploy inventory contract
+        with:
+          ref: ats-fullpossible-v17
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check requests
+      - name: Patch collector and JW3 mappings
         shell: python
         run: |
-          import re, urllib.request, html
-          from urllib.parse import urljoin,urlparse,parse_qs
-          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0'}
-          def get(u):
-              with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r: return r.read().decode('utf-8','replace'),r.geturl()
-          base='https://careers.occstrategy.com/vacancies/vacancy-search-results.aspx'
-          first,final=get(base)
-          text=html.unescape(first)
-          print('TOTALS',re.findall(r'\b(\d+)\s+Vacanc(?:y|ies)\b',text,re.I))
-          print('PAGE_STATUS',re.findall(r'Page:\s*(\d+)\s+of\s+(\d+)',re.sub(r'<[^>]+>',' ',text),re.I))
-          pagers=[]
-          for href,label in re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>',text,re.I|re.S):
-              lab=re.sub(r'<[^>]+>',' ',label).strip()
-              if lab in {'1','2','Next','Last'} or 'page' in href.lower(): pagers.append((lab,urljoin(final,html.unescape(href))))
-          print('PAGERS',pagers[:30])
-          urls=[]
-          for candidate in [final]+[u for _,u in pagers]:
-              if candidate in urls: continue
-              urls.append(candidate); page,_=get(candidate); decoded=html.unescape(page)
-              jobs=[]
-              for href,title in re.findall(r'<a[^>]+href=["\']([^"\']*/vacancies/(\d+)/[^"\']+)["\'][^>]*>(.*?)</a>',decoded,re.I|re.S):
-                  pass
-              pairs=[]
-              for m in re.finditer(r'href=["\']([^"\']*/vacancies/(\d+)/[^"\']+)["\']',decoded,re.I):
-                  u=urljoin(candidate,html.unescape(m.group(1))); key=m.group(2)
-                  if (key,u) not in pairs: pairs.append((key,u))
-              print('EPLOY_PAGE',candidate,'JOBS',len(pairs),'IDS',[x[0] for x in pairs])
-      - name: Probe Imperial Brands counted pages
+          from pathlib import Path
+          import json
+
+          p=Path('collector.py')
+          s=p.read_text()
+          s=s.replace('from urllib.parse import parse_qs, unquote, urljoin, urlparse', 'from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse')
+          s=s.replace('''class TeamtailorPageParser(HTMLParser):
+              def __init__(self, base_url: str):
+                  super().__init__(convert_charrefs=True)
+                  self.base_url = base_url
+                  self.visible_parts = []'''.replace('              ','    '), '''class TeamtailorPageParser(HTMLParser):
+              def __init__(self, base_url: str, allow_external_jobs: bool = False):
+                  super().__init__(convert_charrefs=True)
+                  self.base_url = base_url
+                  self.allow_external_jobs = allow_external_jobs
+                  self.visible_parts = []'''.replace('              ','    '))
+          old='''        if p.netloc.casefold() != urlparse(self.base_url).netloc.casefold():
+                      return
+                  m = TT_JOB_PATH_RE.search(unquote(p.path))
+                  if not m:
+                      return
+                  self._finish_current()
+                  self.current = {"source_id": m.group(1), "url": absolute, "title_parts": [], "context_parts": []}'''.replace('                  ','')
+          new='''        base_host = urlparse(self.base_url).netloc.casefold()
+                  job_host = p.netloc.casefold()
+                  if not self.allow_external_jobs and job_host != base_host:
+                      return
+                  m = TT_JOB_PATH_RE.search(unquote(p.path))
+                  if not m:
+                      return
+                  self._finish_current()
+                  source_id = m.group(1) if job_host == base_host else f"{job_host}:{m.group(1)}"
+                  self.current = {"source_id": source_id, "url": absolute, "title_parts": [], "context_parts": []}'''.replace('                  ','')
+          if old not in s:
+              raise SystemExit('Teamtailor parser anchor block not found')
+          s=s.replace(old,new,1)
+          old_fn='''def collect_teamtailor(company):
+              name = company.get("company")
+              ats = company.get("ats") or {}
+              inventory = clean_text(ats.get("inventory_url"))
+              if not inventory:
+                  raise CollectorError("Teamtailor inventory URL missing")
+              try:
+                  page_html, final_url = get_html(inventory)
+              except Exception as e:
+                  raise NotCheckable(f"Teamtailor public board could not be read safely: {e}") from e
+              parser = TeamtailorPageParser(final_url)
+              parser.feed(page_html)
+              parser.close()
+              expected = teamtailor_total(parser.visible_text)
+              if expected is None:
+                  raise NotCheckable("Teamtailor board does not expose one reconcilable public job total")
+              unique = {}
+              for raw in parser.jobs:
+                  sid = clean_text(raw.get("source_id"))
+                  url = clean_text(raw.get("url"))
+                  title = clean_text(raw.get("title"))
+                  if sid and url and title:
+                      unique[sid] = raw
+              if len(unique) != expected:
+                  raise NotCheckable(f"Teamtailor board count mismatch: retrieved={len(unique)}, total={expected}")
+              jobs = []
+              for sid, raw in unique.items():
+                  loc = teamtailor_location(raw.get("context_parts") or [])
+                  if not location_matches(loc):
+                      continue
+                  jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
+              return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": final_url}
+          '''.replace('          ','')
+          new_fn='''def teamtailor_page_url(url: str, page: int):
+              parsed = urlparse(url)
+              query = parse_qs(parsed.query, keep_blank_values=True)
+              query["page"] = [str(page)]
+              return parsed._replace(query=urlencode(query, doseq=True)).geturl()
+          
+          
+          def collect_teamtailor(company):
+              name = company.get("company")
+              ats = company.get("ats") or {}
+              inventory = clean_text(ats.get("inventory_url"))
+              if not inventory:
+                  raise CollectorError("Teamtailor inventory URL missing")
+              unique = {}
+              expected = None
+              first_final_url = None
+              for page in range(1, MAX_PAGES + 1):
+                  page_url = inventory if page == 1 else teamtailor_page_url(inventory, page)
+                  try:
+                      page_html, final_url = get_html(page_url)
+                  except Exception as e:
+                      raise NotCheckable(f"Teamtailor public board could not be read safely: {e}") from e
+                  if first_final_url is None:
+                      first_final_url = final_url
+                  parser = TeamtailorPageParser(final_url, allow_external_jobs=True)
+                  parser.feed(page_html)
+                  parser.close()
+                  page_total = teamtailor_total(parser.visible_text)
+                  if page == 1:
+                      expected = page_total
+                      if expected is None:
+                          raise NotCheckable("Teamtailor board does not expose one reconcilable public job total")
+                  elif page_total != expected:
+                      raise NotCheckable(f"Teamtailor public total changed during pagination: expected={expected}, page_total={page_total}")
+                  before = len(unique)
+                  for raw in parser.jobs:
+                      sid = clean_text(raw.get("source_id"))
+                      url = clean_text(raw.get("url"))
+                      title = clean_text(raw.get("title"))
+                      if sid and url and title:
+                          unique[sid] = raw
+                  if len(unique) > expected:
+                      raise NotCheckable(f"Teamtailor board exceeded public total: retrieved={len(unique)}, total={expected}")
+                  if len(unique) == expected:
+                      break
+                  if len(unique) == before:
+                      raise NotCheckable(f"Teamtailor paging stopped before public total: retrieved={len(unique)}, total={expected}, page={page}")
+              if len(unique) != expected:
+                  raise NotCheckable(f"Teamtailor board count mismatch: retrieved={len(unique)}, total={expected}")
+              jobs = []
+              for sid, raw in unique.items():
+                  loc = teamtailor_location(raw.get("context_parts") or [])
+                  if not location_matches(loc):
+                      continue
+                  jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
+              return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": first_final_url or inventory}
+          '''.replace('          ','')
+          if old_fn not in s:
+              raise SystemExit('collect_teamtailor block not found')
+          s=s.replace(old_fn,new_fn,1)
+          p.write_text(s)
+
+          mp=Path('ats_mapping_jw3.json')
+          data=json.loads(mp.read_text())
+          for c in data['companies']:
+              if c['company']=='Axpo':
+                  c['ats']['family']='Teamtailor aggregate public board'
+                  c['ats']['tenant']='Axpo Group / multi-board'
+                  c['ats']['inventory_url']='https://careers.axpo.com/jobs'
+                  c['ats']['public_api_or_feed']=None
+                  c['verification']['pagination']='20 per page / numbered pages'
+                  c['verification']['total_count_available']=True
+                  c['verification']['full_inventory_possible']=True
+                  c['job_watch_method']['primary']='Enumerate the official Axpo Teamtailor aggregate board across every numbered page and reconcile host-qualified stable job IDs to the exact public total.'
+                  c['limitations']=['Axpo aggregates several subsidiary Teamtailor boards; complete enumeration must retain cross-domain job links and reconcile them to the aggregate public total.']
+              elif c['company']=='Nadara':
+                  c['ats']['family']='Workday'
+                  c['ats']['tenant']='nadara / wd3'
+                  c['ats']['inventory_url']='https://nadara.wd3.myworkdayjobs.com/External'
+                  c['ats']['public_api_or_feed']='https://nadara.wd3.myworkdayjobs.com/wday/cxs/nadara/External/jobs'
+                  c['verification']['pagination']='Workday CXS offset pagination'
+                  c['verification']['total_count_available']=True
+                  c['verification']['full_inventory_possible']=True
+                  c['job_watch_method']['primary']='Enumerate the official Nadara Workday External site through the public CXS endpoint and reconcile every requisition to total.'
+                  c['limitations']=['Nadara official careers page links directly to the Workday External inventory; same-run public careers count and Workday CXS total reconciled exactly.']
+          mp.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+      - name: Validate targeted collectors
         shell: python
         run: |
-          import re, urllib.request, html
-          from urllib.parse import urljoin,urlparse
-          H={'User-Agent':'Mozilla/5.0 job-watch-probe/1.0'}
-          def get(u):
-              with urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=30) as r: return r.read().decode('utf-8','replace'),r.geturl()
-          base='https://jobs.impbrands.com/jobs/search'
-          all_urls=[]; expected=None
-          for n in range(1,6):
-              page,final=get(base+f'?page={n}')
-              plain=re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' ',html.unescape(page)))
-              m=re.search(r'Displaying\s+(?:all\s+)?(?:\d+\s*[-–]\s*\d+\s+of\s+)?(\d+)\s+(?:in total|entries)',plain,re.I)
-              if not m:
-                  m=re.search(r'Displaying\s+\d+\s*[-–]\s*\d+\s+of\s+(\d+)\s+in total',plain,re.I)
-              total=int(m.group(1)) if m else None
-              if expected is None and total is not None: expected=total
-              links=[]
-              for href in re.findall(r'href=["\']([^"\']+)["\']',page,re.I):
-                  u=urljoin(final,html.unescape(href)); p=urlparse(u)
-                  if p.netloc.casefold()==urlparse(final).netloc.casefold() and re.match(r'^/jobs/[^/?#]+$',p.path) and p.path!='/jobs/search':
-                      if u not in links: links.append(u)
-              print('IMPERIAL_PAGE',n,'TOTAL',total,'JOBS',len(links),'FIRST',links[:2],'LAST',links[-2:])
-              if not links: break
-              all_urls += links
-              if expected is not None and len(set(all_urls))>=expected: break
-          print('IMPERIAL_RECONCILE','expected=',expected,'seen=',len(all_urls),'unique=',len(set(all_urls)),'dups=',len(all_urls)-len(set(all_urls)))
+          import json,os,sys
+          sys.path.insert(0,os.getcwd())
+          import collector
+          m=json.load(open('ats_mapping_jw3.json'))
+          for name,fn in [('Axpo',collector.collect_teamtailor),('Nadara',collector.collect_workday)]:
+              c=next(x for x in m['companies'] if x['company']==name)
+              r=fn(c)
+              print(name,json.dumps({k:r.get(k) for k in ('coverage','collector','inventory_count','source_url')},ensure_ascii=False),'target_jobs=',len(r.get('jobs') or []))
+              if r.get('coverage')!='VERIFIED': raise SystemExit(f'{name} not verified')
+          import py_compile
+          py_compile.compile('collector.py',doraise=True)
+      - name: Commit validated production changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add collector.py ats_mapping_jw3.json
+          git diff --cached --check
+          git commit -m 'Job Watch v1.7: verify Axpo and Nadara inventories'
+          git push origin HEAD:ats-fullpossible-v17
