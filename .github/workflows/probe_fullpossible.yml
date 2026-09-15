@@ -38,10 +38,11 @@ jobs:
               if total!=expected or lo!=len(rows)+1: raise SystemExit('paging changed')
               page_rows=[]
               for attrs,row in re.findall(r'<tr\b([^>]*)>(.*?)</tr>',body,re.I|re.S):
-                  if not re.search(r'\brole=["\']link["\']',attrs,re.I): continue
+                  if not re.search(r'\bclass=["\'][^"\']*\bjob-search-results-row\b',attrs,re.I): continue
                   um=re.search(r'\bdata-job-url=["\']([^"\']+)',attrs,re.I)
-                  if not um: raise SystemExit('missing URL')
+                  if not um: raise SystemExit('job row missing URL')
                   page_rows.append(urljoin(final,html.unescape(um.group(1))))
+              print('PAGE',page,'RANGE',lo,hi,'CARDS',len(page_rows))
               if len(page_rows)!=hi-lo+1: raise SystemExit('card/range mismatch')
               rows+=page_rows
               if len(rows)==expected: break
