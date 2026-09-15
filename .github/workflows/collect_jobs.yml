@@ -58,8 +58,6 @@ jobs:
                   try:
                       return _collect_workday_v13(company)
                   except requests.exceptions.JSONDecodeError as e:
-                      # Workday can transiently return HTML/empty content with HTTP 200.
-                      # Retry the whole inventory so VERIFIED still represents one coherent walk.
                       last_error = e
                       continue
                   except CollectorError as e:
@@ -93,7 +91,6 @@ jobs:
 
           verified = failed = not_checked = 0
           unilever = None
-          supported_not_checked = []
           for batch in ("jw1", "jw2", "jw3", "jw4"):
               data = json.loads(Path(f"current_jobs_{batch}.json").read_text(encoding="utf-8"))
               s = data["summary"]
@@ -105,12 +102,7 @@ jobs:
               for company in data.get("companies", []):
                   if company.get("company") == "Unilever":
                       unilever = company
-                  if company.get("coverage") == "NOT_CHECKED" and not str(company.get("collector") or "").startswith("unsupported_or_unverified"):
-                      supported_not_checked.append((batch, company.get("company"), company.get("collector"), company.get("reason")))
           print({"VERIFIED": verified, "FAILED": failed, "NOT_CHECKED": not_checked})
-          print("Supported collectors safely downgraded to NOT_CHECKED:")
-          for row in supported_not_checked:
-              print(" | ".join(str(x) for x in row))
           if failed != 0:
               raise SystemExit(f"Release blocked: FAILED={failed}")
           if verified < 68:
@@ -119,15 +111,11 @@ jobs:
               raise SystemExit(f"Release blocked: Unilever must remain NOT_CHECKED, got {unilever}")
           PY
 
-      - name: Remove experimental wrappers
-        run: rm -f collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py collector_v14f.py collector_v14g.py finalize_v14.py
-
-      - name: Commit standalone v1.4 release candidate
+      - name: Commit validated v1.4 contents
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add collector.py ats_mapping_jw1.json ats_mapping_jw2.json ats_mapping_jw3.json ats_mapping_jw4.json .github/workflows/collect_jobs.yml current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
-          git add -u collector_v14.py collector_v14b.py collector_v14c.py collector_v14d.py collector_v14e.py collector_v14f.py collector_v14g.py finalize_v14.py
-          git commit -m "Finalize standalone Job Watch collector v1.4"
+          git add collector.py ats_mapping_jw1.json ats_mapping_jw2.json ats_mapping_jw3.json ats_mapping_jw4.json current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json
+          git commit -m "Persist validated Job Watch collector v1.4 contents"
           git push
