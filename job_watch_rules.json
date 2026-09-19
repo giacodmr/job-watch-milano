@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "updated": "2026-09-14",
+  "version": "1.1",
+  "updated": "2026-09-19",
   "locations": {
     "primary": [
       "Milan",
@@ -16,7 +16,6 @@
   "max_experience_years": 5,
   "exclude": [
     "internship",
-    "manager+",
     "marketing",
     "CRM",
     "pure sales",
@@ -62,5 +61,51 @@
     "web search for discovery",
     "LinkedIn and aggregators for discovery only"
   ],
-  "cost_policy": "No paid external services or APIs"
+  "cost_policy": "No paid external services or APIs",
+  "seniority_policy": {
+    "title_is_not_seniority": true,
+    "manager_senior_lead_auto_exclusion": false,
+    "required_experience_target": "0-5 years",
+    "5_plus_preferred": "allowed for analysis",
+    "6_plus_mandatory": "normally exclude unless an unusually strong and credible fit justifies review"
+  },
+  "fit_thresholds": {
+    "milan_rome": 70,
+    "london": 80,
+    "policy": "No maximum number of reported opportunities. Every vacancy meeting the relevant threshold and reporting condition must be surfaced."
+  },
+  "analysis_policy": {
+    "score_all_extracted_target_geography_vacancies": true,
+    "preliminary_title_keyword_filter": false,
+    "read_full_jd_for_plausibly_relevant_roles": true,
+    "distinguish_must_have_from_preferred": true,
+    "semantic_fit_not_keyword_only": true,
+    "audit_required": true,
+    "inventory_reconciliation_required": true,
+    "reporting_reconciliation_required": true
+  },
+  "salary_policy": {
+    "importance": "high",
+    "official_range_first": true,
+    "estimate_if_official_missing": true,
+    "estimate_requires_source_label": true,
+    "missing_salary_does_not_exclude": true
+  },
+  "autonomous_search_policy": {
+    "required_every_run": true,
+    "run_after_mapped_company_checks": true,
+    "purpose": [
+      "discover vacancies missed by primary ATS/mapping",
+      "discover hidden-gem companies and roles"
+    ],
+    "aggregators_are_discovery_only": true
+  },
+  "daily_output_policy": {
+    "omit_known_unchanged_still_open": true,
+    "report_all_new_above_threshold": true,
+    "report_all_autonomous_delta_and_hidden_gems_above_threshold": true,
+    "report_previously_open_but_never_reported_above_threshold": true,
+    "report_materially_updated_above_threshold": true,
+    "no_top_n_cap": true
+  }
 }
