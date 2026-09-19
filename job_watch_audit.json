@@ -1,0 +1,111 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-09-19T10:16:47Z",
+  "definition": "Inventory completeness is separate from analysis completeness. A run is complete only when extracted open vacancies reconcile to the analysis state, all are analyzed, and every currently reportable above-threshold vacancy has been surfaced.",
+  "batches": {
+    "JW1": {
+      "batch": "JW1",
+      "source_generated_at": "2026-09-19T10:11:09Z",
+      "company_ats_coverage": {
+        "VERIFIED": 26,
+        "PARTIAL": 1,
+        "FAILED": 0,
+        "NOT_CHECKED": 27
+      },
+      "vacancy_analysis_coverage": {
+        "extracted_open": 827,
+        "state_records_open": 827,
+        "analyzed_current": 0,
+        "pending_analysis": 827,
+        "analysis_pct": 0.0,
+        "reportable_above_threshold": 0,
+        "surfaced_ever_current": 0
+      },
+      "checks": {
+        "inventory_reconciliation": true,
+        "state_reconciliation": true,
+        "analysis_complete": false,
+        "reporting_reconciliation": false
+      },
+      "run_complete": false
+    },
+    "JW2": {
+      "batch": "JW2",
+      "source_generated_at": "2026-09-19T10:14:46Z",
+      "company_ats_coverage": {
+        "VERIFIED": 18,
+        "PARTIAL": 2,
+        "FAILED": 0,
+        "NOT_CHECKED": 20
+      },
+      "vacancy_analysis_coverage": {
+        "extracted_open": 380,
+        "state_records_open": 380,
+        "analyzed_current": 0,
+        "pending_analysis": 380,
+        "analysis_pct": 0.0,
+        "reportable_above_threshold": 0,
+        "surfaced_ever_current": 0
+      },
+      "checks": {
+        "inventory_reconciliation": true,
+        "state_reconciliation": true,
+        "analysis_complete": false,
+        "reporting_reconciliation": false
+      },
+      "run_complete": false
+    },
+    "JW3": {
+      "batch": "JW3",
+      "source_generated_at": "2026-09-19T10:15:18Z",
+      "company_ats_coverage": {
+        "VERIFIED": 10,
+        "PARTIAL": 3,
+        "FAILED": 0,
+        "NOT_CHECKED": 27
+      },
+      "vacancy_analysis_coverage": {
+        "extracted_open": 174,
+        "state_records_open": 174,
+        "analyzed_current": 0,
+        "pending_analysis": 174,
+        "analysis_pct": 0.0,
+        "reportable_above_threshold": 0,
+        "surfaced_ever_current": 0
+      },
+      "checks": {
+        "inventory_reconciliation": true,
+        "state_reconciliation": true,
+        "analysis_complete": false,
+        "reporting_reconciliation": false
+      },
+      "run_complete": false
+    },
+    "JW4": {
+      "batch": "JW4",
+      "source_generated_at": "2026-09-19T10:16:41Z",
+      "company_ats_coverage": {
+        "VERIFIED": 24,
+        "PARTIAL": 3,
+        "FAILED": 0,
+        "NOT_CHECKED": 21
+      },
+      "vacancy_analysis_coverage": {
+        "extracted_open": 405,
+        "state_records_open": 405,
+        "analyzed_current": 0,
+        "pending_analysis": 405,
+        "analysis_pct": 0.0,
+        "reportable_above_threshold": 0,
+        "surfaced_ever_current": 0
+      },
+      "checks": {
+        "inventory_reconciliation": true,
+        "state_reconciliation": true,
+        "analysis_complete": false,
+        "reporting_reconciliation": false
+      },
+      "run_complete": false
+    }
+  }
+}

@@ -2,7 +2,7 @@
   "version": "1.6",
   "batch": "JW3",
   "batch_name": "Energy, Infrastructure & Industrial",
-  "generated_at": "2026-09-19T04:43:22Z",
+  "generated_at": "2026-09-19T10:15:18Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -22,18 +22,19 @@
     "Roma",
     "London"
   ],
-  "coverage_note": "VERIFIED means the structured/public inventory was exhausted and reconciled in this run. A recognized but non-exhaustible portal remains NOT_CHECKED; request/runtime failures on a valid structured method are FAILED.",
+  "coverage_note": "VERIFIED means the structured/public inventory was exhausted and reconciled in this run. PARTIAL means an official method was actually attempted but exhaustiveness could not be proven. NOT_CHECKED means no safe current-run collector attempt was made. Request/runtime failures on a valid structured method are FAILED.",
   "summary": {
     "companies_total": 40,
     "collector_supported": 13,
     "VERIFIED": 10,
+    "PARTIAL": 3,
     "FAILED": 0,
-    "NOT_CHECKED": 30,
+    "NOT_CHECKED": 27,
     "target_jobs_open": 174,
-    "NEW": 7,
-    "STILL_OPEN": 127,
-    "UPDATED": 40,
-    "CLOSED": 3,
+    "NEW": 0,
+    "STILL_OPEN": 136,
+    "UPDATED": 38,
+    "CLOSED": 0,
     "UNKNOWN": 0
   },
   "companies": [
@@ -41,12 +42,12 @@
       "company": "Eni",
       "mapping_level": "STRONG",
       "ats_family": "Oracle Recruiting Cloud (inferred from CX_* career paths)",
-      "coverage": "NOT_CHECKED",
+      "coverage": "PARTIAL",
       "collector": "collect_oracle",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.eni.com/it-IT/sites/CX_1001",
-      "reason": "NotCheckable: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified",
+      "reason": "NotCheckable after attempted official check: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified",
       "jobs": []
     },
     {
@@ -80,13 +81,13 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Today",
+          "published_at": "Posted Yesterday",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Business-Development-Engineer_R-34084",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Business-Development-Engineer_R-34084",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Business-Development-Engineer_R-34084",
-          "fingerprint": "b566679924e1eeb8",
-          "status": "NEW"
+          "fingerprint": "9921a7a8f6143523",
+          "status": "UPDATED"
         },
         {
           "source_id": "R-31506",
@@ -96,12 +97,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milano-PPL/Project-Quality-Manager_R-31506",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milano-PPL/Project-Quality-Manager_R-31506",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milano-PPL/Project-Quality-Manager_R-31506",
-          "fingerprint": "05c055a1e547daa6",
+          "fingerprint": "ad7ae19ebf3f4ade",
           "status": "UPDATED"
         },
         {
@@ -112,12 +113,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Assistente-Giuntista-Cavi_R-36598",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Assistente-Giuntista-Cavi_R-36598",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Assistente-Giuntista-Cavi_R-36598",
-          "fingerprint": "2ad37939f0e79450",
+          "fingerprint": "9b5351f94bd0f6f7",
           "status": "UPDATED"
         },
         {
@@ -128,12 +129,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Fiber-Optical-Jointer_R-36586",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Fiber-Optical-Jointer_R-36586",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Fiber-Optical-Jointer_R-36586",
-          "fingerprint": "a9f93e24aad47529",
+          "fingerprint": "58df1b32b8044bec",
           "status": "UPDATED"
         },
         {
@@ -144,12 +145,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Fibra-Ottica_R-36582",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Fibra-Ottica_R-36582",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Fibra-Ottica_R-36582",
-          "fingerprint": "74076ba97db0038a",
+          "fingerprint": "b1722ff39e822b52",
           "status": "UPDATED"
         },
         {
@@ -160,12 +161,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointing-Helper_R-36600",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointing-Helper_R-36600",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointing-Helper_R-36600",
-          "fingerprint": "0e1296d0912b4d6f",
+          "fingerprint": "7b23e1f9dcb13ef5",
           "status": "UPDATED"
         },
         {
@@ -176,12 +177,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 2 Days Ago",
+          "published_at": "Posted 3 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistic-Buyer_R-35039-1",
-          "fingerprint": "c525568a3574af77",
+          "fingerprint": "18488e271a43eb0d",
           "status": "UPDATED"
         },
         {
@@ -192,12 +193,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 2 Days Ago",
+          "published_at": "Posted 3 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Vessel-Operation-Coordinator_R-35843",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Vessel-Operation-Coordinator_R-35843",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Vessel-Operation-Coordinator_R-35843",
-          "fingerprint": "c4a4c0b9dac53a11",
+          "fingerprint": "14c1a3c57815a232",
           "status": "UPDATED"
         },
         {
@@ -208,12 +209,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 2 Days Ago",
+          "published_at": "Posted 3 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Transformation-Office-Manager_R-32437",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Transformation-Office-Manager_R-32437",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Transformation-Office-Manager_R-32437",
-          "fingerprint": "66e723eada9a3ef0",
+          "fingerprint": "f3b925e7e6cb6652",
           "status": "UPDATED"
         },
         {
@@ -224,12 +225,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Channels---Content-Specialist_R-29784",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Channels---Content-Specialist_R-29784",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Channels---Content-Specialist_R-29784",
-          "fingerprint": "2fc9b61baa769426",
+          "fingerprint": "e3b665f10a8b80a0",
           "status": "UPDATED"
         },
         {
@@ -240,12 +241,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-Engineer---Land-Installation_R-34813",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-Engineer---Land-Installation_R-34813",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-Engineer---Land-Installation_R-34813",
-          "fingerprint": "c0b038273a0dae8f",
+          "fingerprint": "8b8e69897211eaad",
           "status": "UPDATED"
         },
         {
@@ -256,12 +257,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 3 Days Ago",
+          "published_at": "Posted 4 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Planning---Controlling-Intern_R-36559",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Planning---Controlling-Intern_R-36559",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Planning---Controlling-Intern_R-36559",
-          "fingerprint": "3a5c4d6ce41df12c",
+          "fingerprint": "5999f1cfad5592c6",
           "status": "UPDATED"
         },
         {
@@ -272,12 +273,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Cable-Jointer_R-31243",
-          "fingerprint": "355f3b2fc1bdffdf",
+          "fingerprint": "dc4ed93a291c0358",
           "status": "UPDATED"
         },
         {
@@ -288,12 +289,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Giuntista-Trasfertista_R-31244",
-          "fingerprint": "c9ff82550752406a",
+          "fingerprint": "0ebb21f89d5b601b",
           "status": "UPDATED"
         },
         {
@@ -304,12 +305,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Europe-Engagement-Sr-Specialist_R-35660-1",
-          "fingerprint": "2002a84bf180e791",
+          "fingerprint": "28c6053d98ab577f",
           "status": "UPDATED"
         },
         {
@@ -320,12 +321,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Manager_R-35718",
-          "fingerprint": "06273f42e9ca647b",
+          "fingerprint": "99e691a32783c8d4",
           "status": "UPDATED"
         },
         {
@@ -336,12 +337,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Logistics-Specialist_R-35647-1",
-          "fingerprint": "15ebcceefbd6faed",
+          "fingerprint": "5724b552c1b57cc0",
           "status": "UPDATED"
         },
         {
@@ -352,12 +353,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 4 Days Ago",
+          "published_at": "Posted 5 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Group-Continuous-Improvement-and-Innovation-Engineer_R-36305",
-          "fingerprint": "61dc0d7ae4b22cb8",
+          "fingerprint": "0547288dd10b4b41",
           "status": "UPDATED"
         },
         {
@@ -368,12 +369,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 7 Days Ago",
+          "published_at": "Posted 8 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Administration-Intern_R-36495",
-          "fingerprint": "4de53906b714ca56",
+          "fingerprint": "3d5d9a4102370dc3",
           "status": "UPDATED"
         },
         {
@@ -384,12 +385,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 8 Days Ago",
+          "published_at": "Posted 9 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/General-Ledger---Accounting-Intern_R-36304",
-          "fingerprint": "df80b4ac7934ddfc",
+          "fingerprint": "4a63dcae437dc017",
           "status": "UPDATED"
         },
         {
@@ -400,12 +401,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 8 Days Ago",
+          "published_at": "Posted 9 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Stage-Internal-Audit_R-36463",
-          "fingerprint": "6b727699795d92bb",
+          "fingerprint": "85017f22386ff9f0",
           "status": "UPDATED"
         },
         {
@@ -416,12 +417,12 @@
           "department": null,
           "team": null,
           "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted 9 Days Ago",
+          "published_at": "Posted 10 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Supplier-Quality-Intern_R-35798-1",
-          "fingerprint": "6ffac9259d7d500a",
+          "fingerprint": "6ca461b09bae397f",
           "status": "UPDATED"
         },
         {
@@ -432,12 +433,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 10 Days Ago",
+          "published_at": "Posted 11 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Junior-Qualification-Planner_R-33713",
-          "fingerprint": "339d9411728f3a29",
+          "fingerprint": "02277d7d93665352",
           "status": "UPDATED"
         },
         {
@@ -448,12 +449,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 16 Days Ago",
+          "published_at": "Posted 17 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Global-commodity-leader-Capex-Senior-Buyer_R-35564",
-          "fingerprint": "a3921e5040e58c94",
+          "fingerprint": "51025376e4981b31",
           "status": "UPDATED"
         },
         {
@@ -464,12 +465,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 17 Days Ago",
+          "published_at": "Posted 18 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Corporate-Safety-Manager_R-35799",
-          "fingerprint": "dce452f300e34062",
+          "fingerprint": "05224971bd441736",
           "status": "UPDATED"
         },
         {
@@ -480,12 +481,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 17 Days Ago",
+          "published_at": "Posted 18 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Land-Installation-Controller_R-32341",
-          "fingerprint": "e64e4db9e622daac",
+          "fingerprint": "88a2fea925900b2a",
           "status": "UPDATED"
         },
         {
@@ -496,12 +497,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 17 Days Ago",
+          "published_at": "Posted 18 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Media--Content-and-Channels-Manager_R-29783",
-          "fingerprint": "ad8ea40f95f4c98d",
+          "fingerprint": "daea17a9fa868562",
           "status": "UPDATED"
         },
         {
@@ -512,12 +513,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 18 Days Ago",
+          "published_at": "Posted 19 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Senior-Audit-Manager_R-33763",
-          "fingerprint": "134ded92ee1807dd",
+          "fingerprint": "8d99fffe5df8d952",
           "status": "UPDATED"
         },
         {
@@ -528,12 +529,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 22 Days Ago",
+          "published_at": "Posted 23 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Investment---Cost-Controller-Engineer_R-24735",
-          "fingerprint": "0f16828eda34f707",
+          "fingerprint": "f22d7560c7d7b924",
           "status": "UPDATED"
         },
         {
@@ -544,12 +545,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 25 Days Ago",
+          "published_at": "Posted 26 Days Ago",
           "updated_at": null,
           "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
           "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Permitting-Specialist_R-34833",
-          "fingerprint": "7827f6baf8a26de1",
+          "fingerprint": "84da6f33805dafc6",
           "status": "UPDATED"
         },
         {
@@ -743,38 +744,6 @@
           "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/London/Project-HSE-Coordinator_R-31942",
           "fingerprint": "824e76c86965e4a9",
           "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "R-36604",
-          "company": "Prysmian",
-          "title": "Capex Intern",
-          "location": "Milan, IT",
-          "department": null,
-          "team": null,
-          "employment_type": "Intern (Fixed Term) (Trainee)",
-          "published_at": "Posted Today",
-          "updated_at": null,
-          "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Capex-Intern_R-36604",
-          "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Capex-Intern_R-36604",
-          "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Capex-Intern_R-36604",
-          "fingerprint": "2726dcccef1f6b34",
-          "status": "CLOSED"
-        },
-        {
-          "source_id": "R-32289",
-          "company": "Prysmian",
-          "title": "Electrical Testing & Commissioning Engineer",
-          "location": "Milan, IT",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted 30+ Days Ago",
-          "updated_at": null,
-          "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Testing---Commissioning-Engineer_R-32289",
-          "url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Testing---Commissioning-Engineer_R-32289",
-          "apply_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Testing---Commissioning-Engineer_R-32289",
-          "fingerprint": "08c4da57743f280f",
-          "status": "CLOSED"
         }
       ]
     },
@@ -865,12 +834,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Proposal-Engineering_JR000324",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Proposal-Engineering_JR000324",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Proposal-Engineering_JR000324",
-          "fingerprint": "5b00ae1705a9e2f1",
+          "fingerprint": "ca813cac8cb2ea08",
           "status": "UPDATED"
         },
         {
@@ -881,12 +850,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 9 Days Ago",
+          "published_at": "Posted 10 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Energy---Asset-Management-Specialist_JR000318",
-          "fingerprint": "e33425ca371351de",
+          "fingerprint": "7b97b48f035a50fc",
           "status": "UPDATED"
         },
         {
@@ -897,12 +866,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 14 Days Ago",
+          "published_at": "Posted 15 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Buyer---Focus-Digital---Technology-Specialist_JR000313",
-          "fingerprint": "b6231eb04e251bf0",
+          "fingerprint": "2a66db550e9155f3",
           "status": "UPDATED"
         },
         {
@@ -913,12 +882,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 16 Days Ago",
+          "published_at": "Posted 17 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Commercial-Analysis-Specialist_JR000315",
-          "fingerprint": "bca4281e55545933",
+          "fingerprint": "0ad0658ca42d82b1",
           "status": "UPDATED"
         },
         {
@@ -929,12 +898,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 16 Days Ago",
+          "published_at": "Posted 17 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Advanced-Operator_JR000211",
-          "fingerprint": "80ef27b7a9726161",
+          "fingerprint": "936d79d172cfd5d5",
           "status": "UPDATED"
         },
         {
@@ -945,12 +914,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 17 Days Ago",
+          "published_at": "Posted 18 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Energy-House/Procurement-Specialist_JR000210",
-          "fingerprint": "834b18a42770d779",
+          "fingerprint": "40edac2e94441e64",
           "status": "UPDATED"
         },
         {
@@ -961,12 +930,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted 18 Days Ago",
+          "published_at": "Posted 19 Days Ago",
           "updated_at": null,
           "canonical_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
           "url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
           "apply_url": "https://snam.wd103.myworkdayjobs.com/Carriere/job/Milano-Malipiero-Renovit/Manutentore-Idraulico-Advanced-Operator_JR000296",
-          "fingerprint": "77d9eec779a3035b",
+          "fingerprint": "8e77df0b039b4f47",
           "status": "UPDATED"
         },
         {
@@ -1404,7 +1373,7 @@
           "url": "https://jobs.webuildgroup.com/job/Roma-RSPP/1274702301/",
           "apply_url": "https://jobs.webuildgroup.com/job/Roma-RSPP/1274702301/",
           "fingerprint": "3807133a63c6f81d",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "1397378133",
@@ -1420,7 +1389,7 @@
           "url": "https://jobs.webuildgroup.com/job/Milano-Responsabile-Project-Planning/1397378133/",
           "apply_url": "https://jobs.webuildgroup.com/job/Milano-Responsabile-Project-Planning/1397378133/",
           "fingerprint": "5919d1f9a4678f28",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "1417852333",
@@ -2040,12 +2009,12 @@
       "company": "Terna",
       "mapping_level": "FULL",
       "ats_family": "SAP SuccessFactors / Career Site Builder (inferred from portal pattern)",
-      "coverage": "NOT_CHECKED",
+      "coverage": "PARTIAL",
       "collector": "collect_successfactors",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.terna.it/",
-      "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total",
+      "reason": "NotCheckable after attempted official check: Evidenced SuccessFactors search page has no reconcilable inventory total",
       "jobs": []
     },
     {
@@ -2303,22 +2272,6 @@
           "apply_url": "https://careers.eon.com/italia/job/Milano-Short-Term-Power-Trader/1423462833/",
           "fingerprint": "9227c316b6fc9de9",
           "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "1434482233",
-          "company": "E.ON Italia",
-          "title": "HR Administration & Payroll Specialist",
-          "location": "Milano | IT",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "7 Sept 2026",
-          "updated_at": null,
-          "canonical_url": "https://careers.eon.com/italia/job/Milano-HR-Administration-&-Payroll-Specialist/1434482233/",
-          "url": "https://careers.eon.com/italia/job/Milano-HR-Administration-&-Payroll-Specialist/1434482233/",
-          "apply_url": "https://careers.eon.com/italia/job/Milano-HR-Administration-&-Payroll-Specialist/1434482233/",
-          "fingerprint": "392df86bf3d7e42f",
-          "status": "CLOSED"
         }
       ]
     },
@@ -2326,12 +2279,12 @@
       "company": "ENGIE Italia",
       "mapping_level": "FULL",
       "ats_family": "SAP SuccessFactors / Career Site Builder",
-      "coverage": "NOT_CHECKED",
+      "coverage": "PARTIAL",
       "collector": "collect_successfactors",
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.engie.com/",
-      "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total",
+      "reason": "NotCheckable after attempted official check: Evidenced SuccessFactors search page has no reconcilable inventory total",
       "jobs": []
     },
     {
@@ -2443,7 +2396,7 @@
           "url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000150365210",
           "apply_url": null,
           "fingerprint": "cb5231243d306b5e",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "744000147906649",
@@ -2664,7 +2617,7 @@
           "url": "https://jobs.lever.co/octoenergy/84246bba-0571-42f3-91ef-8b792049bfe1",
           "apply_url": "https://jobs.lever.co/octoenergy/84246bba-0571-42f3-91ef-8b792049bfe1/apply",
           "fingerprint": "fef0b70e030b014c",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "13d1128a-ad67-49dc-afb2-1de1a2d58d8a",
@@ -2680,7 +2633,7 @@
           "url": "https://jobs.lever.co/octoenergy/13d1128a-ad67-49dc-afb2-1de1a2d58d8a",
           "apply_url": "https://jobs.lever.co/octoenergy/13d1128a-ad67-49dc-afb2-1de1a2d58d8a/apply",
           "fingerprint": "32b55cb8dd02dfb8",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "0fdb0472-525f-43aa-baa4-cd3229bece54",
@@ -2936,7 +2889,7 @@
           "url": "https://jobs.lever.co/octoenergy/32ef9478-4f3a-4396-8f28-bb101ddeef8d",
           "apply_url": "https://jobs.lever.co/octoenergy/32ef9478-4f3a-4396-8f28-bb101ddeef8d/apply",
           "fingerprint": "553f2698f8ad88dc",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "c0997238-8159-4562-b40d-074b54f8c68a",
@@ -2952,7 +2905,7 @@
           "url": "https://jobs.lever.co/octoenergy/c0997238-8159-4562-b40d-074b54f8c68a",
           "apply_url": "https://jobs.lever.co/octoenergy/c0997238-8159-4562-b40d-074b54f8c68a/apply",
           "fingerprint": "16b545ebce53e150",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "ffb91e03-9b6a-422b-a90b-701648af08da",
@@ -3032,7 +2985,7 @@
           "url": "https://jobs.lever.co/octoenergy/ce379206-47ec-4e86-a30d-6daa2ad80527",
           "apply_url": "https://jobs.lever.co/octoenergy/ce379206-47ec-4e86-a30d-6daa2ad80527/apply",
           "fingerprint": "10c9ae1c0a4ea481",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "c13b3187-8948-424d-81f3-8cd532f333cc",
@@ -3048,7 +3001,7 @@
           "url": "https://jobs.lever.co/octoenergy/c13b3187-8948-424d-81f3-8cd532f333cc",
           "apply_url": "https://jobs.lever.co/octoenergy/c13b3187-8948-424d-81f3-8cd532f333cc/apply",
           "fingerprint": "f79ce46c3bf8fcdd",
-          "status": "UPDATED"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "978ca67e-4a99-4bae-8920-04e9b3ff17ff",
@@ -3299,7 +3252,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 2169,
+      "inventory_count": 2164,
       "target_jobs_count": 1,
       "source_url": "https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs",
       "reason": null,
@@ -3312,12 +3265,12 @@
           "department": null,
           "team": null,
           "employment_type": null,
-          "published_at": "Posted Yesterday",
+          "published_at": "Posted 2 Days Ago",
           "updated_at": null,
           "canonical_url": "https://gevernova.wd5.myworkdayjobs.com/Vernova_ExternalSite/job/London/Sr-Sales-Manager-3---Proposals_R5053065-2",
           "url": "https://gevernova.wd5.myworkdayjobs.com/Vernova_ExternalSite/job/London/Sr-Sales-Manager-3---Proposals_R5053065-2",
           "apply_url": "https://gevernova.wd5.myworkdayjobs.com/Vernova_ExternalSite/job/London/Sr-Sales-Manager-3---Proposals_R5053065-2",
-          "fingerprint": "4e3f37333f957af0",
+          "fingerprint": "1cffb119c6d6c3db",
           "status": "UPDATED"
         }
       ]
