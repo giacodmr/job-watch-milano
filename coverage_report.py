@@ -57,6 +57,7 @@ def main() -> int:
     grouped = defaultdict(list)
     level_counts = Counter()
     total = 0
+    status_counts = Counter()
     full_possible = 0
 
     for batch in BATCHES:
@@ -64,9 +65,10 @@ def main() -> int:
         mapping = read_json(ROOT / f"ats_mapping_{batch}.json")
         by_name = {c.get("company"): c for c in mapping.get("companies", [])}
         for row in current.get("companies", []):
-            if row.get("coverage") != "NOT_CHECKED":
+            if row.get("coverage") not in {"PARTIAL", "NOT_CHECKED"}:
                 continue
             total += 1
+            status_counts[row.get("coverage") or "UNKNOWN"] += 1
             name = row.get("company")
             mapped = by_name.get(name, {})
             verification = mapped.get("verification") or {}
@@ -79,6 +81,7 @@ def main() -> int:
                 {
                     "batch": batch.upper(),
                     "company": name,
+                    "coverage": row.get("coverage"),
                     "level": level,
                     "full_inventory_possible": verification.get("full_inventory_possible"),
                     "family_raw": (mapped.get("ats") or {}).get("family") or row.get("ats_family"),
@@ -87,18 +90,20 @@ def main() -> int:
                 }
             )
 
-    print(f"NOT_CHECKED total: {total}")
-    print(f"NOT_CHECKED with mapping full_inventory_possible=true: {full_possible}")
+    print(f"NON_VERIFIED total: {total}")
+    print("Coverage statuses:", dict(status_counts))
+    print(f"NON_VERIFIED with mapping full_inventory_possible=true: {full_possible}")
     print("Mapping levels:", dict(level_counts))
     print()
     print("Families by descending NOT_CHECKED count:")
     for family, rows in sorted(grouped.items(), key=lambda kv: (-len(kv[1]), kv[0].casefold())):
         full = sum(1 for x in rows if x["full_inventory_possible"] is True)
         levels = Counter(x["level"] for x in rows)
-        print(f"\n{family}: {len(rows)} NOT_CHECKED | FULL-possible={full} | levels={dict(levels)}")
+        status_mix = Counter(x["coverage"] for x in rows)
+        print(f"\n{family}: {len(rows)} non-verified | statuses={dict(status_mix)} | FULL-possible={full} | levels={dict(levels)}")
         for x in rows:
             print(
-                f"  - {x['batch']} | {x['company']} | {x['level']} | "
+                f"  - {x['batch']} | {x['company']} | {x['coverage']} | {x['level']} | "
                 f"full={x['full_inventory_possible']} | {x['family_raw']} | {x['inventory_url']}"
             )
     return 0
