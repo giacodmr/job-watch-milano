@@ -39,6 +39,8 @@ jobs:
         run: |
           python -m py_compile collector.py
           python -m py_compile amazon_target_check.py
+          python -m py_compile sync_analysis_state.py
+          python -m py_compile audit_job_watch.py
 
       - name: Collect public ATS inventories
         run: python collector.py
@@ -46,12 +48,20 @@ jobs:
       - name: Collect Amazon target inventory
         run: python amazon_target_check.py
 
+      - name: Sync persistent analysis state
+        run: python sync_analysis_state.py
+
+      - name: Generate completeness audit
+        run: python audit_job_watch.py
+
       - name: Commit updated vacancy snapshots
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json
+          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json \
+            analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json \
+            job_watch_audit.json
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
