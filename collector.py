@@ -23,7 +23,7 @@ BATCHES = ("jw1", "jw2", "jw3", "jw4")
 TIMEOUT = 30
 MAX_PAGES = 250
 DEFAULT_WORKERS = 6
-COLLECTOR_VERSION = "1.4"
+COLLECTOR_VERSION = "1.5"
 TARGET_LOCATION_RE = re.compile(r"(?<!\w)(milan|milano|rome|roma|london)(?!\w)", re.I)
 OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 
@@ -1043,11 +1043,11 @@ def collect_company(company: dict) -> tuple[dict, bool]:
         return result, True
     except NotCheckable as e:
         return {
-            "coverage": "NOT_CHECKED",
+            "coverage": "PARTIAL",
             "collector": getattr(fn, "__name__", "collector"),
             "inventory_count": None,
             "jobs": [],
-            "reason": f"NotCheckable: {e}",
+            "reason": f"NotCheckable after attempted official check: {e}",
             "source_url": (company.get("ats") or {}).get("inventory_url"),
         }, True
     except Exception as e:
@@ -1156,6 +1156,7 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
         "companies_total": len(companies),
         "collector_supported": 0,
         "VERIFIED": 0,
+        "PARTIAL": 0,
         "FAILED": 0,
         "NOT_CHECKED": 0,
         "target_jobs_open": 0,
@@ -1196,7 +1197,8 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
         "location_scope": ["Milan", "Milano", "Rome", "Roma", "London"],
         "coverage_note": (
             "VERIFIED means the structured/public inventory was exhausted and reconciled in this run. "
-            "A recognized but non-exhaustible portal remains NOT_CHECKED; request/runtime failures on a "
+            "PARTIAL means an official method was actually attempted but exhaustiveness could not be proven. "
+            "NOT_CHECKED means no safe current-run collector attempt was made. Request/runtime failures on a "
             "valid structured method are FAILED."
         ),
         "summary": summary,
