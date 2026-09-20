@@ -161,6 +161,13 @@
     "decision_files": "semantic_decisions_jw1.json ... semantic_decisions_jw4.json",
     "queue_files": "semantic_queue_jw1.json ... semantic_queue_jw4.json",
     "surfaced_files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
-    "rule": "A run may not claim semantic completeness while semantic_queue contains pending records."
+    "rule": "A run may not claim semantic completeness while semantic_queue contains pending records.",
+    "mode": "two_stage",
+    "title_metadata_rule": "ChatGPT may close a role from title/company/location/metadata only when it is clearly impossible to reach the fit threshold.",
+    "full_jd_rule": "Any plausibly relevant role requires full official-JD mapping; business-compatible Manager/Senior/Lead always requires full-JD review and is never excluded by title.",
+    "analysis_methods": [
+      "chatgpt_semantic_title_metadata",
+      "chatgpt_semantic_full_jd"
+    ]
   }
 }
