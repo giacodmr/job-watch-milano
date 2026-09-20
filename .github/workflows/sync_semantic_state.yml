@@ -1,0 +1,88 @@
+name: Sync Job Watch semantic state
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "semantic_decisions_jw1.json"
+      - "semantic_decisions_jw2.json"
+      - "semantic_decisions_jw3.json"
+      - "semantic_decisions_jw4.json"
+      - "surfaced_jobs_jw1.json"
+      - "surfaced_jobs_jw2.json"
+      - "surfaced_jobs_jw3.json"
+      - "surfaced_jobs_jw4.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: job-watch-semantic-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate semantic sync scripts
+        run: |
+          python -m py_compile sync_analysis_state.py
+          python -m py_compile audit_job_watch.py
+
+      - name: Sync decisions and surfaced history
+        run: |
+          python sync_analysis_state.py
+          python audit_job_watch.py
+
+      - name: Publish semantic state safely
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          GENERATED_FILES="analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_audit.json"
+
+          regenerate() {
+            python sync_analysis_state.py
+            python audit_job_watch.py
+          }
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+              echo "main advanced during semantic sync; regenerating on latest main."
+              git reset --hard origin/main
+              regenerate
+            fi
+
+            git add $GENERATED_FILES
+            if git diff --cached --quiet; then
+              echo "No semantic-state changes to publish."
+              exit 0
+            fi
+
+            git commit -m "Sync Job Watch semantic state"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+
+            echo "Semantic-state push raced with another main update; retrying (attempt $attempt/3)."
+            git fetch origin main
+            git reset --hard origin/main
+            regenerate
+          done
+
+          echo "Could not publish semantic state after 3 retries."
+          exit 1
