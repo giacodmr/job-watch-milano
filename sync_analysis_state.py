@@ -54,6 +54,18 @@ HARD_EXCLUSION_RULES = (
     )),
 )
 
+# Marketing/CRM words are not sufficient for a hard exclusion when the title itself
+# also signals a broader strategy, analytics, commercial-planning or transformation role.
+MARKETING_CRM_REVIEW_EXCEPTIONS = re.compile(
+    r"\b(trade marketing|shopper marketing|marketing strategy|category(?: management| development)?|"
+    r"commercial excellence|commercial strategy|revenue growth management|net revenue management|"
+    r"revenue management|pricing|monetization|sales strategy|sales operations|commercial operations|"
+    r"business insights?|customer insights?|business planning|commercial planning|strategy|strategic|"
+    r"marketplace|seller|e-?commerce|go[- ]to[- ]market|route[- ]to[- ]market|\bgtm\b|\brtm\b|"
+    r"business excellence|business integration|customer strategy|transformation)\b",
+    re.I,
+)
+
 SEMANTIC_FIELDS = (
     "fit_score",
     "experience_required",
@@ -93,6 +105,9 @@ def hard_exclusion_reason(title: str | None) -> str | None:
     value = str(title or "")
     for reason, pattern in HARD_EXCLUSION_RULES:
         if pattern.search(value):
+            if reason == "marketing_crm" and MARKETING_CRM_REVIEW_EXCEPTIONS.search(value):
+                # Route the role to semantic JD review instead of closing it from title only.
+                continue
             return reason
     return None
 

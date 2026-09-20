@@ -2,12 +2,12 @@
   "version": "1.0",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "last_mapped": "2026-09-14",
+  "last_mapped": "2026-09-20",
   "verification_summary": {
-    "companies_analyzed": 48,
-    "FULL": 27,
+    "companies_analyzed": 52,
+    "FULL": 29,
     "STRONG": 18,
-    "PARTIAL": 3,
+    "PARTIAL": 5,
     "OPAQUE": 0
   },
   "companies": [
@@ -1674,6 +1674,132 @@
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
       "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "NielsenIQ",
+      "batch": "JW4",
+      "ats": {
+        "family": "SmartRecruiters",
+        "tenant": null,
+        "career_site": "https://nielseniq.com/global/en/careers/",
+        "inventory_url": "https://jobs.smartrecruiters.com/NielsenIQ",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/NielsenIQ/postings"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "smartrecruiters_public_posting_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "SmartRecruiters limit/offset; reconcile against totalFound.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query SmartRecruiters postings for NielsenIQ, paginate to totalFound and filter target locations.",
+        "fallback": "Use NIQ official career pages/job details if the API is temporarily unavailable."
+      },
+      "limitations": [
+        "Keep RGM, Category, Retail Analytics and Business Insights roles in semantic review even when titles are not generic Strategy/BA."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "IQVIA",
+      "batch": "JW4",
+      "ats": {
+        "family": "IQVIA custom careers platform",
+        "tenant": null,
+        "career_site": "https://jobs.iqvia.com/",
+        "inventory_url": "https://jobs.iqvia.com/en/search-jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_counted_dynamic_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Official IQVIA search supports location filtering; exhaust pages/results shown for target locations.",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use IQVIA Jobs search with exact target locations and enumerate all accessible result pages before filtering.",
+        "fallback": "Confirm each role on its official IQVIA job-detail page."
+      },
+      "limitations": [
+        "Dynamic rendering limits deterministic completeness proof in this environment."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Carlsberg Group",
+      "batch": "JW4",
+      "ats": {
+        "family": "Carlsberg Italia custom job-opportunities page",
+        "tenant": null,
+        "career_site": "https://www.carlsbergitalia.it/",
+        "inventory_url": "https://www.carlsbergitalia.it/contatti/job-opportunities/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_company_openings_page",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan"
+        ],
+        "pagination": "First-party Italy openings page; no stable structured feed verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Check the Carlsberg Italia job-opportunities page every run and validate any discovered Carlsberg Group role on first-party sources.",
+        "fallback": "Use global Carlsberg/LinkedIn only for discovery when the Italian page is incomplete."
+      },
+      "limitations": [
+        "Current Italian recruitment can route applications through a company form rather than a standard ATS."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Nike",
+      "batch": "JW4",
+      "ats": {
+        "family": "Nike custom careers platform",
+        "tenant": null,
+        "career_site": "https://careers.nike.com/",
+        "inventory_url": "https://careers.nike.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_dynamic_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic jobs search with location/function filters; stable exhaustive endpoint not yet verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Nike Careers target-location searches and verify role pages; keep marketplace/planning/business-execution families despite unconventional titles.",
+        "fallback": "Use external job boards only for discovery and compensation context, then confirm on Nike Careers."
+      },
+      "limitations": [
+        "Current Milan examples are often senior; do not infer seniority from Principal/Lead alone—read mandatory scope and experience."
+      ],
+      "last_mapped": "2026-09-20"
     }
   ]
 }

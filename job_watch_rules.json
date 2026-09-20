@@ -1,5 +1,5 @@
 {
-  "version": "1.3",
+  "version": "1.4",
   "updated": "2026-09-20",
   "locations": {
     "primary": [
@@ -16,8 +16,8 @@
   "max_experience_years": 5,
   "exclude": [
     "internship",
-    "marketing",
-    "CRM",
+    "pure brand/product/performance/growth marketing when the role is not strategy, analytics, commercial planning, category, GTM or transformation led",
+    "pure CRM/campaign operations when CRM is the core job rather than part of a broader commercial excellence, customer strategy, analytics or transformation role",
     "pure sales",
     "account executive",
     "engineering",
@@ -39,7 +39,28 @@
     "strategic projects",
     "CEO office",
     "corporate development",
-    "finance business partnering"
+    "finance business partnering",
+    "commercial strategy",
+    "commercial excellence",
+    "revenue growth management (RGM)",
+    "net revenue management (NRM)",
+    "pricing / revenue management",
+    "monetization strategy & operations",
+    "sales strategy & operations",
+    "commercial operations",
+    "commercial planning",
+    "category management / category development",
+    "business insights / commercial analytics",
+    "marketplace / seller growth",
+    "strategic account management when consultative/analytical rather than pure sales",
+    "transformation office / strategic PMO",
+    "business excellence",
+    "customer strategy",
+    "business navigation",
+    "retail / merchandise planning",
+    "go-to-market / route-to-market",
+    "market strategy & partnerships",
+    "business integration"
   ],
   "coverage_statuses": [
     "VERIFIED",
@@ -424,5 +445,64 @@
       "Pure sales, account executive, advertising-sales, engineering, data engineering and highly technical specialist roles remain excluded unless the full JD clearly shows a materially different business scope."
     ],
     "reporting_rule": "Amazon remains a priority company. Preserve exhaustive Amazon business-role inventory in state, but surface user-visible roles according to semantic fit, location threshold, seniority and delta/reporting rules."
+  },
+  "adjacent_role_family_policy": {
+    "enabled": true,
+    "purpose": "Prevent false negatives caused by company-specific titles that describe strategy, analytics, commercial ownership or transformation without using the words Strategy or Business Analyst.",
+    "primary_families": {
+      "Strategy / Transformation": [
+        "Corporate Strategy",
+        "Business Strategy",
+        "Strategic Projects",
+        "Transformation Office",
+        "Strategic PMO",
+        "Business Excellence",
+        "Business Integration",
+        "Chief of Staff / CEO Office"
+      ],
+      "Commercial Growth / Monetization": [
+        "Commercial Strategy",
+        "Commercial Excellence",
+        "Revenue Growth Management (RGM)",
+        "Net Revenue Management (NRM)",
+        "Pricing / Revenue Management",
+        "Monetization Strategy & Operations",
+        "Sales Strategy & Operations",
+        "Commercial Operations",
+        "Commercial Planning",
+        "Go-to-Market / Route-to-Market"
+      ],
+      "Category / Marketplace / Retail": [
+        "Category Management",
+        "Category Development",
+        "Marketplace / Seller Growth",
+        "Vendor / Brand / Buying roles with analytical commercial ownership",
+        "Retail / Merchandise Planning",
+        "Business Navigation"
+      ],
+      "Insights / Analytics": [
+        "Business Insights",
+        "Commercial Analytics",
+        "Customer Insights",
+        "Revenue / Pricing Analytics",
+        "Retail / Category Analytics",
+        "Decision Support"
+      ],
+      "Customer / Partnerships": [
+        "Customer Strategy",
+        "Strategic Account Management",
+        "Market Strategy & Partnerships",
+        "Client / Customer Solutions when consultative and analytical"
+      ]
+    },
+    "semantic_guardrails": [
+      "A title containing Marketing or CRM is not a hard exclusion when it also contains a strong business signal such as Trade Marketing, Commercial Excellence, Category, RGM/NRM, Pricing/Revenue Management, Business/Customer Insights, Strategy, GTM/RTM, Commercial Planning or Sales Strategy & Operations. Send it to full semantic review.",
+      "Trade Marketing is eligible when the JD is primarily channel/category/GTM/commercial analytics, planning or investment effectiveness; exclude brand/campaign execution-heavy roles that lack broader business ownership.",
+      "Sales Strategy & Operations / Sales Operations is eligible when the work centers on planning, analytics, process design, productivity, coverage, incentives or business performance; exclude quota-carrying frontline sales.",
+      "Category/Marketplace titles are eligible when they combine assortment, pricing, profitability, seller/vendor/customer growth, analytics or strategic planning. Procurement-only specialist roles require separate fit assessment.",
+      "Revenue Management titles must be read in context: FMCG/consumer/marketplace pricing and profitability are high-priority; hotel/airline yield-management specialisms are not automatically equivalent.",
+      "Client/Account titles require full-JD distinction between strategic/consultative account ownership and pure new-business sales.",
+      "The job title is a discovery signal only. Final inclusion still depends on mandatory experience, domain requirements, scope, compensation/career value and full-JD semantic fit."
+    ]
   }
 }

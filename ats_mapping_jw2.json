@@ -4,12 +4,12 @@
   "batch_name": "Strategy, Consulting & Tech",
   "source_repository": "giacodmr/job-watch-milano",
   "source_batch_file": "job_watch_batches.json",
-  "last_mapped": "2026-09-14",
+  "last_mapped": "2026-09-20",
   "summary": {
-    "companies_analyzed": 40,
-    "FULL": 18,
-    "STRONG": 18,
-    "PARTIAL": 4,
+    "companies_analyzed": 48,
+    "FULL": 20,
+    "STRONG": 21,
+    "PARTIAL": 7,
     "OPAQUE": 0
   },
   "notes": [
@@ -1309,6 +1309,258 @@
         "The API URL is constructed from the verified board token and Greenhouse's official unauthenticated Job Board API specification; the session URL-safety layer prevented a direct raw endpoint fetch."
       ],
       "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "eBay",
+      "batch": "JW2",
+      "ats": {
+        "family": "Phenom career platform",
+        "tenant": null,
+        "career_site": "https://careers.ebayinc.com/",
+        "inventory_url": "https://jobs.ebayinc.com/us/en/search-results",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_phenom_inventory_with_dynamic_limit",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic Phenom search/results and facets; enumerate all visible pages/offsets when available.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use eBay's official jobs search, exact target-location filters and enumerate all visible result pages before semantic filtering.",
+        "fallback": "Use official eBay job-detail pages for confirmation; external job boards are discovery-only."
+      },
+      "limitations": [
+        "Dynamic client rendering prevents a mathematical completeness proof in the current environment."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "TikTok",
+      "batch": "JW2",
+      "ats": {
+        "family": "TikTok custom careers platform",
+        "tenant": null,
+        "career_site": "https://careers.tiktok.com/",
+        "inventory_url": "https://careers.tiktok.com/position",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_dynamic_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic custom search; current public surface does not expose a stable exhaustive total/pagination contract to this collector.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use TikTok Careers with target locations/teams and verify every candidate role on the official role page; include Monetization Strategy & Operations and TikTok Shop business functions.",
+        "fallback": "Use indexed official TikTok job pages and external boards for discovery only, then validate on TikTok Careers."
+      },
+      "limitations": [
+        "Do not mark VERIFIED unless the current run can enumerate and reconcile the complete target-location inventory."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Altman Solon",
+      "batch": "JW2",
+      "ats": {
+        "family": "Altman Solon custom careers board",
+        "tenant": null,
+        "career_site": "https://www.altmansolon.com/careers/",
+        "inventory_url": "https://www.altmansolon.com/careers/job-opportunities",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_career_board",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "London"
+        ],
+        "pagination": "Official job-opportunities board with location-filterable open positions; exhaust all displayed openings.",
+        "total_count_available": false,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use the official full-time opportunities board and filter Milan/London before applying semantic rules.",
+        "fallback": "Use current official Altman Solon role pages; LinkedIn only for discovery."
+      },
+      "limitations": [
+        "No stable public structured feed was verified, so completeness is based on exhausting the official board UI."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Value Partners",
+      "batch": "JW2",
+      "ats": {
+        "family": "Value Partners custom careers",
+        "tenant": null,
+        "career_site": "https://www.valuepartners.com/",
+        "inventory_url": "https://www.valuepartners.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_role_confirmation_plus_discovery",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "No stable exhaustive public inventory endpoint verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Value Partners official careers/contact surfaces and targeted web discovery; verify every role against a first-party company source/application link before reporting.",
+        "fallback": "LinkedIn may discover roles but is not a completeness source."
+      },
+      "limitations": [
+        "Until an exhaustive official inventory is mapped, coverage must remain PARTIAL."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Eight Sleep",
+      "batch": "JW2",
+      "ats": {
+        "family": "Ashby",
+        "tenant": null,
+        "career_site": "https://www.eightsleep.com/careers/",
+        "inventory_url": "https://jobs.ashbyhq.com/eightsleep",
+        "public_api_or_feed": "https://api.ashbyhq.com/posting-api/job-board/eightsleep"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_public_job_posting_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "London"
+        ],
+        "pagination": "Ashby public job-posting endpoint returns all currently published postings for the board.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Query the Ashby public Job Postings API for board eightsleep and reconcile with Eight Sleep's official careers page; then filter target locations.",
+        "fallback": "Use the hosted Ashby board if the API is temporarily inaccessible."
+      },
+      "limitations": [
+        "Board name is derived from the verified Eight Sleep Ashby careers integration."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "JD.COM / Joybuy",
+      "batch": "JW2",
+      "ats": {
+        "family": "Workday CXS",
+        "tenant": null,
+        "career_site": "https://corporate.jd.com/",
+        "inventory_url": "https://jd.wd103.myworkdayjobs.com/Careers_at_JD",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_workday_cxs_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday CXS offset/limit pagination with facets; enumerate to the reported total when accessible.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use JD.com's current Workday Careers_at_JD inventory, paginate completely and filter by target location before semantic scoring.",
+        "fallback": "Use Joybuy/JD corporate careers and official Workday role details for confirmation."
+      },
+      "limitations": [
+        "Historical Greenhouse references may exist; the current primary inventory is Workday and should take precedence."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "zeb consulting",
+      "batch": "JW2",
+      "ats": {
+        "family": "zeb custom careers inventory",
+        "tenant": null,
+        "career_site": "https://zeb-career.com/en",
+        "inventory_url": "https://zeb-career.com/en/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "official_filterable_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan"
+        ],
+        "pagination": "Official careers page exposes the open-job list and filters by location/interest/level; exhaust displayed results.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Use zeb's official job list and filter Milan; the site explicitly labels permanent advertisements where applicable.",
+        "fallback": "Confirm through the official zeb role-detail page."
+      },
+      "limitations": [
+        "No external board is needed for normal Milan coverage."
+      ],
+      "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Kyndryl",
+      "batch": "JW2",
+      "ats": {
+        "family": "Kyndryl enterprise careers platform",
+        "tenant": null,
+        "career_site": "https://www.kyndryl.com/us/en/careers",
+        "inventory_url": "https://www.kyndryl.com/us/en/careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_dynamic_search_partial",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Dynamic enterprise careers search; exhaustive structured feed not yet verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use Kyndryl official careers search by target location and business/consulting functions; verify every role on a first-party job page.",
+        "fallback": "Use external discovery only to identify candidates for official confirmation."
+      },
+      "limitations": [
+        "Map the underlying ATS/structured inventory in a later remediation run before assigning VERIFIED."
+      ],
+      "last_mapped": "2026-09-20"
     }
   ]
 }
