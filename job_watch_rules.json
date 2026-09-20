@@ -1,5 +1,5 @@
 {
-  "version": "1.1",
+  "version": "1.2",
   "updated": "2026-09-20",
   "locations": {
     "primary": [
@@ -125,7 +125,14 @@
       "education_or_certifications_required",
       "role_level_assessment",
       "seniority_evidence",
-      "final_experience_status"
+      "final_experience_status",
+      "l68_status",
+      "l68_evidence",
+      "l68_requirement_location",
+      "ordinary_twin_found",
+      "ordinary_twin_job_id",
+      "ordinary_twin_url",
+      "ordinary_twin_similarity"
     ],
     "role_level_assessment_values": [
       "ENTRY_JUNIOR",
@@ -257,5 +264,97 @@
     "rule": "Accumulate semantic decisions and surfaced-history changes across all four JW modules during the daily run, then persist them in as few GitHub commits as practical before a single semantic sync/audit cycle.",
     "reason": "Avoid triggering one sync workflow per vacancy or per file and reduce GitHub Actions churn/race opportunities.",
     "exception": "If a critical write must be persisted before continuing, write it immediately; otherwise batch."
+  },
+  "protected_categories_policy": {
+    "enabled": true,
+    "scope": "All JW1/JW2/JW3/JW4 vacancies and autonomous discoveries, not only Amazon.",
+    "principle": "A reference to L.68/99 / Protected Categories / Categorie Protette is never by itself an exclusion. Classification must use the full official JD and distinguish preference, requirement/reservation and inclusive invitation wording.",
+    "statuses": [
+      "NO",
+      "PREFERRED",
+      "REQUIRED",
+      "RESERVED",
+      "INVITED",
+      "AMBIGUOUS"
+    ],
+    "classification": {
+      "NO": "No L.68/99 / protected-category wording detected in the official vacancy.",
+      "PREFERRED": "Protected-category membership is explicitly preferred/preferably intended, but is not a Basic Qualification/must-have. Analyze and score normally; do not materially penalize fit solely for this wording.",
+      "REQUIRED": "Protected-category membership is explicitly required/must-have or appears as an eligibility requirement in Basic Qualifications/application requirements.",
+      "RESERVED": "The vacancy explicitly says it is reserved/exclusively available to protected-category candidates.",
+      "INVITED": "Inclusive wording encourages/invites protected-category candidates to apply without stating a requirement or explicit preference. Analyze and score normally.",
+      "AMBIGUOUS": "Protected-category wording exists but the official JD does not clearly establish preferred vs required/reserved vs invitation. Require full-JD review and flag the ambiguity."
+    },
+    "detection_guardrails": [
+      "A protected-category phrase in the title alone must never be interpreted as REQUIRED or RESERVED.",
+      "Phrases such as 'preferably intended for candidates belonging to Protected Categories' / 'preferibilmente rivolta' map to PREFERRED unless a contradictory must-have appears elsewhere.",
+      "Phrases such as 'candidates belonging to protected categories are encouraged to apply' / 'si invitano a candidarsi' map to INVITED unless a contradictory must-have appears elsewhere.",
+      "If L.68/99 membership appears in Basic Qualifications, explicit must-have/eligibility text, or the application form as required, map to REQUIRED unless the vacancy explicitly says RESERVED/exclusive.",
+      "Never advise false disclosure or bypassing an eligibility question."
+    ],
+    "semantic_fields": [
+      "l68_status",
+      "l68_evidence",
+      "l68_requirement_location",
+      "ordinary_twin_found",
+      "ordinary_twin_job_id",
+      "ordinary_twin_url",
+      "ordinary_twin_similarity"
+    ],
+    "non_l68_routing": {
+      "PREFERRED": "Eligible for normal fit analysis and reporting if above threshold.",
+      "INVITED": "Eligible for normal fit analysis and reporting if above threshold.",
+      "REQUIRED": "Normally not reportable as a candidable opportunity unless eligibility is explicitly confirmed; may be retained as an informational/ambiguous record.",
+      "RESERVED": "Normally not reportable as a candidable opportunity unless eligibility is explicitly confirmed.",
+      "AMBIGUOUS": "Do not assume eligibility either way; surface only when otherwise strong and clearly flag that eligibility needs confirmation."
+    },
+    "candidate_privacy_rule": "Do not persist or infer the user's disability/protected-category status. For REQUIRED/RESERVED roles, treat eligibility as unconfirmed unless the user explicitly confirms it in the current relevant context.",
+    "ordinary_twin_search": {
+      "required_for": [
+        "PREFERRED",
+        "REQUIRED",
+        "RESERVED",
+        "INVITED",
+        "AMBIGUOUS"
+      ],
+      "official_source_only": true,
+      "compare": [
+        "job title",
+        "location",
+        "team/business unit",
+        "responsibilities",
+        "Basic Qualifications",
+        "compensation",
+        "Job ID/requisition ID"
+      ],
+      "priority": "If a substantially equivalent ordinary requisition exists, prefer and report the ordinary requisition, link the protected requisition as protected_twin, and do not recommend applying to both when they are substantively the same opportunity.",
+      "no_twin_rule": "If no ordinary twin exists, PREFERRED/INVITED roles may be reported normally when fit is above threshold; REQUIRED/RESERVED follow eligibility routing."
+    },
+    "application_priority": [
+      "ordinary equivalent requisition, when available",
+      "PREFERRED protected-category requisition when no ordinary twin exists and fit is high",
+      "INVITED protected-category requisition when otherwise in scope and fit is high",
+      "do not recommend REQUIRED/RESERVED unless eligibility is explicitly confirmed"
+    ],
+    "output": {
+      "column": "L.68/99",
+      "values": [
+        "NO",
+        "PREFERRED",
+        "REQUIRED",
+        "RESERVED",
+        "INVITED",
+        "AMBIGUOUS"
+      ],
+      "twin_column": "Ordinary twin",
+      "compact_notes": {
+        "PREFERRED": "L68 PREFERRED — candidatura possibile anche non L68",
+        "INVITED": "L68 INVITED — wording inclusivo, nessun requisito rilevato",
+        "REQUIRED": "L68 REQUIRED — eleggibilità da confermare; non suggerire candidatura se requisito non posseduto",
+        "RESERVED": "L68 RESERVED — eleggibilità da confermare; non suggerire candidatura se requisito non posseduto",
+        "AMBIGUOUS": "L68 AMBIGUOUS — verificare eleggibilità nella JD/form",
+        "twin": "Ordinary twin available — usare questa"
+      }
+    }
   }
 }
