@@ -22,6 +22,36 @@ HARD_EXCLUSION_RULES = (
     ("legal", re.compile(r"\b(counsel|lawyer|legal counsel|legal advisor|attorney)\b", re.I)),
     ("pure_sales", re.compile(r"\b(account executive|sales representative|sales executive|sales account|inside sales|field sales|telesales)\b", re.I)),
     ("insurance_technical", re.compile(r"\b(underwriter|underwriting|claims|actuarial|actuary)\b", re.I)),
+    # Front-line retail/hospitality roles are unambiguously outside the user's
+    # Business/Strategy/Finance target. Keep this list concrete: do not infer
+    # seniority or exclude generic Manager titles.
+    ("frontline_retail_hospitality", re.compile(
+        r"\b(client advisor|sales advisor|fashion advisor|beauty advisor|sales assistant|"
+        r"stockist|stock keeper|tailor|bartender|barman|cameriere|chef de rang|chef de partie|"
+        r"hostess|hospitality assistant|hospitality host|makeup artist|"
+        r"fragrance (?:consultant|specialist|expert)|barista|waiter|waitress)\b",
+        re.I,
+    )),
+    # Hands-on trade/maintenance titles that cannot plausibly meet the target
+    # profile. Generic Project/Operations/Manager wording is intentionally not
+    # included.
+    ("field_trade_maintenance", re.compile(
+        r"\b(giuntista|cable jointer|cable jointing helper|motorista|manutentore|"
+        r"maintenance electrician|maintenance mechanic|field service technician)\b",
+        re.I,
+    )),
+    # Clinical/scientific delivery roles are outside the business target even
+    # when they contain Analyst/Manager wording.
+    ("clinical_scientific", re.compile(
+        r"\b(clinical research associate|clinical science associate|medical scientific liaison|"
+        r"\bmsl\b|biostatistic(?:ian|s)?|statistical programmer|translational medicine|"
+        r"research associate(?:\s+i{1,3})?|medical affairs manager|medical manager|medical head)\b",
+        re.I,
+    )),
+    ("creative_design", re.compile(
+        r"\b(product|ux|ui|visual|fashion|graphic)\s+(?:senior\s+)?designer\b",
+        re.I,
+    )),
 )
 
 SEMANTIC_FIELDS = (
