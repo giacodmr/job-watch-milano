@@ -81,13 +81,40 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json \
-            analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json \
-            job_watch_audit.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "Update Job Watch vacancy snapshots"
-          git pull --rebase origin main
-          git push origin main
+          GENERATED_FILES="current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_audit.json"
+
+          regenerate() {
+            echo "Regenerating Job Watch outputs on latest main..."
+            python collector.py
+            python amazon_target_check.py
+            python sync_analysis_state.py
+            python audit_job_watch.py
+          }
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+              echo "main advanced during the run; resetting to latest main before publishing generated files."
+              git reset --hard origin/main
+              regenerate
+            fi
+
+            git add $GENERATED_FILES
+            if git diff --cached --quiet; then
+              echo "No changes to commit."
+              exit 0
+            fi
+
+            git commit -m "Update Job Watch vacancy snapshots"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+
+            echo "Push raced with another main update; retrying from latest main (attempt $attempt/3)."
+            git fetch origin main
+            git reset --hard origin/main
+            regenerate
+          done
+
+          echo "Could not publish generated Job Watch snapshots after 3 concurrency-safe retries."
+          exit 1
