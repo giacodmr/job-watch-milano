@@ -393,11 +393,12 @@ def sync_batch(batch: str) -> dict:
         "generated_at": utc_now(),
         "pending_count": len(queue_records),
         "instructions": (
-            "ChatGPT must read the full official JD before deciding. Manager/Senior/Lead is never an automatic exclusion. "
+            "ChatGPT may close only clearly impossible roles from title+metadata; any plausibly relevant role requires the full official JD. "
+            "Manager/Senior/Lead is never an automatic exclusion and business-compatible Manager/Senior/Lead roles require full-JD review. "
             "Persist completed decisions in the matching semantic_decisions file using job_key and the exact fingerprint."
         ),
         "required_decision_fields": [
-            "fingerprint", "analysis_status=ANALYZED", "analysis_method=chatgpt_semantic",
+            "fingerprint", "analysis_status=ANALYZED", "analysis_method=chatgpt_semantic_title_metadata|chatgpt_semantic_full_jd",
             "fit_score", "experience_required", "mandatory_years_experience",
             "preferred_years_experience", "mandatory_vs_preferred_requirements",
             "people_management_required", "individual_contributor_possible",
