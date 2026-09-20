@@ -39,7 +39,12 @@ TECHNICAL_TITLE_EXCLUSIONS = (
     "software development engineer", "software engineer", "systems development engineer",
     "data engineer", "applied scientist", "research scientist", "machine learning",
     "security engineer", "network engineer", "hardware", "front end engineer",
-    "quality assurance engineer", "solutions architect",
+    "quality assurance engineer", "solutions architect", " engineer", "architect",
+    "scientist", "designer", "engineering manager", "maintenance", "construction",
+    "realty", "tax manager", "tax analyst", "counsel", "legal", "talent acquisition",
+    "recruit", "human resources", "hr business partner", "marketing", "marketer",
+    "advertising", "sales account manager", "account executive", "design & innovation",
+    "pathways operations manager",
 )
 
 INTERNSHIP_TERMS = ("intern", "internship", "apprentice", "apprenticeship")
