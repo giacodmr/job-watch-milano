@@ -7,9 +7,9 @@
   "last_mapped": "2026-09-20",
   "summary": {
     "companies_analyzed": 48,
-    "FULL": 22,
+    "FULL": 21,
     "STRONG": 19,
-    "PARTIAL": 7,
+    "PARTIAL": 8,
     "OPAQUE": 0
   },
   "notes": [
@@ -1387,30 +1387,32 @@
       "company": "Altman Solon",
       "batch": "JW2",
       "ats": {
-        "family": "Greenhouse",
-        "tenant": "altman-solon",
-        "career_site": "https://www.altmansolon.com/careers/job-opportunities",
-        "inventory_url": "https://job-boards.greenhouse.io/altman-solon",
-        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/altman-solon/jobs"
+        "family": "Altman Solon custom experienced-hire careers board",
+        "tenant": null,
+        "career_site": "https://www.altmansolon.com/careers/",
+        "inventory_url": "https://www.altmansolon.com/careers/job-opportunities",
+        "public_api_or_feed": null
       },
       "verification": {
-        "level": "FULL",
-        "method": "greenhouse_public_job_board_api",
-        "location_filter_supported": true,
+        "level": "PARTIAL",
+        "method": "official_experienced_hire_board_plus_autonomous_discovery",
+        "location_filter_supported": false,
         "locations": [
           "Milan",
           "London"
         ],
-        "pagination": "Greenhouse Job Board API returns the complete published board in one structured response with meta.total reconciliation.",
-        "total_count_available": true,
-        "full_inventory_possible": true
+        "pagination": "The first-party experienced-hire page is reachable but its open-position list is not exposed through a stable enumerable public ATS endpoint.",
+        "total_count_available": false,
+        "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Query the Greenhouse Job Board API for board token altmansolon, reconcile meta.total, then filter Milan/London before semantic scoring.",
-        "fallback": "Use Altman Solon's official job-opportunities pages carrying gh_jid requisition identifiers if the Greenhouse API is temporarily unavailable."
+        "primary": "Attempt the official Altman Solon experienced-hire opportunities page every run and use autonomous discovery for current full-time roles; validate role/company/currentness against first-party Altman Solon careers information before reporting.",
+        "fallback": "Use current LinkedIn/job-board postings for discovery only, then cross-check the role against Altman Solon's first-party careers page and application process."
       },
       "limitations": [
-        "Primary Greenhouse token altman-solon is the current validation candidate after altmansolon returned HTTP 404. Runtime coverage must remain PARTIAL/FAILED unless the live Greenhouse endpoint reconciles successfully."
+        "The public Greenhouse board available for Altman Solon is a separate campus/student board (altmansoloncampus); it must not be used to certify experienced-hire completeness.",
+        "Plain experienced-hire Greenhouse tokens altmansolon and altman-solon both returned HTTP 404 in live validation.",
+        "Keep runtime coverage PARTIAL by design until Altman Solon exposes a stable enumerable experienced-hire inventory."
       ],
       "last_mapped": "2026-09-20"
     },
