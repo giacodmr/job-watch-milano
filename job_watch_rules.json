@@ -1,5 +1,5 @@
 {
-  "version": "1.2",
+  "version": "1.3",
   "updated": "2026-09-20",
   "locations": {
     "primary": [
@@ -366,5 +366,63 @@
         "twin": "Ordinary twin available — usare questa"
       }
     }
+  },
+  "amazon_role_family_policy": {
+    "enabled": true,
+    "purpose": "For Amazon, do not restrict discovery to generic Strategy/Business Analyst titles. Retain the business job families empirically compatible with the candidate's consulting, retail/FMCG, commercial analytics, e-commerce, pricing/margin/inventory/sourcing and stakeholder-management background, then score the full JD semantically.",
+    "primary_target_families": {
+      "Marketplace / Seller Services / Strategic Accounts": [
+        "Associate Marketplace Consultant",
+        "Marketplace Consultant",
+        "Strategic Account Manager",
+        "Senior Strategic Account Manager",
+        "New Accounts Manager",
+        "Seller Services business/account roles"
+      ],
+      "Retail / Vendor / Brand": [
+        "Brand Specialist",
+        "Strategic Brand Specialist",
+        "Vendor Manager",
+        "Vendor Specialist",
+        "Category Manager",
+        "Retail business roles"
+      ],
+      "Program / Business Operations": [
+        "Program Manager",
+        "Project Manager",
+        "Portfolio Manager",
+        "Business Operations",
+        "Business Planning",
+        "Planning roles with commercial/business ownership"
+      ],
+      "Analytics / Finance": [
+        "Business Analyst",
+        "Business Analyst II",
+        "Financial Analyst",
+        "FP&A / Finance business roles"
+      ],
+      "Business Development / Amazon Business": [
+        "Business Development Manager",
+        "Partnerships",
+        "Amazon Business account/growth roles",
+        "Commercial Manager / Growth Manager when analytical and non-pure-sales"
+      ]
+    },
+    "secondary_target_families": [
+      "Business-facing Product Manager roles",
+      "In-Stock / Instock / Buying / Procurement roles when commercial rather than specialist supply-chain",
+      "Customer Success / Customer Solutions roles with strategic account ownership",
+      "Amazon Ads account roles only when the JD is consultative/analytical and not primarily quota-led sales"
+    ],
+    "semantic_guardrails": [
+      "Job title is a discovery signal, never a fit decision. Read the full JD for every plausibly relevant Amazon business role.",
+      "Do not auto-exclude Account Manager merely because it contains 'account': distinguish consultative marketplace/vendor/account-growth ownership from pure quota-carrying sales.",
+      "Do not auto-exclude Vendor Manager, Program Manager, Product Manager, Senior, Lead or Manager by title; apply the global mandatory-experience and actual-scope policy.",
+      "For Business Analyst roles, distinguish business analytics/decision-support roles from SQL/Python-heavy analytics-engineering profiles; mandatory technical gaps affect fit but title alone does not exclude.",
+      "For Product Manager roles, prioritize business/product strategy, customer, marketplace and commercial ownership; deprioritize deeply technical PM roles requiring engineering background.",
+      "For Vendor/Brand/Marketplace roles, give positive evidence weight to retail/FMCG, commercial strategy, pricing, profitability, e-commerce, sourcing/inventory, analytical decision support and senior stakeholder exposure.",
+      "Pure sales, account executive, advertising-sales, engineering, data engineering and highly technical specialist roles remain excluded unless the full JD clearly shows a materially different business scope."
+    ],
+    "reporting_rule": "Amazon remains a priority company. Preserve exhaustive Amazon business-role inventory in state, but surface user-visible roles according to semantic fit, location threshold, seniority and delta/reporting rules."
   }
 }

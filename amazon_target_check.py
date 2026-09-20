@@ -28,13 +28,16 @@ BUSINESS_CATEGORY_TERMS = (
 )
 
 BUSINESS_TITLE_TERMS = (
-    "vendor manager", "vendor specialist", "brand specialist", "brand manager", "category manager",
+    "marketplace consultant", "marketplace manager", "strategic account manager",
+    "new accounts manager", "seller services", "vendor manager", "vendor specialist",
+    "brand specialist", "brand manager", "category manager", "strategic brand",
     "product manager", "program manager", "project manager", "portfolio manager",
     "customer success", "customer solutions", "customer experience", "account manager",
-    "business development", "partnership", "merchant", "retail", "buyer", "buying",
-    "business analyst", "financial analyst", "finance", "fp&a", "strategy", "strategic",
-    "business operations", "business planning", "commercial", "planning", "operations analyst",
-    "supply chain", "capacity planning", "procurement", "economist", "chief of staff",
+    "business development", "partnership", "amazon business", "merchant", "retail",
+    "buyer", "buying", "instock", "in-stock", "business analyst", "financial analyst",
+    "finance", "fp&a", "strategy", "strategic", "business operations", "business planning",
+    "commercial", "growth manager", "planning", "operations analyst", "supply chain",
+    "capacity planning", "procurement", "economist", "chief of staff",
 )
 
 TECHNICAL_TITLE_EXCLUSIONS = (
@@ -328,11 +331,13 @@ def canonical_url(job):
 
 def role_family(title):
     t = str(title or "").casefold()
-    if any(x in t for x in ("vendor", "category", "brand", "retail", "buyer", "buying")):
+    if any(x in t for x in ("marketplace consultant", "marketplace manager", "seller services", "strategic account manager", "new accounts manager")):
+        return "Marketplace / Seller Services / Strategic Accounts"
+    if any(x in t for x in ("vendor", "category", "brand", "retail", "buyer", "buying", "instock", "in-stock")):
         return "Retail / Vendor / Category / Brand"
     if any(x in t for x in ("product manager", "program manager", "project manager", "portfolio manager")):
         return "Product / Program / Project"
-    if any(x in t for x in ("customer", "account manager", "business development", "partnership", "merchant")):
+    if any(x in t for x in ("customer", "account manager", "business development", "partnership", "amazon business", "merchant", "growth manager")):
         return "Customer / Account / Business Development"
     if any(x in t for x in ("finance", "financial", "fp&a", "economist")):
         return "Finance / Economics"
