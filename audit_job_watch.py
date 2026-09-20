@@ -97,8 +97,38 @@ def audit_batch(batch: str) -> dict:
     summary_target = (current.get("summary") or {}).get("target_jobs_open")
     base_inventory_reconciliation = summary_target == len(base_keys)
     state_reconciliation = extracted_open == len(open_records)
+    # Two different completeness concepts:
+    # - DAILY_COMPLETE: today's actionable delta is decided and any reportable
+    #   delta roles have surfaced history. Historical STILL_OPEN backlog does
+    #   not block a daily run.
+    # - FULL_SEMANTIC_COMPLETE: every currently open record is semantically
+    #   decided and every reportable record is surfaced.
+    actionable_delta = [
+        r for r in open_records
+        if r.get("current_status") in {"NEW", "UPDATED"}
+    ]
+    actionable_pending = [r for r in actionable_delta if r.get("needs_analysis")]
+    actionable_analyzed = [
+        r for r in actionable_delta
+        if r.get("analysis_status") == "ANALYZED" and not r.get("needs_analysis")
+    ]
+    actionable_reportable = [
+        r for r in actionable_analyzed
+        if r.get("reportable") is True
+        and (
+            r.get("priority_company") is True
+            or (r.get("fit_score") or 0) >= (r.get("threshold") or 0)
+        )
+    ]
+    actionable_surfaced = [r for r in actionable_reportable if r.get("surfaced_at")]
+
     analysis_complete = len(analyzed) == extracted_open and not pending
     reporting_reconciliation = len(reportable) == len(surfaced) if analysis_complete else False
+    actionable_delta_complete = not actionable_pending
+    actionable_reporting_reconciliation = (
+        len(actionable_reportable) == len(actionable_surfaced)
+        if actionable_delta_complete else False
+    )
 
     company_summary = current.get("summary") or {}
     coverage = {
@@ -153,8 +183,14 @@ def audit_batch(batch: str) -> dict:
             "pending_analysis": len(pending),
             "queue_pending": int(queue.get("pending_count", len(queue.get("records") or [])) or 0),
             "analysis_pct": round((len(analyzed) / extracted_open) * 100, 2) if extracted_open else 100.0,
+            "actionable_delta_open": len(actionable_delta),
+            "actionable_delta_analyzed": len(actionable_analyzed),
+            "actionable_delta_pending": len(actionable_pending),
+            "historical_backlog_remaining": max(0, len(pending) - len(actionable_pending)),
             "reportable_above_threshold_or_priority": len(reportable),
             "surfaced_ever_current": len(surfaced),
+            "actionable_reportable": len(actionable_reportable),
+            "actionable_surfaced": len(actionable_surfaced),
         },
         "partial_remediation": {
             "count": len(partial_backlog),
@@ -167,15 +203,35 @@ def audit_batch(batch: str) -> dict:
             "state_reconciliation": state_reconciliation,
             "analysis_complete": analysis_complete,
             "reporting_reconciliation": reporting_reconciliation,
+            "actionable_delta_complete": actionable_delta_complete,
+            "actionable_reporting_reconciliation": actionable_reporting_reconciliation,
             "all_companies_attempted": all_companies_attempted,
             "no_failed_company_checks": not unresolved_attempts,
             "company_count": total_companies,
         },
-        "run_complete": bool(
+        "daily_complete": bool(
+            base_inventory_reconciliation
+            and state_reconciliation
+            and actionable_delta_complete
+            and actionable_reporting_reconciliation
+            and all_companies_attempted
+            and not unresolved_attempts
+        ),
+        "full_semantic_complete": bool(
             base_inventory_reconciliation
             and state_reconciliation
             and analysis_complete
             and reporting_reconciliation
+            and all_companies_attempted
+            and not unresolved_attempts
+        ),
+        # Backward-compatible alias: operational run completion now means
+        # DAILY_COMPLETE, not historical backlog exhaustion.
+        "run_complete": bool(
+            base_inventory_reconciliation
+            and state_reconciliation
+            and actionable_delta_complete
+            and actionable_reporting_reconciliation
             and all_companies_attempted
             and not unresolved_attempts
         ),
@@ -185,13 +241,15 @@ def audit_batch(batch: str) -> dict:
 def main() -> int:
     batches = {batch.upper(): audit_batch(batch) for batch in BATCHES}
     payload = {
-        "version": "1.1",
+        "version": "1.2",
         "generated_at": utc_now(),
         "definition": (
             "Inventory completeness is separate from semantic-analysis completeness. "
-            "JW2 includes the Amazon priority overlay (Milan/Rome/Luxembourg/London) in analysis reconciliation. "
-            "A run is complete only when official inventory/state reconcile, every pending role is decided, "
-            "and every currently reportable role has surfaced history."
+            "JW2 includes the Amazon priority inventory in analysis reconciliation. "
+            "DAILY_COMPLETE requires official inventory/state reconciliation plus complete semantic handling "
+            "and surfaced history for today's NEW/UPDATED actionable delta. Historical STILL_OPEN backlog "
+            "is reported separately and does not block the daily run. FULL_SEMANTIC_COMPLETE additionally "
+            "requires zero pending historical records and full reporting reconciliation."
         ),
         "batches": batches,
     }
@@ -201,11 +259,11 @@ def main() -> int:
         v = row["vacancy_analysis_coverage"]
         c = row["company_ats_coverage"]
         print(
-            f"{name} complete={row['run_complete']} | "
+            f"{name} DAILY_COMPLETE={row['daily_complete']} FULL_SEMANTIC_COMPLETE={row['full_semantic_complete']} | "
             f"ATS V/P/F/NC={c['VERIFIED']}/{c['PARTIAL']}/{c['FAILED']}/{c['NOT_CHECKED']} | "
-            f"analysis={v['analyzed_current']}/{v['extracted_open']} ({v['analysis_pct']}%) | "
-            f"semantic={v['semantic_analyzed']} pending={v['pending_analysis']} | "
-            f"reportable/surfaced={v['reportable_above_threshold_or_priority']}/{v['surfaced_ever_current']}"
+            f"delta analyzed/pending={v['actionable_delta_analyzed']}/{v['actionable_delta_pending']} | "
+            f"historical_backlog={v['historical_backlog_remaining']} | "
+            f"reportable/surfaced={v['actionable_reportable']}/{v['actionable_surfaced']}"
         )
     return 0
 
