@@ -49,7 +49,7 @@ jobs:
 
           data = json.loads(Path("amazon_target_check.json").read_text(encoding="utf-8"))
           failed = []
-          for city in ("Milan", "Rome", "London"):
+          for city in ("Milan", "Rome", "Luxembourg", "London"):
               x = data.get("locations", {}).get(city, {})
               if x.get("coverage") != "VERIFIED":
                   failed.append(f"{city}: coverage={x.get('coverage')}")
@@ -60,7 +60,7 @@ jobs:
                   )
           if failed:
               raise SystemExit("AMAZON PRIORITY INCOMPLETE\n" + "\n".join(failed))
-          print("Amazon Milan/Rome/London official inventories fully reconciled.")
+          print("Amazon Milan/Rome/Luxembourg/London official inventories fully reconciled.")
           PY
 
       - name: Commit Amazon priority snapshot
