@@ -257,6 +257,14 @@ def link_ordinary_twins(items):
             "ordinary_twin_url": twin.get("apply_url"),
             "ordinary_twin_similarity": score,
         })
+        existing_score = twin.get("protected_twin_similarity") or 0.0
+        if score >= existing_score:
+            twin.update({
+                "protected_twin_found": True,
+                "protected_twin_job_id": protected.get("job_id"),
+                "protected_twin_url": protected.get("apply_url"),
+                "protected_twin_similarity": score,
+            })
 
 
 def years_mentions(text):
@@ -368,6 +376,10 @@ def compact_job(job, city, norm, scope_reason):
         "ordinary_twin_job_id": None,
         "ordinary_twin_url": None,
         "ordinary_twin_similarity": None,
+        "protected_twin_found": False,
+        "protected_twin_job_id": None,
+        "protected_twin_url": None,
+        "protected_twin_similarity": None,
     }
 
 
@@ -389,6 +401,13 @@ def fingerprint(job):
             "ordinary_twin_job_id": job.get("ordinary_twin_job_id"),
             "ordinary_twin_url": job.get("ordinary_twin_url"),
             "ordinary_twin_similarity": job.get("ordinary_twin_similarity"),
+        })
+    if job.get("protected_twin_found"):
+        payload.update({
+            "protected_twin_found": True,
+            "protected_twin_job_id": job.get("protected_twin_job_id"),
+            "protected_twin_url": job.get("protected_twin_url"),
+            "protected_twin_similarity": job.get("protected_twin_similarity"),
         })
     raw = json.dumps(payload, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
