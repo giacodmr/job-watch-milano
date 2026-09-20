@@ -2960,5 +2960,484 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     write_json(ROOT / f"current_jobs_{batch}.json", payload)
     return payload
 
+# === JOB WATCH V1.7 TARGET-COVERAGE + OFFICIAL PROBES ===
+# Adds first-class Amazon target-city enumeration, Banca Ifis deterministic
+# pagination, and a real official-page attempt for every remaining mapped
+# company. Unsupported dynamic portals become PARTIAL after an actual official
+# check rather than remaining opaque NOT_CHECKED rows.
+
+AMAZON_SCOPE_NAME = "Amazon Jobs public search.json target-city inventory"
+BANCA_IFIS_SCOPE_NAME = "Banca Ifis official paginated inventory"
+OFFICIAL_PROBE_SCOPE_NAME = "Official inventory reachability probe"
+
+AMAZON_API = "https://www.amazon.jobs/en/search.json"
+AMAZON_TARGETS = {
+    "Milan": {"probe": "Milan", "country_codes": {"ITA", "IT"}},
+    "Rome": {"probe": "Rome", "country_codes": {"ITA", "IT"}},
+    "London": {"probe": "London", "country_codes": {"GBR", "GB", "UK"}},
+}
+
+
+class BasicTextLinkParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.text_parts = []
+        self.links = []
+        self._link = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag.casefold() != "a":
+            return
+        a = {str(k).casefold(): v for k, v in attrs if k}
+        self._link = {"href": clean_text(a.get("href")), "text": []}
+
+    def handle_data(self, data):
+        value = clean_text(data)
+        if not value:
+            return
+        self.text_parts.append(value)
+        if self._link is not None:
+            self._link["text"].append(value)
+
+    def handle_endtag(self, tag):
+        if tag.casefold() == "a" and self._link is not None:
+            row = dict(self._link)
+            row["text"] = clean_text(" ".join(row.get("text") or []))
+            self.links.append(row)
+            self._link = None
+
+
+def amazon_family(company) -> bool:
+    name = (clean_text(company.get("company")) or "").casefold()
+    family = (clean_text((company.get("ats") or {}).get("family")) or "").casefold()
+    return name == "amazon" or "amazon jobs" in family
+
+
+def _amazon_job_id(job):
+    for k in ("id", "id_icims", "job_id", "requisition_id"):
+        v = job.get(k)
+        if v not in (None, "", []):
+            return str(v)
+    path = clean_text(job.get("job_path") or job.get("url"))
+    return path or None
+
+
+def _amazon_job_url(job):
+    path = clean_text(job.get("job_path") or job.get("url"))
+    if not path:
+        return None
+    return path if path.startswith(("http://", "https://")) else "https://www.amazon.jobs" + path
+
+
+def _amazon_norms(job):
+    v = job.get("normalized_location")
+    if isinstance(v, str):
+        return [v]
+    if isinstance(v, list):
+        return [str(x) for x in v if x]
+    return []
+
+
+def _amazon_country_ok(job, norm, codes):
+    hay = " | ".join(
+        [
+            str(job.get("country_code") or ""),
+            str(job.get("country") or ""),
+            str(norm or ""),
+            str(job.get("location") or ""),
+        ]
+    ).upper()
+    return any(re.search(rf"(^|[^A-Z]){re.escape(c)}([^A-Z]|$)", hay) for c in codes)
+
+
+def _amazon_json(params):
+    try:
+        r = get_session().get(
+            AMAZON_API,
+            params=params,
+            headers={"Accept": "application/json,text/plain,*/*"},
+            timeout=TIMEOUT,
+        )
+        if r.status_code in {401, 403, 404, 406, 410, 429, 500, 502, 503, 504}:
+            raise NotCheckable(f"Amazon Jobs API unavailable from runner (HTTP {r.status_code})")
+        r.raise_for_status()
+        data = r.json()
+    except requests.exceptions.SSLError as e:
+        raise NotCheckable("Amazon Jobs API TLS validation failed") from e
+    except (requests.RequestException, ValueError) as e:
+        raise NotCheckable(f"Amazon Jobs API request/JSON failed: {e}") from e
+    if not isinstance(data, dict) or not isinstance(data.get("jobs"), list):
+        raise NotCheckable("Amazon Jobs API returned an unexpected payload")
+    return data, r.url
+
+
+def _amazon_discover_norms(city, spec):
+    data, _ = _amazon_json(
+        {"base_query": spec["probe"], "offset": 0, "result_limit": 100, "sort": "relevant"}
+    )
+    norms = set()
+    for job in data.get("jobs") or []:
+        for norm in _amazon_norms(job):
+            if city.casefold() in norm.casefold() and _amazon_country_ok(
+                job, norm, spec["country_codes"]
+            ):
+                norms.add(norm)
+    if not norms:
+        raise NotCheckable(f"Amazon Jobs did not expose a normalized_location for {city}")
+    return sorted(norms)
+
+
+def _amazon_enumerate_norm(norm):
+    offset = 0
+    limit = 100
+    expected = None
+    rows = []
+    for _ in range(MAX_PAGES):
+        data, _ = _amazon_json(
+            {
+                "base_query": "",
+                "normalized_location[]": norm,
+                "offset": offset,
+                "result_limit": limit,
+                "sort": "relevant",
+            }
+        )
+        page = data.get("jobs") or []
+        total = int(data.get("hits") or len(page))
+        if expected is None:
+            expected = total
+        elif total != expected:
+            raise NotCheckable(
+                f"Amazon Jobs count changed during pagination for {norm}: {expected}->{total}"
+            )
+        rows.extend(page)
+        if len(rows) >= expected:
+            break
+        if not page:
+            raise NotCheckable(
+                f"Amazon Jobs pagination stopped early for {norm}: {len(rows)}/{expected}"
+            )
+        offset += len(page)
+    else:
+        raise NotCheckable(f"Amazon Jobs inventory exceeds safe page limit for {norm}")
+    if len(rows) != expected:
+        raise NotCheckable(
+            f"Amazon Jobs reconciliation mismatch for {norm}: {len(rows)}!={expected}"
+        )
+    return rows
+
+
+def collect_amazon(company):
+    name = company.get("company") or "Amazon"
+    by_id = {}
+    norm_counts = {}
+    for city, spec in AMAZON_TARGETS.items():
+        norms = _amazon_discover_norms(city, spec)
+        for norm in norms:
+            rows = _amazon_enumerate_norm(norm)
+            norm_counts[norm] = len(rows)
+            for raw in rows:
+                sid = _amazon_job_id(raw)
+                if not sid:
+                    raise NotCheckable("Amazon Jobs row lacks stable requisition/job ID")
+                by_id[sid] = raw
+
+    jobs = []
+    for sid, raw in by_id.items():
+        loc = clean_text(raw.get("location")) or ", ".join(_amazon_norms(raw))
+        jobs.append(
+            compact_job(
+                name,
+                sid,
+                title=raw.get("title"),
+                location=loc,
+                department=raw.get("job_category") or raw.get("business_category"),
+                published_at=raw.get("posted_date") or raw.get("posted_at"),
+                updated_at=raw.get("updated_time"),
+                canonical=_amazon_job_url(raw),
+                apply_url=_amazon_job_url(raw),
+            )
+        )
+    return {
+        "coverage": "VERIFIED",
+        "collector": "amazon_jobs_search_json_target_inventory_v17",
+        "inventory_count": len(by_id),
+        "jobs": jobs,
+        "source_url": AMAZON_API,
+        "reason": None,
+        "target_inventory_detail": norm_counts,
+    }
+
+
+def banca_ifis_family(company) -> bool:
+    name = (clean_text(company.get("company")) or "").casefold()
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url")) or ""
+    return name == "banca ifis" and urlparse(inventory).netloc.casefold() == "posizioniaperte.bancaifis.it"
+
+
+def _banca_ifis_detail(url):
+    text, final_url = get_html(url)
+    parser = BasicTextLinkParser()
+    parser.feed(text)
+    parts = parser.text_parts
+    location = None
+    for i, part in enumerate(parts):
+        p = part.strip()
+        if p.casefold() == "sedi" and i + 1 < len(parts):
+            location = clean_text(parts[i + 1])
+            break
+        if p.casefold().startswith("sedi "):
+            location = clean_text(p[5:])
+            break
+    if not location:
+        for part in parts:
+            if len(part) <= 100 and TARGET_LOCATION_RE.search(part):
+                location = clean_text(part)
+                break
+    return location, final_url
+
+
+def collect_banca_ifis(company):
+    name = company.get("company")
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url"))
+    if not inventory:
+        raise NotCheckable("Banca Ifis inventory URL missing")
+
+    found = {}
+    saw_page = False
+    for page in range(1, MAX_PAGES + 1):
+        params = {"cngLanguage": "ITA"}
+        if page > 1:
+            params.update(
+                {
+                    "PagerAnnunci": page,
+                    "RunDefaultAction": "true",
+                    "StartupViewID": "TableView",
+                }
+            )
+        html_text, final_url = get_html(inventory, params=params)
+        parser = BasicTextLinkParser()
+        parser.feed(html_text)
+        page_rows = {}
+        for link in parser.links:
+            href = clean_text(link.get("href"))
+            if not href:
+                continue
+            u = urljoin(final_url, href)
+            p = urlparse(u)
+            q = parse_qs(p.query)
+            jid = (q.get("JobID") or q.get("jobid") or [None])[0]
+            if (
+                p.netloc.casefold() == "posizioniaperte.bancaifis.it"
+                and "job-details" in p.path.casefold()
+                and jid
+            ):
+                page_rows[str(jid)] = {
+                    "url": u,
+                    "title": clean_text(link.get("text")),
+                }
+        if not page_rows:
+            if page == 1:
+                raise NotCheckable("Banca Ifis first inventory page exposed no stable JobID links")
+            break
+        saw_page = True
+        new_ids = [jid for jid in page_rows if jid not in found]
+        if not new_ids:
+            break
+        found.update(page_rows)
+    else:
+        raise NotCheckable("Banca Ifis pagination exceeded safe page limit")
+
+    if not saw_page or not found:
+        raise NotCheckable("Banca Ifis inventory could not be enumerated")
+
+    jobs = []
+    for jid, row in found.items():
+        loc, canonical = _banca_ifis_detail(row["url"])
+        if location_matches(loc):
+            jobs.append(
+                compact_job(
+                    name,
+                    jid,
+                    title=row.get("title"),
+                    location=loc,
+                    canonical=canonical,
+                    apply_url=canonical,
+                )
+            )
+    return {
+        "coverage": "VERIFIED",
+        "collector": "banca_ifis_paginated_inventory_v17",
+        "inventory_count": len(found),
+        "jobs": jobs,
+        "source_url": inventory,
+        "reason": None,
+    }
+
+
+def prima_family(company) -> bool:
+    name = (clean_text(company.get("company")) or "").casefold()
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url")) or ""
+    return name == "prima assicurazioni" and "helloprima.com" in urlparse(inventory).netloc.casefold()
+
+
+def collect_prima_official(company):
+    name = company.get("company")
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url"))
+    if not inventory:
+        raise NotCheckable("Prima official jobs URL missing")
+    html_text, final_url = get_html(inventory)
+    parser = BasicTextLinkParser()
+    parser.feed(html_text)
+    rows = {}
+    for link in parser.links:
+        href = clean_text(link.get("href"))
+        if not href:
+            continue
+        u = urljoin(final_url, href)
+        p = urlparse(u)
+        path = p.path.rstrip("/")
+        prefix = "/it/carriere/offerte-lavoro/"
+        if "helloprima.com" not in p.netloc.casefold() or prefix not in path.casefold():
+            continue
+        slug = path.split("/")[-1]
+        if not slug or slug.casefold() == "offerte-lavoro":
+            continue
+        rows[slug] = {"url": u, "title": clean_text(link.get("text"))}
+    if not rows:
+        raise NotCheckable("Prima official list is reachable but job-detail links are not server-rendered")
+
+    jobs = []
+    for sid, row in rows.items():
+        detail, canonical = get_html(row["url"])
+        dp = BasicTextLinkParser()
+        dp.feed(detail)
+        loc = None
+        for part in dp.text_parts:
+            if len(part) <= 100 and TARGET_LOCATION_RE.search(part):
+                loc = clean_text(part)
+                break
+        if location_matches(loc):
+            jobs.append(
+                compact_job(
+                    name,
+                    sid,
+                    title=row.get("title") or (dp.text_parts[0] if dp.text_parts else None),
+                    location=loc,
+                    canonical=canonical,
+                    apply_url=canonical,
+                )
+            )
+    return {
+        "coverage": "PARTIAL",
+        "collector": "prima_first_party_rendered_list_v17",
+        "inventory_count": len(rows),
+        "jobs": jobs,
+        "source_url": inventory,
+        "reason": (
+            "Official Prima job-detail list was enumerated as rendered, but the board exposes no "
+            "independent total/pagination contract; completeness cannot be certified."
+        ),
+    }
+
+
+def probe_official_inventory(company):
+    ats = company.get("ats") or {}
+    inventory = clean_text(ats.get("inventory_url")) or clean_text(ats.get("career_site"))
+    family = clean_text(ats.get("family")) or "unresolved ATS"
+    if not inventory:
+        raise NotCheckable(f"No official inventory/career URL mapped for {family}")
+    try:
+        r = get_session().get(
+            inventory,
+            headers={"Accept": "text/html,application/xhtml+xml,application/json,*/*"},
+            timeout=min(TIMEOUT, 18),
+            allow_redirects=True,
+        )
+    except requests.exceptions.SSLError as e:
+        raise NotCheckable(
+            f"Official inventory was attempted but TLS validation failed; no exhaustive parser for {family}"
+        ) from e
+    except requests.RequestException as e:
+        raise NotCheckable(
+            f"Official inventory was attempted but the runner request failed ({type(e).__name__}); "
+            f"no exhaustive parser for {family}"
+        ) from e
+    if r.status_code >= 400:
+        raise NotCheckable(
+            f"Official inventory was attempted but returned HTTP {r.status_code}; "
+            f"no exhaustive parser for {family}"
+        )
+    body = r.text or ""
+    if not body.strip():
+        raise NotCheckable(
+            f"Official inventory returned an empty response; no exhaustive parser for {family}"
+        )
+    raise NotCheckable(
+        f"Official inventory is reachable ({r.status_code}, {len(body)} bytes) but no safe exhaustive "
+        f"collector is implemented yet for {family}"
+    )
+
+
+_choose_v16 = choose
+def choose(company):
+    if amazon_family(company):
+        return collect_amazon
+    if banca_ifis_family(company):
+        return collect_banca_ifis
+    if prima_family(company):
+        return collect_prima_official
+    fn = _choose_v16(company)
+    if fn is not None:
+        return fn
+    return probe_official_inventory
+
+
+def collect_company(company: dict) -> tuple[dict, bool]:
+    fn = choose(company)
+    try:
+        result = fn(company)
+        if "reason" not in result:
+            result["reason"] = None
+        return result, True
+    except NotCheckable as e:
+        return {
+            "coverage": "PARTIAL",
+            "collector": getattr(fn, "__name__", "collector"),
+            "inventory_count": None,
+            "jobs": [],
+            "reason": f"Official check incomplete: {e}",
+            "source_url": (company.get("ats") or {}).get("inventory_url"),
+        }, True
+    except Exception as e:
+        return {
+            "coverage": "FAILED",
+            "collector": getattr(fn, "__name__", "collector"),
+            "inventory_count": None,
+            "jobs": [],
+            "reason": f"{type(e).__name__}: {e}",
+            "source_url": (company.get("ats") or {}).get("inventory_url"),
+        }, True
+
+
+_collect_batch_v16 = collect_batch
+def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
+    payload = _collect_batch_v16(batch, workers=workers)
+    payload["version"] = "1.7"
+    scope = list(payload.get("collector_scope") or [])
+    for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
+        if value not in scope:
+            scope.append(value)
+    payload["collector_scope"] = scope
+    payload["coverage_note"] = (
+        "VERIFIED means the target-scope official inventory was exhausted and reconciled. "
+        "PARTIAL means the official source was actually attempted but full enumeration could not be "
+        "certified or only a rendered subset could be collected. FAILED is reserved for a supported "
+        "structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because "
+        "every mapped company receives at least an official-source probe."
+    )
+    write_json(ROOT / f"current_jobs_{batch}.json", payload)
+    return payload
+
 if __name__ == "__main__":
     raise SystemExit(main())
