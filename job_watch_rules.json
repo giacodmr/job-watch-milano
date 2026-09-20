@@ -169,5 +169,17 @@
       "chatgpt_semantic_title_metadata",
       "chatgpt_semantic_full_jd"
     ]
+  },
+  "surface_registry_policy": {
+    "files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
+    "key": "job_key",
+    "required_fields": [
+      "surfaced_at",
+      "surfaced_status"
+    ],
+    "preserve_history": true,
+    "standard_roles": "Do not repeat unchanged STILL_OPEN roles after they have been surfaced; re-surface only NEW, materially UPDATED, newly reportable, or explicitly requested.",
+    "priority_roles": "Amazon in JW2 and Mastercard in JW1 are re-surfaced every daily run while open and in scope.",
+    "write_order": "Persist semantic decision first; write surfaced history only for roles actually included in the user-visible output; then re-run/sync state when possible."
   }
 }
