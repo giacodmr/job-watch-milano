@@ -828,9 +828,20 @@ def merge_sf_page_jobs(base: str, parser: SFPageParser) -> list[dict]:
 
 
 def sf_startrow(url: str) -> int:
+    """Return the SuccessFactors result offset from query or path pagination.
+
+    Career Site Builder uses both ?startrow=50 and /viewalljobs/50/ depending
+    on site/template. Treat both as the same official pagination contract.
+    """
     try:
-        vals = parse_qs(urlparse(url).query).get("startrow") or []
-        return int(vals[0]) if vals else 0
+        parsed = urlparse(url)
+        vals = parse_qs(parsed.query).get("startrow") or []
+        if vals:
+            return int(vals[0])
+        m = re.search(r"/(?:viewalljobs|search)/(\\d+)/?$", parsed.path, re.I)
+        if m:
+            return int(m.group(1))
+        return 0
     except Exception:
         return 0
 
