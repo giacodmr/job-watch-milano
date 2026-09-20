@@ -132,7 +132,11 @@
       "ordinary_twin_found",
       "ordinary_twin_job_id",
       "ordinary_twin_url",
-      "ordinary_twin_similarity"
+      "ordinary_twin_similarity",
+      "protected_twin_found",
+      "protected_twin_job_id",
+      "protected_twin_url",
+      "protected_twin_similarity"
     ],
     "role_level_assessment_values": [
       "ENTRY_JUNIOR",
@@ -299,7 +303,11 @@
       "ordinary_twin_found",
       "ordinary_twin_job_id",
       "ordinary_twin_url",
-      "ordinary_twin_similarity"
+      "ordinary_twin_similarity",
+      "protected_twin_found",
+      "protected_twin_job_id",
+      "protected_twin_url",
+      "protected_twin_similarity"
     ],
     "non_l68_routing": {
       "PREFERRED": "Eligible for normal fit analysis and reporting if above threshold.",
@@ -329,7 +337,8 @@
       ],
       "priority": "If a substantially equivalent ordinary requisition is currently open on the official career site/ATS, prefer and report the ordinary requisition, link the protected requisition as protected_twin, and do not recommend applying to both when they are substantively the same opportunity. Historical/closed twins may be noted as context but must not be marked ordinary_twin_found.",
       "no_twin_rule": "If no ordinary twin exists, PREFERRED/INVITED roles may be reported normally when fit is above threshold; REQUIRED/RESERVED follow eligibility routing.",
-      "active_only": true
+      "active_only": true,
+      "reverse_link": "When an active ordinary twin is found, persist the protected requisition on the ordinary record as protected_twin_job_id/protected_twin_url so reporting can route the user to the ordinary application while preserving the relationship."
     },
     "application_priority": [
       "ordinary equivalent requisition, when available",
