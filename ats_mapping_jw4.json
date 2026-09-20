@@ -881,36 +881,36 @@
       "company": "Unilever",
       "batch": "JW4",
       "ats": {
-        "family": "Custom Unilever careers frontend + Workday backend",
+        "family": "Workday",
         "tenant": "unilever",
         "career_site": "https://careers.unilever.com/",
-        "inventory_url": "https://careers.unilever.com/en/search_jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://unilever.wd3.myworkdayjobs.com/Unilever_Experienced_Professionals",
+        "public_api_or_feed": "https://unilever.wd3.myworkdayjobs.com/wday/cxs/unilever/Unilever_Experienced_Professionals/jobs"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_inventory",
+        "method": "workday_cxs_inventory",
         "location_filter_supported": true,
-        "location_filter_mode": "country/location and job-category facets",
+        "location_filter_mode": "Workday location search/facets; external Unilever careers site used as cross-check",
         "locations": [
           "Italy",
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "numbered pages with visible result total",
+        "pagination": "Workday CXS limit/offset; exact total reconciliation required",
         "total_count_available": true,
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official inventory URL, apply the target location filters, capture the official total count, enumerate all result pages until the count is reconciled, and deduplicate by official job URL/requisition ID.",
-        "fallback": "Use targeted web discovery restricted to careers.unilever.com only to recover individual official job URLs; do not use the fallback itself as proof of completeness."
+        "primary": "Use the official Unilever Workday CXS Experienced Professionals inventory, paginate limit/offset until retrieved rows exactly equal the reported total, then filter Milan/Rome/London and validate relevant JDs. Cross-check the branded Unilever careers search for discovery.",
+        "fallback": "Use careers.unilever.com search/location pages to discover current roles and reconcile each result to its official Unilever Workday requisition."
       },
       "limitations": [
-        "The application backend/vendor is not fully exposed; completeness is established from the official inventory itself, not from an ATS API.",
-        "No separate public unauthenticated API/feed was verified during this mapping."
+        "The branded Unilever search and Workday may index at slightly different times; Workday is the canonical requisition source for roles exposed there.",
+        "Early-career/internship programmes may live outside this Experienced Professionals board; internships are outside Job Watch target scope."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-20"
     },
     {
       "company": "Bolton Group",
