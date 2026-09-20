@@ -3665,8 +3665,206 @@ def collect_occ(company):
     }
 
 
+PHENOM_SCOPE_NAME = "Phenom CareerConnect public widgets API"
+
+
+def phenom_config(company):
+    ats = company.get("ats") or {}
+    cfg = ats.get("phenom") or {}
+    origin = clean_text(cfg.get("origin"))
+    ref_num = clean_text(cfg.get("ref_num"))
+    if not origin or not ref_num:
+        return None
+    parsed = urlparse(origin)
+    if parsed.scheme not in {"https", "http"} or not parsed.netloc:
+        return None
+    return {
+        "origin": f"{parsed.scheme}://{parsed.netloc}",
+        "lang": clean_text(cfg.get("lang")) or "en_global",
+        "country": clean_text(cfg.get("country")) or "global",
+        "ref_num": ref_num,
+        "url_prefix": (clean_text(cfg.get("url_prefix")) or "global/en").strip("/"),
+    }
+
+
+def phenom_family(company) -> bool:
+    family = (clean_text((company.get("ats") or {}).get("family")) or "").casefold()
+    return "phenom" in family and phenom_config(company) is not None
+
+
+def _phenom_location(raw):
+    direct = raw.get("location") or raw.get("cityStateCountry") or raw.get("cityState")
+    if isinstance(direct, list):
+        vals = []
+        for x in direct:
+            if isinstance(x, dict):
+                for k in ("city", "state", "country", "name"):
+                    v = clean_text(x.get(k))
+                    if v:
+                        vals.append(v)
+            else:
+                v = clean_text(x)
+                if v:
+                    vals.append(v)
+        direct = ", ".join(dict.fromkeys(vals))
+    elif isinstance(direct, dict):
+        vals = [clean_text(direct.get(k)) for k in ("city", "state", "country", "name")]
+        direct = ", ".join(dict.fromkeys(x for x in vals if x))
+    direct = clean_text(direct)
+    if direct:
+        return direct
+    vals = [clean_text(raw.get(k)) for k in ("city", "state", "country")]
+    return ", ".join(dict.fromkeys(x for x in vals if x)) or None
+
+
+def _phenom_total(data):
+    rs = data.get("refineSearch") or {}
+    inner = rs.get("data") or {}
+    for value in (rs.get("totalHits"), inner.get("totalHits"), data.get("totalHits")):
+        if value is None:
+            continue
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _phenom_rows(data):
+    rs = data.get("refineSearch") or {}
+    inner = rs.get("data") or {}
+    rows = inner.get("jobs")
+    return rows if isinstance(rows, list) else None
+
+
+def collect_phenom(company):
+    name = company.get("company")
+    cfg = phenom_config(company)
+    if not cfg:
+        raise NotCheckable("Phenom config missing")
+
+    endpoint = cfg["origin"] + "/widgets"
+    size = 100
+    offset = 0
+    total = None
+    rows_by_id = {}
+
+    for _ in range(MAX_PAGES):
+        payload = {
+            "lang": cfg["lang"],
+            "deviceType": "desktop",
+            "country": cfg["country"],
+            "pageName": "search-results",
+            "ddoKey": "refineSearch",
+            "sortBy": "",
+            "subsearch": "",
+            "from": offset,
+            "jobs": True,
+            "counts": True,
+            "all_fields": ["category", "country", "state", "city", "type"],
+            "size": size,
+            "clearAll": False,
+            "jdsource": "facets",
+            "isSliderEnable": False,
+            "pageId": "page20",
+            "siteType": "external",
+            "keywords": "",
+            "global": cfg["country"].casefold() == "global",
+            "selected_fields": {},
+            "locationData": {},
+            "refNum": cfg["ref_num"],
+        }
+        try:
+            data = post_json(
+                endpoint,
+                payload,
+                headers={
+                    "Accept": "application/json",
+                    "Referer": cfg["origin"] + "/" + cfg["url_prefix"] + "/search-results",
+                },
+            )
+        except requests.RequestException as e:
+            raise NotCheckable(f"Phenom widgets request failed: {type(e).__name__}: {e}") from e
+
+        page = _phenom_rows(data)
+        if page is None:
+            raise NotCheckable("Phenom widgets response does not expose refineSearch.data.jobs")
+        page_total = _phenom_total(data)
+        if total is None:
+            total = page_total
+        elif page_total is not None and total != page_total:
+            raise NotCheckable(f"Phenom inventory total changed during enumeration: {total}!={page_total}")
+
+        if not page:
+            break
+
+        fresh = 0
+        for raw in page:
+            if not isinstance(raw, dict):
+                continue
+            sid = clean_text(raw.get("jobId")) or clean_text(raw.get("jobSeqNo"))
+            title = clean_text(raw.get("title")) or clean_text(raw.get("jobTitle"))
+            if not sid or not title:
+                continue
+            if sid not in rows_by_id:
+                rows_by_id[sid] = raw
+                fresh += 1
+
+        offset += len(page)
+        if total is not None and offset >= total:
+            break
+        if fresh == 0:
+            raise NotCheckable("Phenom widgets pagination repeated the same rows")
+    else:
+        raise NotCheckable("Phenom widgets pagination exceeded safety limit")
+
+    if total is None:
+        raise NotCheckable("Phenom widgets did not expose totalHits")
+    if len(rows_by_id) != total:
+        raise NotCheckable(f"Phenom inventory reconciliation mismatch: retrieved={len(rows_by_id)}, total={total}")
+
+    jobs = []
+    for sid, raw in rows_by_id.items():
+        loc = _phenom_location(raw)
+        if not location_matches(loc, name):
+            continue
+        title = clean_text(raw.get("title")) or clean_text(raw.get("jobTitle"))
+        job_url = clean_text(raw.get("jobUrl"))
+        if job_url:
+            canonical = urljoin(cfg["origin"] + "/", job_url)
+        else:
+            safe_title = re.sub(r"[^A-Za-z0-9]+", "-", title or "job").strip("-")
+            canonical = f'{cfg["origin"]}/{cfg["url_prefix"]}/job/{sid}/{safe_title or "job"}'
+        apply_url = clean_text(raw.get("applyUrl"))
+        if apply_url:
+            apply_url = urljoin(cfg["origin"] + "/", apply_url)
+        jobs.append(
+            compact_job(
+                name,
+                sid,
+                title=title,
+                location=loc,
+                department=raw.get("category"),
+                employment_type=raw.get("type") or raw.get("jobType"),
+                published_at=raw.get("postedDate") or raw.get("dateCreated"),
+                canonical=canonical,
+                apply_url=apply_url or canonical,
+            )
+        )
+
+    return {
+        "coverage": "VERIFIED",
+        "collector": "phenom_careerconnect_widgets_v20",
+        "inventory_count": len(rows_by_id),
+        "jobs": jobs,
+        "source_url": endpoint,
+    }
+
+
 _choose_v16 = choose
 def choose(company):
+    if phenom_family(company):
+        return collect_phenom
     if amazon_family(company):
         return collect_amazon
     if banca_ifis_family(company):
@@ -3715,7 +3913,7 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload = _collect_batch_v16(batch, workers=workers)
     payload["version"] = "1.8"
     scope = list(payload.get("collector_scope") or [])
-    for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OCC_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
+    for value in (PHENOM_SCOPE_NAME, AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OCC_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
         if value not in scope:
             scope.append(value)
     payload["collector_scope"] = scope

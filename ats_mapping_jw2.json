@@ -7,8 +7,8 @@
   "last_mapped": "2026-09-20",
   "summary": {
     "companies_analyzed": 48,
-    "FULL": 21,
-    "STRONG": 20,
+    "FULL": 22,
+    "STRONG": 19,
     "PARTIAL": 7,
     "OPAQUE": 0
   },
@@ -1314,32 +1314,39 @@
       "company": "eBay",
       "batch": "JW2",
       "ats": {
-        "family": "Phenom career platform",
+        "family": "Phenom CareerConnect",
         "tenant": null,
         "career_site": "https://careers.ebayinc.com/",
         "inventory_url": "https://jobs.ebayinc.com/us/en/search-results",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://jobs.ebayinc.com/widgets",
+        "phenom": {
+          "origin": "https://jobs.ebayinc.com",
+          "lang": "en_us",
+          "country": "us",
+          "ref_num": "EBAEBAUS",
+          "url_prefix": "us/en"
+        }
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_phenom_inventory_with_dynamic_limit",
+        "level": "FULL",
+        "method": "phenom_public_widgets_api",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Phenom search-results supports result navigation, but eBay's public server response does not expose a stable complete inventory contract to this collector.",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Public no-auth Phenom CareerConnect POST /widgets; paginate by from/size and reconcile refineSearch totalHits before target-location filtering.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Attempt eBay's official Phenom search-results inventory for each target location and validate every discovered requisition on jobs.ebayinc.com/us/en/job/<req>.",
-        "fallback": "Run mandatory autonomous discovery against indexed eBay job-detail pages and external boards, then require a current first-party eBay job page before a vacancy is treated as open."
+        "primary": "Use eBay's public Phenom CareerConnect /widgets endpoint with the verified EBAEBAUS refNum, paginate the complete published inventory and reconcile totalHits before filtering Milan/Rome/London.",
+        "fallback": "If the Phenom widget endpoint stops returning a reconcilable inventory, downgrade runtime coverage to PARTIAL and use autonomous discovery plus current first-party eBay job pages for confirmation."
       },
       "limitations": [
-        "The public Phenom frontend is reachable but client-rendered; no unauthenticated, provider-supported exhaustive jobs API has been verified for eBay.",
-        "Keep PARTIAL operational coverage when the collector cannot enumerate job cards; autonomous first-party validation is mandatory."
+        "Runtime VERIFIED is allowed only after exact totalHits reconciliation; any widget schema change, first-page failure or pagination mismatch must downgrade coverage.",
+        "The Phenom site context is eBay's en_us external careers site; the collector filters the returned inventory by target locations after enumeration."
       ],
       "last_mapped": "2026-09-20"
     },
@@ -1381,10 +1388,10 @@
       "batch": "JW2",
       "ats": {
         "family": "Greenhouse",
-        "tenant": "altmansolon",
+        "tenant": "altman-solon",
         "career_site": "https://www.altmansolon.com/careers/job-opportunities",
-        "inventory_url": "https://job-boards.greenhouse.io/altmansolon",
-        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/altmansolon/jobs"
+        "inventory_url": "https://job-boards.greenhouse.io/altman-solon",
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/altman-solon/jobs"
       },
       "verification": {
         "level": "FULL",
@@ -1403,7 +1410,7 @@
         "fallback": "Use Altman Solon's official job-opportunities pages carrying gh_jid requisition identifiers if the Greenhouse API is temporarily unavailable."
       },
       "limitations": [
-        "Board token is supported by Altman Solon's first-party gh_jid integration and independently corroborated by a current public ATS tracker; the validation run must confirm the live Greenhouse endpoint before coverage is treated as VERIFIED."
+        "Primary Greenhouse token altman-solon is the current validation candidate after altmansolon returned HTTP 404. Runtime coverage must remain PARTIAL/FAILED unless the live Greenhouse endpoint reconciles successfully."
       ],
       "last_mapped": "2026-09-20"
     },
