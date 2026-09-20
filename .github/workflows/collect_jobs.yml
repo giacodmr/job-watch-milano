@@ -51,6 +51,28 @@ jobs:
       - name: Sync persistent analysis state
         run: python sync_analysis_state.py
 
+      - name: Validate analysis queue
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          incomplete = []
+          for batch in ("jw1","jw2","jw3","jw4"):
+              p = Path(f"analysis_results_{batch}.json")
+              if not p.exists():
+                  incomplete.append(f"{batch.upper()}: state file missing")
+                  continue
+              data = json.loads(p.read_text(encoding="utf-8"))
+              summary = data.get("summary", {})
+              pending = int(summary.get("pending_analysis", 0) or 0)
+              if pending:
+                  incomplete.append(f"{batch.upper()}: {pending} vacancy pending semantic analysis")
+          if incomplete:
+              print("ANALYSIS QUEUE NOT COMPLETE:")
+              print("\n".join(incomplete))
+              print("Collector snapshots will still be audited and committed; run must not be reported COMPLETE.")
+          PY
+
       - name: Generate completeness audit
         run: python audit_job_watch.py
 
