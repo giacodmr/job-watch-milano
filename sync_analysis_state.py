@@ -9,6 +9,32 @@ ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 
+import re
+
+# Conservative title-only hard exclusions approved by the Job Watch policy.
+# There is deliberately NO positive-title whitelist: anything not unambiguously
+# outside scope remains pending for semantic JD review.
+HARD_EXCLUSION_RULES = (
+    ("internship", re.compile(r"\b(intern|internship|stage|apprentice|apprenticeship)\b", re.I)),
+    ("software_engineering", re.compile(r"\b(software|backend|frontend|front-end|full[ -]?stack|mobile|platform|systems?)\s+(engineer|developer)\b|\bdeveloper\b", re.I)),
+    ("technical_engineering", re.compile(r"\b(data engineer|machine learning engineer|ml engineer|security engineer|network engineer|cloud engineer|devops|site reliability engineer|solutions architect|solution architect|enterprise architect|data architect)\b", re.I)),
+    ("data_science", re.compile(r"\b(data scientist|applied scientist|research scientist|machine learning scientist)\b", re.I)),
+    ("marketing_crm", re.compile(r"\b(marketing|crm|brand marketing|product marketing|growth marketing|performance marketing)\b", re.I)),
+    ("hr_recruiting", re.compile(r"\b(recruiter|recruiting|talent acquisition|human resources|people partner|hr business partner)\b", re.I)),
+    ("legal", re.compile(r"\b(counsel|lawyer|legal counsel|legal advisor|attorney)\b", re.I)),
+    ("pure_sales", re.compile(r"\b(account executive|sales representative|sales executive|sales account|inside sales|field sales|telesales)\b", re.I)),
+    ("insurance_technical", re.compile(r"\b(underwriter|underwriting|claims|actuarial|actuary)\b", re.I)),
+)
+
+
+def hard_exclusion_reason(title: str | None) -> str | None:
+    value = str(title or "")
+    for reason, pattern in HARD_EXCLUSION_RULES:
+        if pattern.search(value):
+            return reason
+    return None
+
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -81,6 +107,8 @@ def sync_batch(batch: str) -> dict:
             })
             preserved += 1
         else:
+            exclusion = hard_exclusion_reason(job.get("title"))
+            auto_excluded = exclusion is not None
             rec = {
                 "company": company_name,
                 "source_id": str(job.get("source_id")),
@@ -92,15 +120,20 @@ def sync_batch(batch: str) -> dict:
                 "current_status": job.get("status"),
                 "current_open": True,
                 "threshold": threshold_for(job.get("location")),
-                "needs_analysis": True,
-                "analysis_status": "PENDING",
-                "fit_score": None,
+                "needs_analysis": not auto_excluded,
+                "analysis_status": "ANALYZED" if auto_excluded else "PENDING",
+                "analysis_method": "hard_rule_title" if auto_excluded else None,
+                "hard_exclusion_reason": exclusion,
+                "fit_score": 0 if auto_excluded else None,
                 "experience_required": None,
                 "salary": None,
                 "salary_source": None,
-                "reportable": None,
-                "rationale": None,
-                "analyzed_at": None,
+                "reportable": False if auto_excluded else None,
+                "rationale": (
+                    f"Hard-excluded by approved conservative title rule: {exclusion}."
+                    if auto_excluded else None
+                ),
+                "analyzed_at": utc_now() if auto_excluded else None,
                 "surfaced_at": old.get("surfaced_at"),
                 "surfaced_status": old.get("surfaced_status"),
                 "first_seen_at": old.get("first_seen_at") or current.get("generated_at") or utc_now(),
@@ -123,6 +156,8 @@ def sync_batch(batch: str) -> dict:
     open_records = [r for r in records.values() if r.get("current_open")]
     pending = sum(1 for r in open_records if r.get("needs_analysis"))
     analyzed = sum(1 for r in open_records if r.get("analysis_status") == "ANALYZED" and not r.get("needs_analysis"))
+    hard_rule_analyzed = sum(1 for r in open_records if r.get("analysis_status") == "ANALYZED" and r.get("analysis_method") == "hard_rule_title" and not r.get("needs_analysis"))
+    semantic_analyzed = analyzed - hard_rule_analyzed
     reportable = sum(1 for r in open_records if r.get("reportable") is True and not r.get("needs_analysis"))
     surfaced = sum(1 for r in open_records if r.get("reportable") is True and r.get("surfaced_at"))
 
@@ -144,6 +179,8 @@ def sync_batch(batch: str) -> dict:
             "preserved_current_analysis": preserved,
             "reset_or_new_pending_analysis": reset,
             "analyzed_current": analyzed,
+            "hard_rule_analyzed": hard_rule_analyzed,
+            "semantic_analyzed": semantic_analyzed,
             "pending_analysis": pending,
             "reportable_current": reportable,
             "surfaced_current": surfaced,
