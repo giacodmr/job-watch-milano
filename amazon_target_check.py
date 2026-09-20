@@ -162,15 +162,21 @@ def experience_decision(job):
     pref = str(value(job, "preferred_qualifications") or "")
     required = years_mentions(basic)
     preferred = years_mentions(pref)
-    required_min = max(required) if required else None
+    required_min = min(required) if required else None
     bucket = experience_bucket(job)
     bucket_l = (bucket or "").casefold()
-    if required_min is not None and required_min > 5:
+    if required and all(x > 5 for x in required):
         status = "OUT"
-        reason = f"basic qualifications require at least {required_min} years"
-    elif required_min is not None:
+        reason = f"all numeric Basic Qualifications experience requirements exceed 5 years: {required}"
+    elif required and any(x > 5 for x in required) and any(x <= 5 for x in required):
+        status = "REVIEW"
+        reason = (
+            f"mixed numeric Basic Qualifications experience mentions {required}; "
+            "full-JD semantic review required to determine AND/OR/alternative requirement logic"
+        )
+    elif required:
         status = "TARGET"
-        reason = f"basic qualifications require up to {required_min} years"
+        reason = f"numeric Basic Qualifications experience requirements are within 0-5 years: {required}"
     elif any(x in bucket_l for x in ("seven_plus", "7+", "7 plus", "7 or more")):
         status = "OUT"
         reason = "Amazon industry-experience bucket is 7+ years"
