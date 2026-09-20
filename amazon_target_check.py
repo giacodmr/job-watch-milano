@@ -16,6 +16,7 @@ HEADERS = {
 TARGETS = {
     "Milan": {"probe": "Milan", "country_codes": {"ITA", "IT"}},
     "Rome": {"probe": "Rome", "country_codes": {"ITA", "IT"}},
+    "Luxembourg": {"probe": "Luxembourg", "country_codes": {"LUX", "LU"}},
     "London": {"probe": "London", "country_codes": {"GBR", "GB", "UK"}},
 }
 
@@ -265,10 +266,10 @@ def main():
         "version": "2.0",
         "checked_at": datetime.now(timezone.utc).isoformat(),
         "source": "Amazon Jobs public /en/search.json API",
-        "scope": ["Milan", "Rome", "London"],
+        "scope": ["Milan", "Rome", "Luxembourg", "London"],
         "experience_policy": "Business roles are included when Basic Qualifications do not explicitly require >5 years. Unknown numeric requirements are retained for manual review to avoid false negatives. Amazon's 4-6 years bucket is therefore reviewed from the JD rather than excluded wholesale.",
         "global_coverage": "NOT_CHECKED",
-        "global_coverage_reason": "All official Amazon Jobs inventory is exhausted for the three target cities, but worldwide inventory is intentionally not certified.",
+        "global_coverage_reason": "All official Amazon Jobs inventory is exhausted for Milan, Rome, Luxembourg and London, but worldwide inventory is intentionally not certified.",
         "locations": {}, "target_jobs": [], "excluded_business_jobs": [],
     }
 
@@ -326,7 +327,7 @@ def main():
             "search_urls": search_urls,
         }
 
-    city_rank = {"Milan": 0, "Rome": 1, "London": 2}
+    city_rank = {"Milan": 0, "Rome": 1, "Luxembourg": 2, "London": 3}
     deduped = {}
     for item in current_by_id.values():
         jid = item["job_id"]
@@ -358,6 +359,7 @@ def main():
         "CLOSED": sum(x.get("status") == "CLOSED" for x in result["target_jobs"]),
         "Milan": sum(x.get("target_city") == "Milan" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
         "Rome": sum(x.get("target_city") == "Rome" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
+        "Luxembourg": sum(x.get("target_city") == "Luxembourg" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
         "London": sum(x.get("target_city") == "London" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
     }
 
