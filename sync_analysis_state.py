@@ -222,6 +222,14 @@ def sync_batch(batch: str) -> dict:
     current_all, current_open, url_to_key = add_standard_jobs(current)
     overlay_amazon_priority(batch, current_all, current_open, url_to_key)
 
+    # Mastercard is collected through the standard Workday inventory, but it is
+    # a priority company in JW1 just like Amazon is in JW2. Mark it explicitly
+    # so queue ordering and reporting reconciliation apply the priority policy.
+    if batch == "jw1":
+        for item in current_open.values():
+            if (item.get("_company_name") or "").casefold() == "mastercard":
+                item["_priority_company"] = True
+
     records = {}
     preserved = 0
     reset = 0
