@@ -91,7 +91,19 @@ def threshold_for(location: str | None) -> int:
     return 80 if ("london" in loc or "luxembourg" in loc or "luxemburg" in loc) else 70
 
 
-def decision_valid(decision: dict, fingerprint: str | None) -> bool:
+def decision_valid(
+    decision: dict,
+    fingerprint: str | None,
+    *,
+    title: str | None = None,
+    priority_company: bool = False,
+) -> bool:
+    """Validate a persisted semantic decision before it can clear the queue.
+
+    Priority roles and titles that look senior by wording (Manager/Senior/Lead/
+    Head/Director) must have been checked against the full official JD. This is
+    the guardrail that prevents title-based false negatives/positives.
+    """
     if not isinstance(decision, dict):
         return False
     if decision.get("fingerprint") != fingerprint:
@@ -104,6 +116,19 @@ def decision_valid(decision: dict, fingerprint: str | None) -> bool:
         return False
     if not str(decision.get("rationale") or "").strip():
         return False
+    if decision.get("final_experience_status") not in {"TARGET_0_5", "REVIEW_UNCLEAR", "OUT_GT5_MANDATORY"}:
+        return False
+    if decision.get("role_level_assessment") not in {"ENTRY_JUNIOR", "EARLY_MID", "MID", "SENIOR", "UNCLEAR"}:
+        return False
+    if not str(decision.get("seniority_evidence") or "").strip():
+        return False
+    if "mandatory_vs_preferred_requirements" not in decision:
+        return False
+
+    senior_wording = bool(re.search(r"\b(manager|senior|lead|head|director)\b", str(title or ""), re.I))
+    if priority_company or senior_wording:
+        if decision.get("analysis_method") != "chatgpt_semantic_full_jd":
+            return False
     return True
 
 
@@ -288,7 +313,12 @@ def sync_batch(batch: str) -> dict:
                 "analyzed_at": utc_now(),
             })
             preserved += 1
-        elif decision_valid(decision, fingerprint):
+        elif decision_valid(
+            decision,
+            fingerprint,
+            title=job.get("title"),
+            priority_company=bool(job.get("_priority_company")),
+        ):
             rec.update({
                 "needs_analysis": False,
                 "analysis_status": "ANALYZED",
