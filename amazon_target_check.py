@@ -469,6 +469,24 @@ def main():
             deduped[jid] = item
     current_by_id = deduped
 
+    # Link protected-category requisitions to substantially equivalent
+    # ordinary requisitions before final status/fingerprint reconciliation.
+    all_business_items = list(current_by_id.values()) + list(excluded_by_id.values())
+    link_ordinary_twins(all_business_items)
+    for item in all_business_items:
+        item["fingerprint"] = fingerprint(item)
+
+    # Reconcile status after twin linkage because the twin relationship is part
+    # of the semantic freshness signal.
+    for jid, item in current_by_id.items():
+        old = previous.get(jid)
+        if old is None:
+            item["status"] = "NEW"
+        elif old.get("fingerprint") and old.get("fingerprint") != item.get("fingerprint"):
+            item["status"] = "UPDATED"
+        else:
+            item["status"] = "STILL_OPEN"
+
     result["target_jobs"] = list(current_by_id.values())
     result["excluded_business_jobs"] = list(excluded_by_id.values())
 
