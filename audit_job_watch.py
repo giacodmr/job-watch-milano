@@ -64,6 +64,7 @@ def priority_overlay_keys(batch: str, existing: set[str]) -> set[str]:
 
 def audit_batch(batch: str) -> dict:
     current = read_json(ROOT / f"current_jobs_{batch}.json", {})
+    mapping = read_json(ROOT / f"ats_mapping_{batch}.json", {"companies": []})
     state = read_json(ROOT / f"analysis_results_{batch}.json", {"records": {}})
     queue = read_json(ROOT / f"semantic_queue_{batch}.json", {"records": []})
 
@@ -111,6 +112,32 @@ def audit_batch(batch: str) -> dict:
     all_companies_attempted = coverage["NOT_CHECKED"] == 0
     unresolved_attempts = coverage["FAILED"] > 0
 
+    mapping_by_company = {
+        row.get("company"): row
+        for row in (mapping.get("companies") or [])
+        if row.get("company")
+    }
+    partial_backlog = []
+    for company in current.get("companies", []):
+        if company.get("coverage") != "PARTIAL":
+            continue
+        mapped = mapping_by_company.get(company.get("company")) or {}
+        partial_backlog.append({
+            "company": company.get("company"),
+            "mapping_level": (mapped.get("verification") or {}).get("level"),
+            "ats_family": company.get("ats_family"),
+            "collector": company.get("collector"),
+            "reason": company.get("reason"),
+            "source_url": company.get("source_url"),
+            "priority_full_mapping": (mapped.get("verification") or {}).get("level") == "FULL",
+        })
+    partial_backlog.sort(
+        key=lambda row: (
+            0 if row.get("priority_full_mapping") else 1,
+            (row.get("company") or "").casefold(),
+        )
+    )
+
     return {
         "batch": batch.upper(),
         "source_generated_at": current.get("generated_at"),
@@ -128,6 +155,11 @@ def audit_batch(batch: str) -> dict:
             "analysis_pct": round((len(analyzed) / extracted_open) * 100, 2) if extracted_open else 100.0,
             "reportable_above_threshold_or_priority": len(reportable),
             "surfaced_ever_current": len(surfaced),
+        },
+        "partial_remediation": {
+            "count": len(partial_backlog),
+            "full_mapping_but_partial": sum(1 for row in partial_backlog if row.get("priority_full_mapping")),
+            "companies": partial_backlog,
         },
         "checks": {
             "inventory_reconciliation": base_inventory_reconciliation,
