@@ -251,5 +251,11 @@
     "priority_company_reporting": "For Amazon and Mastercard, keep exhaustive inventory and semantic coverage in state files, but user-visible daily output should emphasize NEW/UPDATED/newly-decided high-fit roles plus concise counts. Do not print hundreds of unchanged STILL_OPEN rows unless explicitly requested.",
     "standard_company_reporting": "Show NEW, materially UPDATED, AUTONOMOUS_DELTA, newly reportable and never-surfaced relevant roles. Suppress unchanged already-surfaced STILL_OPEN roles.",
     "audit_footer": "Always include concise per-batch coverage, daily delta completeness, historical backlog remaining, FAILED/NOT_CHECKED counts, and new-company discovery changes."
+  },
+  "persistence_batching_policy": {
+    "enabled": true,
+    "rule": "Accumulate semantic decisions and surfaced-history changes across all four JW modules during the daily run, then persist them in as few GitHub commits as practical before a single semantic sync/audit cycle.",
+    "reason": "Avoid triggering one sync workflow per vacancy or per file and reduce GitHub Actions churn/race opportunities.",
+    "exception": "If a critical write must be persisted before continuing, write it immediately; otherwise batch."
   }
 }
