@@ -7,8 +7,8 @@
   "last_mapped": "2026-09-20",
   "summary": {
     "companies_analyzed": 48,
-    "FULL": 20,
-    "STRONG": 21,
+    "FULL": 21,
+    "STRONG": 20,
     "PARTIAL": 7,
     "OPAQUE": 0
   },
@@ -1329,16 +1329,17 @@
           "Rome",
           "London"
         ],
-        "pagination": "Dynamic Phenom search/results and facets; enumerate all visible pages/offsets when available.",
+        "pagination": "Phenom search-results supports result navigation, but eBay's public server response does not expose a stable complete inventory contract to this collector.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use eBay's official jobs search, exact target-location filters and enumerate all visible result pages before semantic filtering.",
-        "fallback": "Use official eBay job-detail pages for confirmation; external job boards are discovery-only."
+        "primary": "Attempt eBay's official Phenom search-results inventory for each target location and validate every discovered requisition on jobs.ebayinc.com/us/en/job/<req>.",
+        "fallback": "Run mandatory autonomous discovery against indexed eBay job-detail pages and external boards, then require a current first-party eBay job page before a vacancy is treated as open."
       },
       "limitations": [
-        "Dynamic client rendering prevents a mathematical completeness proof in the current environment."
+        "The public Phenom frontend is reachable but client-rendered; no unauthenticated, provider-supported exhaustive jobs API has been verified for eBay.",
+        "Keep PARTIAL operational coverage when the collector cannot enumerate job cards; autonomous first-party validation is mandatory."
       ],
       "last_mapped": "2026-09-20"
     },
@@ -1346,10 +1347,10 @@
       "company": "TikTok",
       "batch": "JW2",
       "ats": {
-        "family": "TikTok custom careers platform",
+        "family": "TikTok LifeAtTikTok custom careers platform",
         "tenant": null,
-        "career_site": "https://careers.tiktok.com/",
-        "inventory_url": "https://careers.tiktok.com/position",
+        "career_site": "https://lifeattiktok.com/",
+        "inventory_url": "https://lifeattiktok.com/search?recruitment_id_list=&job_category_id_list=&subject_id_list=&location_code_list=&keyword=&limit=12&offset=0",
         "public_api_or_feed": null
       },
       "verification": {
@@ -1361,16 +1362,17 @@
           "Rome",
           "London"
         ],
-        "pagination": "Dynamic custom search; current public surface does not expose a stable exhaustive total/pagination contract to this collector.",
+        "pagination": "Official search accepts limit/offset and filter query parameters, but the result list is client-rendered and no stable public exhaustive JSON contract has been verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use TikTok Careers with target locations/teams and verify every candidate role on the official role page; include Monetization Strategy & Operations and TikTok Shop business functions.",
-        "fallback": "Use indexed official TikTok job pages and external boards for discovery only, then validate on TikTok Careers."
+        "primary": "Use the current LifeAtTikTok search surface (not the legacy careers.tiktok.com/position redirect), target Milan/Rome/London and verify every candidate on its official lifeattiktok.com/search/<job_id> detail page.",
+        "fallback": "Use indexed official LifeAtTikTok detail pages plus independent web/LinkedIn discovery, then validate current status on LifeAtTikTok before reporting."
       },
       "limitations": [
-        "Do not mark VERIFIED unless the current run can enumerate and reconcile the complete target-location inventory."
+        "Do not mark VERIFIED from limit/offset parameters alone: the server-rendered search shell does not expose a reconcilable job total or complete result set to the collector.",
+        "Individual job-detail pages are first-party and server-readable, so autonomous discovery can still be validated reliably."
       ],
       "last_mapped": "2026-09-20"
     },
@@ -1378,30 +1380,30 @@
       "company": "Altman Solon",
       "batch": "JW2",
       "ats": {
-        "family": "Altman Solon custom careers board",
-        "tenant": null,
-        "career_site": "https://www.altmansolon.com/careers/",
-        "inventory_url": "https://www.altmansolon.com/careers/job-opportunities",
-        "public_api_or_feed": null
+        "family": "Greenhouse",
+        "tenant": "altmansolon",
+        "career_site": "https://www.altmansolon.com/careers/job-opportunities",
+        "inventory_url": "https://job-boards.greenhouse.io/altmansolon",
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/altmansolon/jobs"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_career_board",
+        "level": "FULL",
+        "method": "greenhouse_public_job_board_api",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "London"
         ],
-        "pagination": "Official job-opportunities board with location-filterable open positions; exhaust all displayed openings.",
-        "total_count_available": false,
+        "pagination": "Greenhouse Job Board API returns the complete published board in one structured response with meta.total reconciliation.",
+        "total_count_available": true,
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official full-time opportunities board and filter Milan/London before applying semantic rules.",
-        "fallback": "Use current official Altman Solon role pages; LinkedIn only for discovery."
+        "primary": "Query the Greenhouse Job Board API for board token altmansolon, reconcile meta.total, then filter Milan/London before semantic scoring.",
+        "fallback": "Use Altman Solon's official job-opportunities pages carrying gh_jid requisition identifiers if the Greenhouse API is temporarily unavailable."
       },
       "limitations": [
-        "No stable public structured feed was verified, so completeness is based on exhausting the official board UI."
+        "Board token is supported by Altman Solon's first-party gh_jid integration and independently corroborated by a current public ATS tracker; the validation run must confirm the live Greenhouse endpoint before coverage is treated as VERIFIED."
       ],
       "last_mapped": "2026-09-20"
     },
@@ -1417,23 +1419,24 @@
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_role_confirmation_plus_discovery",
+        "method": "official_role_confirmation_plus_autonomous_discovery",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "No stable exhaustive public inventory endpoint verified.",
+        "pagination": "No stable public ATS or exhaustive first-party vacancy inventory has been verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use Value Partners official careers/contact surfaces and targeted web discovery; verify every role against a first-party company source/application link before reporting.",
-        "fallback": "LinkedIn may discover roles but is not a completeness source."
+        "primary": "Use targeted autonomous discovery for Value Partners roles and validate company identity, current posting date and role content; prefer any first-party application/contact surface when exposed.",
+        "fallback": "Use LinkedIn/company-recruiter postings as discovery evidence only and re-check the Value Partners corporate site/privacy/application instructions before reporting the role as actionable."
       },
       "limitations": [
-        "Until an exhaustive official inventory is mapped, coverage must remain PARTIAL."
+        "The current Milan Business Analyst role is publicly discoverable, but Value Partners does not expose a stable enumerable public ATS in the mapped corporate site.",
+        "Coverage therefore remains PARTIAL by design; do not infer 'no jobs' from an empty corporate careers page."
       ],
       "last_mapped": "2026-09-20"
     },

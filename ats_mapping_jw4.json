@@ -5,9 +5,9 @@
   "last_mapped": "2026-09-20",
   "verification_summary": {
     "companies_analyzed": 52,
-    "FULL": 29,
-    "STRONG": 18,
-    "PARTIAL": 5,
+    "FULL": 31,
+    "STRONG": 17,
+    "PARTIAL": 4,
     "OPAQUE": 0
   },
   "companies": [
@@ -1711,31 +1711,31 @@
       "company": "IQVIA",
       "batch": "JW4",
       "ats": {
-        "family": "IQVIA custom careers platform",
-        "tenant": null,
+        "family": "Workday CXS",
+        "tenant": "iqvia",
         "career_site": "https://jobs.iqvia.com/",
-        "inventory_url": "https://jobs.iqvia.com/en/search-jobs",
-        "public_api_or_feed": null
+        "inventory_url": "https://iqvia.wd1.myworkdayjobs.com/IQVIA",
+        "public_api_or_feed": "https://iqvia.wd1.myworkdayjobs.com/wday/cxs/iqvia/IQVIA/jobs"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_counted_dynamic_inventory",
+        "level": "FULL",
+        "method": "official_workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Official IQVIA search supports location filtering; exhaust pages/results shown for target locations.",
+        "pagination": "Workday CXS offset/limit pagination; enumerate to the reported total and reconcile exactly before location filtering.",
         "total_count_available": true,
-        "full_inventory_possible": false
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use IQVIA Jobs search with exact target locations and enumerate all accessible result pages before filtering.",
-        "fallback": "Confirm each role on its official IQVIA job-detail page."
+        "primary": "Use IQVIA's official Workday CXS inventory, paginate to the reported total, then filter Milan/Rome/London before semantic analysis.",
+        "fallback": "Use jobs.iqvia.com and official IQVIA Workday job-detail pages to confirm roles if the CXS endpoint is temporarily unavailable."
       },
       "limitations": [
-        "Dynamic rendering limits deterministic completeness proof in this environment."
+        "IQVIA's branded jobs frontend may return 403 to generic probing, but current first-party job pages resolve on iqvia.wd1.myworkdayjobs.com/IQVIA; use Workday as the structured primary source."
       ],
       "last_mapped": "2026-09-20"
     },
@@ -1773,31 +1773,32 @@
       "company": "Nike",
       "batch": "JW4",
       "ats": {
-        "family": "Nike custom careers platform",
-        "tenant": null,
+        "family": "Workday CXS",
+        "tenant": "nike",
         "career_site": "https://careers.nike.com/",
-        "inventory_url": "https://careers.nike.com/",
-        "public_api_or_feed": null
+        "inventory_url": "https://nike.wd1.myworkdayjobs.com/nke",
+        "public_api_or_feed": "https://nike.wd1.myworkdayjobs.com/wday/cxs/nike/nke/jobs"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_dynamic_search_partial",
+        "level": "FULL",
+        "method": "official_workday_cxs_inventory",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Dynamic jobs search with location/function filters; stable exhaustive endpoint not yet verified.",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Workday CXS offset/limit pagination; enumerate to the reported total and reconcile exactly before location filtering.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use Nike Careers target-location searches and verify role pages; keep marketplace/planning/business-execution families despite unconventional titles.",
-        "fallback": "Use external job boards only for discovery and compensation context, then confirm on Nike Careers."
+        "primary": "Use Nike's official Workday CXS inventory (site nke), paginate completely and filter target locations; retain business-operations, marketplace, planning and commercial-strategy families for semantic review.",
+        "fallback": "Use careers.nike.com job pages and their first-party Apply Now links to Nike Workday for requisition confirmation."
       },
       "limitations": [
-        "Current Milan examples are often senior; do not infer seniority from Principal/Lead alone—read mandatory scope and experience."
+        "Nike's branded careers UI remains useful for category/location facets, but Workday CXS is the completeness source for the collector.",
+        "Retail frontline roles are still filtered later by Job Watch rules; the inventory itself must remain exhaustive."
       ],
       "last_mapped": "2026-09-20"
     }
