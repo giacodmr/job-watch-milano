@@ -161,23 +161,32 @@ def decision_valid(
         return False
     if "mandatory_vs_preferred_requirements" not in decision:
         return False
-    if decision.get("l68_status") not in {"NO", "PREFERRED", "REQUIRED", "RESERVED", "INVITED", "AMBIGUOUS"}:
-        return False
-    if "ordinary_twin_found" not in decision or not isinstance(decision.get("ordinary_twin_found"), bool):
-        return False
-
     senior_wording = bool(re.search(r"\b(manager|senior|lead|head|director)\b", str(title or ""), re.I))
     protected_wording = bool(re.search(
         r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
         str(title or ""),
         re.I,
     ))
-    if priority_company or senior_wording or protected_wording or decision.get("l68_status") != "NO":
+
+    # Backward compatibility: historical semantic decisions created before the
+    # L.68/99 policy are treated as NO only when the title itself contains no
+    # protected-category signal. Protected titles must be re-read from the full
+    # official JD and explicitly classified.
+    l68_status = decision.get("l68_status")
+    if l68_status is None and not protected_wording:
+        l68_status = "NO"
+    if l68_status not in {"NO", "PREFERRED", "REQUIRED", "RESERVED", "INVITED", "AMBIGUOUS"}:
+        return False
+    if l68_status != "NO":
+        if "ordinary_twin_found" not in decision or not isinstance(decision.get("ordinary_twin_found"), bool):
+            return False
+
+    if priority_company or senior_wording or protected_wording or l68_status != "NO":
         if decision.get("analysis_method") != "chatgpt_semantic_full_jd":
             return False
     # Do not silently route a protected-category must-have/reserved vacancy as
     # candidable when eligibility has not been explicitly established.
-    if decision.get("l68_status") in {"REQUIRED", "RESERVED"} and decision.get("reportable") is True:
+    if l68_status in {"REQUIRED", "RESERVED"} and decision.get("reportable") is True:
         return False
     return True
 
