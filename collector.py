@@ -2989,6 +2989,7 @@ AMAZON_API = "https://www.amazon.jobs/en/search.json"
 AMAZON_TARGETS = {
     "Milan": {"probe": "Milan", "country_codes": {"ITA", "IT"}},
     "Rome": {"probe": "Rome", "country_codes": {"ITA", "IT"}},
+    "Luxembourg": {"probe": "Luxembourg", "country_codes": {"LUX", "LU"}},
     "London": {"probe": "London", "country_codes": {"GBR", "GB", "UK"}},
 }
 
@@ -3521,6 +3522,149 @@ def collect_bolt(company):
     }
 
 
+OCC_SCOPE_NAME = "OC&C official counted paginated vacancies inventory"
+OCC_ROLE_RE = re.compile(r"/vacancies/(\d+)/[^?#]*\.html$", re.I)
+
+
+def occ_family(company) -> bool:
+    name = (clean_text(company.get("company")) or "").casefold()
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url")) or ""
+    return name == "oc&c strategy consultants" and "careers.occstrategy.com" in urlparse(inventory).netloc.casefold()
+
+
+def _occ_expected_total(parser: BasicTextLinkParser) -> int | None:
+    text = " ".join(parser.text_parts)
+    m = re.search(r"\b(\d+)\s+Vacanc(?:y|ies)\b", text, re.I)
+    return int(m.group(1)) if m else None
+
+
+def _occ_detail(url: str):
+    html_text, final_url = get_html(url)
+    parser = BasicTextLinkParser()
+    parser.feed(html_text)
+    parts = parser.text_parts
+    location = None
+    for i, part in enumerate(parts):
+        if part.casefold() == "location" and i + 1 < len(parts):
+            candidate = clean_text(parts[i + 1])
+            if candidate and candidate.casefold() != "please select":
+                location = candidate
+                break
+    if not location:
+        for part in parts:
+            if len(part) <= 120 and TARGET_LOCATION_RE.search(part):
+                location = clean_text(part)
+                break
+    return location, final_url
+
+
+def collect_occ(company):
+    name = company.get("company")
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url"))
+    if not inventory:
+        raise NotCheckable("OC&C vacancies URL missing")
+
+    queue = [inventory]
+    visited = set()
+    found = {}
+    expected_total = None
+
+    while queue:
+        url = queue.pop(0)
+        if url in visited:
+            continue
+        visited.add(url)
+        html_text, final_url = get_html(url)
+        parser = BasicTextLinkParser()
+        parser.feed(html_text)
+
+        total = _occ_expected_total(parser)
+        if total is not None:
+            if expected_total is None:
+                expected_total = total
+            elif total != expected_total:
+                raise NotCheckable(f"OC&C vacancy total changed during pagination: {expected_total}->{total}")
+
+        current_path = urlparse(final_url).path.casefold()
+        for link in parser.links:
+            href = clean_text(link.get("href"))
+            if not href:
+                continue
+            absolute = urljoin(final_url, href)
+            parsed = urlparse(absolute)
+            if parsed.netloc.casefold() != "careers.occstrategy.com":
+                continue
+
+            m = OCC_ROLE_RE.search(parsed.path)
+            if m:
+                found[m.group(1)] = {
+                    "url": absolute,
+                    "title": clean_text(link.get("text")),
+                }
+                continue
+
+            # Follow only pagination links belonging to the same official
+            # vacancy-search results page. We rely on links actually exposed
+            # by the portal instead of guessing its query contract.
+            link_text = (clean_text(link.get("text")) or "").casefold()
+            if (
+                parsed.path.casefold() == current_path
+                and parsed.query
+                and (
+                    link_text.isdigit()
+                    or link_text in {"next", "last", ">", "»", "›"}
+                    or "page" in parsed.query.casefold()
+                )
+                and absolute not in visited
+                and absolute not in queue
+            ):
+                queue.append(absolute)
+
+        if expected_total is not None and len(found) >= expected_total:
+            break
+        if len(visited) > 50:
+            raise NotCheckable("OC&C vacancy pagination exceeded safe page limit")
+
+    if expected_total is None:
+        raise NotCheckable("OC&C portal did not expose an explicit vacancy total")
+    if len(found) != expected_total:
+        raise NotCheckable(f"OC&C inventory reconciliation mismatch: retrieved={len(found)}, total={expected_total}")
+
+    jobs = []
+    stale = 0
+    for sid, row in found.items():
+        try:
+            location, canonical = _occ_detail(row["url"])
+        except requests.HTTPError as e:
+            if getattr(e.response, "status_code", None) in {404, 410}:
+                stale += 1
+                continue
+            raise
+        if location_matches(location):
+            jobs.append(
+                compact_job(
+                    name,
+                    sid,
+                    title=row.get("title"),
+                    location=location,
+                    canonical=canonical,
+                    apply_url=canonical,
+                )
+            )
+
+    return {
+        "coverage": "PARTIAL" if stale else "VERIFIED",
+        "collector": "occ_counted_paginated_inventory_v19",
+        "inventory_count": len(found),
+        "jobs": jobs,
+        "source_url": inventory,
+        "reason": (
+            f"{stale} OC&C vacancy detail(s) disappeared after inventory enumeration."
+            if stale else None
+        ),
+    }
+
+
 _choose_v16 = choose
 def choose(company):
     if amazon_family(company):
@@ -3529,6 +3673,8 @@ def choose(company):
         return collect_banca_ifis
     if bolt_family(company):
         return collect_bolt
+    if occ_family(company):
+        return collect_occ
     if prima_family(company):
         return collect_prima_official
     fn = _choose_v16(company)
@@ -3569,13 +3715,13 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload = _collect_batch_v16(batch, workers=workers)
     payload["version"] = "1.8"
     scope = list(payload.get("collector_scope") or [])
-    for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
+    for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OCC_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
         if value not in scope:
             scope.append(value)
     payload["collector_scope"] = scope
     payload["coverage_note"] = (
         "VERIFIED means the target-scope official inventory was exhausted and reconciled. "
-        "The standard scope is Milan/Rome/London; Mastercard additionally includes Luxembourg. "
+        "The standard scope is Milan/Rome/London; Amazon and Mastercard additionally include Luxembourg. "
         "PARTIAL means the official source was actually attempted but full enumeration could not be "
         "certified or only a rendered subset could be collected. FAILED is reserved for a supported "
         "structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because "
