@@ -523,13 +523,18 @@ def main():
         "Rome": sum(x.get("target_city") == "Rome" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
         "Luxembourg": sum(x.get("target_city") == "Luxembourg" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
         "London": sum(x.get("target_city") == "London" and x.get("status") in OPEN_STATUSES for x in result["target_jobs"]),
+        "L68_PREFERRED": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "PREFERRED" for x in result["target_jobs"]),
+        "L68_REQUIRED": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "REQUIRED" for x in result["target_jobs"]),
+        "L68_RESERVED": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "RESERVED" for x in result["target_jobs"]),
+        "L68_INVITED": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "INVITED" for x in result["target_jobs"]),
+        "L68_AMBIGUOUS": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "AMBIGUOUS" for x in result["target_jobs"]),
     }
 
     OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("AMAZON", json.dumps(result["summary"], ensure_ascii=False))
     for x in result["target_jobs"]:
         if x.get("status") in {"NEW", "UPDATED", "CLOSED"}:
-            print(f"  {x.get('status')} | {x.get('target_city')} | {x.get('experience_status')} | {x.get('title')} | {x.get('apply_url')}")
+            print(f"  {x.get('status')} | {x.get('target_city')} | {x.get('experience_status')} | L68={x.get('l68_status')} | {x.get('title')} | {x.get('apply_url')}")
 
 
 if __name__ == "__main__":
