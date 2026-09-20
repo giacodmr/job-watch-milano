@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "updated": "2026-09-19",
+  "updated": "2026-09-20",
   "locations": {
     "primary": [
       "Milan",
@@ -107,5 +107,37 @@
     "report_previously_open_but_never_reported_above_threshold": true,
     "report_materially_updated_above_threshold": true,
     "no_top_n_cap": true
+  },
+  "jd_mapping_policy": {
+    "required_for_plausibly_relevant_roles": true,
+    "title_never_determines_seniority": true,
+    "fields": [
+      "mandatory_years_experience",
+      "preferred_years_experience",
+      "mandatory_vs_preferred_requirements",
+      "people_management_required",
+      "direct_reports_or_team_lead_scope",
+      "individual_contributor_possible",
+      "decision_scope_and_ownership",
+      "budget_or_p_and_l_ownership",
+      "domain_experience_required",
+      "education_or_certifications_required",
+      "role_level_assessment",
+      "seniority_evidence",
+      "final_experience_status"
+    ],
+    "role_level_assessment_values": [
+      "ENTRY_JUNIOR",
+      "EARLY_MID",
+      "MID",
+      "SENIOR",
+      "UNCLEAR"
+    ],
+    "final_experience_status_values": [
+      "TARGET_0_5",
+      "REVIEW_UNCLEAR",
+      "OUT_GT5_MANDATORY"
+    ],
+    "policy": "A title containing Manager, Senior, Lead, Head or Director must never be rejected by title alone. Read the full JD first. Base inclusion on mandatory years, actual responsibility scope, people-management requirements and role level. Manager titles with <=5 mandatory years or junior/early-mid scope remain eligible."
   }
 }
