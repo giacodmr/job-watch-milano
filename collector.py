@@ -165,12 +165,16 @@ def html_to_text(v):
     return s or None
 
 
-def location_matches(location) -> bool:
-    """Match target cities while excluding obvious North-American namesakes."""
+def location_matches(location, company_name: str | None = None) -> bool:
+    """Match standard target cities; Mastercard additionally includes Luxembourg."""
     if not location:
         return False
     s = str(location)
-    if not TARGET_LOCATION_RE.search(s):
+    mastercard_lux = (
+        (company_name or "").casefold() == "mastercard"
+        and re.search(r"(?<!\\w)(luxembourg|luxemburg)(?!\\w)", s, re.I)
+    )
+    if not TARGET_LOCATION_RE.search(s) and not mastercard_lux:
         return False
     if re.search(r"\bLondon\s*,\s*(?:ON|Ontario)(?:\s*,|\b)", s, re.I):
         return False
@@ -538,7 +542,7 @@ def collect_workday(company):
     jobs = []
     for raw in all_jobs:
         loc = clean_text(raw.get("locationsText"))
-        if not location_matches(loc):
+        if not location_matches(loc, name):
             continue
         external_path = clean_text(raw.get("externalPath"))
         if not external_path:
@@ -3470,8 +3474,15 @@ def collect_bolt(company):
         raise NotCheckable("Bolt positions inventory could not be enumerated")
 
     jobs = []
+    stale_details = 0
     for sid, url in found.items():
-        detail = _bolt_detail(url)
+        try:
+            detail = _bolt_detail(url)
+        except requests.HTTPError as e:
+            if getattr(e.response, "status_code", None) == 404:
+                stale_details += 1
+                continue
+            raise
         if location_matches(detail.get("location")):
             jobs.append(
                 compact_job(
@@ -3486,12 +3497,16 @@ def collect_bolt(company):
                 )
             )
     return {
-        "coverage": "VERIFIED",
-        "collector": "bolt_paginated_positions_inventory_v17",
+        "coverage": "PARTIAL" if stale_details else "VERIFIED",
+        "collector": "bolt_paginated_positions_inventory_v18",
         "inventory_count": len(found),
         "jobs": jobs,
         "source_url": inventory,
-        "reason": None,
+        "reason": (
+            f"{stale_details} Bolt role link(s) disappeared between inventory enumeration and detail verification; "
+            "remaining official inventory was processed."
+            if stale_details else None
+        ),
     }
 
 
@@ -3503,6 +3518,10 @@ def choose(company):
         return collect_banca_ifis
     if bolt_family(company):
         return collect_bolt
+    if (clean_text(company.get("company")) or "").casefold() == "unilever":
+        # The old Lever tenant is stale. Always verify the current official
+        # TalentBrew/Unilever careers inventory instead of calling that endpoint.
+        return probe_official_inventory
     if prima_family(company):
         return collect_prima_official
     fn = _choose_v16(company)
@@ -3541,7 +3560,7 @@ def collect_company(company: dict) -> tuple[dict, bool]:
 _collect_batch_v16 = collect_batch
 def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload = _collect_batch_v16(batch, workers=workers)
-    payload["version"] = "1.7"
+    payload["version"] = "1.8"
     scope = list(payload.get("collector_scope") or [])
     for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
         if value not in scope:
@@ -3549,6 +3568,7 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload["collector_scope"] = scope
     payload["coverage_note"] = (
         "VERIFIED means the target-scope official inventory was exhausted and reconciled. "
+        "The standard scope is Milan/Rome/London; Mastercard additionally includes Luxembourg. "
         "PARTIAL means the official source was actually attempted but full enumeration could not be "
         "certified or only a rendered subset could be collected. FAILED is reserved for a supported "
         "structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because "
