@@ -182,5 +182,17 @@
     "standard_roles": "Do not repeat unchanged STILL_OPEN roles after they have been surfaced; re-surface only NEW, materially UPDATED, newly reportable, or explicitly requested.",
     "priority_roles": "Amazon in JW2 and Mastercard in JW1 are re-surfaced every daily run while open and in scope.",
     "write_order": "Persist semantic decision first; write surfaced history only for roles actually included in the user-visible output; then re-run/sync state when possible."
+  },
+  "partial_remediation_policy": {
+    "required_every_run": true,
+    "priority": [
+      "FAILED or NOT_CHECKED first",
+      "mapping level FULL but current coverage PARTIAL",
+      "high-priority/tier-A companies before lower-priority companies"
+    ],
+    "method": "Attempt a safer structured/public ATS endpoint, pagination contract, count reconciliation or official first-party inventory parser. Never upgrade coverage merely by changing a label.",
+    "verified_rule": "Promote to VERIFIED only when the current run can exhaust and reconcile the official inventory.",
+    "non_blocking": true,
+    "logging": "Keep unresolved portals PARTIAL with the concrete technical reason so the next run can retry or remap them."
   }
 }
