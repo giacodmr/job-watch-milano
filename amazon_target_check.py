@@ -1,6 +1,7 @@
 import hashlib
 import json
 import re
+from difflib import SequenceMatcher
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -142,6 +143,122 @@ def is_business_role(job):
     return False, "outside_business_scope"
 
 
+
+L68_MENTION_RE = re.compile(
+    r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor(?:y|ies)|categorie protette|categoria protetta)",
+    re.I,
+)
+L68_PREFERRED_RE = re.compile(
+    r"(?:preferably\s+intended|preferably\s+(?:for|reserved|targeted)|preferibilmente\s+(?:rivolt|destinat|riservat))",
+    re.I,
+)
+L68_INVITED_RE = re.compile(
+    r"(?:encouraged\s+to\s+apply|we\s+(?:invite|encourage).{0,40}protected categor|"
+    r"si\s+invitano\s+a\s+candidarsi|invitiamo.{0,40}candid)",
+    re.I,
+)
+L68_RESERVED_RE = re.compile(
+    r"(?:reserved\s+(?:exclusively|only)|exclusively\s+(?:for|reserved)|"
+    r"riservat[aoie]\s+esclusivamente|esclusivamente\s+riservat|solo\s+(?:a|agli|alle).{0,40}(?:categorie protette|l\.?\s*68))",
+    re.I,
+)
+L68_REQUIRED_RE = re.compile(
+    r"(?:must\s+(?:belong|be\s+(?:a\s+)?member)|membership.{0,30}required|"
+    r"(?:registration|enrollment).{0,30}(?:l\.?\s*68|protected categor).{0,20}required|"
+    r"iscrizione.{0,30}(?:l\.?\s*68|categorie protette).{0,20}richiest|"
+    r"appartenenza.{0,30}(?:l\.?\s*68|categorie protette).{0,20}richiest)",
+    re.I,
+)
+
+
+def l68_classification(job):
+    title = str(value(job, "title") or "")
+    description = str(value(job, "description", "job_description", "description_short", "body") or "")
+    basic = str(value(job, "basic_qualifications") or "")
+    pref = str(value(job, "preferred_qualifications") or "")
+    combined = "\n".join((title, description, basic, pref))
+    if not L68_MENTION_RE.search(combined):
+        return "NO", None, None
+
+    # Explicit must-have/reservation language outranks preference/invitation.
+    if L68_MENTION_RE.search(basic):
+        return "REQUIRED", "L.68/99 / protected-category membership appears in Basic Qualifications", "BASIC_QUALIFICATIONS"
+    if L68_RESERVED_RE.search(combined):
+        return "RESERVED", "Official JD uses reserved/exclusive protected-category wording", "DESCRIPTION"
+    if L68_REQUIRED_RE.search(combined):
+        return "REQUIRED", "Official JD uses explicit required/must-have protected-category wording", "DESCRIPTION"
+    if L68_PREFERRED_RE.search(description) or L68_PREFERRED_RE.search(pref):
+        return "PREFERRED", "Official JD states that the position is preferably intended/preferred for protected-category candidates", "DESCRIPTION"
+    if L68_INVITED_RE.search(description) or L68_INVITED_RE.search(pref):
+        return "INVITED", "Official JD invites/encourages protected-category candidates without making membership a requirement", "DESCRIPTION"
+
+    # A protected-category phrase in the title alone is deliberately ambiguous,
+    # never REQUIRED by inference.
+    return "AMBIGUOUS", "Protected-category wording detected but requirement level is not explicit in the fields exposed by the inventory API", "TITLE_OR_DESCRIPTION"
+
+
+def ordinary_title(title):
+    t = str(title or "")
+    t = re.sub(
+        r"\s*[-–—,:]?\s*(?:protected\s+categories?|categorie\s+protette|categoria\s+protetta)"
+        r"(?:\s*\([^)]*(?:68\s*/\s*99|68/99)[^)]*\))?.*$",
+        "",
+        t,
+        flags=re.I,
+    )
+    t = re.sub(r"\s+", " ", t).strip(" -–—,:")
+    return t.casefold()
+
+
+def twin_similarity(protected, ordinary):
+    if ordinary_title(protected.get("title")) != ordinary_title(ordinary.get("title")):
+        return 0.0
+    if protected.get("target_city") != ordinary.get("target_city"):
+        return 0.0
+    basic_a = re.sub(r"\s+", " ", str(protected.get("basic_qualifications") or "")).casefold()
+    basic_b = re.sub(r"\s+", " ", str(ordinary.get("basic_qualifications") or "")).casefold()
+    pref_a = re.sub(r"\s+", " ", str(protected.get("preferred_qualifications") or "")).casefold()
+    pref_b = re.sub(r"\s+", " ", str(ordinary.get("preferred_qualifications") or "")).casefold()
+    basic_score = SequenceMatcher(None, basic_a, basic_b).ratio() if basic_a and basic_b else 0.0
+    pref_score = SequenceMatcher(None, pref_a, pref_b).ratio() if pref_a and pref_b else 0.0
+    # Exact normalized title + city carries most of the signal; qualifications
+    # disambiguate parallel requisitions and protect against false twins.
+    return round(0.60 + 0.25 * basic_score + 0.15 * pref_score, 4)
+
+
+def link_ordinary_twins(items):
+    ordinary = [x for x in items if x.get("l68_status") == "NO"]
+    for protected in items:
+        if protected.get("l68_status") == "NO":
+            protected.update({
+                "ordinary_twin_found": False,
+                "ordinary_twin_job_id": None,
+                "ordinary_twin_url": None,
+                "ordinary_twin_similarity": None,
+            })
+            continue
+        candidates = []
+        for item in ordinary:
+            score = twin_similarity(protected, item)
+            if score >= 0.80:
+                candidates.append((score, item))
+        if not candidates:
+            protected.update({
+                "ordinary_twin_found": False,
+                "ordinary_twin_job_id": None,
+                "ordinary_twin_url": None,
+                "ordinary_twin_similarity": None,
+            })
+            continue
+        score, twin = max(candidates, key=lambda pair: pair[0])
+        protected.update({
+            "ordinary_twin_found": True,
+            "ordinary_twin_job_id": twin.get("job_id"),
+            "ordinary_twin_url": twin.get("apply_url"),
+            "ordinary_twin_similarity": score,
+        })
+
+
 def years_mentions(text):
     text = re.sub(r"(?i)(\d{1,2})\s*(?:-|–|—|to)\s*(\d{1,2})\s*(?:years?|yrs?)", r"\1 years", text or "")
     vals = []
@@ -222,6 +339,7 @@ def compact_job(job, city, norm, scope_reason):
     basic = str(value(job, "basic_qualifications") or "")
     pref = str(value(job, "preferred_qualifications") or "")
     required, preferred, required_min, bucket, exp_status, exp_reason = experience_decision(job)
+    l68_status, l68_evidence, l68_location = l68_classification(job)
     return {
         "job_id": job_id(job),
         "title": value(job, "title"),
@@ -243,6 +361,13 @@ def compact_job(job, city, norm, scope_reason):
         "experience_reason": exp_reason,
         "basic_qualifications": basic,
         "preferred_qualifications": pref,
+        "l68_status": l68_status,
+        "l68_evidence": l68_evidence,
+        "l68_requirement_location": l68_location,
+        "ordinary_twin_found": False,
+        "ordinary_twin_job_id": None,
+        "ordinary_twin_url": None,
+        "ordinary_twin_similarity": None,
     }
 
 
@@ -251,6 +376,8 @@ def fingerprint(job):
         "title", "role_family", "location", "target_city", "company", "job_category", "business_category",
         "industry_experience", "posted_date", "apply_url", "required_years_mentions", "preferred_years_mentions",
         "required_min_years", "experience_status", "basic_qualifications", "preferred_qualifications",
+        "l68_status", "l68_evidence", "l68_requirement_location",
+        "ordinary_twin_found", "ordinary_twin_job_id", "ordinary_twin_url", "ordinary_twin_similarity",
     )
     raw = json.dumps({k: job.get(k) for k in keys}, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
