@@ -327,8 +327,9 @@
         "compensation",
         "Job ID/requisition ID"
       ],
-      "priority": "If a substantially equivalent ordinary requisition exists, prefer and report the ordinary requisition, link the protected requisition as protected_twin, and do not recommend applying to both when they are substantively the same opportunity.",
-      "no_twin_rule": "If no ordinary twin exists, PREFERRED/INVITED roles may be reported normally when fit is above threshold; REQUIRED/RESERVED follow eligibility routing."
+      "priority": "If a substantially equivalent ordinary requisition is currently open on the official career site/ATS, prefer and report the ordinary requisition, link the protected requisition as protected_twin, and do not recommend applying to both when they are substantively the same opportunity. Historical/closed twins may be noted as context but must not be marked ordinary_twin_found.",
+      "no_twin_rule": "If no ordinary twin exists, PREFERRED/INVITED roles may be reported normally when fit is above threshold; REQUIRED/RESERVED follow eligibility routing.",
+      "active_only": true
     },
     "application_priority": [
       "ordinary equivalent requisition, when available",
