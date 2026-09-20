@@ -77,6 +77,8 @@ def audit_batch(batch: str) -> dict:
             "extracted_open": extracted_open,
             "state_records_open": len(open_records),
             "analyzed_current": len(analyzed),
+            "hard_rule_analyzed": sum(1 for r in analyzed if r.get("analysis_method") == "hard_rule_title"),
+            "semantic_analyzed": sum(1 for r in analyzed if r.get("analysis_method") != "hard_rule_title"),
             "pending_analysis": len(pending),
             "analysis_pct": round((len(analyzed) / extracted_open) * 100, 2) if extracted_open else 100.0,
             "reportable_above_threshold": len(reportable),
