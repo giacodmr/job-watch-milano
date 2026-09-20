@@ -1,8 +1,8 @@
 {
-  "version": "1.7",
+  "version": "1.8",
   "batch": "JW1",
   "batch_name": "Finance, Payments, Banking & Insurance",
-  "generated_at": "2026-09-20T09:46:01Z",
+  "generated_at": "2026-09-20T10:35:10Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -16,6 +16,7 @@
     "Yello / Recsolu public board",
     "Amazon Jobs public search.json target-city inventory",
     "Banca Ifis official paginated inventory",
+    "Bolt official paginated positions inventory",
     "Official inventory reachability probe"
   ],
   "location_scope": [
@@ -25,7 +26,7 @@
     "Roma",
     "London"
   ],
-  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
+  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. The standard scope is Milan/Rome/London; Mastercard additionally includes Luxembourg. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
   "summary": {
     "companies_total": 54,
     "collector_supported": 54,
@@ -34,8 +35,8 @@
     "FAILED": 0,
     "NOT_CHECKED": 0,
     "target_jobs_open": 839,
-    "NEW": 16,
-    "STILL_OPEN": 823,
+    "NEW": 0,
+    "STILL_OPEN": 839,
     "UPDATED": 0,
     "CLOSED": 0,
     "UNKNOWN": 0
@@ -1429,7 +1430,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/software-engineer-0d3e7ef3-d34b-4e6e-8383-1cbb98470a75",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/software-engineer-0d3e7ef3-d34b-4e6e-8383-1cbb98470a75",
           "fingerprint": "f29719c6b4d91158",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "application-security-engineer-110fae7c-326b-474c-8af4-5cf94739bfc3",
@@ -1445,7 +1446,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/application-security-engineer-110fae7c-326b-474c-8af4-5cf94739bfc3",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/application-security-engineer-110fae7c-326b-474c-8af4-5cf94739bfc3",
           "fingerprint": "bd8c9fc4624bd255",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "data-scientist-1b650a6c-4649-43f4-854b-a3decfb9a006",
@@ -1461,7 +1462,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/data-scientist-1b650a6c-4649-43f4-854b-a3decfb9a006",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/data-scientist-1b650a6c-4649-43f4-854b-a3decfb9a006",
           "fingerprint": "eb7009ea71d559ed",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "design-system-frontend-engineer-1c29eb73-22d1-4535-a720-15f9ee2314d1",
@@ -1477,7 +1478,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/design-system-frontend-engineer-1c29eb73-22d1-4535-a720-15f9ee2314d1",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/design-system-frontend-engineer-1c29eb73-22d1-4535-a720-15f9ee2314d1",
           "fingerprint": "7163756a2520d5ff",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "elixir-software-engineer-20ced366-045e-46b5-b621-225e4fb04006",
@@ -1493,7 +1494,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/elixir-software-engineer-20ced366-045e-46b5-b621-225e4fb04006",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/elixir-software-engineer-20ced366-045e-46b5-b621-225e4fb04006",
           "fingerprint": "76f1398b9283c348",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         }
       ]
     },
@@ -5045,7 +5046,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.unicredit.eu/en_GB/jobsuche/SearchJobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 262314 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 262321 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved",
       "jobs": []
     },
     {
@@ -5085,7 +5086,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=276640908",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=276640908",
           "fingerprint": "f65ccd2c4e2afa98",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "275630285",
@@ -5101,7 +5102,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=275630285",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=275630285",
           "fingerprint": "75db19a67ffe55a3",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "272273376",
@@ -5117,7 +5118,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=272273376",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=272273376",
           "fingerprint": "b819688c3eae7dcf",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "271912427",
@@ -5133,7 +5134,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271912427",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271912427",
           "fingerprint": "e5a6ec1fc70304b8",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "271777094",
@@ -5149,7 +5150,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271777094",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271777094",
           "fingerprint": "4080caddbd0601bd",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "271154193",
@@ -5165,7 +5166,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271154193",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271154193",
           "fingerprint": "aebf531c553431d7",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "263879555",
@@ -5181,7 +5182,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=263879555",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=263879555",
           "fingerprint": "0ff43fc4c7beb3ab",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "271009151",
@@ -5197,7 +5198,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271009151",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271009151",
           "fingerprint": "829b93ac38913e2c",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "263304512",
@@ -5213,7 +5214,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=263304512",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=263304512",
           "fingerprint": "1bf3a2318db012af",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "270320016",
@@ -5229,7 +5230,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=270320016",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=270320016",
           "fingerprint": "d2ae15796496d475",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "264017629",
@@ -5245,7 +5246,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=264017629",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=264017629",
           "fingerprint": "75fbe6d9587e1742",
-          "status": "NEW"
+          "status": "STILL_OPEN"
         }
       ]
     },
@@ -5258,7 +5259,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.illimity.com/en/open-position",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 98193 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic career site; ATS unresolved",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 98194 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic career site; ATS unresolved",
       "jobs": []
     },
     {
@@ -9952,7 +9953,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://dojo.careers/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 76873 bytes) but no safe exhaustive collector is implemented yet for Greenhouse for core roles; Lever also observed for some field-sales recruiting",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 76839 bytes) but no safe exhaustive collector is implemented yet for Greenhouse for core roles; Lever also observed for some field-sales recruiting",
       "jobs": []
     },
     {
@@ -13246,7 +13247,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.bancamediolanum.it/corporate/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 76191 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 76190 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved",
       "jobs": []
     },
     {
@@ -14137,7 +14138,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.metlifecareers.com/en_US/ml/SearchJobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 104934 bytes) but no safe exhaustive collector is implemented yet for Avature",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 104933 bytes) but no safe exhaustive collector is implemented yet for Avature",
       "jobs": []
     }
   ]

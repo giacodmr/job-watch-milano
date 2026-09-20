@@ -1,11 +1,11 @@
 {
-  "version": "1.0",
-  "generated_at": "2026-09-20T09:52:16Z",
-  "definition": "Inventory completeness is separate from analysis completeness. A run is complete only when extracted open vacancies reconcile to the analysis state, all are analyzed, and every currently reportable above-threshold vacancy has been surfaced.",
+  "version": "1.1",
+  "generated_at": "2026-09-20T10:40:46Z",
+  "definition": "Inventory completeness is separate from semantic-analysis completeness. JW2 includes the Amazon priority overlay (Milan/Rome/Luxembourg/London) in analysis reconciliation. A run is complete only when official inventory/state reconcile, every pending role is decided, and every currently reportable role has surfaced history.",
   "batches": {
     "JW1": {
       "batch": "JW1",
-      "source_generated_at": "2026-09-20T09:46:01Z",
+      "source_generated_at": "2026-09-20T10:35:10Z",
       "company_ats_coverage": {
         "VERIFIED": 27,
         "PARTIAL": 27,
@@ -13,18 +13,22 @@
         "NOT_CHECKED": 0
       },
       "vacancy_analysis_coverage": {
+        "base_extracted_open": 839,
+        "priority_overlay_open": 0,
         "extracted_open": 839,
         "state_records_open": 839,
         "analyzed_current": 301,
         "hard_rule_analyzed": 301,
         "semantic_analyzed": 0,
         "pending_analysis": 538,
+        "queue_pending": 538,
         "analysis_pct": 35.88,
-        "reportable_above_threshold": 0,
+        "reportable_above_threshold_or_priority": 0,
         "surfaced_ever_current": 0
       },
       "checks": {
         "inventory_reconciliation": true,
+        "priority_overlay_reconciliation": true,
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
@@ -36,26 +40,30 @@
     },
     "JW2": {
       "batch": "JW2",
-      "source_generated_at": "2026-09-20T09:49:52Z",
+      "source_generated_at": "2026-09-20T10:38:15Z",
       "company_ats_coverage": {
-        "VERIFIED": 19,
-        "PARTIAL": 21,
+        "VERIFIED": 20,
+        "PARTIAL": 20,
         "FAILED": 0,
         "NOT_CHECKED": 0
       },
       "vacancy_analysis_coverage": {
-        "extracted_open": 980,
-        "state_records_open": 980,
+        "base_extracted_open": 980,
+        "priority_overlay_open": 46,
+        "extracted_open": 1026,
+        "state_records_open": 1026,
         "analyzed_current": 234,
         "hard_rule_analyzed": 234,
         "semantic_analyzed": 0,
-        "pending_analysis": 746,
-        "analysis_pct": 23.88,
-        "reportable_above_threshold": 0,
+        "pending_analysis": 792,
+        "queue_pending": 792,
+        "analysis_pct": 22.81,
+        "reportable_above_threshold_or_priority": 0,
         "surfaced_ever_current": 0
       },
       "checks": {
         "inventory_reconciliation": true,
+        "priority_overlay_reconciliation": true,
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
@@ -67,7 +75,7 @@
     },
     "JW3": {
       "batch": "JW3",
-      "source_generated_at": "2026-09-20T09:50:49Z",
+      "source_generated_at": "2026-09-20T10:39:11Z",
       "company_ats_coverage": {
         "VERIFIED": 10,
         "PARTIAL": 30,
@@ -75,18 +83,22 @@
         "NOT_CHECKED": 0
       },
       "vacancy_analysis_coverage": {
+        "base_extracted_open": 174,
+        "priority_overlay_open": 0,
         "extracted_open": 174,
         "state_records_open": 174,
         "analyzed_current": 33,
         "hard_rule_analyzed": 33,
         "semantic_analyzed": 0,
         "pending_analysis": 141,
+        "queue_pending": 141,
         "analysis_pct": 18.97,
-        "reportable_above_threshold": 0,
+        "reportable_above_threshold_or_priority": 0,
         "surfaced_ever_current": 0
       },
       "checks": {
         "inventory_reconciliation": true,
+        "priority_overlay_reconciliation": true,
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
@@ -98,31 +110,35 @@
     },
     "JW4": {
       "batch": "JW4",
-      "source_generated_at": "2026-09-20T09:52:08Z",
+      "source_generated_at": "2026-09-20T10:40:35Z",
       "company_ats_coverage": {
-        "VERIFIED": 24,
+        "VERIFIED": 25,
         "PARTIAL": 23,
-        "FAILED": 1,
+        "FAILED": 0,
         "NOT_CHECKED": 0
       },
       "vacancy_analysis_coverage": {
-        "extracted_open": 405,
-        "state_records_open": 405,
+        "base_extracted_open": 406,
+        "priority_overlay_open": 0,
+        "extracted_open": 406,
+        "state_records_open": 406,
         "analyzed_current": 125,
         "hard_rule_analyzed": 125,
         "semantic_analyzed": 0,
-        "pending_analysis": 280,
-        "analysis_pct": 30.86,
-        "reportable_above_threshold": 0,
+        "pending_analysis": 281,
+        "queue_pending": 281,
+        "analysis_pct": 30.79,
+        "reportable_above_threshold_or_priority": 0,
         "surfaced_ever_current": 0
       },
       "checks": {
         "inventory_reconciliation": true,
+        "priority_overlay_reconciliation": true,
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
         "all_companies_attempted": true,
-        "no_failed_company_checks": false,
+        "no_failed_company_checks": true,
         "company_count": 48
       },
       "run_complete": false

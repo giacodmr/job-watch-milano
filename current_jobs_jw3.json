@@ -1,8 +1,8 @@
 {
-  "version": "1.7",
+  "version": "1.8",
   "batch": "JW3",
   "batch_name": "Energy, Infrastructure & Industrial",
-  "generated_at": "2026-09-20T09:50:49Z",
+  "generated_at": "2026-09-20T10:39:11Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -16,6 +16,7 @@
     "Yello / Recsolu public board",
     "Amazon Jobs public search.json target-city inventory",
     "Banca Ifis official paginated inventory",
+    "Bolt official paginated positions inventory",
     "Official inventory reachability probe"
   ],
   "location_scope": [
@@ -25,7 +26,7 @@
     "Roma",
     "London"
   ],
-  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
+  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. The standard scope is Milan/Rome/London; Mastercard additionally includes Luxembourg. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
   "summary": {
     "companies_total": 40,
     "collector_supported": 40,
@@ -62,7 +63,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.enel.com/it_IT/careers/JobOpeningsItaly",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 163560 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 163557 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed)",
       "jobs": []
     },
     {
@@ -783,7 +784,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.gruppoa2a.it/it/carriere/opportunita-lavoro-nostre-career-areas",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1050614 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 1050615 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed)",
       "jobs": []
     },
     {
@@ -1993,7 +1994,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.fastwebvodafone.it/lavora-con-noi/job-opportunities/",
-      "reason": "Official check incomplete: Official inventory was attempted but TLS validation failed; no exhaustive parser for LinkedIn-mediated / official portal transition",
+      "reason": "Official check incomplete: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for LinkedIn-mediated / official portal transition",
       "jobs": []
     },
     {
@@ -2359,7 +2360,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.shell.com/careers.html",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 9377 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 9376 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal",
       "jobs": []
     },
     {
@@ -3222,7 +3223,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.seamilano.eu/it/lavora-con-noi",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom",
+      "reason": "Official check incomplete: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for custom",
       "jobs": []
     },
     {
@@ -3287,7 +3288,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.se.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 826150 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 826149 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed)",
       "jobs": []
     },
     {
@@ -3299,7 +3300,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.siemens-energy.com/en_US/jobs/Jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 142929 bytes) but no safe exhaustive collector is implemented yet for Avature",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 142941 bytes) but no safe exhaustive collector is implemented yet for Avature",
       "jobs": []
     },
     {
