@@ -44,13 +44,14 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Query the official Mastercard search-results inventory, apply location terms/facets for Italy, Milan/Milano, Rome/Roma and London, and exhaust all rendered results.",
-        "fallback": "Use official-domain web discovery for careers.mastercard.com job-detail URLs, then reconcile every discovered role back to the official inventory."
+        "primary": "Enumerate the official Mastercard Workday CXS CorporateCareers inventory via limit/offset until retrieved rows exactly equal the reported global total; then inspect every Milan/Rome/London job detail needed for business-scope and experience classification.",
+        "fallback": "Use careers.mastercard.com and official Workday job-detail discovery to reconcile requisition IDs; use external job boards only as a discovery layer."
       },
       "limitations": [
-        "Phenom JavaScript front end; Workday tenant/endpoints were not safely identified, so complete backend enumeration cannot be guaranteed."
+        "The global Workday inventory can be count-reconciled; business-role and <=5-year completeness additionally requires opening and evaluating the target-geography job descriptions.",
+        "External job boards may index earlier or later than Workday and are used only to identify deltas to reconcile against the official source."
       ],
-      "last_mapped": "2026-09-15"
+      "last_mapped": "2026-09-20"
     },
     {
       "company": "Visa",
