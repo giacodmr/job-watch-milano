@@ -194,5 +194,62 @@
     "verified_rule": "Promote to VERIFIED only when the current run can exhaust and reconcile the official inventory.",
     "non_blocking": true,
     "logging": "Keep unresolved portals PARTIAL with the concrete technical reason so the next run can retry or remap them."
+  },
+  "daily_semantic_completion_policy": {
+    "objective": "A daily Job Watch run must fully process the current actionable delta without being blocked by the historical semantic backlog.",
+    "actionable_delta": [
+      "all NEW vacancies in target geography",
+      "all materially UPDATED vacancies",
+      "all newly discovered AUTONOMOUS_DELTA vacancies",
+      "all open Amazon and Mastercard priority vacancies that are new/updated or not yet semantically decided",
+      "previously open never-surfaced roles that are selected for today's backlog tranche"
+    ],
+    "backlog_policy": {
+      "blocks_daily_completion": false,
+      "process_after_delta": true,
+      "prioritization": [
+        "priority companies",
+        "Milan and Rome",
+        "Luxembourg priority-company roles",
+        "London high-fit roles",
+        "newest posting date",
+        "highest expected fit"
+      ],
+      "minimum_progress_rule": "After the current delta is complete, use remaining run capacity to reduce the oldest/highest-value backlog. Never re-read unchanged already-decided JD fingerprints."
+    },
+    "daily_complete_rule": "DAILY_COMPLETE when every actionable-delta item for the run is decided/reconciled and output persistence succeeds, even if historical backlog remains. Report backlog separately as BACKLOG_REMAINING.",
+    "full_backlog_complete_rule": "FULL_SEMANTIC_COMPLETE only when semantic queues contain no pending historical records."
+  },
+  "company_self_improvement_policy": {
+    "enabled": true,
+    "staging_file": "discovery_candidates.json",
+    "purpose": "Continuously discover high-value employers outside the current watchlist without polluting the permanent company universe.",
+    "discovery_sources": [
+      "independent web/job-board discovery",
+      "official career sites reached from discovered roles",
+      "recurring high-fit employers surfaced by LinkedIn/Indeed/Glassdoor/other aggregators"
+    ],
+    "candidate_requirements": [
+      "company not already in companies_job_watch_v2.json",
+      "at least one official open role in a target geography matching the user's business/strategy/finance profile",
+      "official careers/job source must be identifiable",
+      "not in user exclusion list"
+    ],
+    "promotion_rule": "Promote to the appropriate JW batch when either (A) at least 2 distinct validated in-scope roles are observed within 30 days, or (B) one Milan/Rome role has expected fit >=85 and the employer has attractive compensation/career relevance. London-only companies require stronger evidence and expected fit >=85.",
+    "promotion_action": "On promotion, add the company to companies_job_watch_v2.json and the correct job_watch_batches.json batch, then create/update an ATS mapping. If ATS cannot yet be mapped safely, keep the company staged and continue discovery.",
+    "pruning_rule": "Remove or archive a candidate after 60 days with no further relevant validated role.",
+    "no_auto_promotion_if": [
+      "mostly pure sales/marketing/CRM hiring",
+      "primarily technical specialist roles",
+      "compensation/career value is clearly below current targets",
+      "official source cannot be validated"
+    ]
+  },
+  "reporting_efficiency_policy": {
+    "one_daily_report": true,
+    "preserve_internal_batches": true,
+    "priority_company_reporting": "For Amazon and Mastercard, keep exhaustive inventory and semantic coverage in state files, but user-visible daily output should emphasize NEW/UPDATED/newly-decided high-fit roles plus concise counts. Do not print hundreds of unchanged STILL_OPEN rows unless explicitly requested.",
+    "standard_company_reporting": "Show NEW, materially UPDATED, AUTONOMOUS_DELTA, newly reportable and never-surfaced relevant roles. Suppress unchanged already-surfaced STILL_OPEN roles.",
+    "audit_footer": "Always include concise per-batch coverage, daily delta completeness, historical backlog remaining, FAILED/NOT_CHECKED counts, and new-company discovery changes."
   }
 }
