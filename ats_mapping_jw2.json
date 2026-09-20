@@ -91,7 +91,7 @@
         "family": "SAP SuccessFactors Recruiting Marketing",
         "tenant": null,
         "career_site": "https://careers.ey.com/",
-        "inventory_url": "https://careers.ey.com/ey/search/",
+        "inventory_url": "https://careers.ey.com/viewalljobs/",
         "public_api_or_feed": null
       },
       "verification": {
@@ -108,13 +108,13 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the global EY SuccessFactors search, filter by Country/City for each target city and enumerate every page through the displayed total; then apply Job Watch role/seniority exclusions.",
-        "fallback": "Cross-check EY/EY-Parthenon official role pages if a result detail fails to open."
+        "primary": "Use EY's official counted view-all SuccessFactors inventory, enumerate every numbered page through the displayed total, then filter the reconciled inventory to Milan/Rome/London and evaluate EY/EY-Parthenon role fit from the official JD.",
+        "fallback": "If the view-all inventory changes structure, use the official EY search and current EY/EY-Parthenon job-detail pages; do not claim VERIFIED unless the current inventory total is reconciled."
       },
       "limitations": [
         "Result totals and page counts change continuously; capture them per run."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-20"
     },
     {
       "company": "PwC / Strategy&",
