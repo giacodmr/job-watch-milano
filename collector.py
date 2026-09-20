@@ -3518,10 +3518,6 @@ def choose(company):
         return collect_banca_ifis
     if bolt_family(company):
         return collect_bolt
-    if (clean_text(company.get("company")) or "").casefold() == "unilever":
-        # The old Lever tenant is stale. Always verify the current official
-        # TalentBrew/Unilever careers inventory instead of calling that endpoint.
-        return probe_official_inventory
     if prima_family(company):
         return collect_prima_official
     fn = _choose_v16(company)
