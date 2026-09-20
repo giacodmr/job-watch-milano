@@ -265,7 +265,6 @@ def sync_batch(batch: str) -> dict:
 
         # Preserve Amazon structured JD hints in state/queue.
         for field in (
-            "basic_qualifications", "preferred_qualifications",
             "required_years_mentions", "preferred_years_mentions",
             "required_min_years", "experience_status_hint",
             "experience_reason_hint", "industry_experience",
@@ -354,8 +353,7 @@ def sync_batch(batch: str) -> dict:
             "apply_url": rec.get("apply_url"),
             "fingerprint": rec.get("fingerprint"),
             "first_seen_at": rec.get("first_seen_at"),
-            "basic_qualifications": rec.get("basic_qualifications"),
-            "preferred_qualifications": rec.get("preferred_qualifications"),
+            "amazon_semantic_source": "amazon_target_check.json" if rec.get("company") == "Amazon" and rec.get("priority_company") else None,
             "required_years_mentions": rec.get("required_years_mentions"),
             "preferred_years_mentions": rec.get("preferred_years_mentions"),
             "required_min_years": rec.get("required_min_years"),
