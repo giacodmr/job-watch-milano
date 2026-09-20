@@ -70,6 +70,13 @@ SEMANTIC_FIELDS = (
     "role_level_assessment",
     "seniority_evidence",
     "final_experience_status",
+    "l68_status",
+    "l68_evidence",
+    "l68_requirement_location",
+    "ordinary_twin_found",
+    "ordinary_twin_job_id",
+    "ordinary_twin_url",
+    "ordinary_twin_similarity",
     "salary",
     "salary_source",
     "reportable",
@@ -154,11 +161,24 @@ def decision_valid(
         return False
     if "mandatory_vs_preferred_requirements" not in decision:
         return False
+    if decision.get("l68_status") not in {"NO", "PREFERRED", "REQUIRED", "RESERVED", "INVITED", "AMBIGUOUS"}:
+        return False
+    if "ordinary_twin_found" not in decision or not isinstance(decision.get("ordinary_twin_found"), bool):
+        return False
 
     senior_wording = bool(re.search(r"\b(manager|senior|lead|head|director)\b", str(title or ""), re.I))
-    if priority_company or senior_wording:
+    protected_wording = bool(re.search(
+        r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
+        str(title or ""),
+        re.I,
+    ))
+    if priority_company or senior_wording or protected_wording or decision.get("l68_status") != "NO":
         if decision.get("analysis_method") != "chatgpt_semantic_full_jd":
             return False
+    # Do not silently route a protected-category must-have/reserved vacancy as
+    # candidable when eligibility has not been explicitly established.
+    if decision.get("l68_status") in {"REQUIRED", "RESERVED"} and decision.get("reportable") is True:
+        return False
     return True
 
 
@@ -229,6 +249,13 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
             "experience_status_hint": raw.get("experience_status"),
             "experience_reason_hint": raw.get("experience_reason"),
             "industry_experience": raw.get("industry_experience"),
+            "l68_status_hint": raw.get("l68_status"),
+            "l68_evidence_hint": raw.get("l68_evidence"),
+            "l68_requirement_location_hint": raw.get("l68_requirement_location"),
+            "ordinary_twin_found_hint": raw.get("ordinary_twin_found"),
+            "ordinary_twin_job_id_hint": raw.get("ordinary_twin_job_id"),
+            "ordinary_twin_url_hint": raw.get("ordinary_twin_url"),
+            "ordinary_twin_similarity_hint": raw.get("ordinary_twin_similarity"),
         })
         # The dedicated Amazon fingerprint includes the qualifications and is
         # the correct freshness key for semantic analysis.
