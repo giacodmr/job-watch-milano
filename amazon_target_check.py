@@ -269,6 +269,7 @@ def main():
 
     current_by_id = {}
     excluded_by_id = {}
+    all_open_ids = set()
     for city, spec in TARGETS.items():
         norms, probe_url, probe_hits = discover_norms(city, spec)
         city_jobs, total_inventory, search_urls = [], 0, []
@@ -282,6 +283,7 @@ def main():
                 if not jid or jid in seen_city:
                     continue
                 seen_city.add(jid)
+                all_open_ids.add(jid)
                 city_jobs.append((job, norm))
 
         business_count = target_count = excluded_exp_count = 0
@@ -303,7 +305,7 @@ def main():
                 item["status"] = "UPDATED"
             else:
                 item["status"] = "STILL_OPEN"
-            current_by_id[item["job_id"]] = item
+            current_by_id.setdefault(item["job_id"], item)
             target_count += 1
 
         result["locations"][city] = {
@@ -332,7 +334,7 @@ def main():
     result["excluded_business_jobs"] = list(excluded_by_id.values())
 
     for jid, old in previous.items():
-        if jid not in current_by_id and old.get("status") != "CLOSED":
+        if jid not in current_by_id and jid not in all_open_ids and old.get("status") != "CLOSED":
             closed = dict(old)
             closed["status"] = "CLOSED"
             result["target_jobs"].append(closed)
