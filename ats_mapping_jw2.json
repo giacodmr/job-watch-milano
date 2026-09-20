@@ -412,11 +412,11 @@
         "tenant": null,
         "career_site": "https://www.amazon.jobs/",
         "inventory_url": "https://www.amazon.jobs/en/search",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://www.amazon.jobs/en/search.json"
       },
       "verification": {
         "level": "FULL",
-        "method": "official_counted_filtered_inventory",
+        "method": "amazon_jobs_search_json_counted_inventory",
         "location_filter_supported": true,
         "locations": [
           "Milan",
@@ -428,13 +428,14 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use Amazon Jobs search, filter Country/Region/City for each target, record the displayed total, and load/enumerate every result until the count is exhausted.",
-        "fallback": "Use official Amazon job-detail pages for confirmation and requisition-ID deduplication."
+        "primary": "Use the official Amazon Jobs /en/search.json inventory. Discover the exact normalized_location value for Milan, Rome and London, then exhaust every page and reconcile retrieved rows to the API hits count before any business-role or experience filtering.",
+        "fallback": "Use official Amazon Jobs search UI and official job-detail pages to reconcile requisition IDs; use external job boards only for discovery, never as the completeness source."
       },
       "limitations": [
-        "Amazon city/region facets can change labels; use both Milan/Milano and Rome/Roma only where the portal itself exposes those variants."
+        "Target-city completeness can be certified only when API hit counts reconcile exactly for Milan, Rome and London.",
+        "Amazon's 4-6 years experience bucket cannot by itself enforce a <=5-year rule; inspect Basic Qualifications and keep ambiguous no-numeric-minimum roles for review."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-09-20"
     },
     {
       "company": "Google",
