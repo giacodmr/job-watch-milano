@@ -44,6 +44,7 @@ def audit_batch(batch: str) -> dict:
         if r.get("analysis_status") == "ANALYZED" and not r.get("needs_analysis")
     ]
     pending = [r for r in open_records if r.get("needs_analysis")]
+    attempted_companies = sum(coverage_value for coverage_value in []) if False else None
     reportable = [
         r for r in analyzed
         if r.get("reportable") is True and (r.get("fit_score") or 0) >= (r.get("threshold") or 0)
@@ -64,6 +65,10 @@ def audit_batch(batch: str) -> dict:
         "NOT_CHECKED": int(company_summary.get("NOT_CHECKED", 0) or 0),
     }
 
+    total_companies = sum(coverage.values())
+    all_companies_attempted = coverage["NOT_CHECKED"] == 0
+    unresolved_attempts = coverage["FAILED"] > 0
+
     return {
         "batch": batch.upper(),
         "source_generated_at": current.get("generated_at"),
@@ -82,12 +87,17 @@ def audit_batch(batch: str) -> dict:
             "state_reconciliation": state_reconciliation,
             "analysis_complete": analysis_complete,
             "reporting_reconciliation": reporting_reconciliation,
+            "all_companies_attempted": all_companies_attempted,
+            "no_failed_company_checks": not unresolved_attempts,
+            "company_count": total_companies,
         },
         "run_complete": bool(
             inventory_reconciliation
             and state_reconciliation
             and analysis_complete
             and reporting_reconciliation
+            and all_companies_attempted
+            and not unresolved_attempts
         ),
     }
 
