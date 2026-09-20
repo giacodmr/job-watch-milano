@@ -77,6 +77,10 @@ SEMANTIC_FIELDS = (
     "ordinary_twin_job_id",
     "ordinary_twin_url",
     "ordinary_twin_similarity",
+    "protected_twin_found",
+    "protected_twin_job_id",
+    "protected_twin_url",
+    "protected_twin_similarity",
     "salary",
     "salary_source",
     "reportable",
@@ -265,6 +269,10 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
             "ordinary_twin_job_id_hint": raw.get("ordinary_twin_job_id"),
             "ordinary_twin_url_hint": raw.get("ordinary_twin_url"),
             "ordinary_twin_similarity_hint": raw.get("ordinary_twin_similarity"),
+            "protected_twin_found_hint": raw.get("protected_twin_found"),
+            "protected_twin_job_id_hint": raw.get("protected_twin_job_id"),
+            "protected_twin_url_hint": raw.get("protected_twin_url"),
+            "protected_twin_similarity_hint": raw.get("protected_twin_similarity"),
         })
         # The dedicated Amazon fingerprint includes the qualifications and is
         # the correct freshness key for semantic analysis.
