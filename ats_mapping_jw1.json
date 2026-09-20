@@ -37,6 +37,7 @@
           "Italy",
           "Milan",
           "Rome",
+          "Luxembourg",
           "London"
         ],
         "pagination": "Workday CXS limit/offset; exact total reconciliation required",
@@ -44,12 +45,12 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Enumerate the official Mastercard Workday CXS CorporateCareers inventory via limit/offset until retrieved rows exactly equal the reported global total; then inspect every Milan/Rome/London job detail needed for business-scope and experience classification.",
+        "primary": "Enumerate the official Mastercard Workday CXS CorporateCareers inventory via limit/offset until retrieved rows exactly equal the reported global total; then inspect every Milan/Rome/Luxembourg/London job detail needed for business-scope and experience classification.",
         "fallback": "Use careers.mastercard.com and official Workday job-detail discovery to reconcile requisition IDs; use external job boards only as a discovery layer."
       },
       "limitations": [
         "The global Workday inventory can be count-reconciled; business-role and <=5-year completeness additionally requires opening and evaluating the target-geography job descriptions.",
-        "External job boards may index earlier or later than Workday and are used only to identify deltas to reconcile against the official source."
+        "External job boards may index earlier or later than Workday and are used only as a discovery layer."
       ],
       "last_mapped": "2026-09-20"
     },
