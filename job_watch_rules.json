@@ -139,5 +139,28 @@
       "OUT_GT5_MANDATORY"
     ],
     "policy": "A title containing Manager, Senior, Lead, Head or Director must never be rejected by title alone. Read the full JD first. Base inclusion on mandatory years, actual responsibility scope, people-management requirements and role level. Manager titles with <=5 mandatory years or junior/early-mid scope remain eligible."
+  },
+  "priority_company_locations": {
+    "Amazon": [
+      "Milan",
+      "Rome",
+      "Luxembourg",
+      "London"
+    ],
+    "Mastercard": [
+      "Milan",
+      "Rome",
+      "Luxembourg",
+      "London"
+    ]
+  },
+  "semantic_analysis_execution": {
+    "owner": "ChatGPT recurring JW task",
+    "github_role": "enumerate inventory, preserve state, generate semantic queue and audit",
+    "chatgpt_role": "open/read full JD, map mandatory vs preferred requirements, assess real seniority and fit, persist decision",
+    "decision_files": "semantic_decisions_jw1.json ... semantic_decisions_jw4.json",
+    "queue_files": "semantic_queue_jw1.json ... semantic_queue_jw4.json",
+    "surfaced_files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
+    "rule": "A run may not claim semantic completeness while semantic_queue contains pending records."
   }
 }
