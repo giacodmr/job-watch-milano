@@ -3379,12 +3379,130 @@ def probe_official_inventory(company):
     )
 
 
+
+BOLT_SCOPE_NAME = "Bolt official paginated positions inventory"
+BOLT_ROLE_RE = re.compile(
+    r"^/en/careers/positions/([0-9a-f]{8}-[0-9a-f-]{27,36})/?$",
+    re.I,
+)
+
+
+def bolt_family(company) -> bool:
+    name = (clean_text(company.get("company")) or "").casefold()
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url")) or ""
+    return name == "bolt" and urlparse(inventory).netloc.casefold().endswith("bolt.eu")
+
+
+def _bolt_detail(url):
+    html_text, final_url = get_html(url)
+    parser = BasicTextLinkParser()
+    parser.feed(html_text)
+    parts = parser.text_parts
+    title = None
+    department = None
+    location = None
+    employment_type = None
+
+    # Bolt's public detail page exposes stable uppercase field labels.
+    for i, part in enumerate(parts):
+        low = part.casefold()
+        if i == 0 and part:
+            title = part
+        if low == "department" and i + 1 < len(parts):
+            department = clean_text(parts[i + 1])
+        elif low == "locations" and i + 1 < len(parts):
+            location = clean_text(parts[i + 1])
+        elif low == "type" and i + 1 < len(parts):
+            employment_type = clean_text(parts[i + 1])
+    if not title:
+        # Fall back to the first concise non-navigation item.
+        for part in parts:
+            if 2 <= len(part) <= 160 and part.casefold() not in {"bolt careers", "view all roles"}:
+                title = part
+                break
+    return {
+        "title": title,
+        "department": department,
+        "location": location,
+        "employment_type": employment_type,
+        "url": final_url,
+    }
+
+
+def collect_bolt(company):
+    name = company.get("company")
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url"))
+    if not inventory:
+        raise NotCheckable("Bolt positions URL missing")
+
+    found = {}
+    for page in range(1, MAX_PAGES + 1):
+        params = {} if page == 1 else {"page": page}
+        html_text, final_url = get_html(inventory, params=params)
+        parser = BasicTextLinkParser()
+        parser.feed(html_text)
+        page_rows = {}
+        for link in parser.links:
+            href = clean_text(link.get("href"))
+            if not href:
+                continue
+            u = urljoin(final_url, href)
+            p = urlparse(u)
+            if not p.netloc.casefold().endswith("bolt.eu"):
+                continue
+            m = BOLT_ROLE_RE.fullmatch(p.path)
+            if not m:
+                continue
+            sid = m.group(1).lower()
+            page_rows[sid] = u
+        if not page_rows:
+            if page == 1:
+                raise NotCheckable("Bolt first positions page exposed no stable role links")
+            break
+        new_ids = [sid for sid in page_rows if sid not in found]
+        if not new_ids:
+            break
+        found.update(page_rows)
+    else:
+        raise NotCheckable("Bolt positions pagination exceeded safe page limit")
+
+    if not found:
+        raise NotCheckable("Bolt positions inventory could not be enumerated")
+
+    jobs = []
+    for sid, url in found.items():
+        detail = _bolt_detail(url)
+        if location_matches(detail.get("location")):
+            jobs.append(
+                compact_job(
+                    name,
+                    sid,
+                    title=detail.get("title"),
+                    location=detail.get("location"),
+                    department=detail.get("department"),
+                    employment_type=detail.get("employment_type"),
+                    canonical=detail.get("url"),
+                    apply_url=detail.get("url"),
+                )
+            )
+    return {
+        "coverage": "VERIFIED",
+        "collector": "bolt_paginated_positions_inventory_v17",
+        "inventory_count": len(found),
+        "jobs": jobs,
+        "source_url": inventory,
+        "reason": None,
+    }
+
+
 _choose_v16 = choose
 def choose(company):
     if amazon_family(company):
         return collect_amazon
     if banca_ifis_family(company):
         return collect_banca_ifis
+    if bolt_family(company):
+        return collect_bolt
     if prima_family(company):
         return collect_prima_official
     fn = _choose_v16(company)
@@ -3425,7 +3543,7 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload = _collect_batch_v16(batch, workers=workers)
     payload["version"] = "1.7"
     scope = list(payload.get("collector_scope") or [])
-    for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
+    for value in (AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
         if value not in scope:
             scope.append(value)
     payload["collector_scope"] = scope
