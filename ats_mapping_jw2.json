@@ -421,6 +421,7 @@
         "locations": [
           "Milan",
           "Rome",
+          "Luxembourg",
           "London"
         ],
         "pagination": "Load-more/result-limit pagination with explicit counts and location facets",
@@ -428,11 +429,11 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official Amazon Jobs /en/search.json inventory. Discover the exact normalized_location value for Milan, Rome and London, then exhaust every page and reconcile retrieved rows to the API hits count before any business-role or experience filtering.",
+        "primary": "Use the official Amazon Jobs /en/search.json inventory. Discover the exact normalized_location value for Milan, Rome, Luxembourg and London, then exhaust every page and reconcile retrieved rows to the API hits count before any business-role or experience filtering.",
         "fallback": "Use official Amazon Jobs search UI and official job-detail pages to reconcile requisition IDs; use external job boards only for discovery, never as the completeness source."
       },
       "limitations": [
-        "Target-city completeness can be certified only when API hit counts reconcile exactly for Milan, Rome and London.",
+        "Target-city completeness can be certified only when API hit counts reconcile exactly for Milan, Rome, Luxembourg and London.",
         "Amazon's 4-6 years experience bucket cannot by itself enforce a <=5-year rule; inspect Basic Qualifications and keep ambiguous no-numeric-minimum roles for review."
       ],
       "last_mapped": "2026-09-20"
