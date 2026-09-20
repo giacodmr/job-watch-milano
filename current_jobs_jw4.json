@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "generated_at": "2026-09-20T10:49:44Z",
+  "generated_at": "2026-09-20T11:49:15Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -17,6 +17,7 @@
     "Amazon Jobs public search.json target-city inventory",
     "Banca Ifis official paginated inventory",
     "Bolt official paginated positions inventory",
+    "OC&C official counted paginated vacancies inventory",
     "Official inventory reachability probe"
   ],
   "location_scope": [
@@ -26,7 +27,7 @@
     "Roma",
     "London"
   ],
-  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. The standard scope is Milan/Rome/London; Mastercard additionally includes Luxembourg. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
+  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. The standard scope is Milan/Rome/London; Amazon and Mastercard additionally include Luxembourg. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
   "summary": {
     "companies_total": 48,
     "collector_supported": 48,
@@ -1285,7 +1286,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://it.coca-colahellenic.com/en/working-with-us/search-and-apply",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1869 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 1865 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified",
       "jobs": []
     },
     {
@@ -3726,7 +3727,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.lvmh.com/en/join-us/our-job-offers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 2134389 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 2130448 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform",
       "jobs": []
     },
     {
@@ -3738,7 +3739,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kering.com/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 216611 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 216590 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS)",
       "jobs": []
     },
     {
@@ -3759,7 +3760,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1244,
+      "inventory_count": 1245,
       "target_jobs_count": 0,
       "source_url": "https://roche.wd3.myworkdayjobs.com/wday/cxs/roche/roche-ext/jobs",
       "reason": null,
@@ -3991,7 +3992,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pepsicojobs.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1159083 bytes) but no safe exhaustive collector is implemented yet for Custom PepsiCo careers platform; application ATS not conclusively identified",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 1184940 bytes) but no safe exhaustive collector is implemented yet for Custom PepsiCo careers platform; application ATS not conclusively identified",
       "jobs": []
     },
     {
@@ -4096,7 +4097,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://join.pmicareers.com/it/it/search-results",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 281645 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 287799 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding",
       "jobs": []
     },
     {
@@ -4132,7 +4133,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.ikea.com/en/search-jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1087700 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 1085181 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform",
       "jobs": []
     },
     {
@@ -5180,7 +5181,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pgcareers.com/global/en/search-results/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 290080 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 299067 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified",
       "jobs": []
     },
     {
@@ -5377,7 +5378,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.henkel.com/careers/find-your-job-apply",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 412905 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 412913 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified",
       "jobs": []
     },
     {
@@ -6960,7 +6961,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.abbvie.com/en/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 202893 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 202897 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified",
       "jobs": []
     },
     {

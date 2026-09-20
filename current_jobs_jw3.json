@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW3",
   "batch_name": "Energy, Infrastructure & Industrial",
-  "generated_at": "2026-09-20T10:48:25Z",
+  "generated_at": "2026-09-20T11:47:48Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -17,6 +17,7 @@
     "Amazon Jobs public search.json target-city inventory",
     "Banca Ifis official paginated inventory",
     "Bolt official paginated positions inventory",
+    "OC&C official counted paginated vacancies inventory",
     "Official inventory reachability probe"
   ],
   "location_scope": [
@@ -26,7 +27,7 @@
     "Roma",
     "London"
   ],
-  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. The standard scope is Milan/Rome/London; Mastercard additionally includes Luxembourg. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
+  "coverage_note": "VERIFIED means the target-scope official inventory was exhausted and reconciled. The standard scope is Milan/Rome/London; Amazon and Mastercard additionally include Luxembourg. PARTIAL means the official source was actually attempted but full enumeration could not be certified or only a rendered subset could be collected. FAILED is reserved for a supported structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because every mapped company receives at least an official-source probe.",
   "summary": {
     "companies_total": 40,
     "collector_supported": 40,
@@ -63,7 +64,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.enel.com/it_IT/careers/JobOpeningsItaly",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 163557 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 163559 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed)",
       "jobs": []
     },
     {
@@ -784,7 +785,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.gruppoa2a.it/it/carriere/opportunita-lavoro-nostre-career-areas",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1050615 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 1050614 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed)",
       "jobs": []
     },
     {
@@ -2030,7 +2031,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.axpo.com/it/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 423046 bytes) but no safe exhaustive collector is implemented yet for custom career platform",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 422854 bytes) but no safe exhaustive collector is implemented yet for custom career platform",
       "jobs": []
     },
     {
@@ -2312,7 +2313,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.rwe.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 44933 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 44934 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed)",
       "jobs": []
     },
     {
@@ -3187,7 +3188,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.autostrade.it/it/persone/entra-nel-team",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 177482 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed)",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 177481 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed)",
       "jobs": []
     },
     {
@@ -3256,7 +3257,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 2159,
+      "inventory_count": 2158,
       "target_jobs_count": 1,
       "source_url": "https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs",
       "reason": null,
@@ -3300,7 +3301,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.siemens-energy.com/en_US/jobs/Jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 142929 bytes) but no safe exhaustive collector is implemented yet for Avature",
+      "reason": "Official check incomplete: Official inventory is reachable (200, 142931 bytes) but no safe exhaustive collector is implemented yet for Avature",
       "jobs": []
     },
     {
