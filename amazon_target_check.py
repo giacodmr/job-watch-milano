@@ -372,14 +372,25 @@ def compact_job(job, city, norm, scope_reason):
 
 
 def fingerprint(job):
+    # Preserve historical fingerprints for ordinary vacancies so adding the
+    # L.68/99 feature does not mark the entire Amazon inventory UPDATED once.
     keys = (
         "title", "role_family", "location", "target_city", "company", "job_category", "business_category",
         "industry_experience", "posted_date", "apply_url", "required_years_mentions", "preferred_years_mentions",
         "required_min_years", "experience_status", "basic_qualifications", "preferred_qualifications",
-        "l68_status", "l68_evidence", "l68_requirement_location",
-        "ordinary_twin_found", "ordinary_twin_job_id", "ordinary_twin_url", "ordinary_twin_similarity",
     )
-    raw = json.dumps({k: job.get(k) for k in keys}, ensure_ascii=False, sort_keys=True)
+    payload = {k: job.get(k) for k in keys}
+    if job.get("l68_status") and job.get("l68_status") != "NO":
+        payload.update({
+            "l68_status": job.get("l68_status"),
+            "l68_evidence": job.get("l68_evidence"),
+            "l68_requirement_location": job.get("l68_requirement_location"),
+            "ordinary_twin_found": job.get("ordinary_twin_found"),
+            "ordinary_twin_job_id": job.get("ordinary_twin_job_id"),
+            "ordinary_twin_url": job.get("ordinary_twin_url"),
+            "ordinary_twin_similarity": job.get("ordinary_twin_similarity"),
+        })
+    raw = json.dumps(payload, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
 
 
