@@ -1,6 +1,6 @@
 {
   "version": "1.3",
-  "generated_at": "2026-09-21T09:44:58Z",
+  "generated_at": "2026-09-21T09:45:10Z",
   "definition": "Inventory completeness is separate from semantic-analysis completeness. JW2 includes the Amazon priority inventory in analysis reconciliation. DAILY_COMPLETE requires official inventory/state reconciliation, complete semantic handling, surfaced history, a current GPT run certification, mandatory autonomous search, and priority-company checks for today's actionable delta. Historical STILL_OPEN backlog is reported separately and does not block the daily run. FULL_SEMANTIC_COMPLETE additionally requires zero pending historical records and full reporting reconciliation.",
   "batches": {
     "JW1": {
@@ -310,9 +310,7 @@
         "priority_check_complete": true,
         "priority_snapshot_match": true,
         "batch_errors": [],
-        "global_blocking_errors": [
-          "JW4 PRADA Innovation Manager requires full official JD semantic review; official page was not retrievable in this run."
-        ],
+        "global_blocking_errors": [],
         "complete": true
       },
       "daily_complete": true,
@@ -617,9 +615,7 @@
         "priority_check_complete": true,
         "priority_snapshot_match": true,
         "batch_errors": [],
-        "global_blocking_errors": [
-          "JW4 PRADA Innovation Manager requires full official JD semantic review; official page was not retrievable in this run."
-        ],
+        "global_blocking_errors": [],
         "complete": true
       },
       "daily_complete": true,
@@ -960,9 +956,7 @@
         "priority_check_complete": true,
         "priority_snapshot_match": true,
         "batch_errors": [],
-        "global_blocking_errors": [
-          "JW4 PRADA Innovation Manager requires full official JD semantic review; official page was not retrievable in this run."
-        ],
+        "global_blocking_errors": [],
         "complete": true
       },
       "daily_complete": true,
@@ -983,20 +977,20 @@
         "priority_overlay_open": 0,
         "extracted_open": 450,
         "state_records_open": 450,
-        "analyzed_current": 190,
+        "analyzed_current": 191,
         "hard_rule_analyzed": 185,
-        "semantic_analyzed": 5,
-        "pending_analysis": 260,
-        "queue_pending": 260,
-        "analysis_pct": 42.22,
+        "semantic_analyzed": 6,
+        "pending_analysis": 259,
+        "queue_pending": 259,
+        "analysis_pct": 42.44,
         "actionable_delta_open": 6,
-        "actionable_delta_analyzed": 5,
-        "actionable_delta_pending": 1,
+        "actionable_delta_analyzed": 6,
+        "actionable_delta_pending": 0,
         "historical_backlog_remaining": 259,
-        "reportable_above_threshold_or_priority": 0,
-        "surfaced_ever_current": 0,
-        "actionable_reportable": 0,
-        "actionable_surfaced": 0
+        "reportable_above_threshold_or_priority": 1,
+        "surfaced_ever_current": 1,
+        "actionable_reportable": 1,
+        "actionable_surfaced": 1
       },
       "partial_remediation": {
         "count": 24,
@@ -1226,19 +1220,19 @@
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
-        "actionable_delta_complete": false,
-        "actionable_reporting_reconciliation": false,
+        "actionable_delta_complete": true,
+        "actionable_reporting_reconciliation": true,
         "all_companies_attempted": true,
         "no_failed_company_checks": true,
         "company_count": 52,
-        "gpt_run_certified": false
+        "gpt_run_certified": true
       },
       "run_certification": {
         "run_id": "20260921T094000Z",
         "manifest_persisted": true,
         "identity_complete": true,
         "source_snapshot_match": true,
-        "semantic_delta_declared_complete": false,
+        "semantic_delta_declared_complete": true,
         "autonomous_search_complete": true,
         "autonomous_search_evidence_present": true,
         "autonomous_delta_count": 0,
@@ -1248,17 +1242,13 @@
         "priority_check_evidence_present": true,
         "priority_check_complete": true,
         "priority_snapshot_match": true,
-        "batch_errors": [
-          "PRADA Innovation Manager NEW is plausibly relevant but official full JD could not be retrieved; title-only closure is prohibited by policy."
-        ],
-        "global_blocking_errors": [
-          "JW4 PRADA Innovation Manager requires full official JD semantic review; official page was not retrievable in this run."
-        ],
-        "complete": false
+        "batch_errors": [],
+        "global_blocking_errors": [],
+        "complete": true
       },
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "run_complete": false
+      "run_complete": true
     }
   }
 }
