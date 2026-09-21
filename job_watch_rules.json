@@ -1,5 +1,5 @@
 {
-  "version": "1.6",
+  "version": "1.7",
   "updated": "2026-09-21",
   "locations": {
     "primary": [
@@ -555,7 +555,8 @@
       "TO_REVIEW and INTERESTED open vacancies remain actionable until resolved and cannot disappear into historical backlog merely by becoming STILL_OPEN.",
       "APPLIED vacancies are excluded from the apply-now list but remain monitored for closure/update.",
       "NOT_INTERESTED vacancies are suppressed from normal user-facing reports while retaining history.",
-      "Never generalize one vacancy decision into a company-wide, role-family or keyword exclusion without explicit user instruction."
+      "Never generalize one vacancy decision into a company-wide, role-family or keyword exclusion without explicit user instruction.",
+      "Any vacancy first seen on or after never_disappear_since that is still unreviewed and never surfaced remains daily-actionable even if its lifecycle rolls to STILL_OPEN. Older pending rows are handled by backlog rescue without blocking daily completion."
     ],
     "morning_output": [
       "NEW_TODAY",
@@ -563,6 +564,7 @@
       "INTERESTED_STILL_OPEN",
       "AUTONOMOUS_DELTA",
       "APPLIED_UPDATES"
-    ]
+    ],
+    "never_disappear_since": "2026-09-21T11:40:00Z"
   }
 }
