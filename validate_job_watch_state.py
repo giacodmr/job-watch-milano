@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Fail-fast integrity checks for Job Watch generated state."""
 import json
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -15,12 +16,39 @@ def load(name):
     except Exception as e:
         raise SystemExit(f"INTEGRITY ERROR: {name} invalid JSON: {e}")
 
+
+def load_head(name):
+    try:
+        cp = subprocess.run(
+            ["git", "show", f"HEAD:{name}"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return json.loads(cp.stdout)
+    except Exception:
+        return None
+
 for b in BATCHES:
     cur=load(f"current_jobs_{b}.json")
     state=load(f"analysis_results_{b}.json")
     queue=load(f"semantic_queue_{b}.json")
     summary=cur.get("summary") or {}
     target=int(summary.get("target_jobs_open",0) or 0)
+    previous=load_head(f"current_jobs_{b}.json")
+    if previous:
+        previous_target=int(((previous.get("summary") or {}).get("target_jobs_open",0)) or 0)
+        if previous_target >= 20 and target < previous_target * 0.25:
+            raise SystemExit(
+                f"INTEGRITY ERROR: {b} suspicious inventory collapse "
+                f"{previous_target}->{target}; refusing silent overwrite"
+            )
+        if previous_target >= 20 and target > previous_target * 5:
+            raise SystemExit(
+                f"INTEGRITY ERROR: {b} suspicious inventory explosion "
+                f"{previous_target}->{target}; refusing silent overwrite"
+            )
     records=state.get("records")
     if not isinstance(records,dict):
         raise SystemExit(f"INTEGRITY ERROR: {b} analysis records missing")
