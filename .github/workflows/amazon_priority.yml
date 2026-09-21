@@ -7,9 +7,6 @@ on:
       - main
     paths:
       - ".amazon_priority_run"
-  schedule:
-    - cron: "15 7 * * *"
-      timezone: "Europe/Rome"
 
 permissions:
   contents: write
