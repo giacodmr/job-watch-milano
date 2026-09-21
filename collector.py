@@ -208,11 +208,12 @@ def metadata_fingerprint(job: dict) -> str:
         # Workday and similar ATS expose rolling labels such as "Posted 2 Days Ago".
         # Those labels change every day even when the vacancy itself has not changed.
         # Excluding them prevents false UPDATED statuses and needless analysis resets.
-        volatile_date = (
-            d in {"today", "yesterday", "posted today", "posted yesterday"}
-            or (d.startswith("posted ") and d.endswith(" ago"))
-        )
-        if volatile_date:
+        # Only absolute/date-like values are stable enough for change detection.
+        # Amazon and some ATS expose rolling labels such as "about 15 hours",
+        # "1 day", "2 days", "posted yesterday", etc. Those are display-age
+        # counters, not evidence that the vacancy changed.
+        absolute_date = bool(DATEISH_RE.search(effective_date))
+        if not absolute_date:
             effective_date = None
     fields = {
         "title": clean_text(job.get("title")),
