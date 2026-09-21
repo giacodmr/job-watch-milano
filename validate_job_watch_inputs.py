@@ -12,6 +12,7 @@ REQUIRED_CONFIG = (
     "companies_job_watch_v2.json",
     "watchlist_additions.json",
     "discovery_candidates.json",
+    "user_job_decisions.json",
 )
 
 def load(name):
@@ -44,6 +45,20 @@ def prior_records_count(name):
 
 for name in REQUIRED_CONFIG:
     load(name)
+
+user_decisions = load("user_job_decisions.json")
+allowed_user_statuses = {"TO_REVIEW", "INTERESTED", "APPLIED", "NOT_INTERESTED"}
+if not isinstance(user_decisions.get("records"), dict):
+    raise SystemExit("INPUT ERROR: user_job_decisions.json records must be an object")
+for key, value in user_decisions["records"].items():
+    if not isinstance(key, str) or not isinstance(value, dict):
+        raise SystemExit("INPUT ERROR: invalid user job decision record")
+    if value.get("decision") not in allowed_user_statuses:
+        raise SystemExit(f"INPUT ERROR: invalid user decision status for {key}")
+    if not value.get("decided_at"):
+        raise SystemExit(f"INPUT ERROR: user decision {key} lacks decided_at")
+    if not value.get("fingerprint"):
+        raise SystemExit(f"INPUT ERROR: user decision {key} lacks fingerprint")
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
