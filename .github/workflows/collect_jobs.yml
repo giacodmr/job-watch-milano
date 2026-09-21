@@ -42,6 +42,10 @@ jobs:
           python -m py_compile sync_analysis_state.py
           python -m py_compile audit_job_watch.py
           python -m py_compile validate_job_watch_state.py
+          python -m py_compile validate_job_watch_inputs.py
+
+      - name: Validate persistent inputs
+        run: python validate_job_watch_inputs.py
 
       - name: Collect public ATS inventories
         run: python collector.py
