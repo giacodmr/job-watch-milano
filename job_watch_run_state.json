@@ -1,27 +1,28 @@
 {
   "version": "1.0",
-  "run_id": "20260921T094000Z",
-  "started_at": "2026-09-21T09:32:00Z",
-  "completed_at": "2026-09-21T09:55:00Z",
+  "run_id": "20260921T110019Z",
+  "started_at": "2026-09-21T11:00:19Z",
+  "completed_at": "2026-09-21T11:31:00Z",
   "source_generated_at": {
-    "JW1": "2026-09-21T09:02:07Z",
-    "JW2": "2026-09-21T09:04:50Z",
-    "JW3": "2026-09-21T09:05:47Z",
-    "JW4": "2026-09-21T09:08:28Z"
+    "JW1": "2026-09-21T11:01:33Z",
+    "JW2": "2026-09-21T11:04:17Z",
+    "JW3": "2026-09-21T11:05:13Z",
+    "JW4": "2026-09-21T11:08:07Z"
   },
   "batches": {
     "JW1": {
       "semantic_delta_complete": true,
       "autonomous_search_complete": true,
       "priority_check_complete": true,
-      "autonomous_delta_count": 0,
-      "autonomous_validated_count": 0,
+      "autonomous_delta_count": 1,
+      "autonomous_validated_count": 1,
       "errors": [],
       "autonomous_search_evidence": [
-        "2026-09-21 independent finance/payments/business-role search across Milan/Rome; no additional first-party validated actionable delta."
+        "Independent 2026-09-21 finance/payments search validated ING Business Analyst Business Banking Digital Channels & Onboarding on ING official careers; not present in current JW1 snapshot.",
+        "Independent search also revalidated Intesa Sanpaolo Business Analyst - Digital Asset Projects already represented in JW1 inventory."
       ],
       "priority_check_evidence": [
-        "Mastercard official Workday inventory represented in current JW1 snapshot; no NEW/UPDATED Mastercard delta."
+        "Mastercard official careers/Workday priority search checked for Milan, Rome, Luxembourg and London; current priority inventory reviewed."
       ]
     },
     "JW2": {
@@ -32,10 +33,11 @@
       "autonomous_validated_count": 1,
       "errors": [],
       "autonomous_search_evidence": [
-        "KPMG Junior Consultant | Business Transformation, Milan; official KPMG posting dated 18 Sep 2026 validated."
+        "Independent 2026-09-21 strategy/tech search validated Accenture Strategy Consultant – AI, Data & GenAI for Milan/Rome on Accenture official careers; not present in current JW2 snapshot.",
+        "Kearney Business Analyst 2026 independently revalidated on official Kearney careers and already represented in inventory."
       ],
       "priority_check_evidence": [
-        "Amazon target snapshot VERIFIED Milan/Rome/Luxembourg/London at 2026-09-21T09:08:28.548970+00:00."
+        "Amazon target inventory reconciled for Milan, Rome, Luxembourg and London against amazon_target_check.json."
       ]
     },
     "JW3": {
@@ -46,7 +48,7 @@
       "autonomous_validated_count": 0,
       "errors": [],
       "autonomous_search_evidence": [
-        "Independent energy/industrial search; Octopus Commercial Analyst official Lever JD validated as monitored NEW; no additional first-party autonomous delta."
+        "Independent 2026-09-21 energy/industrial search performed; Octopus Customer Operations role validated on official Octopus careers but is outside target strategy/analytics scope; no additional first-party actionable delta."
       ],
       "priority_check_evidence": []
     },
@@ -58,8 +60,8 @@
       "autonomous_validated_count": 0,
       "errors": [],
       "autonomous_search_evidence": [
-        "Independent consumer/luxury/corporate search across Milan business controller/commercial planning/strategy; no additional first-party validated actionable delta.",
-        "PRADA Innovation Manager full JD recovered from Prada employer-posted LinkedIn listing; official Prada collector independently confirms current vacancy."
+        "Independent 2026-09-21 consumer/luxury/corporate search revalidated VERSACE Retail Business Analyst, FP&A on Prada Group official careers; already represented in current JW4 inventory.",
+        "Current Prada/Nike/Sky/Chanel delta reviewed; no additional first-party autonomous delta."
       ],
       "priority_check_evidence": []
     }
@@ -70,6 +72,6 @@
   },
   "blocking_errors": [],
   "priority_snapshot_at": {
-    "Amazon": "2026-09-21T09:08:28.548970+00:00"
+    "Amazon": "2026-09-21T11:08:08.857620+00:00"
   }
 }
