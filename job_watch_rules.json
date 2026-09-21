@@ -1,6 +1,6 @@
 {
-  "version": "1.4",
-  "updated": "2026-09-20",
+  "version": "1.5",
+  "updated": "2026-09-21",
   "locations": {
     "primary": [
       "Milan",
@@ -288,7 +288,10 @@
     "enabled": true,
     "rule": "Accumulate semantic decisions and surfaced-history changes across all four JW modules during the daily run, then persist them in as few GitHub commits as practical before a single semantic sync/audit cycle.",
     "reason": "Avoid triggering one sync workflow per vacancy or per file and reduce GitHub Actions churn/race opportunities.",
-    "exception": "If a critical write must be persisted before continuing, write it immediately; otherwise batch."
+    "exception": "If a critical write must be persisted before continuing, write it immediately; otherwise batch.",
+    "atomic_commit_preferred": true,
+    "atomic_commit_rule": "Persist semantic_decisions, surfaced history, and job_watch_run_state for all affected JW modules in one Git commit via Git data/tree operations when connector capabilities allow. This prevents multiple push-triggered semantic-sync runs and preserves one coherent GPT run.",
+    "post_write_verification": "After persistence, verify the resulting semantic-sync workflow and re-read job_watch_healthcheck.json. Do not report completion until repository evidence confirms the write and healthcheck."
   },
   "protected_categories_policy": {
     "enabled": true,
@@ -504,5 +507,32 @@
       "Client/Account titles require full-JD distinction between strategic/consultative account ownership and pure new-business sales.",
       "The job title is a discovery signal only. Final inclusion still depends on mandatory experience, domain requirements, scope, compensation/career value and full-JD semantic fit."
     ]
+  },
+  "run_certification_policy": {
+    "enabled": true,
+    "manifest_file": "job_watch_run_state.json",
+    "healthcheck_file": "job_watch_healthcheck.json",
+    "source_snapshot_rule": "The GPT run manifest must match current_jobs_jw1..jw4 generated_at exactly. JW2 must also match amazon_target_check.json checked_at.",
+    "required_per_batch": [
+      "semantic_delta_complete=true only after all actionable NEW/UPDATED/AUTONOMOUS_DELTA items are decided",
+      "autonomous_search_complete=true only after independent autonomous research has actually been executed for the batch",
+      "priority_check_complete=true for JW1/Mastercard and JW2/Amazon; JW3/JW4 use true as not-applicable completion",
+      "autonomous_delta_count must equal autonomous_validated_count after first-party validation/reconciliation",
+      "errors must be empty"
+    ],
+    "overall_required": [
+      "run_id and completed_at are present",
+      "blocking_errors is empty",
+      "priority_checks.Mastercard=true",
+      "priority_checks.Amazon=true",
+      "priority_snapshot_at.Amazon matches amazon_target_check.checked_at",
+      "job_watch_healthcheck.json DAILY_COMPLETE=true after semantic sync"
+    ],
+    "reporting_rule": "Never state DAILY_COMPLETE from assistant memory, collector success, or audit text alone. Read the persisted healthcheck generated after the GPT persistence/sync cycle."
+  },
+  "github_connector_read_policy": {
+    "large_file_rule": "A connector response with content='' is not evidence that a repository file is empty. Check repository metadata size/SHA and use blob reads or line-range reads for large files before diagnosing corruption.",
+    "corruption_rule": "Declare a file corrupted only after cross-checking repository size/SHA, parseability or blob content, commit/diff evidence, and related audit/state files.",
+    "action_rule": "For run status, inspect the actual GitHub Actions run conclusion and relevant job logs, not only committed output files."
   }
 }
