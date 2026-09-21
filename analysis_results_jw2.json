@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "batch": "JW2",
-  "synced_at": "2026-09-21T15:59:12Z",
+  "synced_at": "2026-09-21T16:09:33Z",
   "source_generated_at": "2026-09-21T11:04:17Z",
   "policy": {
     "milan_rome_threshold": 70,
@@ -19,17 +19,17 @@
   "summary": {
     "open_extracted": 1159,
     "open_state_records": 1159,
-    "valid_current_analysis": 290,
-    "pending_analysis": 869,
-    "analyzed_current": 290,
+    "valid_current_analysis": 297,
+    "pending_analysis": 862,
+    "analyzed_current": 297,
     "hard_rule_analyzed": 247,
-    "semantic_analyzed": 43,
-    "reportable_current": 15,
-    "active_shortlist": 5,
+    "semantic_analyzed": 50,
+    "reportable_current": 16,
+    "active_shortlist": 6,
     "applied_open": 1,
     "not_interested_open": 11,
     "stale_user_decisions": 0,
-    "surfaced_current": 15
+    "surfaced_current": 16
   },
   "records": {
     "KPMG::1359127757": {
@@ -68,7 +68,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1367494357": {
       "company": "KPMG",
@@ -296,7 +296,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::805768902": {
       "company": "KPMG",
@@ -600,7 +600,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1372533857": {
       "company": "KPMG",
@@ -752,7 +752,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1372478457": {
       "company": "KPMG",
@@ -904,7 +904,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1361657957": {
       "company": "KPMG",
@@ -1018,7 +1018,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1372036357": {
       "company": "KPMG",
@@ -1474,7 +1474,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371946657": {
       "company": "KPMG",
@@ -1540,17 +1540,50 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 44,
+      "experience_required": "6-10 years in consulting or corporate environments strongly oriented to technology innovation.",
+      "mandatory_years_experience": 6,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "6-10 years relevant experience",
+          "IT strategy/cloud/infrastructure/sourcing/process expertise",
+          "Relevant engineering degree",
+          "English",
+          "Advanced Excel/PowerPoint/Power BI"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "direct_reports_or_team_lead_scope": "Manager-level advisory role with leadership of complex technology-strategy work.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Advises CIOs on IT strategy, architecture, cloud, sourcing, business cases and digital-transformation programs.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Technology strategy / CIO Advisory.",
+      "education_or_certifications_required": "Engineering degree in IT/Electronics/Management or related.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Official JD explicitly requires 6-10 years.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Interesting strategy content but clearly out of range due to the explicit 6-10 years and specialist IT-strategy background.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "KPMG::1366609557": {
       "company": "KPMG",
@@ -1702,7 +1735,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1366576857": {
       "company": "KPMG",
@@ -1740,7 +1773,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1366577057": {
       "company": "KPMG",
@@ -1778,7 +1811,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371818557": {
       "company": "KPMG",
@@ -1854,7 +1887,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371819457": {
       "company": "KPMG",
@@ -1892,7 +1925,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371819957": {
       "company": "KPMG",
@@ -1930,7 +1963,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371865357": {
       "company": "KPMG",
@@ -1968,7 +2001,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1366391357": {
       "company": "KPMG",
@@ -2006,7 +2039,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1366391457": {
       "company": "KPMG",
@@ -2120,7 +2153,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371614757": {
       "company": "KPMG",
@@ -2158,7 +2191,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371614957": {
       "company": "KPMG",
@@ -2196,7 +2229,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371582557": {
       "company": "KPMG",
@@ -2304,7 +2337,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1358138957": {
       "company": "KPMG",
@@ -2494,7 +2527,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1371447457": {
       "company": "KPMG",
@@ -2877,7 +2910,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1363366757": {
       "company": "KPMG",
@@ -3143,7 +3176,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1365989157": {
       "company": "KPMG",
@@ -3257,7 +3290,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1365974157": {
       "company": "KPMG",
@@ -3295,7 +3328,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1365965257": {
       "company": "KPMG",
@@ -3447,7 +3480,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1360917357": {
       "company": "KPMG",
@@ -4129,7 +4162,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1365690457": {
       "company": "KPMG",
@@ -4319,7 +4352,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::768523602": {
       "company": "KPMG",
@@ -4851,7 +4884,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1368288357": {
       "company": "KPMG",
@@ -4927,7 +4960,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1368278657": {
       "company": "KPMG",
@@ -5003,7 +5036,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1368215057": {
       "company": "KPMG",
@@ -5041,7 +5074,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1329250057": {
       "company": "KPMG",
@@ -5107,17 +5140,51 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
-      "salary": null,
-      "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "fit_score": 66,
+      "experience_required": "No prior-years minimum; role targets junior profiles but requires a master's degree in Artificial Intelligence, Business Analytics or a similar AI-oriented program.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "AI/Business Analytics or similar master's",
+          "English",
+          "Analytical mindset",
+          "Interest in AI applied to finance transformation"
+        ],
+        "preferred": [
+          "Study/work abroad"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal people-management requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports finance process assessment, target operating model, planning/budgeting/forecasting, dashboards, EPM implementations and AI-enabled transformation.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": null,
+      "education_or_certifications_required": "Master's in AI, Business Analytics or similar AI-oriented program.",
+      "role_level_assessment": "ENTRY_JUNIOR",
+      "seniority_evidence": "Junior/internship or entry-level standard contract; no experience minimum.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
+      "salary": "EUR 29,000 RAL standard contract or EUR 800-1,000/month internship",
+      "salary_source": "KPMG official JD",
+      "reportable": false,
+      "rationale": "The work content is relevant, but the required AI-oriented master's and very junior compensation/level make it a poor career-step fit.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "KPMG::1329249557": {
       "company": "KPMG",
@@ -5155,7 +5222,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "KPMG::1367943057": {
       "company": "KPMG",
@@ -5345,7 +5412,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "BearingPoint::7944263": {
       "company": "BearingPoint",
@@ -5383,7 +5450,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "BearingPoint::7603236": {
       "company": "BearingPoint",
@@ -5981,7 +6048,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Kearney::MCNtPBOzkBEppZgi6HMm5g": {
       "company": "Kearney",
@@ -6095,7 +6162,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Protiviti::JR-257799": {
       "company": "Protiviti",
@@ -6862,7 +6929,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::5b9f3924-f0f1-4de3-8b58-eed6e7726d85": {
       "company": "Amazon",
@@ -7077,7 +7144,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::06caf39c-4716-4c73-ab25-f0dc28346c69": {
       "company": "Amazon",
@@ -7122,7 +7189,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::2c071cad-9a10-45fb-8fca-e0bdbbbc61ef": {
       "company": "Amazon",
@@ -7198,7 +7265,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::03208958-a282-4820-a43b-b033e199e855": {
       "company": "Amazon",
@@ -7709,7 +7776,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::a9a9b86a-db40-4c61-b02a-1f5c6fb5b315": {
       "company": "Amazon",
@@ -7747,7 +7814,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::4a68c8a7-114d-4fdc-a42a-bb18037fc07b": {
       "company": "Amazon",
@@ -7944,7 +8011,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::f34561e4-e070-4b27-8285-74ec362db746": {
       "company": "Amazon",
@@ -8020,7 +8087,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::64eab993-10e6-461b-88ed-42235e09bd9f": {
       "company": "Amazon",
@@ -8141,7 +8208,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::7874871a-c671-4f7d-93cd-e9d8bbdae43e": {
       "company": "Amazon",
@@ -8300,7 +8367,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::6e720454-6fd6-40b6-82fc-6470f5df7c35": {
       "company": "Amazon",
@@ -8573,7 +8640,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::c9846fce-b405-48ad-a6ba-ca589008fde9": {
       "company": "Amazon",
@@ -8829,7 +8896,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::60066ebc-e0bf-4579-a74e-42f4f9c93539": {
       "company": "Amazon",
@@ -9962,7 +10029,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::6aa9bc67-2e57-4946-9803-ef33620da2f1": {
       "company": "Amazon",
@@ -10000,7 +10067,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::b637827f-1d07-4a8c-9985-f9b42dbc909a": {
       "company": "Amazon",
@@ -10038,7 +10105,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::875634c9-0f46-48ff-a86a-66e70a7ec4cd": {
       "company": "Amazon",
@@ -10273,7 +10340,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::814ad9f2-0e4f-4ef5-a99a-5c0f4d480dee": {
       "company": "Amazon",
@@ -10511,17 +10578,57 @@
       "experience_reason_hint": "no numeric minimum exposed in basic qualifications",
       "industry_experience": null,
       "business_scope_reason": "business_title",
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 58,
+      "experience_required": "No numeric tenure minimum; requires advanced Excel and SQL, program/project management, supply-chain experience and data-led process improvement.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Bachelor's degree",
+          "Advanced Excel",
+          "SQL",
+          "Program/project management",
+          "Cross-functional tech/non-tech work",
+          "Supply-chain experience",
+          "Data/metrics process improvement"
+        ],
+        "preferred": [
+          "End-to-end delivery",
+          "Senior-leadership communication",
+          "Stakeholder management",
+          "Process building"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "Leads cross-functional sourcing teams but no direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns packaging category sourcing strategy, supplier negotiation, supplier performance, savings targets and market intelligence.",
+      "budget_or_p_and_l_ownership": "Savings/value target ownership; no direct P&L stated.",
+      "domain_experience_required": "Supply chain/procurement.",
+      "education_or_certifications_required": "Bachelor's degree.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Category-manager scope with supplier strategy and sourcing ownership; no numeric years threshold.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Category strategy is adjacent, but mandatory SQL plus supply-chain/procurement experience and supplier-contract ownership make this a materially different profile.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "Amazon::203bf4e5-52c9-4076-ba9e-56a2722792ff": {
       "company": "Amazon",
@@ -11442,7 +11549,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::901c3d2d-b03a-40d4-ae7b-4b59567ab747": {
       "company": "Amazon",
@@ -11480,7 +11587,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::3cfbb208-5827-48bf-8d09-07d2cf25ddb5": {
       "company": "Amazon",
@@ -11643,17 +11750,55 @@
       "experience_reason_hint": "no numeric minimum exposed in basic qualifications",
       "industry_experience": null,
       "business_scope_reason": "business_title",
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 72,
+      "experience_required": "No numeric tenure minimum; requires experience in a finance role, project/program leadership, large-scale data tools and financial modeling.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Bachelor's degree",
+          "Finance-role experience",
+          "Project/program leadership",
+          "Multi-stakeholder business partnering",
+          "Excel and large-scale reporting/data-mining tools",
+          "Financial modeling"
+        ],
+        "preferred": [
+          "Finance/Math/Economics degree",
+          "Strategic decision support",
+          "Fast-paced corporate environment"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns financial/operational planning, month-end/variance analysis, cost-out opportunities and strategic finance partnering.",
+      "budget_or_p_and_l_ownership": "Owns planning and financial analysis; no direct P&L ownership stated.",
+      "domain_experience_required": "Finance-role experience.",
+      "education_or_certifications_required": "Bachelor's degree or above.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Senior Financial Analyst scope with independent finance partnership and planning ownership.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "The strategic decision-support content is attractive, but direct finance-role experience plus large-scale data tooling are Basic Qualifications, making this less aligned than the non-senior transformation analyst opening.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "Amazon::5c31c73f-891c-4cca-a46b-5ae5e6205ad1": {
       "company": "Amazon",
@@ -11767,7 +11912,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::8e6e137d-8665-40ef-8910-89cc22d86fd6": {
       "company": "Amazon",
@@ -12050,17 +12195,56 @@
       "experience_reason_hint": "no numeric minimum exposed in basic qualifications",
       "industry_experience": null,
       "business_scope_reason": "business_title",
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 60,
+      "experience_required": "No numeric tenure minimum; requires strategic planning, negotiation, account/consulting/e-commerce background and excellent English and German.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Bachelor's degree",
+          "Excel/data analysis",
+          "Strategic planning",
+          "High-level negotiation",
+          "Project delivery",
+          "Excellent English",
+          "Excellent German",
+          "Relevant consulting/account/e-commerce/business-development experience"
+        ],
+        "preferred": [
+          "Account management/paid services",
+          "Automotive aftermarket"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal people-management requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns a portfolio of sellers, strategic recommendations, business reviews, recruitment and account growth.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": null,
+      "education_or_certifications_required": "Bachelor's degree.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Portfolio ownership and seller-consulting scope; no numeric years threshold.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "The consulting/marketplace work is relevant, but excellent German is an explicit Basic Qualification and is not part of the current profile.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "Amazon::e6422256-cd84-4bb3-9f98-7a1fa9e8ceaf": {
       "company": "Amazon",
@@ -12143,7 +12327,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::bd0a5b99-fed6-4b42-830b-3ec18546b7e0": {
       "company": "Amazon",
@@ -12702,7 +12886,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::bc575a7b-461b-4594-bdfb-e8feaea93f46": {
       "company": "Amazon",
@@ -12830,7 +13014,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::84d02322-b130-4af0-a45e-94a292805d1f": {
       "company": "Amazon",
@@ -12868,7 +13052,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::99683724-9398-411a-8f90-4ad039e331f1": {
       "company": "Amazon",
@@ -13226,26 +13410,62 @@
       "threshold": 80,
       "first_seen_at": "2026-09-20T11:46:51Z",
       "last_seen_at": "2026-09-21T11:04:17Z",
-      "surfaced_at": null,
-      "surfaced_status": null,
-      "user_decision": null,
-      "user_decision_original": null,
-      "user_decision_fingerprint": null,
+      "surfaced_at": "2026-09-21T16:20:00Z",
+      "surfaced_status": "STILL_OPEN",
+      "user_decision": "TO_REVIEW",
+      "user_decision_original": "TO_REVIEW",
+      "user_decision_fingerprint": "a5dcbadca4af0e26",
       "user_decision_stale": false,
-      "user_decision_reason": null,
-      "user_decided_at": null,
+      "user_decision_reason": "High-fit non-senior Amazon transformation analyst role in Luxembourg; no numeric tenure minimum and strong overlap with analytics, profitability and project management.",
+      "user_decided_at": "2026-09-21T16:20:00Z",
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 96,
+      "experience_required": "No numeric tenure minimum; requires experience in an analytical field plus the ability to structure and lead projects and influence internal partners.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Bachelor's degree/equivalent in Math, Engineering, Science or Business",
+          "Experience in an analytical field",
+          "Project structuring and leadership",
+          "Internal stakeholder influence",
+          "Strong written/oral communication"
+        ],
+        "preferred": [
+          "Master's/MBA in supply chain, business, engineering, finance or related",
+          "Autonomy in ambiguity"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal people-management requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Steers EU transformation initiatives with 75% analytics and 25% project management, evaluating cost-to-serve, customer experience, growth and profitability trade-offs.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated; role evaluates cost and long-term profitability trade-offs.",
+      "domain_experience_required": null,
+      "education_or_certifications_required": "Bachelor's or equivalent in Math, Engineering, Science or Business.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Analyst role with no numeric experience threshold; capability-based requirements rather than senior tenure.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": true,
+      "rationale": "Near-direct fit to analytics-led transformation, project management, strategic trade-offs, profitability, customer experience and cross-functional decision support. Supply-chain context is learnable and not listed as a Basic Qualification.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "Amazon::0bbd2765-893e-4f03-8332-8aa110511fc9": {
       "company": "Amazon",
@@ -13620,7 +13840,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::3024d814-ca65-4f43-9f3d-ef301ecef635": {
       "company": "Amazon",
@@ -13700,17 +13920,54 @@
       "experience_reason_hint": "no numeric minimum exposed in basic qualifications",
       "industry_experience": null,
       "business_scope_reason": "business_title",
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 78,
+      "experience_required": "No numeric tenure minimum; requires finance experience or large cross-functional project results, large-scale data/reporting tools and financial modeling.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Bachelor's/Master's degree",
+          "Finance-role experience or major cross-functional initiative results",
+          "Excel and SQL/Power Query/Python or similar large-scale data tools",
+          "Financial modeling"
+        ],
+        "preferred": [
+          "Relevant quantitative/finance degree",
+          "Complex-issue resolution",
+          "Multinational/fast-paced experience",
+          "Business recommendations and stakeholder influence"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated; raises analytical standard for peers/juniors.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns cost-out frameworks, profitability/network analyses, automation roadmaps and recommendations to senior operational leaders.",
+      "budget_or_p_and_l_ownership": "Influences investment, capacity and cost strategy; no direct P&L ownership stated.",
+      "domain_experience_required": null,
+      "education_or_certifications_required": "Bachelor's or Master's degree.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Senior Analyst role expects independent judgement, leadership influence, automation/data ownership and peer coaching.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Content overlaps strongly with business cases and decision support, but senior-level independent judgement plus hands-on large-scale data tooling make it a stretch beyond the current target; the non-senior Transformation Analyst is materially cleaner.",
+      "analyzed_at": "2026-09-21T16:20:00Z"
     },
     "Amazon::83aa7ae7-ead3-4752-90c2-9e44a1f13060": {
       "company": "Amazon",
@@ -14004,7 +14261,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::eabfd795-dcb6-41f8-b758-8d16f3793979": {
       "company": "Amazon",
@@ -14248,7 +14505,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::107faae4-8d55-4cca-b32a-dba2967c2269": {
       "company": "Amazon",
@@ -15089,7 +15346,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::8b433cd7-577a-485a-8778-e98055aba7c2": {
       "company": "Amazon",
@@ -15127,7 +15384,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::e53daddd-99ee-4d3d-b155-2757a47f726c": {
       "company": "Amazon",
@@ -15165,7 +15422,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::8549c9d8-1c00-4160-9221-8f8e455bffe3": {
       "company": "Amazon",
@@ -16286,7 +16543,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::4dfe3c1f-5b48-4275-9a46-094016a0348e": {
       "company": "Amazon",
@@ -16483,7 +16740,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::4c51950b-dcdf-49d3-8f42-d05ce4437a1f": {
       "company": "Amazon",
@@ -16559,7 +16816,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::bf217693-8f07-4d50-ab34-2a188da7caf3": {
       "company": "Amazon",
@@ -16898,7 +17155,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::3947cb2d-a53e-442b-94ec-706a1ff0864b": {
       "company": "Amazon",
@@ -17064,7 +17321,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::bc91e564-6fab-40af-8858-6bf6c8b4333d": {
       "company": "Amazon",
@@ -17441,7 +17698,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::15a4e958-028b-4dfd-b4da-76bcfabc29ab": {
       "company": "Amazon",
@@ -17555,7 +17812,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::fe08ee4d-6f0d-48d9-8d7d-c1bbd635233d": {
       "company": "Amazon",
@@ -17638,7 +17895,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::64a33eed-2bd7-4b9a-ac60-0e49541e8214": {
       "company": "Amazon",
@@ -18060,7 +18317,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::e6cce2b8-02b8-46f9-973e-55d2bee9717b": {
       "company": "Amazon",
@@ -18136,7 +18393,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::2033e175-ca4a-4efb-9f49-7b0da55cefa1": {
       "company": "Amazon",
@@ -18219,7 +18476,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::f195121d-3043-4eeb-8bfa-b7a0e23d60ca": {
       "company": "Amazon",
@@ -18513,7 +18770,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::07a1171c-be3c-4868-9646-c6386f609a33": {
       "company": "Amazon",
@@ -18551,7 +18808,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::57cb005b-1a44-4f0a-86bf-edf0f8c93796": {
       "company": "Amazon",
@@ -18800,7 +19057,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::0e65622f-d139-4467-8843-ab53f9d60691": {
       "company": "Amazon",
@@ -18838,7 +19095,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::1d5c3916-f649-47cc-a1a4-7d606e9006e1": {
       "company": "Amazon",
@@ -18966,7 +19223,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::d540424b-d864-4328-b2c4-9a6738b2e87d": {
       "company": "Amazon",
@@ -19042,7 +19299,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::64f79dc4-a878-4a13-90ae-7a72543cedf4": {
       "company": "Amazon",
@@ -19080,7 +19337,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::df81e77d-46a1-4340-991a-ec764cf4d844": {
       "company": "Amazon",
@@ -19118,7 +19375,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::71bdc575-5801-4c2b-9c6d-938a3da8f9fb": {
       "company": "Amazon",
@@ -19270,7 +19527,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::ffd64268-f066-4c98-88c0-c90b4c54ddce": {
       "company": "Amazon",
@@ -19398,7 +19655,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::2f608e8f-e82a-4511-b5c4-eb17a3ad256e": {
       "company": "Amazon",
@@ -19436,7 +19693,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::d5e29f14-497a-4ae1-a862-f5e3791061cf": {
       "company": "Amazon",
@@ -19907,7 +20164,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::973b1282-7e43-4e89-8f1e-1200e62288b5": {
       "company": "Amazon",
@@ -20169,7 +20426,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::e68bffe7-673a-48db-9075-1398e0d2d277": {
       "company": "Amazon",
@@ -20984,7 +21241,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::3adee4bf-48d1-4530-af2a-03f70797c6f6": {
       "company": "Amazon",
@@ -21067,7 +21324,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::05c7d9ce-3096-40da-8093-a13993e1c5d1": {
       "company": "Amazon",
@@ -21112,7 +21369,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::e8f2f550-7407-4d92-9e93-74c9722e6f59": {
       "company": "Amazon",
@@ -21427,7 +21684,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::0f89a44a-842d-4950-86e4-69f7a7a65b54": {
       "company": "Amazon",
@@ -21465,7 +21722,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::296238b0-5130-4cc9-af34-6aa03d5099dc": {
       "company": "Amazon",
@@ -21880,7 +22137,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::89ca0b12-d175-4498-b64f-4164c9f71450": {
       "company": "Amazon",
@@ -21925,7 +22182,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::f5643ecf-5229-47aa-ab0c-8b8055b052aa": {
       "company": "Amazon",
@@ -22001,7 +22258,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::0d604211-4054-4172-95ab-f8b55796e1a0": {
       "company": "Amazon",
@@ -22288,7 +22545,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::b4932c08-895a-44bd-b590-48ba8d5c2c55": {
       "company": "Amazon",
@@ -22326,7 +22583,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::3497cde5-2ce4-41ae-90b5-e103c6e9e319": {
       "company": "Amazon",
@@ -22878,7 +23135,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::190ed1e1-e1c9-4e2c-8182-e707f90f2719": {
       "company": "Amazon",
@@ -23144,7 +23401,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::9ff41a98-0e63-4346-8dc9-39af830b2c76": {
       "company": "Amazon",
@@ -23514,7 +23771,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::fef5a6ab-cc15-4f72-8270-a4ffd7ceff25": {
       "company": "Amazon",
@@ -24844,7 +25101,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::f9f6d9da-271d-4e55-9efe-120dd99702e5": {
       "company": "Amazon",
@@ -25496,7 +25753,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::519d00bd-37e3-4c23-be52-304e6fd76528": {
       "company": "Amazon",
@@ -26040,7 +26297,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::ba5209b3-02b7-4999-b2c4-cdafe8070984": {
       "company": "Amazon",
@@ -26251,7 +26508,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::5d90daad-da98-4ad3-b5f6-14d1c0a15349": {
       "company": "Amazon",
@@ -26406,7 +26663,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::65b6e5bf-33c3-4781-8c46-807ebeaf7df0": {
       "company": "Amazon",
@@ -27120,7 +27377,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::fe91edd0-37b3-4e1f-973e-97ff288fe753": {
       "company": "Amazon",
@@ -27206,7 +27463,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::6691aa52-1770-4740-98d4-6da5a0ee7b9a": {
       "company": "Amazon",
@@ -28225,7 +28482,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::b09236f2-83af-4f5b-8dd8-8c58a9d57025": {
       "company": "Amazon",
@@ -28429,7 +28686,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::aa6ac18e-ffbe-4a6c-a832-b1453470487f": {
       "company": "Amazon",
@@ -28806,7 +29063,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::c45e5540-af3f-4b9c-8aa7-e17ca8990165": {
       "company": "Amazon",
@@ -28972,7 +29229,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::8c9aaabd-4026-4264-ac3d-382d51e6eaf9": {
       "company": "Amazon",
@@ -29010,7 +29267,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::6c61d4b0-ffd3-433a-bbe1-a3048ab71ace": {
       "company": "Amazon",
@@ -29162,7 +29419,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::efffc5f0-feb6-425c-950e-e63386005912": {
       "company": "Amazon",
@@ -29252,7 +29509,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::629abe52-b66d-4503-a5c9-b2cbe5390871": {
       "company": "Amazon",
@@ -29290,7 +29547,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::f82d33e9-d5f7-4c38-9dff-db6f8a084026": {
       "company": "Amazon",
@@ -29897,7 +30154,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::d307987f-bc9b-424d-a47e-5eaa82b040f3": {
       "company": "Amazon",
@@ -29935,7 +30192,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::2f5385d7-37e4-47f1-ba24-52a4846c0e75": {
       "company": "Amazon",
@@ -30011,7 +30268,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::b61e2c4a-be2e-43f5-a655-71731a344bf4": {
       "company": "Amazon",
@@ -30464,7 +30721,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::1c4c40a3-92a5-4af3-ab7e-a750cc003306": {
       "company": "Amazon",
@@ -30933,7 +31190,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::93fa171a-d9b9-457c-9dfb-62fd0f631b91": {
       "company": "Amazon",
@@ -31047,7 +31304,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::d4631cae-ca5b-4ea5-8488-a73765979e64": {
       "company": "Amazon",
@@ -31123,7 +31380,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::27ac3ddf-6cc0-4867-b821-28bffab3513d": {
       "company": "Amazon",
@@ -31555,7 +31812,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::c7cee1f2-c1d8-476b-abf7-c12dff80107e": {
       "company": "Amazon",
@@ -31638,7 +31895,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::664fa20e-802d-4614-ae49-5c2d0a7c27ae": {
       "company": "Amazon",
@@ -31942,7 +32199,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::d6a4f9cb-ebc9-44b6-bb19-7c730ec065f6": {
       "company": "Amazon",
@@ -32146,7 +32403,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::4a3ef573-4095-4664-9797-1f2b8ff30e11": {
       "company": "Amazon",
@@ -32404,7 +32661,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::a8863c27-d3ef-4aa0-8078-c456d4b90c08": {
       "company": "Amazon",
@@ -32480,7 +32737,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::3b258757-a5aa-46c4-b80f-5b1150af1550": {
       "company": "Amazon",
@@ -32565,7 +32822,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::eab1222f-2ba1-488d-ab6d-55c06e1637b6": {
       "company": "Amazon",
@@ -32693,7 +32950,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::ed1e7ec9-c95d-44ee-9880-0dd3f280e382": {
       "company": "Amazon",
@@ -32852,7 +33109,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::fd6ff66b-e553-4c84-b0a0-535aacba40c7": {
       "company": "Amazon",
@@ -33236,7 +33493,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::e0db4c26-f889-4921-89ba-77a1dfac7cb6": {
       "company": "Amazon",
@@ -33319,7 +33576,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::755be555-0a37-4ffe-a97b-0c5f49cb3c70": {
       "company": "Amazon",
@@ -33404,7 +33661,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::6e8f81a7-f78d-45ed-9b03-b54969ce803f": {
       "company": "Amazon",
@@ -33480,7 +33737,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::121a8426-d263-4663-bf7d-e71574aaf4c0": {
       "company": "Amazon",
@@ -33769,7 +34026,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::7f166781-d37d-4128-864a-0f0634c34280": {
       "company": "Amazon",
@@ -34208,7 +34465,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::cdc4ab07-d660-4c78-83d5-6b8f540f4559": {
       "company": "Amazon",
@@ -34246,7 +34503,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::196d6e29-2df0-48d5-96e4-5f186568abd6": {
       "company": "Amazon",
@@ -34329,7 +34586,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::5a1914a9-9b45-48d0-a809-da41fac75b55": {
       "company": "Amazon",
@@ -34415,7 +34672,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::51bed458-b6cd-44df-b801-31c9ce5d7888": {
       "company": "Amazon",
@@ -34761,7 +35018,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::5710dd38-d7ba-4694-9e72-c7fe88cc7c3d": {
       "company": "Amazon",
@@ -35086,7 +35343,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::12ed9cac-3362-4a4c-9057-6a1c727f6063": {
       "company": "Amazon",
@@ -35200,7 +35457,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::1b0975bb-efd7-4e99-9124-aba380dd45dc": {
       "company": "Amazon",
@@ -35238,7 +35495,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::d2ee7b8f-11be-40b9-8bfc-9d38aa5c2b11": {
       "company": "Amazon",
@@ -35446,7 +35703,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::91aed076-9c8a-4ed6-9a5a-82768134a2dd": {
       "company": "Amazon",
@@ -35484,7 +35741,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::c5e8e779-fa19-4414-b100-d031affaf5c7": {
       "company": "Amazon",
@@ -35522,7 +35779,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Amazon::1d66719f-9994-4fc0-bb8f-ca868dd15933": {
       "company": "Amazon",
@@ -35560,7 +35817,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "SAP::1407416533": {
       "company": "SAP",
@@ -35598,7 +35855,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "SAP::1407420133": {
       "company": "SAP",
@@ -35747,7 +36004,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "SAP::1370672333": {
       "company": "SAP",
@@ -35861,7 +36118,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "SAP::1286243201": {
       "company": "SAP",
@@ -35937,7 +36194,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2014393": {
       "company": "Cisco",
@@ -35975,7 +36232,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2024763": {
       "company": "Cisco",
@@ -36078,7 +36335,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2023882": {
       "company": "Cisco",
@@ -36154,7 +36411,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2025977": {
       "company": "Cisco",
@@ -36192,7 +36449,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2026102": {
       "company": "Cisco",
@@ -36230,7 +36487,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2026224": {
       "company": "Cisco",
@@ -36268,7 +36525,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2023612": {
       "company": "Cisco",
@@ -36496,7 +36753,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2023762": {
       "company": "Cisco",
@@ -36534,7 +36791,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2022420": {
       "company": "Cisco",
@@ -36610,7 +36867,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2015936": {
       "company": "Cisco",
@@ -36724,7 +36981,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Cisco::2018433": {
       "company": "Cisco",
@@ -36800,7 +37057,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "ServiceNow::744000150402420": {
       "company": "ServiceNow",
@@ -37180,7 +37437,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "ServiceNow::744000140843399": {
       "company": "ServiceNow",
@@ -37332,7 +37589,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Senior-Cloud-Account-Executive---Slack_JR360288": {
       "company": "Salesforce",
@@ -37370,7 +37627,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Rome/Cloud-Account-Executive---Slack_JR360290-1": {
       "company": "Salesforce",
@@ -37408,7 +37665,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Cloud-Account-Executive---Slack_JR360286": {
       "company": "Salesforce",
@@ -37446,7 +37703,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Forward-Deployed-Engineer_JR346373": {
       "company": "Salesforce",
@@ -37522,7 +37779,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Customer-Success-Manager---FinTech-and-Health-Life-Sciences_JR360206": {
       "company": "Salesforce",
@@ -37636,7 +37893,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive--General-Business_JR358044": {
       "company": "Salesforce",
@@ -37674,7 +37931,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Director--Product-Solutions---Life-Sciences_JR359251": {
       "company": "Salesforce",
@@ -37750,7 +38007,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Product-Strategy---Office-of-the-CEO_JR360049": {
       "company": "Salesforce",
@@ -37826,7 +38083,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Private-Equity--Analyst_JR355899-1": {
       "company": "Salesforce",
@@ -37902,7 +38159,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Lead-Forward-Deployed-Engineer_JR348956": {
       "company": "Salesforce",
@@ -37978,7 +38235,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Associate-Technical-Consultant_JR359549": {
       "company": "Salesforce",
@@ -38130,7 +38387,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive-Health-and-Life-Sciences_JR359385": {
       "company": "Salesforce",
@@ -38168,7 +38425,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Enterprise-Account-Executive---Qualified_JR357229": {
       "company": "Salesforce",
@@ -38206,7 +38463,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Commercial-Account-Executive---Qualified_JR358918": {
       "company": "Salesforce",
@@ -38244,7 +38501,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Rome/Lead-Forward-Deployed-Engineer_JR348965": {
       "company": "Salesforce",
@@ -38320,7 +38577,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Strategic-Enterprise-Account-Executive-2---Automotive_JR359322": {
       "company": "Salesforce",
@@ -38358,7 +38615,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Customer-Success-Manager--Senior-Manager---FinTech--Regulated-Markets_JR356208": {
       "company": "Salesforce",
@@ -38472,7 +38729,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Success-Architect---Agentforce-Data-Cloud_JR354599": {
       "company": "Salesforce",
@@ -38548,7 +38805,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Associate-Relationship-Manager--Startups---Venture-Capital_JR356419": {
       "company": "Salesforce",
@@ -38624,7 +38881,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Enterprise-Account-Executive---Telco--Media---Tech_JR355734-1": {
       "company": "Salesforce",
@@ -38662,7 +38919,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Specialist-Account-Executive---Sales-Performance-Management_JR353708": {
       "company": "Salesforce",
@@ -38700,7 +38957,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive---Energy_JR354183": {
       "company": "Salesforce",
@@ -38738,7 +38995,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive---Dept-of-Health---Social-Care_JR322811": {
       "company": "Salesforce",
@@ -38776,7 +39033,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Senior-Director--Solutions-Builder_JR358556": {
       "company": "Salesforce",
@@ -38890,7 +39147,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Rome/Deployment-Strategist_JR348962": {
       "company": "Salesforce",
@@ -38966,7 +39223,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Intern--Tech-Sales---Business-Development--Milan---September-2026-_JR336586-1": {
       "company": "Salesforce",
@@ -39004,7 +39261,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Account-Executive---Life-Sciences--Italy-_JR353014": {
       "company": "Salesforce",
@@ -39042,7 +39299,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive---HLS_JR357163-1": {
       "company": "Salesforce",
@@ -39080,7 +39337,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Rome/Account-Executive-2_JR357157": {
       "company": "Salesforce",
@@ -39118,7 +39375,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Data360-FDE_JR357933-1": {
       "company": "Salesforce",
@@ -39308,7 +39565,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/Italy---Milan/Account-Solution-Engineer-7_JR349614": {
       "company": "Salesforce",
@@ -39384,7 +39641,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Data-360-AVP--Sales-EMEA_JR357117": {
       "company": "Salesforce",
@@ -39498,7 +39755,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Consumption-Value-Manager--AI---API-Solutions_JR356483": {
       "company": "Salesforce",
@@ -39612,7 +39869,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Cloud-Account-Executive---Platform---Security_JR355711": {
       "company": "Salesforce",
@@ -39650,7 +39907,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Mid-Market-Account-Executive_JR355710": {
       "company": "Salesforce",
@@ -39688,7 +39945,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Slack---Enterprise-Cloud-Account-Executive_JR355705": {
       "company": "Salesforce",
@@ -39726,7 +39983,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Client-Solution-Consultant--Data-Foundation-and-MuleSoft_JR341592": {
       "company": "Salesforce",
@@ -39840,7 +40097,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive_JR354124-1": {
       "company": "Salesforce",
@@ -39878,7 +40135,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Senior-Services-Sales-Solutions-Manager_JR353667": {
       "company": "Salesforce",
@@ -39954,7 +40211,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Enterprise-Account-Executive---Agentforce-Marketing-Cloud_JR351914": {
       "company": "Salesforce",
@@ -39992,7 +40249,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Commercial-Account-Executive---Agentforce-Marketing_JR353598": {
       "company": "Salesforce",
@@ -40030,7 +40287,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Specialist-Solution-Engineer-9---Informatica_JR351442": {
       "company": "Salesforce",
@@ -40106,7 +40363,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Technical-Migration-Delivery-Sr-Lead---Tableau-Cloud_JR345434": {
       "company": "Salesforce",
@@ -40334,7 +40591,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Senior-Director--Field-Service_JR345652": {
       "company": "Salesforce",
@@ -40410,7 +40667,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Field-Service-Specialist_JR345643": {
       "company": "Salesforce",
@@ -40524,7 +40781,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Enterprise-Account-Executive---Manufacturing_JR350507": {
       "company": "Salesforce",
@@ -40562,7 +40819,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Named-Account-Executive--Telecommunications_JR349234": {
       "company": "Salesforce",
@@ -40600,7 +40857,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Commercial-Cloud-Account-Executive---Tableau_JR350367": {
       "company": "Salesforce",
@@ -40638,7 +40895,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Cloud-Account-Executive---Tableau_JR346158": {
       "company": "Salesforce",
@@ -40676,7 +40933,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Deployment-Strategist_JR350115": {
       "company": "Salesforce",
@@ -40752,7 +41009,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Prime-Territory-Account-Executive--Mulesoft--Greek-market_JR347343-1": {
       "company": "Salesforce",
@@ -40790,7 +41047,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Brand---Corporate-Marketing--UKI-Field-Marketing--Senior-Lead_JR341246-1": {
       "company": "Salesforce",
@@ -40866,7 +41123,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Salesforce::/job/United-Kingdom---London/Specialist-Solution-Engineer_JR344345": {
       "company": "Salesforce",
@@ -41159,7 +41416,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Prometeia::/job/Milano---Brera/Senior-Consultant-Insurance_JR100052": {
       "company": "Prometeia",
@@ -41311,7 +41568,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Prometeia::/job/Milano---Brera/Python-Engineer_JR100087": {
       "company": "Prometeia",
@@ -41653,7 +41910,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "AlixPartners::7814512003": {
       "company": "AlixPartners",
@@ -41691,7 +41948,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "AlixPartners::7734054003": {
       "company": "AlixPartners",
@@ -41729,7 +41986,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "AlixPartners::7548114003": {
       "company": "AlixPartners",
@@ -42147,7 +42404,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "LSC Lifesciences Consultants::159881": {
       "company": "LSC Lifesciences Consultants",
@@ -42861,7 +43118,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "FTI Consulting::/job/London-United-Kingdom/Director--Crisis---Litigation--Strategic-Communications_JR260581-1": {
       "company": "FTI Consulting",
@@ -43583,7 +43840,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Flix::8809607002": {
       "company": "Flix",
@@ -43659,7 +43916,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "FREENOW::8191479": {
       "company": "FREENOW",
@@ -44490,7 +44747,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Eight Sleep::e9a84433-b292-497e-ad33-15da82056af5": {
       "company": "Eight Sleep",
@@ -44528,7 +44785,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Eight Sleep::632b5397-b57d-4f4b-bf3e-0ec6a12c64bf": {
       "company": "Eight Sleep",
@@ -44566,7 +44823,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Eight Sleep::8cac7e1b-99ce-46da-8d2a-a0eac5831ecd": {
       "company": "Eight Sleep",
@@ -44604,7 +44861,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "Eight Sleep::a8538d65-0445-48a7-a193-47bb75e7ef70": {
       "company": "Eight Sleep",
@@ -44642,7 +44899,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Category-Manager---Fashion---Beauty_JR104067": {
       "company": "JD.COM / Joybuy",
@@ -45440,7 +45697,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/_JR103270": {
       "company": "JD.COM / Joybuy",
@@ -45478,7 +45735,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/_JR103283": {
       "company": "JD.COM / Joybuy",
@@ -45516,7 +45773,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/---_JR102908": {
       "company": "JD.COM / Joybuy",
@@ -45554,7 +45811,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Software-Engineer_JR00923-1": {
       "company": "JD.COM / Joybuy",
@@ -45592,7 +45849,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Software-Engineer_JR101355": {
       "company": "JD.COM / Joybuy",
@@ -45630,7 +45887,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Software-Engineer_JR101224": {
       "company": "JD.COM / Joybuy",
@@ -45668,7 +45925,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Product-Manager_JR010912M-1": {
       "company": "JD.COM / Joybuy",
@@ -46010,7 +46267,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Business-Analysis-POP-_JR103178": {
       "company": "JD.COM / Joybuy",
@@ -46086,7 +46343,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Fresh-Category-Operation-Manager_JR103412": {
       "company": "JD.COM / Joybuy",
@@ -46352,7 +46609,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Compliance-Manager---non-food_JR103149": {
       "company": "JD.COM / Joybuy",
@@ -46504,7 +46761,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Machine-Learning-Engineer---Fulfillment_JR101321": {
       "company": "JD.COM / Joybuy",
@@ -46542,7 +46799,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Machine-Learning-Engineer_JR101164": {
       "company": "JD.COM / Joybuy",
@@ -46580,7 +46837,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Machine-Learning-Engineer_JR00911-1": {
       "company": "JD.COM / Joybuy",
@@ -46618,7 +46875,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-09-21T15:59:12Z"
+      "analyzed_at": "2026-09-21T16:09:33Z"
     },
     "JD.COM / Joybuy::/job/GBR-London/Project-Manager_JR102474": {
       "company": "JD.COM / Joybuy",
