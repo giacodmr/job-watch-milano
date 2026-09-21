@@ -47,4 +47,11 @@ for city in ("Milan","Rome","Luxembourg","London"):
 audit=load("job_watch_audit.json")
 if set((audit.get("batches") or {}).keys()) != {"JW1","JW2","JW3","JW4"}:
     raise SystemExit("INTEGRITY ERROR: audit missing batches")
+health=load("job_watch_healthcheck.json")
+if set((health.get("batches") or {}).keys()) != {"JW1","JW2","JW3","JW4"}:
+    raise SystemExit("INTEGRITY ERROR: healthcheck missing batches")
+if health.get("DAILY_COMPLETE") is True:
+    incomplete=[b for b,row in (health.get("batches") or {}).items() if row.get("daily_complete") is not True]
+    if incomplete:
+        raise SystemExit(f"INTEGRITY ERROR: healthcheck claims DAILY_COMPLETE with incomplete batches: {incomplete}")
 print("Job Watch integrity checks passed.")
