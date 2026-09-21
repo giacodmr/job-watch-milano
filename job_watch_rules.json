@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
+  "version": "1.6",
   "updated": "2026-09-21",
   "locations": {
     "primary": [
@@ -249,8 +249,13 @@
       ],
       "minimum_progress_rule": "After the current delta is complete, use remaining run capacity to reduce the oldest/highest-value backlog. Never re-read unchanged already-decided JD fingerprints."
     },
-    "daily_complete_rule": "DAILY_COMPLETE when every actionable-delta item for the run is decided/reconciled and output persistence succeeds, even if historical backlog remains. Report backlog separately as BACKLOG_REMAINING.",
-    "full_backlog_complete_rule": "FULL_SEMANTIC_COMPLETE only when semantic queues contain no pending historical records."
+    "daily_complete_rule": "Every NEW/UPDATED/AUTONOMOUS_DELTA item plus every explicit TO_REVIEW/INTERESTED open vacancy must be decided/reconciled and required reportable items surfaced. Historical unreviewed backlog is reported separately.",
+    "full_backlog_complete_rule": "FULL_SEMANTIC_COMPLETE only when semantic queues contain no pending historical records.",
+    "actionable_user_state": [
+      "TO_REVIEW",
+      "INTERESTED"
+    ],
+    "never_disappear_guard": "An open explicit TO_REVIEW/INTERESTED vacancy remains part of daily actionable work even when lifecycle status is STILL_OPEN."
   },
   "company_self_improvement_policy": {
     "enabled": true,
@@ -536,5 +541,28 @@
     "large_file_rule": "A connector response with content='' is not evidence that a repository file is empty. Check repository metadata size/SHA and use blob reads or line-range reads for large files before diagnosing corruption.",
     "corruption_rule": "Declare a file corrupted only after cross-checking repository size/SHA, parseability or blob content, commit/diff evidence, and related audit/state files.",
     "action_rule": "For run status, inspect the actual GitHub Actions run conclusion and relevant job logs, not only committed output files."
+  },
+  "user_decision_policy": {
+    "registry": "user_job_decisions.json",
+    "statuses": [
+      "TO_REVIEW",
+      "INTERESTED",
+      "APPLIED",
+      "NOT_INTERESTED"
+    ],
+    "rules": [
+      "Vacancy-specific user decisions persist independently of NEW/STILL_OPEN/UPDATED lifecycle status.",
+      "TO_REVIEW and INTERESTED open vacancies remain actionable until resolved and cannot disappear into historical backlog merely by becoming STILL_OPEN.",
+      "APPLIED vacancies are excluded from the apply-now list but remain monitored for closure/update.",
+      "NOT_INTERESTED vacancies are suppressed from normal user-facing reports while retaining history.",
+      "Never generalize one vacancy decision into a company-wide, role-family or keyword exclusion without explicit user instruction."
+    ],
+    "morning_output": [
+      "NEW_TODAY",
+      "TO_REVIEW",
+      "INTERESTED_STILL_OPEN",
+      "AUTONOMOUS_DELTA",
+      "APPLIED_UPDATES"
+    ]
   }
 }
