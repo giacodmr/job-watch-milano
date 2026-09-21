@@ -516,7 +516,9 @@
     "required_per_batch": [
       "semantic_delta_complete=true only after all actionable NEW/UPDATED/AUTONOMOUS_DELTA items are decided",
       "autonomous_search_complete=true only after independent autonomous research has actually been executed for the batch",
+      "autonomous_search_evidence must be a non-empty list recording the searches/sources actually checked in that batch",
       "priority_check_complete=true for JW1/Mastercard and JW2/Amazon; JW3/JW4 use true as not-applicable completion",
+      "JW1/JW2 priority_check_evidence must be a non-empty list tied to the official priority-company verification performed in the run",
       "autonomous_delta_count must equal autonomous_validated_count after first-party validation/reconciliation",
       "errors must be empty"
     ],
