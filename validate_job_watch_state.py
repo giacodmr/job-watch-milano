@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""Fail-fast integrity checks for Job Watch generated state."""
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+BATCHES = ("jw1","jw2","jw3","jw4")
+
+def load(name):
+    p=ROOT/name
+    if not p.exists() or p.stat().st_size < 20:
+        raise SystemExit(f"INTEGRITY ERROR: {name} missing or suspiciously small")
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise SystemExit(f"INTEGRITY ERROR: {name} invalid JSON: {e}")
+
+for b in BATCHES:
+    cur=load(f"current_jobs_{b}.json")
+    state=load(f"analysis_results_{b}.json")
+    queue=load(f"semantic_queue_{b}.json")
+    summary=cur.get("summary") or {}
+    target=int(summary.get("target_jobs_open",0) or 0)
+    records=state.get("records")
+    if not isinstance(records,dict):
+        raise SystemExit(f"INTEGRITY ERROR: {b} analysis records missing")
+    open_records=sum(1 for r in records.values() if r.get("current_open"))
+    if open_records != target:
+        raise SystemExit(f"INTEGRITY ERROR: {b} current/state mismatch {target}!={open_records}")
+    qrecords=queue.get("records")
+    if not isinstance(qrecords,list):
+        raise SystemExit(f"INTEGRITY ERROR: {b} queue records missing")
+    pending=int(queue.get("pending_count",len(qrecords)) or 0)
+    if pending != len(qrecords):
+        raise SystemExit(f"INTEGRITY ERROR: {b} queue count mismatch {pending}!={len(qrecords)}")
+
+amazon=load("amazon_target_check.json")
+for city in ("Milan","Rome","Luxembourg","London"):
+    row=(amazon.get("locations") or {}).get(city)
+    if not isinstance(row,dict):
+        raise SystemExit(f"INTEGRITY ERROR: Amazon {city} missing")
+    if row.get("coverage") != "VERIFIED":
+        raise SystemExit(f"INTEGRITY ERROR: Amazon {city} not VERIFIED")
+    if int(row.get("inventory_count",-1)) != int(row.get("api_reported_hits_sum",-2)):
+        raise SystemExit(f"INTEGRITY ERROR: Amazon {city} count mismatch")
+
+audit=load("job_watch_audit.json")
+if set((audit.get("batches") or {}).keys()) != {"JW1","JW2","JW3","JW4"}:
+    raise SystemExit("INTEGRITY ERROR: audit missing batches")
+print("Job Watch integrity checks passed.")
