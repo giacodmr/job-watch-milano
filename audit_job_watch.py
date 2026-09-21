@@ -132,6 +132,7 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     mapping = read_json(ROOT / f"ats_mapping_{batch}.json", {"companies": []})
     state = read_json(ROOT / f"analysis_results_{batch}.json", {"records": {}})
     queue = read_json(ROOT / f"semantic_queue_{batch}.json", {"records": []})
+    user_decisions = (read_json(ROOT / "user_job_decisions.json", {"records": {}}).get("records") or {})
     certification = run_certification(batch, current, run_state)
 
     base_keys = extracted_open_keys(current)
@@ -169,9 +170,13 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     #   not block a daily run.
     # - FULL_SEMANTIC_COMPLETE: every currently open record is semantically
     #   decided and every reportable record is surfaced.
+    # Daily actionable work includes normal NEW/UPDATED plus any explicit user-facing
+    # review item. This prevents an interesting vacancy from disappearing merely
+    # because it rolled from NEW to STILL_OPEN before semantic review/surfacing.
     actionable_delta = [
         r for r in open_records
         if r.get("current_status") in {"NEW", "UPDATED"}
+        or r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
     ]
     actionable_pending = [r for r in actionable_delta if r.get("needs_analysis")]
     actionable_analyzed = [
@@ -253,6 +258,9 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             "actionable_delta_analyzed": len(actionable_analyzed),
             "actionable_delta_pending": len(actionable_pending),
             "historical_backlog_remaining": max(0, len(pending) - len(actionable_pending)),
+            "explicit_user_review_open": sum(1 for r in open_records if r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}),
+            "never_reviewed_open": sum(1 for r in open_records if r.get("analysis_status") != "ANALYZED"),
+            "never_surfaced_pending": sum(1 for r in pending if not r.get("surfaced_at")),
             "reportable_above_threshold_or_priority": len(reportable),
             "surfaced_ever_current": len(surfaced),
             "actionable_reportable": len(actionable_reportable),
@@ -312,14 +320,14 @@ def main() -> int:
     run_state = read_json(ROOT / "job_watch_run_state.json", {})
     batches = {batch.upper(): audit_batch(batch, run_state) for batch in BATCHES}
     payload = {
-        "version": "1.3",
+        "version": "1.4",
         "generated_at": utc_now(),
         "definition": (
             "Inventory completeness is separate from semantic-analysis completeness. "
             "JW2 includes the Amazon priority inventory in analysis reconciliation. "
             "DAILY_COMPLETE requires official inventory/state reconciliation, complete semantic handling, "
             "surfaced history, a current GPT run certification, mandatory autonomous search, and priority-company "
-            "checks for today's actionable delta. Historical STILL_OPEN backlog "
+            "checks for today's actionable delta. Explicit TO_REVIEW/INTERESTED vacancies remain actionable even after becoming STILL_OPEN. Historical STILL_OPEN backlog "
             "is reported separately and does not block the daily run. FULL_SEMANTIC_COMPLETE additionally "
             "requires zero pending historical records and full reporting reconciliation."
         ),
