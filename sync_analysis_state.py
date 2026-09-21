@@ -404,7 +404,42 @@ def sync_batch(batch: str) -> dict:
             if field in job:
                 rec[field] = job.get(field)
 
-        if exclusion:
+        if effective_user_decision == "NOT_INTERESTED":
+            rec.update({
+                "needs_analysis": False,
+                "analysis_status": "ANALYZED",
+                "analysis_method": "user_decision_not_interested",
+                "hard_exclusion_reason": None,
+                "fit_score": old.get("fit_score"),
+                "experience_required": old.get("experience_required"),
+                "salary": old.get("salary"),
+                "salary_source": old.get("salary_source"),
+                "reportable": False,
+                "rationale": user_decision.get("reason") or "Explicit user decision: not interested.",
+                "analyzed_at": user_decision.get("decided_at") or utc_now(),
+            })
+            preserved += 1
+        elif effective_user_decision == "APPLIED" and not decision_valid(
+            decision,
+            fingerprint,
+            title=job.get("title"),
+            priority_company=bool(job.get("_priority_company")),
+        ):
+            rec.update({
+                "needs_analysis": False,
+                "analysis_status": "ANALYZED",
+                "analysis_method": "user_decision_applied",
+                "hard_exclusion_reason": None,
+                "fit_score": old.get("fit_score"),
+                "experience_required": old.get("experience_required"),
+                "salary": old.get("salary"),
+                "salary_source": old.get("salary_source"),
+                "reportable": False,
+                "rationale": user_decision.get("reason") or "Explicit user decision: already applied.",
+                "analyzed_at": user_decision.get("decided_at") or utc_now(),
+            })
+            preserved += 1
+        elif exclusion:
             rec.update({
                 "needs_analysis": False,
                 "analysis_status": "ANALYZED",
