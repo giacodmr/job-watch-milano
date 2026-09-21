@@ -325,12 +325,14 @@ def sync_batch(batch: str) -> dict:
     decisions_path = ROOT / f"semantic_decisions_{batch}.json"
     surfaced_path = ROOT / f"surfaced_jobs_{batch}.json"
     queue_path = ROOT / f"semantic_queue_{batch}.json"
+    user_decisions_path = ROOT / "user_job_decisions.json"
 
     current = read_json(current_path, {})
     old_state = read_json(state_path, {"records": {}})
     old_records = old_state.get("records") or {}
     decisions = (read_json(decisions_path, {"records": {}}).get("records") or {})
     surfaced_registry = (read_json(surfaced_path, {"records": {}}).get("records") or {})
+    user_decisions = (read_json(user_decisions_path, {"records": {}}).get("records") or {})
 
     current_all, current_open, url_to_key = add_standard_jobs(current)
     overlay_amazon_priority(batch, current_all, current_open, url_to_key)
@@ -354,6 +356,7 @@ def sync_batch(batch: str) -> dict:
         exclusion = hard_exclusion_reason(job.get("title"))
         decision = decisions.get(key) or {}
         surfaced = surfaced_registry.get(key) or {}
+        user_decision = user_decisions.get(key) or {}
 
         rec = {
             "company": company_name,
@@ -374,6 +377,9 @@ def sync_batch(batch: str) -> dict:
             "last_seen_at": current.get("generated_at") or utc_now(),
             "surfaced_at": surfaced.get("surfaced_at") or old.get("surfaced_at"),
             "surfaced_status": surfaced.get("surfaced_status") or old.get("surfaced_status"),
+            "user_decision": user_decision.get("decision"),
+            "user_decision_reason": user_decision.get("reason"),
+            "user_decided_at": user_decision.get("decided_at"),
         }
 
         # Preserve Amazon structured JD hints in state/queue.
@@ -471,6 +477,10 @@ def sync_batch(batch: str) -> dict:
             "apply_url": rec.get("apply_url"),
             "fingerprint": rec.get("fingerprint"),
             "first_seen_at": rec.get("first_seen_at"),
+            "user_decision": rec.get("user_decision"),
+            "user_decision_reason": rec.get("user_decision_reason"),
+            "never_reviewed": rec.get("analysis_status") != "ANALYZED",
+            "never_surfaced": not bool(rec.get("surfaced_at")),
             "amazon_semantic_source": "amazon_target_check.json" if rec.get("company") == "Amazon" and rec.get("priority_company") else None,
             "required_years_mentions": rec.get("required_years_mentions"),
             "preferred_years_mentions": rec.get("preferred_years_mentions"),
@@ -478,7 +488,11 @@ def sync_batch(batch: str) -> dict:
             "experience_status_hint": rec.get("experience_status_hint"),
             "experience_reason_hint": rec.get("experience_reason_hint"),
         })
-    queue_records.sort(key=queue_sort_key)
+    # Explicit TO_REVIEW/INTERESTED records are user-facing priority even when STILL_OPEN.
+    queue_records.sort(key=lambda row: (
+        0 if row.get("user_decision") in {"TO_REVIEW", "INTERESTED"} else 1,
+        *queue_sort_key(row),
+    ))
 
     payload = {
         "version": "2.0",
@@ -495,6 +509,8 @@ def sync_batch(batch: str) -> dict:
             "decision_registry": decisions_path.name,
             "surfaced_registry": surfaced_path.name,
             "queue_file": queue_path.name,
+            "user_decisions_registry": user_decisions_path.name,
+            "never_reviewed_never_surfaced_guard": True,
         },
         "summary": {
             "open_extracted": len(current_open),
