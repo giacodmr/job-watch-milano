@@ -17,7 +17,6 @@ HARD_EXCLUSION_RULES = (
     ("software_engineering", re.compile(r"\b(software|backend|frontend|front-end|full[ -]?stack|mobile|platform|systems?)\s+(engineer|developer)\b|\bdeveloper\b", re.I)),
     ("technical_engineering", re.compile(r"\b(data engineer|machine learning engineer|ml engineer|security engineer|network engineer|cloud engineer|devops|site reliability engineer|solutions architect|solution architect|enterprise architect|data architect)\b", re.I)),
     ("data_science", re.compile(r"\b(data scientist|applied scientist|research scientist|machine learning scientist)\b", re.I)),
-    ("marketing_crm", re.compile(r"\b(marketing|crm|brand marketing|product marketing|growth marketing|performance marketing)\b", re.I)),
     ("hr_recruiting", re.compile(r"\b(recruiter|recruiting|talent acquisition|human resources|people partner|hr business partner)\b", re.I)),
     ("legal", re.compile(r"\b(counsel|lawyer|legal counsel|legal advisor|attorney)\b", re.I)),
     ("pure_sales", re.compile(r"\b(account executive|sales representative|sales executive|sales account|inside sales|field sales|telesales)\b", re.I)),
