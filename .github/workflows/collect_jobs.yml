@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - ".job_watch_run"
+      - ".job_watch_manual_run"
   schedule:
     - cron: "30 6 * * *"
       timezone: "Europe/Rome"
