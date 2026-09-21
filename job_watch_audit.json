@@ -1,6 +1,6 @@
 {
   "version": "1.3",
-  "generated_at": "2026-09-21T11:14:39Z",
+  "generated_at": "2026-09-21T11:16:08Z",
   "definition": "Inventory completeness is separate from semantic-analysis completeness. JW2 includes the Amazon priority inventory in analysis reconciliation. DAILY_COMPLETE requires official inventory/state reconciliation, complete semantic handling, surfaced history, a current GPT run certification, mandatory autonomous search, and priority-company checks for today's actionable delta. Historical STILL_OPEN backlog is reported separately and does not block the daily run. FULL_SEMANTIC_COMPLETE additionally requires zero pending historical records and full reporting reconciliation.",
   "batches": {
     "JW1": {
@@ -17,15 +17,15 @@
         "priority_overlay_open": 0,
         "extracted_open": 833,
         "state_records_open": 833,
-        "analyzed_current": 288,
+        "analyzed_current": 291,
         "hard_rule_analyzed": 282,
-        "semantic_analyzed": 6,
-        "pending_analysis": 545,
-        "queue_pending": 545,
-        "analysis_pct": 34.57,
+        "semantic_analyzed": 9,
+        "pending_analysis": 542,
+        "queue_pending": 542,
+        "analysis_pct": 34.93,
         "actionable_delta_open": 6,
-        "actionable_delta_analyzed": 3,
-        "actionable_delta_pending": 3,
+        "actionable_delta_analyzed": 6,
+        "actionable_delta_pending": 0,
         "historical_backlog_remaining": 542,
         "reportable_above_threshold_or_priority": 2,
         "surfaced_ever_current": 2,
@@ -287,23 +287,23 @@
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
-        "actionable_delta_complete": false,
-        "actionable_reporting_reconciliation": false,
+        "actionable_delta_complete": true,
+        "actionable_reporting_reconciliation": true,
         "all_companies_attempted": true,
         "no_failed_company_checks": true,
         "company_count": 54,
-        "gpt_run_certified": false
+        "gpt_run_certified": true
       },
       "run_certification": {
-        "run_id": "20260921T094000Z",
+        "run_id": "20260921T110019Z",
         "manifest_persisted": true,
         "identity_complete": true,
-        "source_snapshot_match": false,
+        "source_snapshot_match": true,
         "semantic_delta_declared_complete": true,
         "autonomous_search_complete": true,
         "autonomous_search_evidence_present": true,
-        "autonomous_delta_count": 0,
-        "autonomous_validated_count": 0,
+        "autonomous_delta_count": 1,
+        "autonomous_validated_count": 1,
         "autonomous_delta_reconciled": true,
         "priority_check_required": true,
         "priority_check_evidence_present": true,
@@ -311,11 +311,11 @@
         "priority_snapshot_match": true,
         "batch_errors": [],
         "global_blocking_errors": [],
-        "complete": false
+        "complete": true
       },
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "run_complete": false
+      "run_complete": true
     },
     "JW2": {
       "batch": "JW2",
@@ -331,15 +331,15 @@
         "priority_overlay_open": 0,
         "extracted_open": 1159,
         "state_records_open": 1159,
-        "analyzed_current": 263,
+        "analyzed_current": 265,
         "hard_rule_analyzed": 247,
-        "semantic_analyzed": 16,
-        "pending_analysis": 896,
-        "queue_pending": 896,
-        "analysis_pct": 22.69,
+        "semantic_analyzed": 18,
+        "pending_analysis": 894,
+        "queue_pending": 894,
+        "analysis_pct": 22.86,
         "actionable_delta_open": 2,
-        "actionable_delta_analyzed": 0,
-        "actionable_delta_pending": 2,
+        "actionable_delta_analyzed": 2,
+        "actionable_delta_pending": 0,
         "historical_backlog_remaining": 894,
         "reportable_above_threshold_or_priority": 10,
         "surfaced_ever_current": 10,
@@ -592,18 +592,18 @@
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
-        "actionable_delta_complete": false,
-        "actionable_reporting_reconciliation": false,
+        "actionable_delta_complete": true,
+        "actionable_reporting_reconciliation": true,
         "all_companies_attempted": true,
         "no_failed_company_checks": true,
         "company_count": 48,
-        "gpt_run_certified": false
+        "gpt_run_certified": true
       },
       "run_certification": {
-        "run_id": "20260921T094000Z",
+        "run_id": "20260921T110019Z",
         "manifest_persisted": true,
         "identity_complete": true,
-        "source_snapshot_match": false,
+        "source_snapshot_match": true,
         "semantic_delta_declared_complete": true,
         "autonomous_search_complete": true,
         "autonomous_search_evidence_present": true,
@@ -613,14 +613,14 @@
         "priority_check_required": true,
         "priority_check_evidence_present": true,
         "priority_check_complete": true,
-        "priority_snapshot_match": false,
+        "priority_snapshot_match": true,
         "batch_errors": [],
         "global_blocking_errors": [],
-        "complete": false
+        "complete": true
       },
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "run_complete": false
+      "run_complete": true
     },
     "JW3": {
       "batch": "JW3",
@@ -938,13 +938,13 @@
         "all_companies_attempted": true,
         "no_failed_company_checks": true,
         "company_count": 40,
-        "gpt_run_certified": false
+        "gpt_run_certified": true
       },
       "run_certification": {
-        "run_id": "20260921T094000Z",
+        "run_id": "20260921T110019Z",
         "manifest_persisted": true,
         "identity_complete": true,
-        "source_snapshot_match": false,
+        "source_snapshot_match": true,
         "semantic_delta_declared_complete": true,
         "autonomous_search_complete": true,
         "autonomous_search_evidence_present": true,
@@ -957,11 +957,11 @@
         "priority_snapshot_match": true,
         "batch_errors": [],
         "global_blocking_errors": [],
-        "complete": false
+        "complete": true
       },
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "run_complete": false
+      "run_complete": true
     },
     "JW4": {
       "batch": "JW4",
@@ -977,15 +977,15 @@
         "priority_overlay_open": 0,
         "extracted_open": 452,
         "state_records_open": 452,
-        "analyzed_current": 189,
+        "analyzed_current": 193,
         "hard_rule_analyzed": 184,
-        "semantic_analyzed": 5,
-        "pending_analysis": 263,
-        "queue_pending": 263,
-        "analysis_pct": 41.81,
+        "semantic_analyzed": 9,
+        "pending_analysis": 259,
+        "queue_pending": 259,
+        "analysis_pct": 42.7,
         "actionable_delta_open": 7,
-        "actionable_delta_analyzed": 3,
-        "actionable_delta_pending": 4,
+        "actionable_delta_analyzed": 7,
+        "actionable_delta_pending": 0,
         "historical_backlog_remaining": 259,
         "reportable_above_threshold_or_priority": 1,
         "surfaced_ever_current": 1,
@@ -1220,18 +1220,18 @@
         "state_reconciliation": true,
         "analysis_complete": false,
         "reporting_reconciliation": false,
-        "actionable_delta_complete": false,
-        "actionable_reporting_reconciliation": false,
+        "actionable_delta_complete": true,
+        "actionable_reporting_reconciliation": true,
         "all_companies_attempted": true,
         "no_failed_company_checks": true,
         "company_count": 52,
-        "gpt_run_certified": false
+        "gpt_run_certified": true
       },
       "run_certification": {
-        "run_id": "20260921T094000Z",
+        "run_id": "20260921T110019Z",
         "manifest_persisted": true,
         "identity_complete": true,
-        "source_snapshot_match": false,
+        "source_snapshot_match": true,
         "semantic_delta_declared_complete": true,
         "autonomous_search_complete": true,
         "autonomous_search_evidence_present": true,
@@ -1244,11 +1244,11 @@
         "priority_snapshot_match": true,
         "batch_errors": [],
         "global_blocking_errors": [],
-        "complete": false
+        "complete": true
       },
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "run_complete": false
+      "run_complete": true
     }
   }
 }
