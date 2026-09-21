@@ -62,11 +62,61 @@ def priority_overlay_keys(batch: str, existing: set[str]) -> set[str]:
     return extra
 
 
-def audit_batch(batch: str) -> dict:
+
+def run_certification(batch: str, current: dict, run_state: dict) -> dict:
+    name = batch.upper()
+    row = ((run_state.get("batches") or {}).get(name) or {})
+    source_match = ((run_state.get("source_generated_at") or {}).get(name) == current.get("generated_at"))
+    autonomous_complete = row.get("autonomous_search_complete") is True
+    semantic_declared = row.get("semantic_delta_complete") is True
+    priority_required = batch in {"jw1", "jw2"}
+    priority_name = "Mastercard" if batch == "jw1" else "Amazon" if batch == "jw2" else None
+    priority_row_ok = row.get("priority_check_complete") is True
+    priority_global_ok = True if not priority_required else (run_state.get("priority_checks") or {}).get(priority_name) is True
+    try:
+        autonomous_delta_count = int(row.get("autonomous_delta_count", 0) or 0)
+        autonomous_validated_count = int(row.get("autonomous_validated_count", 0) or 0)
+    except (TypeError, ValueError):
+        autonomous_delta_count = -1
+        autonomous_validated_count = -2
+    autonomous_reconciled = autonomous_delta_count >= 0 and autonomous_delta_count == autonomous_validated_count
+    batch_errors = row.get("errors") or []
+    global_errors = run_state.get("blocking_errors") or []
+    identity_ok = bool(run_state.get("run_id") and run_state.get("completed_at"))
+    complete = bool(
+        identity_ok
+        and source_match
+        and semantic_declared
+        and autonomous_complete
+        and autonomous_reconciled
+        and priority_row_ok
+        and priority_global_ok
+        and not batch_errors
+        and not global_errors
+    )
+    return {
+        "run_id": run_state.get("run_id"),
+        "manifest_persisted": bool(run_state),
+        "identity_complete": identity_ok,
+        "source_snapshot_match": source_match,
+        "semantic_delta_declared_complete": semantic_declared,
+        "autonomous_search_complete": autonomous_complete,
+        "autonomous_delta_count": autonomous_delta_count,
+        "autonomous_validated_count": autonomous_validated_count,
+        "autonomous_delta_reconciled": autonomous_reconciled,
+        "priority_check_required": priority_required,
+        "priority_check_complete": priority_row_ok and priority_global_ok,
+        "batch_errors": batch_errors,
+        "global_blocking_errors": global_errors,
+        "complete": complete,
+    }
+
+def audit_batch(batch: str, run_state: dict) -> dict:
     current = read_json(ROOT / f"current_jobs_{batch}.json", {})
     mapping = read_json(ROOT / f"ats_mapping_{batch}.json", {"companies": []})
     state = read_json(ROOT / f"analysis_results_{batch}.json", {"records": {}})
     queue = read_json(ROOT / f"semantic_queue_{batch}.json", {"records": []})
+    certification = run_certification(batch, current, run_state)
 
     base_keys = extracted_open_keys(current)
     overlay_keys = priority_overlay_keys(batch, base_keys)
@@ -208,7 +258,9 @@ def audit_batch(batch: str) -> dict:
             "all_companies_attempted": all_companies_attempted,
             "no_failed_company_checks": not unresolved_attempts,
             "company_count": total_companies,
+            "gpt_run_certified": certification["complete"],
         },
+        "run_certification": certification,
         "daily_complete": bool(
             base_inventory_reconciliation
             and state_reconciliation
@@ -216,6 +268,7 @@ def audit_batch(batch: str) -> dict:
             and actionable_reporting_reconciliation
             and all_companies_attempted
             and not unresolved_attempts
+            and certification["complete"]
         ),
         "full_semantic_complete": bool(
             base_inventory_reconciliation
@@ -234,26 +287,58 @@ def audit_batch(batch: str) -> dict:
             and actionable_reporting_reconciliation
             and all_companies_attempted
             and not unresolved_attempts
+            and certification["complete"]
         ),
     }
 
 
 def main() -> int:
-    batches = {batch.upper(): audit_batch(batch) for batch in BATCHES}
+    run_state = read_json(ROOT / "job_watch_run_state.json", {})
+    batches = {batch.upper(): audit_batch(batch, run_state) for batch in BATCHES}
     payload = {
-        "version": "1.2",
+        "version": "1.3",
         "generated_at": utc_now(),
         "definition": (
             "Inventory completeness is separate from semantic-analysis completeness. "
             "JW2 includes the Amazon priority inventory in analysis reconciliation. "
-            "DAILY_COMPLETE requires official inventory/state reconciliation plus complete semantic handling "
-            "and surfaced history for today's NEW/UPDATED actionable delta. Historical STILL_OPEN backlog "
+            "DAILY_COMPLETE requires official inventory/state reconciliation, complete semantic handling, "
+            "surfaced history, a current GPT run certification, mandatory autonomous search, and priority-company "
+            "checks for today's actionable delta. Historical STILL_OPEN backlog "
             "is reported separately and does not block the daily run. FULL_SEMANTIC_COMPLETE additionally "
             "requires zero pending historical records and full reporting reconciliation."
         ),
         "batches": batches,
     }
     write_json(ROOT / "job_watch_audit.json", payload)
+
+    overall = all(row.get("daily_complete") is True for row in batches.values())
+    health = {
+        "version": "1.0",
+        "generated_at": payload["generated_at"],
+        "run_id": run_state.get("run_id"),
+        "DAILY_COMPLETE": overall,
+        "FULL_SEMANTIC_COMPLETE": all(row.get("full_semantic_complete") is True for row in batches.values()),
+        "priority_checks": run_state.get("priority_checks") or {},
+        "batches": {
+            name: {
+                "source_generated_at": row.get("source_generated_at"),
+                "daily_complete": row.get("daily_complete"),
+                "full_semantic_complete": row.get("full_semantic_complete"),
+                "gpt_run_certified": (row.get("run_certification") or {}).get("complete"),
+                "actionable_delta_pending": (row.get("vacancy_analysis_coverage") or {}).get("actionable_delta_pending"),
+                "historical_backlog_remaining": (row.get("vacancy_analysis_coverage") or {}).get("historical_backlog_remaining"),
+                "failed": (row.get("company_ats_coverage") or {}).get("FAILED"),
+                "not_checked": (row.get("company_ats_coverage") or {}).get("NOT_CHECKED"),
+            }
+            for name, row in batches.items()
+        },
+        "blocking_errors": list(run_state.get("blocking_errors") or []) + [
+            f"{name}: end-to-end run incomplete"
+            for name, row in batches.items()
+            if row.get("daily_complete") is not True
+        ],
+    }
+    write_json(ROOT / "job_watch_healthcheck.json", health)
 
     for name, row in batches.items():
         v = row["vacancy_analysis_coverage"]
