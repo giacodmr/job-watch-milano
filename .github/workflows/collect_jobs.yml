@@ -85,7 +85,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          GENERATED_FILES="current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_audit.json"
+          GENERATED_FILES="current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_audit.json job_watch_healthcheck.json"
 
           regenerate() {
             echo "Regenerating Job Watch outputs on latest main..."
