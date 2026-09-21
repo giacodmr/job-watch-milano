@@ -1,64 +1,78 @@
 {
   "version": "1.0",
-  "run_id": null,
-  "started_at": null,
-  "completed_at": null,
+  "run_id": "20260921T094000Z",
+  "started_at": "2026-09-21T09:32:00Z",
+  "completed_at": "2026-09-21T09:40:00Z",
   "source_generated_at": {
-    "JW1": null,
-    "JW2": null,
-    "JW3": null,
-    "JW4": null
+    "JW1": "2026-09-21T09:02:07Z",
+    "JW2": "2026-09-21T09:04:50Z",
+    "JW3": "2026-09-21T09:05:47Z",
+    "JW4": "2026-09-21T09:08:28Z"
   },
   "batches": {
     "JW1": {
-      "semantic_delta_complete": false,
-      "autonomous_search_complete": false,
-      "priority_check_complete": false,
-      "autonomous_delta_count": 0,
-      "autonomous_validated_count": 0,
-      "errors": [],
-      "autonomous_search_evidence": [],
-      "priority_check_evidence": []
-    },
-    "JW2": {
-      "semantic_delta_complete": false,
-      "autonomous_search_complete": false,
-      "priority_check_complete": false,
-      "autonomous_delta_count": 0,
-      "autonomous_validated_count": 0,
-      "errors": [],
-      "autonomous_search_evidence": [],
-      "priority_check_evidence": []
-    },
-    "JW3": {
-      "semantic_delta_complete": false,
-      "autonomous_search_complete": false,
+      "semantic_delta_complete": true,
+      "autonomous_search_complete": true,
       "priority_check_complete": true,
       "autonomous_delta_count": 0,
       "autonomous_validated_count": 0,
       "errors": [],
-      "autonomous_search_evidence": [],
+      "autonomous_search_evidence": [
+        "2026-09-21 independent finance/payments/business-role search across Milan/Rome; no additional first-party validated actionable delta."
+      ],
+      "priority_check_evidence": [
+        "Mastercard official Workday inventory represented in current JW1 snapshot; no NEW/UPDATED Mastercard delta."
+      ]
+    },
+    "JW2": {
+      "semantic_delta_complete": true,
+      "autonomous_search_complete": true,
+      "priority_check_complete": true,
+      "autonomous_delta_count": 1,
+      "autonomous_validated_count": 1,
+      "errors": [],
+      "autonomous_search_evidence": [
+        "KPMG Junior Consultant | Business Transformation, Milan; official KPMG posting dated 18 Sep 2026 validated."
+      ],
+      "priority_check_evidence": [
+        "Amazon target snapshot VERIFIED Milan/Rome/Luxembourg/London at 2026-09-21T09:08:28.548970+00:00."
+      ]
+    },
+    "JW3": {
+      "semantic_delta_complete": true,
+      "autonomous_search_complete": true,
+      "priority_check_complete": true,
+      "autonomous_delta_count": 0,
+      "autonomous_validated_count": 0,
+      "errors": [],
+      "autonomous_search_evidence": [
+        "Independent energy/industrial search; Octopus Commercial Analyst official Lever JD validated as monitored NEW; no additional first-party autonomous delta."
+      ],
       "priority_check_evidence": []
     },
     "JW4": {
       "semantic_delta_complete": false,
-      "autonomous_search_complete": false,
+      "autonomous_search_complete": true,
       "priority_check_complete": true,
       "autonomous_delta_count": 0,
       "autonomous_validated_count": 0,
-      "errors": [],
-      "autonomous_search_evidence": [],
+      "errors": [
+        "PRADA Innovation Manager NEW is plausibly relevant but official full JD could not be retrieved; title-only closure is prohibited by policy."
+      ],
+      "autonomous_search_evidence": [
+        "Independent consumer/luxury/corporate search across Milan business controller/commercial planning/strategy; no additional first-party validated actionable delta."
+      ],
       "priority_check_evidence": []
     }
   },
   "priority_checks": {
-    "Amazon": false,
-    "Mastercard": false
+    "Amazon": true,
+    "Mastercard": true
   },
   "blocking_errors": [
-    "No GPT run has yet been certified against the current inventory."
+    "JW4 PRADA Innovation Manager requires full official JD semantic review; official page was not retrievable in this run."
   ],
   "priority_snapshot_at": {
-    "Amazon": null
+    "Amazon": "2026-09-21T09:08:28.548970+00:00"
   }
 }
