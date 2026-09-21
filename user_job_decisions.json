@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "updated_at": "2026-09-21T11:25:00Z",
+  "version": "1.1",
+  "updated_at": "2026-09-21T11:40:00Z",
   "statuses": [
     "TO_REVIEW",
     "INTERESTED",
@@ -10,17 +10,19 @@
   "policy": {
     "purpose": "Persist explicit user decisions separately from semantic fit and vacancy lifecycle status.",
     "default": "No record means no explicit user decision.",
-    "not_interested": "Suppress from normal reports while the same vacancy fingerprint remains open; retain history.",
-    "applied": "Suppress from apply-now list; keep open/closed monitoring.",
+    "not_interested": "Suppress from normal reports while the same vacancy fingerprint remains open. If the fingerprint materially changes, force re-review.",
+    "applied": "Suppress from apply-now list while continuing open/updated/closed monitoring.",
     "interested": "Keep in active shortlist while open.",
     "to_review": "Keep visible until user decides.",
-    "generalization": "Never infer a company-wide or role-family exclusion from one vacancy decision."
+    "generalization": "Never infer a company-wide or role-family exclusion from one vacancy decision.",
+    "fingerprint_rule": "Store the fingerprint at the time of a vacancy-specific decision. NOT_INTERESTED is invalidated by a fingerprint change; TO_REVIEW, INTERESTED and APPLIED persist across updates."
   },
   "records": {
     "Nike::R-91871": {
       "decision": "TO_REVIEW",
       "reason": "Recovered from historical semantic backlog after user identified it; requires immediate full-JD review and explicit user decision.",
-      "decided_at": "2026-09-21T11:25:00Z"
+      "decided_at": "2026-09-21T11:25:00Z",
+      "fingerprint": "c28b802d562bb47d"
     }
   }
 }
