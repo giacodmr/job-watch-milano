@@ -62,6 +62,10 @@ for b in BATCHES:
     if pending != len(qrecords):
         raise SystemExit(f"INTEGRITY ERROR: {b} queue count mismatch {pending}!={len(qrecords)}")
 
+user_decisions=load("user_job_decisions.json")
+if not isinstance(user_decisions.get("records"), dict):
+    raise SystemExit("INTEGRITY ERROR: user decision registry invalid")
+
 amazon=load("amazon_target_check.json")
 for city in ("Milan","Rome","Luxembourg","London"):
     row=(amazon.get("locations") or {}).get(city)
