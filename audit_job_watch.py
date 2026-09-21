@@ -33,6 +33,17 @@ def canonical_key(url: str | None) -> str | None:
     return str(url).split("#", 1)[0].rstrip("/").casefold()
 
 
+def iso_at_or_after(value: str | None, cutoff: str | None) -> bool:
+    if not value or not cutoff:
+        return False
+    try:
+        left = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        right = datetime.fromisoformat(str(cutoff).replace("Z", "+00:00"))
+        return left >= right
+    except (TypeError, ValueError):
+        return False
+
+
 def extracted_open_keys(current: dict) -> set[str]:
     keys = set()
     for company in current.get("companies", []):
@@ -133,6 +144,8 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     state = read_json(ROOT / f"analysis_results_{batch}.json", {"records": {}})
     queue = read_json(ROOT / f"semantic_queue_{batch}.json", {"records": []})
     user_decisions = (read_json(ROOT / "user_job_decisions.json", {"records": {}}).get("records") or {})
+    rules = read_json(ROOT / "job_watch_rules.json", {})
+    never_disappear_since = ((rules.get("user_decision_policy") or {}).get("never_disappear_since"))
     certification = run_certification(batch, current, run_state)
 
     base_keys = extracted_open_keys(current)
@@ -154,6 +167,7 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     reportable = [
         r for r in analyzed
         if r.get("reportable") is True
+        and r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
         and (
             r.get("priority_company") is True
             or (r.get("fit_score") or 0) >= (r.get("threshold") or 0)
@@ -175,8 +189,18 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     # because it rolled from NEW to STILL_OPEN before semantic review/surfacing.
     actionable_delta = [
         r for r in open_records
-        if r.get("current_status") in {"NEW", "UPDATED"}
-        or r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
+        if (
+            r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
+            and (
+                r.get("current_status") in {"NEW", "UPDATED"}
+                or r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
+                or (
+                    r.get("needs_analysis")
+                    and not r.get("surfaced_at")
+                    and iso_at_or_after(r.get("first_seen_at"), never_disappear_since)
+                )
+            )
+        )
     ]
     actionable_pending = [r for r in actionable_delta if r.get("needs_analysis")]
     actionable_analyzed = [
@@ -185,10 +209,16 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     ]
     actionable_reportable = [
         r for r in actionable_analyzed
-        if r.get("reportable") is True
-        and (
-            r.get("priority_company") is True
-            or (r.get("fit_score") or 0) >= (r.get("threshold") or 0)
+        if (
+            r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
+            or (
+                r.get("reportable") is True
+                and r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
+                and (
+                    r.get("priority_company") is True
+                    or (r.get("fit_score") or 0) >= (r.get("threshold") or 0)
+                )
+            )
         )
     ]
     actionable_surfaced = [r for r in actionable_reportable if r.get("surfaced_at")]
@@ -259,6 +289,14 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             "actionable_delta_pending": len(actionable_pending),
             "historical_backlog_remaining": max(0, len(pending) - len(actionable_pending)),
             "explicit_user_review_open": sum(1 for r in open_records if r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}),
+            "applied_open": sum(1 for r in open_records if r.get("user_decision") == "APPLIED"),
+            "not_interested_open": sum(1 for r in open_records if r.get("user_decision") == "NOT_INTERESTED"),
+            "guarded_never_reviewed_open": sum(
+                1 for r in open_records
+                if r.get("needs_analysis")
+                and not r.get("surfaced_at")
+                and iso_at_or_after(r.get("first_seen_at"), never_disappear_since)
+            ),
             "never_reviewed_open": sum(1 for r in open_records if r.get("analysis_status") != "ANALYZED"),
             "never_surfaced_pending": sum(1 for r in pending if not r.get("surfaced_at")),
             "reportable_above_threshold_or_priority": len(reportable),
