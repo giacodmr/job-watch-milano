@@ -73,6 +73,13 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
     priority_name = "Mastercard" if batch == "jw1" else "Amazon" if batch == "jw2" else None
     priority_row_ok = row.get("priority_check_complete") is True
     priority_global_ok = True if not priority_required else (run_state.get("priority_checks") or {}).get(priority_name) is True
+    if batch == "jw2":
+        amazon = read_json(ROOT / "amazon_target_check.json", {})
+        priority_snapshot_match = (
+            (run_state.get("priority_snapshot_at") or {}).get("Amazon") == amazon.get("checked_at")
+        )
+    else:
+        priority_snapshot_match = True
     try:
         autonomous_delta_count = int(row.get("autonomous_delta_count", 0) or 0)
         autonomous_validated_count = int(row.get("autonomous_validated_count", 0) or 0)
@@ -91,6 +98,7 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
         and autonomous_reconciled
         and priority_row_ok
         and priority_global_ok
+        and priority_snapshot_match
         and not batch_errors
         and not global_errors
     )
@@ -106,6 +114,7 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
         "autonomous_delta_reconciled": autonomous_reconciled,
         "priority_check_required": priority_required,
         "priority_check_complete": priority_row_ok and priority_global_ok,
+        "priority_snapshot_match": priority_snapshot_match,
         "batch_errors": batch_errors,
         "global_blocking_errors": global_errors,
         "complete": complete,
