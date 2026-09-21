@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-09-21T11:25:00Z",
+  "statuses": [
+    "TO_REVIEW",
+    "INTERESTED",
+    "APPLIED",
+    "NOT_INTERESTED"
+  ],
+  "policy": {
+    "purpose": "Persist explicit user decisions separately from semantic fit and vacancy lifecycle status.",
+    "default": "No record means no explicit user decision.",
+    "not_interested": "Suppress from normal reports while the same vacancy fingerprint remains open; retain history.",
+    "applied": "Suppress from apply-now list; keep open/closed monitoring.",
+    "interested": "Keep in active shortlist while open.",
+    "to_review": "Keep visible until user decides.",
+    "generalization": "Never infer a company-wide or role-family exclusion from one vacancy decision."
+  },
+  "records": {
+    "Nike::R-91871": {
+      "decision": "TO_REVIEW",
+      "reason": "Recovered from historical semantic backlog after user identified it; requires immediate full-JD review and explicit user decision.",
+      "decided_at": "2026-09-21T11:25:00Z"
+    }
+  }
+}
