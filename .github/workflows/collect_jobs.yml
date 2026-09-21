@@ -41,6 +41,7 @@ jobs:
           python -m py_compile amazon_target_check.py
           python -m py_compile sync_analysis_state.py
           python -m py_compile audit_job_watch.py
+          python -m py_compile validate_job_watch_state.py
 
       - name: Collect public ATS inventories
         run: python collector.py
@@ -76,6 +77,9 @@ jobs:
       - name: Generate completeness audit
         run: python audit_job_watch.py
 
+      - name: Validate generated state integrity
+        run: python validate_job_watch_state.py
+
       - name: Commit updated vacancy snapshots
         shell: bash
         run: |
@@ -89,6 +93,7 @@ jobs:
             python amazon_target_check.py
             python sync_analysis_state.py
             python audit_job_watch.py
+            python validate_job_watch_state.py
           }
 
           for attempt in 1 2 3; do
