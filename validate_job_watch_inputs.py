@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate persistent Job Watch inputs before any state regeneration."""
 import json
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -22,6 +23,25 @@ def load(name):
     except Exception as e:
         raise SystemExit(f"INPUT ERROR: {name} invalid JSON: {e}")
 
+
+def prior_records_count(name):
+    try:
+        log = subprocess.run(
+            ["git", "log", "-n", "1", "--format=%H", "--", name],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        if not log:
+            return None
+        cp = subprocess.run(
+            ["git", "show", f"{log}^:{name}"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        )
+        prior = json.loads(cp.stdout)
+        records = prior.get("records")
+        return len(records) if isinstance(records, dict) else None
+    except Exception:
+        return None
+
 for name in REQUIRED_CONFIG:
     load(name)
 
@@ -37,6 +57,18 @@ for b in BATCHES:
         raise SystemExit(f"INPUT ERROR: semantic_decisions_{b}.json records must be an object")
     if not isinstance(surfaced.get("records"), dict):
         raise SystemExit(f"INPUT ERROR: surfaced_jobs_{b}.json records must be an object")
+    prior_decisions = prior_records_count(f"semantic_decisions_{b}.json")
+    prior_surfaced = prior_records_count(f"surfaced_jobs_{b}.json")
+    if prior_decisions is not None and len(decisions["records"]) < prior_decisions:
+        raise SystemExit(
+            f"INPUT ERROR: semantic decision history shrank in {b}: "
+            f"{prior_decisions}->{len(decisions['records'])}"
+        )
+    if prior_surfaced is not None and len(surfaced["records"]) < prior_surfaced:
+        raise SystemExit(
+            f"INPUT ERROR: surfaced history shrank in {b}: "
+            f"{prior_surfaced}->{len(surfaced['records'])}"
+        )
     for key, value in decisions["records"].items():
         if not isinstance(key, str) or not isinstance(value, dict):
             raise SystemExit(f"INPUT ERROR: invalid semantic decision record in {b}")
