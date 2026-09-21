@@ -14,6 +14,7 @@ on:
       - "surfaced_jobs_jw2.json"
       - "surfaced_jobs_jw3.json"
       - "surfaced_jobs_jw4.json"
+      - "job_watch_run_state.json"
 
 permissions:
   contents: write
@@ -54,7 +55,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          GENERATED_FILES="analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_audit.json"
+          GENERATED_FILES="analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_audit.json job_watch_healthcheck.json"
 
           regenerate() {
             python sync_analysis_state.py
