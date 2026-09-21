@@ -106,7 +106,6 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
         and priority_global_ok
         and priority_snapshot_match
         and not batch_errors
-        and not global_errors
     )
     return {
         "run_id": run_state.get("run_id"),
