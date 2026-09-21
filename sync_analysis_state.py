@@ -357,6 +357,14 @@ def sync_batch(batch: str) -> dict:
         decision = decisions.get(key) or {}
         surfaced = surfaced_registry.get(key) or {}
         user_decision = user_decisions.get(key) or {}
+        raw_user_decision = user_decision.get("decision")
+        user_decision_fingerprint = user_decision.get("fingerprint")
+        user_decision_stale = bool(
+            raw_user_decision == "NOT_INTERESTED"
+            and user_decision_fingerprint
+            and user_decision_fingerprint != fingerprint
+        )
+        effective_user_decision = None if user_decision_stale else raw_user_decision
 
         rec = {
             "company": company_name,
@@ -377,9 +385,13 @@ def sync_batch(batch: str) -> dict:
             "last_seen_at": current.get("generated_at") or utc_now(),
             "surfaced_at": surfaced.get("surfaced_at") or old.get("surfaced_at"),
             "surfaced_status": surfaced.get("surfaced_status") or old.get("surfaced_status"),
-            "user_decision": user_decision.get("decision"),
+            "user_decision": effective_user_decision,
+            "user_decision_original": raw_user_decision,
+            "user_decision_fingerprint": user_decision_fingerprint,
+            "user_decision_stale": user_decision_stale,
             "user_decision_reason": user_decision.get("reason"),
             "user_decided_at": user_decision.get("decided_at"),
+            "suppress_from_apply_now": effective_user_decision in {"APPLIED", "NOT_INTERESTED"},
         }
 
         # Preserve Amazon structured JD hints in state/queue.
@@ -456,7 +468,15 @@ def sync_batch(batch: str) -> dict:
     analyzed = [r for r in open_records if r.get("analysis_status") == "ANALYZED" and not r.get("needs_analysis")]
     hard_rule_analyzed = [r for r in analyzed if r.get("analysis_method") == "hard_rule_title"]
     semantic_analyzed = [r for r in analyzed if r.get("analysis_method") != "hard_rule_title"]
-    reportable = [r for r in analyzed if r.get("reportable") is True]
+    reportable = [
+        r for r in analyzed
+        if r.get("reportable") is True
+        and r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
+    ]
+    active_shortlist = [
+        r for r in open_records
+        if r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
+    ]
     surfaced = [r for r in reportable if r.get("surfaced_at")]
 
     queue_records = []
@@ -479,6 +499,7 @@ def sync_batch(batch: str) -> dict:
             "first_seen_at": rec.get("first_seen_at"),
             "user_decision": rec.get("user_decision"),
             "user_decision_reason": rec.get("user_decision_reason"),
+            "user_decision_stale": rec.get("user_decision_stale"),
             "never_reviewed": rec.get("analysis_status") != "ANALYZED",
             "never_surfaced": not bool(rec.get("surfaced_at")),
             "amazon_semantic_source": "amazon_target_check.json" if rec.get("company") == "Amazon" and rec.get("priority_company") else None,
@@ -521,6 +542,10 @@ def sync_batch(batch: str) -> dict:
             "hard_rule_analyzed": len(hard_rule_analyzed),
             "semantic_analyzed": len(semantic_analyzed),
             "reportable_current": len(reportable),
+            "active_shortlist": len(active_shortlist),
+            "applied_open": sum(1 for r in open_records if r.get("user_decision") == "APPLIED"),
+            "not_interested_open": sum(1 for r in open_records if r.get("user_decision") == "NOT_INTERESTED"),
+            "stale_user_decisions": sum(1 for r in open_records if r.get("user_decision_stale")),
             "surfaced_current": len(surfaced),
         },
         "records": records,
