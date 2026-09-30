@@ -58,7 +58,12 @@ for key, value in user_decisions["records"].items():
     if not value.get("decided_at"):
         raise SystemExit(f"INPUT ERROR: user decision {key} lacks decided_at")
     if not value.get("fingerprint"):
-        raise SystemExit(f"INPUT ERROR: user decision {key} lacks fingerprint")
+        if value.get("decision") == "NOT_INTERESTED":
+            raise SystemExit(f"INPUT ERROR: NOT_INTERESTED user decision {key} lacks fingerprint")
+        print(
+            f"INPUT WARNING: user decision {key} lacks fingerprint; "
+            "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the collector sees the vacancy and sync backfills it."
+        )
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
