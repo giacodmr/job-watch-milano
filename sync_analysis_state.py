@@ -332,7 +332,9 @@ def sync_batch(batch: str) -> dict:
     old_records = old_state.get("records") or {}
     decisions = (read_json(decisions_path, {"records": {}}).get("records") or {})
     surfaced_registry = (read_json(surfaced_path, {"records": {}}).get("records") or {})
-    user_decisions = (read_json(user_decisions_path, {"records": {}}).get("records") or {})
+    user_decisions_payload = read_json(user_decisions_path, {"records": {}})
+    user_decisions = user_decisions_payload.get("records") or {}
+    user_decisions_backfilled = False
 
     current_all, current_open, url_to_key = add_standard_jobs(current)
     overlay_amazon_priority(batch, current_all, current_open, url_to_key)
