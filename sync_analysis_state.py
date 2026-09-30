@@ -359,6 +359,10 @@ def sync_batch(batch: str) -> dict:
         decision = decisions.get(key) or {}
         surfaced = surfaced_registry.get(key) or {}
         user_decision = user_decisions.get(key) or {}
+        if user_decision and not user_decision.get("fingerprint") and fingerprint:
+            user_decision["fingerprint"] = fingerprint
+            user_decisions[key] = user_decision
+            user_decisions_backfilled = True
         raw_user_decision = user_decision.get("decision")
         user_decision_fingerprint = user_decision.get("fingerprint")
         user_decision_stale = bool(
