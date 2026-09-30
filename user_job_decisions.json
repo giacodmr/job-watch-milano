@@ -15,7 +15,7 @@
     "interested": "Keep in active shortlist while open.",
     "to_review": "Keep visible until user decides.",
     "generalization": "Never infer a company-wide or role-family exclusion from one vacancy decision.",
-    "fingerprint_rule": "Store the fingerprint at the time of a vacancy-specific decision. NOT_INTERESTED is invalidated by a fingerprint change; TO_REVIEW, INTERESTED and APPLIED persist across updates."
+    "fingerprint_rule": "Store the collector fingerprint when available. An externally validated TO_REVIEW, INTERESTED or APPLIED vacancy may temporarily have no fingerprint until the collector first sees it; semantic sync must then backfill the exact collector fingerprint. NOT_INTERESTED always requires a fingerprint because a later fingerprint change invalidates the suppression."
   },
   "records": {
     "Nike::R-91871": {
