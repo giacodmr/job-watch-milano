@@ -615,6 +615,12 @@ def sync_batch(batch: str) -> dict:
         "records": queue_records,
     }
     write_json(queue_path, queue_payload)
+
+    if user_decisions_backfilled:
+        user_decisions_payload["records"] = user_decisions
+        user_decisions_payload["updated_at"] = utc_now()
+        write_json(user_decisions_path, user_decisions_payload)
+
     return payload
 
 
