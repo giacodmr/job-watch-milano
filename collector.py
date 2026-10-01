@@ -176,6 +176,10 @@ def location_matches(location, company_name: str | None = None) -> bool:
     )
     if not TARGET_LOCATION_RE.search(s) and not mastercard_lux:
         return False
+    # London, Kentucky is in the US, not in the target UK London scope.
+    if (re.search(r"\bLondon\s*,\s*(?:KY|Kentucky)\b", s, re.I)
+            and not re.search(r"\bLondon\s*,?\s*(?:UK|GB|England|United Kingdom)\b", s, re.I)):
+        return False
     if re.search(r"\bLondon\s*,\s*(?:ON|Ontario)(?:\s*,|\b)", s, re.I):
         return False
     if re.search(r"\bLondon\b.*\bCanada\b", s, re.I):

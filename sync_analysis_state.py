@@ -53,7 +53,43 @@ HARD_EXCLUSION_RULES = (
     ("generic_non_vacancy", re.compile(
         r"\b(?:candidatura spontanea|talent pool|general application|non trovi posizioni aperte)\b", re.I,
     )),
-    ("internship", re.compile(r"\b(intern|internship|stage|apprentice|apprenticeship)\b", re.I)),
+    # Additional explicitly out-of-scope title families from reviewed open backlog.
+    ("admin_clerical_narrow", re.compile(
+        r"\b(?:executive assistant|administrative senior professional|pa & internal engagement assistant|"
+        r"share plans administrator|mortgage administrator|sales and service administrator|"
+        r"speculative applications - mortgage administrator|addetto/a inserimento dati|"
+        r"contabilit[aà] fornitori)\b", re.I,
+    )),
+    ("frontline_store_narrow", re.compile(
+        r"\b(?:caf[eè] team member|tecnico audioprotesista|stock manager|responsabile vendite/athlete|"
+        r"responsabile vendite\s*-|athlete nike|ma[iî]tre|skincare specialist|"
+        r"digital client service advisor)\b", re.I,
+    )),
+    ("clinical_narrow", re.compile(
+        r"\b(?:clinical quality manager|statistical programming|health improvement coordinator|"
+        r"infermiere|dermatology nurses|isf specialist|product specialist biosurgery|"
+        r"clinical outcome assessment)\b", re.I,
+    )),
+    ("technical_speciality_narrow", re.compile(
+        r"\b(?:specialista ingegneria civile|responsabile topografia|specialista progettazione impianti|"
+        r"it infrastructure service manager|signal processing manager|technical leader|"
+        r"senior techops|systems integrator)\b", re.I,
+    )),
+    ("specialist_trading_narrow", re.compile(
+        r"\b(?:fx options trader|bond trader|ficc sales vice president)\b", re.I,
+    )),
+    ("hr_business_partner_narrow", re.compile(
+        r"\b(?:hrbp|jdl-hrbp|jdl hrbp|total rewards\s*&\s*mobility policies)\b", re.I,
+    )),
+    ("generic_or_translator_narrow", re.compile(
+        r"\b(?:we.re always on the lookout|freelance translators|freelance-\s*translators|"
+        r"freelance\s*translators)\b", re.I,
+    )),
+    ("field_maintenance_dispatch_narrow", re.compile(
+        r"\b(?:delivery station supervisor|gas dispatcher|addetto/a alla manutenzione elettrica|"
+        r"assistente alla manutenzione idraulica|manutentore idraulico)\b", re.I,
+    )),
+    ("internship", re.compile(r"\b(intern|internship|stage|apprentice|apprenticeship)\b|(?<=_)internship(?=_)", re.I)),
     ("software_engineering", re.compile(r"\b(software|backend|frontend|front-end|full[ -]?stack|mobile|platform|systems?)\s+(engineer|developer)\b|\bdeveloper\b", re.I)),
     ("technical_engineering", re.compile(r"\b(data engineer|machine learning engineer|ml engineer|security engineer|network engineer|cloud engineer|devops|site reliability engineer|solutions architect|solution architect|enterprise architect|data architect)\b", re.I)),
     ("data_science", re.compile(r"\b(data scientist|applied scientist|research scientist|machine learning scientist)\b", re.I)),
@@ -444,6 +480,11 @@ def sync_batch(batch: str) -> dict:
         fingerprint = job.get("fingerprint")
         old = old_records.get(key) or {}
         exclusion = hard_exclusion_reason(job.get("title"))
+        # Exclude US London (Kentucky) rows already captured in this snapshot.
+        loc = str(job.get("location") or "")
+        if (re.search(r"\bLondon\s*,\s*(?:KY|Kentucky)\b", loc, re.I)
+                and not re.search(r"\bLondon\s*,?\s*(?:UK|GB|England|United Kingdom)\b", loc, re.I)):
+            exclusion = "outside_target_geography"
         decision = decisions.get(key) or {}
         surfaced = surfaced_registry.get(key) or {}
         user_decision = user_decisions.get(key) or {}
@@ -533,7 +574,7 @@ def sync_batch(batch: str) -> dict:
                 "analyzed_at": user_decision.get("decided_at") or utc_now(),
             })
             preserved += 1
-        elif exclusion and (exclusion == "m_and_a_title_user_exclusion" or (not bool(job.get("_priority_company")) and not re.search(
+        elif exclusion and (exclusion in {"m_and_a_title_user_exclusion", "outside_target_geography"} or (not bool(job.get("_priority_company")) and not re.search(
             r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
             str(job.get("title") or ""),
             re.I,
