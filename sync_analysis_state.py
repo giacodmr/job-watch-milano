@@ -14,6 +14,45 @@ OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 # positive-title whitelist and no Manager/Senior/Lead exclusion.
 HARD_EXCLUSION_RULES = (
     ("m_and_a_title_user_exclusion", re.compile(r"\bM\s*(?:&|&amp;)\s*A\b", re.I)),
+    # Narrow job-family exclusions vetted against the 2026-10-01 historical queue.
+    # No generic Manager/Senior/Director, Sales, Engineering or BD keyword rule.
+    # Priority Amazon/Mastercard and L.68/99 postings still require JD review,
+    # except the separately authorized global M&A title exclusion above.
+    ("specialist_tax", re.compile(r"\b(?:tax|vat)\b", re.I)),
+    ("specialist_legal", re.compile(r"\b(?:legal\s+(?:specialist|consultant|advisor)|commercial legal|legal public sector|paralegal)\b", re.I)),
+    ("technical_engineering_narrow", re.compile(
+        r"\b(?:ai|python|web|forward deployed|integration|implementation|solutions?|applications support|"
+        r"electrical design|civil marine|packaging r&d|mlops|growth|account risk|project|product design|"
+        r"ai specification|ai-enabled threat defense|senior android|senior ios|senior software java)\s+"
+        r"(?:(?:\w+|&)\s+){0,3}(?:engineer|engineering)\b|"
+        r"\b(?:engineering (?:lead|manager|director)|lead analytics engineer|analytics engineering|"
+        r"global ai engineering|ai scientist|machine learning engineer|"
+        r"project hse (?:manager|coordinator)|corporate safety manager)\b", re.I,
+    )),
+    ("technical_architecture_narrow", re.compile(
+        r"\b(?:application|cloud|it|erp ecosystem|data\s*&\s*ai|security|enterprise\s*&\s*it|"
+        r"solutions?|technical)\s+architect\b|\b(?:senior network architect|architecture lead)\b", re.I,
+    )),
+    ("pure_content_creative_narrow", re.compile(
+        r"\b(?:content marketing|seo content|content specialist|content designer|content editor|"
+        r"brand marketing designer|creative strategy\s*&\s*integrated campaigns|"
+        r"media, channels\s*&\s*content|senior designer offices|staff content designer)\b", re.I,
+    )),
+    ("frontline_warehouse_store_narrow", re.compile(
+        r"\b(?:cold.chain warehouse manager|warehouse manager hazardous goods|device maintenance|"
+        r"facilities\s*&\s*maintenance manager|in[- ]store\s+(?:crm|high.end|training)\s+manager|"
+        r"deputy store director|in store artisan|in store trainer|store training manager)\b", re.I,
+    )),
+    ("hr_administration_narrow", re.compile(r"\b(?:benefits program manager|hr director|hr administrator)\b", re.I)),
+    ("pure_sales_narrow", re.compile(
+        r"\b(?:sales development representative|manager, sales development|head of payout sales|"
+        r"director, sales|senior sales manager|financial institution financing sales|"
+        r"electronic investment solutions sales|sales\s*-\s*derivatives|"
+        r"services sales solution director)\b", re.I,
+    )),
+    ("generic_non_vacancy", re.compile(
+        r"\b(?:candidatura spontanea|talent pool|general application|non trovi posizioni aperte)\b", re.I,
+    )),
     ("internship", re.compile(r"\b(intern|internship|stage|apprentice|apprenticeship)\b", re.I)),
     ("software_engineering", re.compile(r"\b(software|backend|frontend|front-end|full[ -]?stack|mobile|platform|systems?)\s+(engineer|developer)\b|\bdeveloper\b", re.I)),
     ("technical_engineering", re.compile(r"\b(data engineer|machine learning engineer|ml engineer|security engineer|network engineer|cloud engineer|devops|site reliability engineer|solutions architect|solution architect|enterprise architect|data architect)\b", re.I)),

@@ -25,7 +25,10 @@
     "software development",
     "IT infrastructure",
     "data science",
-    "highly technical specialist roles"
+    "highly technical specialist roles",
+    "Specialist tax/VAT or legal professional titles (not ordinary business analysis or finance roles)",
+    "Clearly technical IT/software/engineering or technology-architecture titles, without excluding business-facing roles solely for the word 'Engineering'",
+    "Pure content/design, front-line warehouse/in-store operations, HR administration and dedicated sales-development roles when the title unambiguously establishes that function"
   ],
   "preferred": [
     "corporate strategy",
@@ -113,6 +116,12 @@
       "case_insensitive": true,
       "scope": "All batches and employers, including Amazon/Mastercard and protected-category roles; title only, not body text.",
       "precedence": "Override priority-company and senior-title JD review; exclude from user-facing reports without deleting historical or APPLIED records."
+    },
+    "conservative_title_backlog_triage": {
+      "enabled": true,
+      "scope": "Clearly unrelated title-specialist roles only; applies to all batches. Priority Amazon/Mastercard and protected-category vacancies remain JD-gated unless M&A-title exclusion applies.",
+      "exceptions": "Do not exclude generic Manager, Senior, Lead, Sales, Business Development, Consulting, Analyst, Strategy, Category or Product titles by those words alone.",
+      "historical_origin": "Reviewed pending queues on 2026-10-01; preserve user decisions and history."
     }
   },
   "salary_policy": {
