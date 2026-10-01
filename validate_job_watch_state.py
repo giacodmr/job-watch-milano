@@ -53,8 +53,30 @@ for b in BATCHES:
     if not isinstance(records,dict):
         raise SystemExit(f"INTEGRITY ERROR: {b} analysis records missing")
     open_records=sum(1 for r in records.values() if r.get("current_open"))
-    if open_records != target:
-        raise SystemExit(f"INTEGRITY ERROR: {b} current/state mismatch {target}!={open_records}")
+    expected_open = target
+    if b == "jw2":
+        # JW2 semantic state overlays exhaustive Amazon target-city roles that
+        # can be absent from the base company collector. Reconcile those extra
+        # canonical vacancies before declaring an integrity mismatch.
+        amazon_overlay = load("amazon_target_check.json")
+        existing = set()
+        for company in cur.get("companies", []):
+            for job in company.get("jobs", []):
+                if job.get("status") not in {"NEW", "STILL_OPEN", "UPDATED"}:
+                    continue
+                url = str(job.get("canonical_url") or job.get("url") or job.get("apply_url") or "").split("#", 1)[0].rstrip("/").casefold()
+                if url:
+                    existing.add(url)
+        extras = 0
+        for job in amazon_overlay.get("target_jobs", []):
+            if job.get("status") not in {"NEW", "STILL_OPEN", "UPDATED"}:
+                continue
+            url = str(job.get("apply_url") or "").split("#", 1)[0].rstrip("/").casefold()
+            if url and url not in existing:
+                extras += 1
+        expected_open += extras
+    if open_records != expected_open:
+        raise SystemExit(f"INTEGRITY ERROR: {b} current/state mismatch {expected_open}!={open_records}")
     qrecords=queue.get("records")
     if not isinstance(qrecords,list):
         raise SystemExit(f"INTEGRITY ERROR: {b} queue records missing")
