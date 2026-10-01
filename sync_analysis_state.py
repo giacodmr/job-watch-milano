@@ -51,6 +51,27 @@ HARD_EXCLUSION_RULES = (
         r"\b(product|ux|ui|visual|fashion|graphic)\s+(?:senior\s+)?designer\b",
         re.I,
     )),
+    ("frontline_retail_hospitality", re.compile(
+        r"\b(sales associate|store associate|retail associate|shop assistant|store advisor|beauty consultant|"
+        r"beauty therapist|beautician|cashier|store cashier|floor manager|store manager|assistant store manager|"
+        r"restaurant manager|restaurant supervisor|front office agent|receptionist|concierge)\b", re.I,
+    )),
+    ("clinical_scientific", re.compile(
+        r"\b(informatore scientifico|pharmacist|pharmacy advisor|nurse|nursing|physician|doctor|clinical coding|"
+        r"clinical coder|clinical auditor|clinical trial|clinical operations|clinical development|clinical safety|"
+        r"drug safety|pharmacovigilance|medical science|health technology assessment|hta|health economist)\b", re.I,
+    )),
+    ("creative_content", re.compile(
+        r"\b(copywriter|art director|creative strategist|creative director|content creator|graphic artist|"
+        r"visual merchandis(?:er|ing)|stylist|styling)\b", re.I,
+    )),
+    ("facilities_property", re.compile(
+        r"\b(facilities manager|facility manager|workplace service|workplace services|building manager|property maintenance)\b", re.I,
+    )),
+    ("technical_it_specialist", re.compile(
+        r"\b(cybersecurity|cyber security|security architect|cloudops|cloud ops|sre expert|penetration testing|"
+        r"red team|technical specialist|it support|service desk|network specialist|infrastructure engineer)\b", re.I,
+    )),
 )
 
 # Marketing/CRM words are not sufficient for a hard exclusion when the title itself
@@ -445,7 +466,11 @@ def sync_batch(batch: str) -> dict:
                 "analyzed_at": user_decision.get("decided_at") or utc_now(),
             })
             preserved += 1
-        elif exclusion:
+        elif exclusion and not bool(job.get("_priority_company")) and not re.search(
+            r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
+            str(job.get("title") or ""),
+            re.I,
+        ):
             rec.update({
                 "needs_analysis": False,
                 "analysis_status": "ANALYZED",
