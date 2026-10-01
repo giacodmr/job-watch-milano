@@ -213,6 +213,14 @@ def hard_exclusion_reason(title: str | None) -> str | None:
     value = str(title or "")
     for reason, pattern in HARD_EXCLUSION_RULES:
         if pattern.search(value):
+            # Customer-facing solution/pre-sales engineers can be consultative
+            # business roles (rather than pure software engineering). Review
+            # the full JD instead of title-excluding this ambiguous family.
+            if reason == "technical_engineering_narrow" and re.search(
+                r"\b(?:solutions?\s+engineer(?:ing)?|growth engineer|implementation engineer)\b",
+                value, re.I,
+            ):
+                continue
             if reason == "marketing_crm" and MARKETING_CRM_REVIEW_EXCEPTIONS.search(value):
                 # Route the role to semantic JD review instead of closing it from title only.
                 continue
