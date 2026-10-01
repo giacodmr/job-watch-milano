@@ -256,9 +256,13 @@ def add_standard_jobs(current: dict):
             item["_company_name"] = company_name
             current_all[key] = item
             ckey = canonical_key(job.get("canonical_url") or job.get("url") or job.get("apply_url"))
-            if ckey:
+            is_open = job.get("status") in OPEN_STATUSES
+            # Historical CLOSED rows can share the exact URL with the current
+            # stable-ID vacancy (notably after the Amazon UUID migration).
+            # Never let a closed key shadow an open key in canonical matching.
+            if ckey and (ckey not in url_to_key or is_open):
                 url_to_key[ckey] = key
-            if job.get("status") in OPEN_STATUSES:
+            if is_open:
                 current_open[key] = item
     return current_all, current_open, url_to_key
 
