@@ -1,6 +1,6 @@
 {
   "version": "1.7",
-  "updated": "2026-09-21",
+  "updated": "2026-10-01",
   "locations": {
     "primary": [
       "Milan",
@@ -111,7 +111,11 @@
     "official_range_first": true,
     "estimate_if_official_missing": true,
     "estimate_requires_source_label": true,
-    "missing_salary_does_not_exclude": true
+    "missing_salary_does_not_exclude": true,
+    "minimum_acceptable_fixed_base_eur": 33000,
+    "minimum_acceptable_fixed_base_scope": "Fixed annual gross base compensation (RAL), excluding variable bonus, sign-on and RSUs; use equivalent local-currency threshold outside eurozone if reliable FX is available.",
+    "minimum_acceptable_fixed_base_rule": "Exclude a vacancy when documented fixed-base pay is capped below €33,000, or user receives a confirmed offer below this floor. When an official advert publishes only a minimum below €33,000 but the employer explicitly allows higher pay, flag salary risk and retain only if the user expressly requested it; do not misrepresent the minimum as the final RAL. When compensation is undisclosed, keep pending salary validation and do not auto-exclude.",
+    "explicit_exception": "Amazon::10415736 retained by user despite published €31,100 minimum; pursue only at a confirmed fixed-base RAL >=€33,000."
   },
   "autonomous_search_policy": {
     "required_every_run": true,
