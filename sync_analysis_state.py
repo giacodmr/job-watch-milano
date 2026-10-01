@@ -498,7 +498,7 @@ def sync_batch(batch: str) -> dict:
             r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
             str(job.get("title") or ""),
             re.I,
-        )):
+        ))):
             rec.update({
                 "needs_analysis": False,
                 "analysis_status": "ANALYZED",
