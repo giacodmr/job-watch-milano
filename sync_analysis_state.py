@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 
-# Conservative, unambiguous title-only exclusions. There is deliberately no
+# Conservative, unambiguous title-only exclusions. Queue-noise policy refreshed 2026-10-01. There is deliberately no
 # positive-title whitelist and no Manager/Senior/Lead exclusion.
 HARD_EXCLUSION_RULES = (
     ("internship", re.compile(r"\b(intern|internship|stage|apprentice|apprenticeship)\b", re.I)),
