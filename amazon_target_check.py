@@ -318,9 +318,13 @@ def experience_decision(job):
 
 
 def job_id(job):
-    # Keep this registry on the same stable public requisition ID used by the
-    # main Amazon collector. The API `id` field is an opaque row UUID.
-    return str(value(job, "id_icims", "job_id", "requisition_id", "id") or value(job, "job_path") or "")
+    # Prefer the numeric public requisition embedded in /jobs/<id>/ because
+    # search.json's opaque `id` UUID is not a stable vacancy identity.
+    path = str(value(job, "job_path", "url") or "")
+    m = re.search(r"/jobs/(\d+)(?:/|$)", path, re.I)
+    if m:
+        return m.group(1)
+    return str(value(job, "id_icims", "job_id", "requisition_id", "id") or path or "")
 
 
 def canonical_url(job):
