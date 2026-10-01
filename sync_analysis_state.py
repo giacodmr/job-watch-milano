@@ -82,7 +82,7 @@ HARD_EXCLUSION_RULES = (
     )),
     ("pure_marketing_communications", re.compile(
         r"\b(brand ambassador|paid media expert|performance marketing|content marketing specialist|corporate communications|"
-        r"events manager|event manager|public relations manager|pr manager)\b", re.I,
+        r"brand ambassador assistant|paid media specialist)\b", re.I,
     )),
 )
 
