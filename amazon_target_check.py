@@ -445,11 +445,12 @@ def main():
         "experience_policy": "Business roles are included when Basic Qualifications do not explicitly require >5 years. Unknown numeric requirements are retained for manual review to avoid false negatives. Amazon's 4-6 years bucket is therefore reviewed from the JD rather than excluded wholesale.",
         "global_coverage": "NOT_CHECKED",
         "global_coverage_reason": "All official Amazon Jobs inventory is exhausted for Milan, Rome, Luxembourg and London, but worldwide inventory is intentionally not certified.",
-        "locations": {}, "target_jobs": [], "excluded_business_jobs": [],
+        "locations": {}, "target_jobs": [], "excluded_business_jobs": [], "excluded_nonbusiness_jobs": [],
     }
 
     current_by_id = {}
     excluded_by_id = {}
+    nonbusiness_by_id = {}
     all_open_ids = set()
     for city, spec in TARGETS.items():
         norms, probe_url, probe_hits = discover_norms(city, spec)
@@ -471,6 +472,9 @@ def main():
         for job, norm in city_jobs:
             in_scope, scope_reason = is_business_role(job)
             if not in_scope:
+                item = compact_job(job, city, norm, scope_reason)
+                item["fingerprint"] = fingerprint(item)
+                nonbusiness_by_id.setdefault(item["job_id"], item)
                 continue
             business_count += 1
             item = compact_job(job, city, norm, scope_reason)
@@ -531,6 +535,7 @@ def main():
 
     result["target_jobs"] = list(current_by_id.values())
     result["excluded_business_jobs"] = list(excluded_by_id.values())
+    result["excluded_nonbusiness_jobs"] = list(nonbusiness_by_id.values())
 
     for jid, old in previous.items():
         if jid not in current_by_id and jid not in all_open_ids and old.get("status") != "CLOSED":
@@ -540,6 +545,7 @@ def main():
 
     result["target_jobs"].sort(key=lambda x: (city_rank.get(x.get("target_city"), 99), x.get("status") or "", (x.get("title") or "").casefold(), x.get("job_id") or ""))
     result["excluded_business_jobs"].sort(key=lambda x: (city_rank.get(x.get("target_city"), 99), (x.get("title") or "").casefold(), x.get("job_id") or ""))
+    result["excluded_nonbusiness_jobs"].sort(key=lambda x: (city_rank.get(x.get("target_city"), 99), (x.get("title") or "").casefold(), x.get("job_id") or ""))
     active = [x for x in result["target_jobs"] if x.get("status") in OPEN_STATUSES]
     result["summary"] = {
         "target_jobs_open": len(active),
