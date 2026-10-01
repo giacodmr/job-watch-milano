@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "batch": "JW1",
-  "synced_at": "2026-10-01T17:17:31Z",
+  "synced_at": "2026-10-01T17:22:13Z",
   "source_generated_at": "2026-10-01T08:38:06Z",
   "policy": {
     "milan_rome_threshold": 70,
@@ -19,12 +19,12 @@
   "summary": {
     "open_extracted": 883,
     "open_state_records": 883,
-    "valid_current_analysis": 396,
-    "pending_analysis": 487,
-    "analyzed_current": 396,
+    "valid_current_analysis": 406,
+    "pending_analysis": 477,
+    "analyzed_current": 406,
     "hard_rule_analyzed": 316,
-    "semantic_analyzed": 80,
-    "reportable_current": 8,
+    "semantic_analyzed": 90,
+    "reportable_current": 10,
     "active_shortlist": 6,
     "applied_open": 0,
     "not_interested_open": 3,
@@ -58,17 +58,52 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 42,
+      "experience_required": "Comparable/current Mastercard Director Product Management postings require around 8+ years of product-management experience plus senior cross-functional ownership.",
+      "mandatory_years_experience": 8,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Extensive product-management experience",
+          "End-to-end product strategy and lifecycle ownership",
+          "Senior stakeholder influence",
+          "Business-case and commercialization leadership"
+        ],
+        "preferred": [
+          "Payments/financial-services product experience",
+          "Technical/API/data-product fluency"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Director-level product strategy, roadmap, commercialization and cross-functional delivery ownership.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Established product-management depth is mandatory.",
+      "education_or_certifications_required": null,
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Director-level scope; Mastercard Director Product Management roles currently advertise approximately 8+ years of product-management experience.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Product function is relevant, but the Director level and 8+ year product-management benchmark are materially beyond the 0-5 target.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-291603": {
       "company": "Mastercard",
@@ -96,17 +131,58 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 87,
+      "experience_required": "No numeric minimum stated. Requires proven product-management experience in a communication-intensive digital-financial-services context.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Product-management experience",
+          "Complex product documentation and governance",
+          "Cross-functional readiness/launch execution",
+          "Management decks/training/product communications",
+          "Analytical problem solving",
+          "Bachelor's degree",
+          "English"
+        ],
+        "preferred": [
+          "Payments/fintech",
+          "KYC/AML familiarity",
+          "Cross-border payments/FX",
+          "API product lifecycle",
+          "SharePoint/Power Automate"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns product-readiness governance, intake, launch assessments, documentation standards, dashboards, communications, process automation and stakeholder enablement across Product, Tech, Ops, Compliance, Legal and Finance.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Product-management experience is required; payments/FX and deeper financial-services knowledge are partly preferred/adjacent.",
+      "education_or_certifications_required": "Bachelor's required; master's preferred.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Manager title with substantial IC ownership but no numeric tenure or formal people-management requirement.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": true,
+      "rationale": "Very strong adjacency to governance, PMO, dashboards, documentation, PowerPoint/Excel, process improvement and cross-functional execution. Main gap is direct product-management/payments experience, but title alone should not exclude it.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-287484": {
       "company": "Mastercard",
@@ -210,17 +286,50 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 60,
+      "experience_required": "Executive enterprise-strategy role requiring extensive strategy-consulting/corporate-strategy and payments/financial-services leadership experience.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Extensive enterprise/corporate strategy experience",
+          "Executive-level strategy development",
+          "Senior leadership/CEO/Management Committee interaction",
+          "Payments/financial-services expertise",
+          "Enterprise initiative leadership"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Shapes Mastercard long-term enterprise direction and leads the company's most critical strategic decisions with top executives.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Deep payments and enterprise-strategy leadership are required.",
+      "education_or_certifications_required": null,
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Vice President role at the center of CEO/Management Committee strategic decision making; materially beyond early-career scope.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "The strategy function is ideal in theory, but this is an executive VP-level role requiring extensive strategy/payments leadership, far beyond the target seniority.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-292298": {
       "company": "Mastercard",
@@ -248,17 +357,49 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 20,
+      "experience_required": "Creative/visual strategy role requiring art-direction/design/content experience rather than business strategy consulting.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Creative concepting and art direction",
+          "Visual design/typography/imagery",
+          "Multi-channel content execution",
+          "Client/brand guideline management"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Develops and executes creative/art concepts and visual content for client marketing work.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Creative/art/design expertise is core.",
+      "education_or_certifications_required": null,
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Specialist creative role; seniority is secondary to a clear functional mismatch.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Despite 'Strategist' in the title, the full role is creative/art direction and content design, outside the target strategy/analytics/commercial role families.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-292082": {
       "company": "Mastercard",
@@ -286,17 +427,49 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
-      "salary": null,
-      "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "fit_score": 15,
+      "experience_required": "Requires established professional copywriting/content experience across advertising and marketing formats.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Italian copywriting",
+          "Concepting and persuasive content",
+          "Multi-channel marketing copy",
+          "Client and creative-team collaboration"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Creates advertising and marketing copy across channels within Mastercard Advisors Creative Desk.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Professional copywriting/creative expertise is mandatory.",
+      "education_or_certifications_required": null,
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Senior copywriter specialist role; seniority is not the primary exclusion.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
+      "salary": "EUR 45,000-72,000",
+      "salary_source": "Current Mastercard job listing",
+      "reportable": false,
+      "rationale": "Pure creative/copywriting function, explicitly outside the user's target role families.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-290700": {
       "company": "Mastercard",
@@ -324,17 +497,49 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 62,
+      "experience_required": "No numeric minimum stated; requires practical experience in technology risk, operational risk, cybersecurity, information security, technology governance, audit, compliance or related.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Technology/operational risk or related experience",
+          "Working knowledge of infrastructure, applications, cloud and cybersecurity concepts",
+          "Risk assessments, control gaps and remediation",
+          "Risk reporting/KRIs and governance documentation"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports technology-risk assessments, controls/issues, KRI analysis, dashboards, governance reporting and cross-functional remediation.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Technology risk/cyber/infrastructure knowledge is a core requirement.",
+      "education_or_certifications_required": null,
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Analyst II / developing risk professional; no high-tenure requirement.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Seniority is accessible and dashboard/governance skills overlap, but direct technology-risk/cyber/infrastructure experience is core and is not part of the user's profile.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::/job/London-England-Angel-Lane/Manager--Account-Management--Global-Partnerships_R-291797-1": {
       "company": "Mastercard",
@@ -362,17 +567,54 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 86,
+      "experience_required": "No numeric minimum stated. Prior experience may come from account management, consulting, sales, business development, partnerships, payments, fintech, merchant payments or acquiring.",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Prior relevant client-facing experience in account management/consulting/BD/partnerships/payments or adjacent",
+          "Strong quantitative, project-management and organizational skills",
+          "Customer relationship and pipeline execution",
+          "Clear written/presentation communication",
+          "Bachelor's degree"
+        ],
+        "preferred": [
+          "Payments acceptance ecosystem knowledge",
+          "Digital payments/open banking/stablecoins familiarity",
+          "Gaming-platform familiarity"
+        ]
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports and grows strategic global partnerships, customer relationships, opportunity pipeline, commercial proposals and strategic initiatives using customer performance and market insight.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Payments knowledge is important but the JD explicitly accepts consulting and adjacent client-facing backgrounds.",
+      "education_or_certifications_required": "Bachelor's degree.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Manager title but no numeric tenure or people-management requirement; the role is an IC relationship/strategy role.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": true,
+      "rationale": "Strong Mastercard fit: consulting/client-facing experience, quantitative analysis, project management, strategic initiatives and stakeholder work all transfer well. Main gaps are payments acceptance depth and direct account/pipeline ownership.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-290723": {
       "company": "Mastercard",
@@ -892,17 +1134,48 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 90,
+      "experience_required": "10-week internship for penultimate-year students with expected graduation in 2028; no prior professional tenure required.",
+      "mandatory_years_experience": 0,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Currently enrolled bachelor's/master's student graduating in 2028",
+          "Available full-time 1 June-6 August 2027",
+          "Communication, collaboration and organization"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports product-management work including business cases, customer-centric product development and go-to-market exposure.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "No specialist tenure required.",
+      "education_or_certifications_required": "Current bachelor's/master's student.",
+      "role_level_assessment": "ENTRY_JUNIOR",
+      "seniority_evidence": "Explicit 10-week internship.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Product content is attractive, but internships are explicitly excluded and eligibility is limited to current penultimate-year students graduating in 2028.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::/job/London-England-Angel-Lane/Director--Product-Management_R-291207-1": {
       "company": "Mastercard",
@@ -1118,17 +1391,49 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 96,
+      "experience_required": "Internship for students graduating between Dec 2027 and Aug 2028; no professional experience required.",
+      "mandatory_years_experience": 0,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Current undergraduate/master's student graduating Dec 2027-Aug 2028",
+          "English",
+          "Availability from 1 June 2027",
+          "Communication and problem-solving skills"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports Advisors & Consulting Services strategy/transformation projects, data analysis, recommendations, client presentations and client problem solving.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "No specialist domain experience required.",
+      "education_or_certifications_required": "Current bachelor's/master's student.",
+      "role_level_assessment": "ENTRY_JUNIOR",
+      "seniority_evidence": "Explicit summer internship.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Functionally almost perfect, but the Job Watch rules explicitly exclude internships; the vacancy also targets current students graduating in 2027-2028.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::R-288779": {
       "company": "Mastercard",
@@ -1434,17 +1739,53 @@
       "user_decision_reason": null,
       "user_decided_at": null,
       "suppress_from_apply_now": false,
-      "needs_analysis": true,
-      "analysis_status": "PENDING",
-      "analysis_method": null,
+      "needs_analysis": false,
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
       "hard_exclusion_reason": null,
-      "fit_score": null,
-      "experience_required": null,
+      "fit_score": 2,
+      "experience_required": "10+ years in Software Engineering/DevOps, including at least 2 years of technical leadership.",
+      "mandatory_years_experience": 10,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "10+ years software engineering/DevOps",
+          "2+ years technical leadership",
+          "Linux",
+          "Cloud AWS/Azure/GCP",
+          "Kubernetes/Helm",
+          "Terraform/Ansible/Chef",
+          "CI/CD",
+          "Go/Python/Ruby scripting"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "direct_reports_or_team_lead_scope": "No formal direct-report requirement stated.",
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Principal engineering ownership for Mastercard infrastructure automation and DevOps platforms.",
+      "budget_or_p_and_l_ownership": "No direct P&L ownership stated.",
+      "domain_experience_required": "Deep software engineering, cloud and DevOps expertise is mandatory.",
+      "education_or_certifications_required": null,
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Explicit 10+ years plus technical leadership.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "l68_requirement_location": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "ordinary_twin_similarity": null,
+      "protected_twin_found": false,
+      "protected_twin_job_id": null,
+      "protected_twin_url": null,
+      "protected_twin_similarity": null,
       "salary": null,
       "salary_source": null,
-      "reportable": null,
-      "rationale": null,
-      "analyzed_at": null
+      "reportable": false,
+      "rationale": "Pure senior software/DevOps engineering role, both functionally out of scope and explicitly 10+ years.",
+      "analyzed_at": "2026-10-01T17:35:00Z"
     },
     "Mastercard::/job/London-England-Angel-Lane/Manager-Channel-Sales---Partnerships---Europe_R-286388-1": {
       "company": "Mastercard",
@@ -2201,7 +2542,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Visa::/job/GB---London-United-Kingdom/Director--Rules-Governance-and-Transformation_REF088281W": {
       "company": "Visa",
@@ -2429,7 +2770,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Visa::/job/GB---London-United-Kingdom/Director--Large-Merchant-Acceptance-UK-I_REF088474W": {
       "company": "Visa",
@@ -2581,7 +2922,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_marketing_communications.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Visa::/job/GB---London-United-Kingdom/Senior-Product-Manager_REF087931W": {
       "company": "Visa",
@@ -2999,7 +3340,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Visa::/job/GB---London-United-Kingdom/Sr-Consultant--Solutions-Management_REF084730W-1": {
       "company": "Visa",
@@ -3075,7 +3416,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Visa::/job/IT---Milan-Italy/Manager--VCA_REF084686W": {
       "company": "Visa",
@@ -3227,7 +3568,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Visa::/job/GB---London-United-Kingdom/Client-Incentive-Ops-Analyst_REF082703W": {
       "company": "Visa",
@@ -3455,7 +3796,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26012999": {
       "company": "American Express",
@@ -3634,7 +3975,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26014784": {
       "company": "American Express",
@@ -3672,7 +4013,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26014788": {
       "company": "American Express",
@@ -3710,7 +4051,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013324": {
       "company": "American Express",
@@ -3862,7 +4203,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26014192": {
       "company": "American Express",
@@ -3938,7 +4279,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26014320": {
       "company": "American Express",
@@ -4014,7 +4355,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013237": {
       "company": "American Express",
@@ -4052,7 +4393,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013242": {
       "company": "American Express",
@@ -4090,7 +4431,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013726": {
       "company": "American Express",
@@ -4128,7 +4469,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013728": {
       "company": "American Express",
@@ -4166,7 +4507,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013758": {
       "company": "American Express",
@@ -4204,7 +4545,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013766": {
       "company": "American Express",
@@ -4242,7 +4583,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013769": {
       "company": "American Express",
@@ -4280,7 +4621,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013779": {
       "company": "American Express",
@@ -4356,7 +4697,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "American Express::26013945": {
       "company": "American Express",
@@ -4394,7 +4735,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Prima Assicurazioni::software-engineer-0d3e7ef3-d34b-4e6e-8383-1cbb98470a75": {
       "company": "Prima Assicurazioni",
@@ -4432,7 +4773,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Prima Assicurazioni::data-scientist-1b650a6c-4649-43f4-854b-a3decfb9a006": {
       "company": "Prima Assicurazioni",
@@ -4470,7 +4811,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Prima Assicurazioni::elixir-software-engineer-20ced366-045e-46b5-b621-225e4fb04006": {
       "company": "Prima Assicurazioni",
@@ -4508,7 +4849,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Prima Assicurazioni::devops-engineer-2f486d8e-d9ee-4eb9-b04f-cdcbfb4889b3": {
       "company": "Prima Assicurazioni",
@@ -4546,7 +4887,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::45744663-4768-48d1-81c9-218eb54a2027": {
       "company": "Satispay",
@@ -4584,7 +4925,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::5ee73f71-9077-47bd-9674-d9b94c7f8808": {
       "company": "Satispay",
@@ -4622,7 +4963,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::db8bb67c-ab6c-4ef7-ab17-bd37fb7154f0": {
       "company": "Satispay",
@@ -4660,7 +5001,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::45484473-f8e0-4457-983e-ae0ddadbfec1": {
       "company": "Satispay",
@@ -4774,7 +5115,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: customer_service_frontline.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::64c940b5-4dc6-4e3b-a26b-28ec7c2af0ab": {
       "company": "Satispay",
@@ -4888,7 +5229,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: accounting_payroll.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::1f2cf2a6-48bf-4c08-b672-782adcf3e395": {
       "company": "Satispay",
@@ -4964,7 +5305,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::424a7547-f4ba-4dc6-acd1-9b0da74872fd": {
       "company": "Satispay",
@@ -5040,7 +5381,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::f97f126b-a3db-41ce-bf91-63f8f4400cda": {
       "company": "Satispay",
@@ -5078,7 +5419,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::f1e38957-2927-41d6-8e77-dcf77b498931": {
       "company": "Satispay",
@@ -5116,7 +5457,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::cdbd208a-2e6f-46ab-ae46-f9edc5f1d4c1": {
       "company": "Satispay",
@@ -5154,7 +5495,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::185ba572-3474-4c75-a800-8955219955af": {
       "company": "Satispay",
@@ -5529,7 +5870,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::e157f6af-6e42-4121-b6f8-16f55001ef70": {
       "company": "Satispay",
@@ -5641,7 +5982,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::19965715-2228-46c9-94e1-a9971ecf00fd": {
       "company": "Satispay",
@@ -5717,7 +6058,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::18d5e108-387a-4dd2-b245-95934a5b187f": {
       "company": "Satispay",
@@ -5793,7 +6134,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::05d4af99-6eaa-415a-adc6-13872250632d": {
       "company": "Satispay",
@@ -5907,7 +6248,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::985c8f5d-5518-4535-aec2-2c630653ce0e": {
       "company": "Satispay",
@@ -5945,7 +6286,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::57c28f8c-af9e-42eb-a42b-a3db534228dd": {
       "company": "Satispay",
@@ -6021,7 +6362,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::4ef1e3cd-0310-4403-a5f3-b208335e01c3": {
       "company": "Satispay",
@@ -6391,7 +6732,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: customer_service_frontline.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::d884f7b2-7198-4397-ad94-2d738d576bc2": {
       "company": "Satispay",
@@ -6693,7 +7034,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::e33fc402-ebf9-48c7-9fcc-7e03ebe51481": {
       "company": "Satispay",
@@ -6861,7 +7202,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::863fd1a3-c620-403e-9bac-08c06d8c297a": {
       "company": "Satispay",
@@ -6899,7 +7240,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Satispay::2c680afe-9fc6-4fbf-9e9d-598c1337c2ca": {
       "company": "Satispay",
@@ -7013,7 +7354,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Qonto::7d508564-98c1-4cca-8633-dc8e87b7fd79": {
       "company": "Qonto",
@@ -7089,7 +7430,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Qonto::19404ce8-0ac7-4f1b-939a-b322f0c9eefb": {
       "company": "Qonto",
@@ -7457,7 +7798,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Scalapay::4961960101": {
       "company": "Scalapay",
@@ -7495,7 +7836,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Scalapay::4960781101": {
       "company": "Scalapay",
@@ -7533,7 +7874,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Scalapay::4990707101": {
       "company": "Scalapay",
@@ -7645,7 +7986,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Scalapay::4927248101": {
       "company": "Scalapay",
@@ -7683,7 +8024,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Moneyfarm::800228D0EF": {
       "company": "Moneyfarm",
@@ -7721,7 +8062,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: accounting_payroll.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Moneyfarm::9217C2DAC7": {
       "company": "Moneyfarm",
@@ -7873,7 +8214,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Moneyfarm::DAAF75EBDA": {
       "company": "Moneyfarm",
@@ -7949,7 +8290,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Moneyfarm::795EB5B945": {
       "company": "Moneyfarm",
@@ -7987,7 +8328,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Moneyfarm::10DA917410": {
       "company": "Moneyfarm",
@@ -8025,7 +8366,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Moneyfarm::32B82FA748": {
       "company": "Moneyfarm",
@@ -8581,7 +8922,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ION Group::b87e5403-4d89-4f11-a840-a6c964560e03": {
       "company": "ION Group",
@@ -8619,7 +8960,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: accounting_payroll.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ION Group::dcec50d5-db49-4555-b29a-636ce13fa9d9": {
       "company": "ION Group",
@@ -8912,7 +9253,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ION Group::445b7b17-c29d-4db9-996e-5522870f07ad": {
       "company": "ION Group",
@@ -8950,7 +9291,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: accounting_payroll.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ION Group::844b876a-a724-470d-844c-4f9ca989bba1": {
       "company": "ION Group",
@@ -9026,7 +9367,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ION Group::fab01d52-b2c5-4e5f-b685-50a6d6adc309": {
       "company": "ION Group",
@@ -9140,7 +9481,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ION Group::53191ce4-9acd-4c04-a128-0f8c9918d3da": {
       "company": "ION Group",
@@ -9553,7 +9894,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1441065033": {
       "company": "Intesa Sanpaolo",
@@ -9629,7 +9970,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1441063833": {
       "company": "Intesa Sanpaolo",
@@ -9819,7 +10160,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1429700333": {
       "company": "Intesa Sanpaolo",
@@ -9857,7 +10198,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1429708233": {
       "company": "Intesa Sanpaolo",
@@ -9895,7 +10236,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1429692333": {
       "company": "Intesa Sanpaolo",
@@ -9933,7 +10274,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1429710033": {
       "company": "Intesa Sanpaolo",
@@ -9971,7 +10312,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1429695333": {
       "company": "Intesa Sanpaolo",
@@ -10085,7 +10426,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1440451733": {
       "company": "Intesa Sanpaolo",
@@ -10123,7 +10464,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1440364633": {
       "company": "Intesa Sanpaolo",
@@ -10199,7 +10540,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1440208433": {
       "company": "Intesa Sanpaolo",
@@ -10428,7 +10769,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1417883333": {
       "company": "Intesa Sanpaolo",
@@ -10542,7 +10883,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439073433": {
       "company": "Intesa Sanpaolo",
@@ -10656,7 +10997,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439032533": {
       "company": "Intesa Sanpaolo",
@@ -10694,7 +11035,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439021133": {
       "company": "Intesa Sanpaolo",
@@ -10732,7 +11073,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439027233": {
       "company": "Intesa Sanpaolo",
@@ -10770,7 +11111,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439090433": {
       "company": "Intesa Sanpaolo",
@@ -10846,7 +11187,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439071533": {
       "company": "Intesa Sanpaolo",
@@ -10884,7 +11225,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1439087633": {
       "company": "Intesa Sanpaolo",
@@ -11074,7 +11415,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416882433": {
       "company": "Intesa Sanpaolo",
@@ -11264,7 +11605,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1437137133": {
       "company": "Intesa Sanpaolo",
@@ -11340,7 +11681,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1406517633": {
       "company": "Intesa Sanpaolo",
@@ -11378,7 +11719,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1436550633": {
       "company": "Intesa Sanpaolo",
@@ -11639,7 +11980,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416412133": {
       "company": "Intesa Sanpaolo",
@@ -11677,7 +12018,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416414933": {
       "company": "Intesa Sanpaolo",
@@ -11715,7 +12056,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416413633": {
       "company": "Intesa Sanpaolo",
@@ -11753,7 +12094,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416411633": {
       "company": "Intesa Sanpaolo",
@@ -11791,7 +12132,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416408633": {
       "company": "Intesa Sanpaolo",
@@ -11829,7 +12170,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1416275533": {
       "company": "Intesa Sanpaolo",
@@ -11943,7 +12284,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1436075233": {
       "company": "Intesa Sanpaolo",
@@ -12057,7 +12398,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1435603233": {
       "company": "Intesa Sanpaolo",
@@ -12168,7 +12509,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1435602233": {
       "company": "Intesa Sanpaolo",
@@ -12545,7 +12886,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1434704433": {
       "company": "Intesa Sanpaolo",
@@ -12583,7 +12924,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1434692333": {
       "company": "Intesa Sanpaolo",
@@ -12772,7 +13113,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1412906133": {
       "company": "Intesa Sanpaolo",
@@ -12810,7 +13151,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1412901933": {
       "company": "Intesa Sanpaolo",
@@ -12886,7 +13227,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1412768333": {
       "company": "Intesa Sanpaolo",
@@ -13076,7 +13417,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Intesa Sanpaolo::1433309033": {
       "company": "Intesa Sanpaolo",
@@ -13334,7 +13675,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Banca Ifis::276640908": {
       "company": "Banca Ifis",
@@ -13372,7 +13713,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Banca Ifis::275630285": {
       "company": "Banca Ifis",
@@ -13410,7 +13751,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Banca Ifis::271912427": {
       "company": "Banca Ifis",
@@ -13600,7 +13941,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Banca Ifis::270320016": {
       "company": "Banca Ifis",
@@ -13638,7 +13979,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Banca Sella::JR-002424": {
       "company": "Banca Sella",
@@ -13893,7 +14234,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373498057": {
       "company": "Zurich",
@@ -13931,7 +14272,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373498657": {
       "company": "Zurich",
@@ -13969,7 +14310,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373498857": {
       "company": "Zurich",
@@ -14007,7 +14348,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373499357": {
       "company": "Zurich",
@@ -14045,7 +14386,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373498557": {
       "company": "Zurich",
@@ -14083,7 +14424,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373497657": {
       "company": "Zurich",
@@ -14121,7 +14462,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1373290357": {
       "company": "Zurich",
@@ -14197,7 +14538,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1367924257": {
       "company": "Zurich",
@@ -14273,7 +14614,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1367759357": {
       "company": "Zurich",
@@ -14311,7 +14652,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1372940257": {
       "company": "Zurich",
@@ -14387,7 +14728,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1371812657": {
       "company": "Zurich",
@@ -14425,7 +14766,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1371810657": {
       "company": "Zurich",
@@ -14539,7 +14880,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1371809857": {
       "company": "Zurich",
@@ -14577,7 +14918,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1371809957": {
       "company": "Zurich",
@@ -14615,7 +14956,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::828853602": {
       "company": "Zurich",
@@ -14653,7 +14994,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1366164257": {
       "company": "Zurich",
@@ -14691,7 +15032,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1368903457": {
       "company": "Zurich",
@@ -14729,7 +15070,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Zurich::1368903357": {
       "company": "Zurich",
@@ -14767,7 +15108,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Account-Executive_R0019481-1": {
       "company": "Howden",
@@ -14805,7 +15146,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Global-Mobility-Coordinator_R0019517-1": {
       "company": "Howden",
@@ -14908,7 +15249,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: facilities_property.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London---One-Creechurch-Place/Private-Capital-Due-Diligence-Graduate-Programme-2027_R0019547-1": {
       "company": "Howden",
@@ -15060,7 +15401,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Underwriter_R0019251-2": {
       "company": "Howden",
@@ -15098,7 +15439,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019323": {
       "company": "Howden",
@@ -15597,7 +15938,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/AI-Product-Manager_R0019187-1": {
       "company": "Howden",
@@ -15673,7 +16014,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019269": {
       "company": "Howden",
@@ -15711,7 +16052,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019260": {
       "company": "Howden",
@@ -15901,7 +16242,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019276": {
       "company": "Howden",
@@ -15939,7 +16280,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019272": {
       "company": "Howden",
@@ -15977,7 +16318,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019273": {
       "company": "Howden",
@@ -16015,7 +16356,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019274": {
       "company": "Howden",
@@ -16053,7 +16394,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019275": {
       "company": "Howden",
@@ -16091,7 +16432,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019282": {
       "company": "Howden",
@@ -16129,7 +16470,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019277": {
       "company": "Howden",
@@ -16167,7 +16508,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019279": {
       "company": "Howden",
@@ -16205,7 +16546,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019280": {
       "company": "Howden",
@@ -16243,7 +16584,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::R0019284": {
       "company": "Howden",
@@ -16281,7 +16622,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Internal-Audit-Manager---IT_R0019190-1": {
       "company": "Howden",
@@ -16395,7 +16736,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: frontline_retail_hospitality.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Head-of-Property---Casualty-Claims_R0018915-1": {
       "company": "Howden",
@@ -16433,7 +16774,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London---Gracechurch-Street/Mortgage-Administrator_R0018497-1": {
       "company": "Howden",
@@ -16585,7 +16926,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London---Gracechurch-Street/Speculative-Applications---Mortgage-Administrator-Paraplanner-or-Mortgage-Advisor-Broker_R0018303-2": {
       "company": "Howden",
@@ -16813,7 +17154,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Senior-Underwriter_R0008860-2": {
       "company": "Howden",
@@ -16851,7 +17192,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Howden::/job/London/Reinsurance-Broker---International-Treaty-Associate-Director_R0008623-1": {
       "company": "Howden",
@@ -17003,7 +17344,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152773029": {
       "company": "Wise",
@@ -17079,7 +17420,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152709599": {
       "company": "Wise",
@@ -17258,7 +17599,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152444709": {
       "company": "Wise",
@@ -17372,7 +17713,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152433354": {
       "company": "Wise",
@@ -17486,7 +17827,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152387063": {
       "company": "Wise",
@@ -17562,7 +17903,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152385429": {
       "company": "Wise",
@@ -17638,7 +17979,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152356484": {
       "company": "Wise",
@@ -17866,7 +18207,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152184429": {
       "company": "Wise",
@@ -17904,7 +18245,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152174364": {
       "company": "Wise",
@@ -18018,7 +18359,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000152127649": {
       "company": "Wise",
@@ -18056,7 +18397,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151951319": {
       "company": "Wise",
@@ -18132,7 +18473,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151865442": {
       "company": "Wise",
@@ -18246,7 +18587,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151810217": {
       "company": "Wise",
@@ -18284,7 +18625,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151791319": {
       "company": "Wise",
@@ -18398,7 +18739,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151610169": {
       "company": "Wise",
@@ -18436,7 +18777,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151598099": {
       "company": "Wise",
@@ -18550,7 +18891,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151567709": {
       "company": "Wise",
@@ -18588,7 +18929,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151564094": {
       "company": "Wise",
@@ -18626,7 +18967,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151566464": {
       "company": "Wise",
@@ -18740,7 +19081,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151435589": {
       "company": "Wise",
@@ -18778,7 +19119,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151434330": {
       "company": "Wise",
@@ -18854,7 +19195,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151426346": {
       "company": "Wise",
@@ -18892,7 +19233,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151417259": {
       "company": "Wise",
@@ -18930,7 +19271,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151415509": {
       "company": "Wise",
@@ -19006,7 +19347,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151399508": {
       "company": "Wise",
@@ -19044,7 +19385,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151399119": {
       "company": "Wise",
@@ -19234,7 +19575,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000151348749": {
       "company": "Wise",
@@ -19760,7 +20101,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150419294": {
       "company": "Wise",
@@ -19798,7 +20139,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150420594": {
       "company": "Wise",
@@ -19874,7 +20215,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150407789": {
       "company": "Wise",
@@ -20026,7 +20367,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150309299": {
       "company": "Wise",
@@ -20102,7 +20443,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150224729": {
       "company": "Wise",
@@ -20140,7 +20481,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150224679": {
       "company": "Wise",
@@ -20216,7 +20557,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150223555": {
       "company": "Wise",
@@ -20254,7 +20595,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150223359": {
       "company": "Wise",
@@ -20292,7 +20633,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150221219": {
       "company": "Wise",
@@ -20330,7 +20671,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000150138299": {
       "company": "Wise",
@@ -20444,7 +20785,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000149726079": {
       "company": "Wise",
@@ -21242,7 +21583,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000147914444": {
       "company": "Wise",
@@ -21432,7 +21773,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000147282960": {
       "company": "Wise",
@@ -21584,7 +21925,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: frontline_retail_hospitality.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000146680027": {
       "company": "Wise",
@@ -21698,7 +22039,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000145775089": {
       "company": "Wise",
@@ -21774,7 +22115,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_content.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000145738365": {
       "company": "Wise",
@@ -22496,7 +22837,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000143775470": {
       "company": "Wise",
@@ -22876,7 +23217,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000142130824": {
       "company": "Wise",
@@ -22914,7 +23255,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000141970079": {
       "company": "Wise",
@@ -22990,7 +23331,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: data_science.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000141876659": {
       "company": "Wise",
@@ -23028,7 +23369,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000141874569": {
       "company": "Wise",
@@ -23370,7 +23711,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000140042077": {
       "company": "Wise",
@@ -23522,7 +23863,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000139095880": {
       "company": "Wise",
@@ -23560,7 +23901,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000139079853": {
       "company": "Wise",
@@ -23864,7 +24205,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000137860044": {
       "company": "Wise",
@@ -24244,7 +24585,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000129195750": {
       "company": "Wise",
@@ -24282,7 +24623,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000127948469": {
       "company": "Wise",
@@ -24320,7 +24661,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Wise::744000124144555": {
       "company": "Wise",
@@ -24472,7 +24813,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8467953002": {
       "company": "SumUp",
@@ -24716,7 +25057,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8493802002": {
       "company": "SumUp",
@@ -24754,7 +25095,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8801377002": {
       "company": "SumUp",
@@ -24792,7 +25133,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8660342002": {
       "company": "SumUp",
@@ -24830,7 +25171,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8713865002": {
       "company": "SumUp",
@@ -24868,7 +25209,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8537093002": {
       "company": "SumUp",
@@ -25264,7 +25605,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: creative_design.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "SumUp::8821322002": {
       "company": "SumUp",
@@ -25416,7 +25757,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Trade Republic::6683716003": {
       "company": "Trade Republic",
@@ -25454,7 +25795,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Trade Republic::7781222003": {
       "company": "Trade Republic",
@@ -25530,7 +25871,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8114155": {
       "company": "Stripe",
@@ -25568,7 +25909,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8048193": {
       "company": "Stripe",
@@ -25606,7 +25947,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8121419": {
       "company": "Stripe",
@@ -25644,7 +25985,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8079514": {
       "company": "Stripe",
@@ -25682,7 +26023,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8213481": {
       "company": "Stripe",
@@ -25720,7 +26061,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8203649": {
       "company": "Stripe",
@@ -25758,7 +26099,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8196267": {
       "company": "Stripe",
@@ -25796,7 +26137,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8196259": {
       "company": "Stripe",
@@ -25834,7 +26175,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8040940": {
       "company": "Stripe",
@@ -25872,7 +26213,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::7389692": {
       "company": "Stripe",
@@ -25910,7 +26251,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8207708": {
       "company": "Stripe",
@@ -25948,7 +26289,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8130729": {
       "company": "Stripe",
@@ -25986,7 +26327,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8202831": {
       "company": "Stripe",
@@ -26328,7 +26669,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8141450": {
       "company": "Stripe",
@@ -26366,7 +26707,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::7589400": {
       "company": "Stripe",
@@ -26898,7 +27239,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::7208537": {
       "company": "Stripe",
@@ -26936,7 +27277,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8130930": {
       "company": "Stripe",
@@ -26974,7 +27315,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::7882492": {
       "company": "Stripe",
@@ -27012,7 +27353,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8168813": {
       "company": "Stripe",
@@ -27050,7 +27391,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8179419": {
       "company": "Stripe",
@@ -27088,7 +27429,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8119967": {
       "company": "Stripe",
@@ -27126,7 +27467,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8043083": {
       "company": "Stripe",
@@ -27240,7 +27581,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8129954": {
       "company": "Stripe",
@@ -27278,7 +27619,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Stripe::8230276": {
       "company": "Stripe",
@@ -27465,7 +27806,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::b260d522-6353-4524-a8cc-22eeb9ab4b6f": {
       "company": "Airwallex",
@@ -27579,7 +27920,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::76737659-4f27-450f-8f7b-f690723faad5": {
       "company": "Airwallex",
@@ -27720,7 +28061,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::0041178d-9b99-4c6e-9ad0-d8399d77559f": {
       "company": "Airwallex",
@@ -27872,7 +28213,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::52f9e4a0-021c-4118-845f-4b8e58c5dfa7": {
       "company": "Airwallex",
@@ -27910,7 +28251,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::0dcbcd66-80b8-41a3-be15-24bb158adbc1": {
       "company": "Airwallex",
@@ -28214,7 +28555,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::dec2ab16-75ee-45c4-a730-63d7462c42fa": {
       "company": "Airwallex",
@@ -28290,7 +28631,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::52dfc23a-08ff-49bd-859a-fd4512b93792": {
       "company": "Airwallex",
@@ -28442,7 +28783,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: hr_recruiting.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::5bcf2ca6-804d-4252-b794-363ee33bcb29": {
       "company": "Airwallex",
@@ -28518,7 +28859,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::6a05f3f0-7302-49a2-8d17-d6f652a36f1a": {
       "company": "Airwallex",
@@ -28556,7 +28897,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::ece86a2d-7c0d-48c8-89df-74046880433a": {
       "company": "Airwallex",
@@ -28746,7 +29087,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::9261f89e-0703-45c0-a80e-d5f6a1cc03e1": {
       "company": "Airwallex",
@@ -28974,7 +29315,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::7fc0f49a-3fa4-4dec-8e92-bb167e484dc0": {
       "company": "Airwallex",
@@ -29544,7 +29885,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::1cb1eb70-8ca9-44e1-a5eb-e6e90f47c980": {
       "company": "Airwallex",
@@ -29582,7 +29923,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Airwallex::0297d7a5-5aac-4ed9-904f-fce6ed3dbdf1": {
       "company": "Airwallex",
@@ -29826,7 +30167,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::/job/London/Marketing-Manager_R28603-1": {
       "company": "Euronext",
@@ -29940,7 +30281,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::/job/Milan/Euronext-Securities---Tax-Services-associate_R28555-1": {
       "company": "Euronext",
@@ -30016,7 +30357,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28631": {
       "company": "Euronext",
@@ -30054,7 +30395,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28578": {
       "company": "Euronext",
@@ -30092,7 +30433,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28535": {
       "company": "Euronext",
@@ -30130,7 +30471,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28557": {
       "company": "Euronext",
@@ -30168,7 +30509,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28536": {
       "company": "Euronext",
@@ -30244,7 +30585,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::/job/London/Business-Analyst_R28294-2": {
       "company": "Euronext",
@@ -30434,7 +30775,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28250": {
       "company": "Euronext",
@@ -30472,7 +30813,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28402": {
       "company": "Euronext",
@@ -30510,7 +30851,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28308": {
       "company": "Euronext",
@@ -30548,7 +30889,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::/job/Milan/Borsa-Italiana---Listing-Sales-Analyst---Mid---Small-Caps-Internship_R28302-1": {
       "company": "Euronext",
@@ -30586,7 +30927,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28289": {
       "company": "Euronext",
@@ -30624,7 +30965,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28288": {
       "company": "Euronext",
@@ -30662,7 +31003,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28284": {
       "company": "Euronext",
@@ -30700,7 +31041,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28279": {
       "company": "Euronext",
@@ -30738,7 +31079,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28255": {
       "company": "Euronext",
@@ -30776,7 +31117,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28247": {
       "company": "Euronext",
@@ -30814,7 +31155,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28042": {
       "company": "Euronext",
@@ -31004,7 +31345,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28209": {
       "company": "Euronext",
@@ -31042,7 +31383,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28197": {
       "company": "Euronext",
@@ -31080,7 +31421,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28195": {
       "company": "Euronext",
@@ -31118,7 +31459,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28183": {
       "company": "Euronext",
@@ -31156,7 +31497,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28182": {
       "company": "Euronext",
@@ -31194,7 +31535,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28196": {
       "company": "Euronext",
@@ -31232,7 +31573,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28178": {
       "company": "Euronext",
@@ -31270,7 +31611,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28177": {
       "company": "Euronext",
@@ -31308,7 +31649,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R28163": {
       "company": "Euronext",
@@ -31346,7 +31687,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R27941": {
       "company": "Euronext",
@@ -31422,7 +31763,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Euronext::R27305": {
       "company": "Euronext",
@@ -31666,7 +32007,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "BBVA Italy::/job/BBVA-One-Canada-Square-44th-Floor-Canary-Wharf--London-E14-5AA-UK/Head-Cash-Management-UK_JR00115431": {
       "company": "BBVA Italy",
@@ -32111,7 +32452,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_marketing_communications.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ING Italia::REQ-10115738": {
       "company": "ING Italia",
@@ -32187,7 +32528,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ING Italia::REQ-10114889": {
       "company": "ING Italia",
@@ -32225,7 +32566,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: software_engineering.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ING Italia::REQ-10115548": {
       "company": "ING Italia",
@@ -32594,7 +32935,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_marketing_communications.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ING Italia::REQ-10118776": {
       "company": "ING Italia",
@@ -32670,7 +33011,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_marketing_communications.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ING Italia::REQ-10118232": {
       "company": "ING Italia",
@@ -32784,7 +33125,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: technical_it_specialist.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "ING Italia::REQ-10083297": {
       "company": "ING Italia",
@@ -33126,7 +33467,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: internship.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Senior-Credit-Officer--Political-Risk-Group_JR2600431-1": {
       "company": "AIG",
@@ -33419,7 +33760,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Senior-Underwriter--Casualty_JR2603881": {
       "company": "AIG",
@@ -33457,7 +33798,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Senior-Account-Risk-Engineer---Property_JR2602311": {
       "company": "AIG",
@@ -33533,7 +33874,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Lead-Analyst----Legal-Entity-Capital-Modelling-and-Production_JR2603714": {
       "company": "AIG",
@@ -33685,7 +34026,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Underwriting-Technical-Support-Manager_JR2603285": {
       "company": "AIG",
@@ -33723,7 +34064,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/International-Head-of-Fraud---Recovery_JR2602244": {
       "company": "AIG",
@@ -33875,7 +34216,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: accounting_payroll.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Client-Director--12-month-Maternity-Cover-_JR2603123": {
       "company": "AIG",
@@ -33951,7 +34292,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: accounting_payroll.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Real-Estate-Claims-Account-Handler_JR2602120": {
       "company": "AIG",
@@ -33989,7 +34330,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Senior-Data---Reporting-Analyst_JR2600918": {
       "company": "AIG",
@@ -34065,7 +34406,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Syndicates-Financial-Controller_JR2602688": {
       "company": "AIG",
@@ -34141,7 +34482,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Senior-Delegated-Authority-Analyst_JR2600317": {
       "company": "AIG",
@@ -34217,7 +34558,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Senior-Cargo-Underwriter--Multinational-_JR2507004": {
       "company": "AIG",
@@ -34255,7 +34596,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "AIG::/job/London/Marine-Underwriter---International-Cargo_JR2506760": {
       "company": "AIG",
@@ -34293,7 +34634,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::36740": {
       "company": "Chubb",
@@ -34331,7 +34672,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::36989": {
       "company": "Chubb",
@@ -34407,7 +34748,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::37161": {
       "company": "Chubb",
@@ -34445,7 +34786,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::37164": {
       "company": "Chubb",
@@ -34483,7 +34824,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::37167": {
       "company": "Chubb",
@@ -34521,7 +34862,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::31561": {
       "company": "Chubb",
@@ -34635,7 +34976,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::33046": {
       "company": "Chubb",
@@ -34673,7 +35014,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Chubb::36168": {
       "company": "Chubb",
@@ -34825,7 +35166,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Swiss Re::1410297433": {
       "company": "Swiss Re",
@@ -34901,7 +35242,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: legal.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Swiss Re::1441242033": {
       "company": "Swiss Re",
@@ -34977,7 +35318,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: pure_sales.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Swiss Re::1440338133": {
       "company": "Swiss Re",
@@ -35015,7 +35356,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Swiss Re::1439219033": {
       "company": "Swiss Re",
@@ -35053,7 +35394,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Swiss Re::1427954033": {
       "company": "Swiss Re",
@@ -35091,7 +35432,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Swiss Re::1437787033": {
       "company": "Swiss Re",
@@ -35281,7 +35622,7 @@
       "salary_source": null,
       "reportable": false,
       "rationale": "Hard-excluded by approved conservative title rule: insurance_technical.",
-      "analyzed_at": "2026-10-01T17:17:31Z"
+      "analyzed_at": "2026-10-01T17:22:13Z"
     },
     "Qonto::471e0021-d630-4cd1-81c3-2fb2e9dc253c": {
       "company": "Qonto",
