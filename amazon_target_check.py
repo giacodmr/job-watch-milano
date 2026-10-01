@@ -318,7 +318,9 @@ def experience_decision(job):
 
 
 def job_id(job):
-    return str(value(job, "id", "id_icims", "job_id", "requisition_id") or value(job, "job_path") or "")
+    # Keep this registry on the same stable public requisition ID used by the
+    # main Amazon collector. The API `id` field is an opaque row UUID.
+    return str(value(job, "id_icims", "job_id", "requisition_id", "id") or value(job, "job_path") or "")
 
 
 def canonical_url(job):

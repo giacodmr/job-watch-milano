@@ -273,8 +273,19 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
         canonical = raw.get("apply_url")
         ckey = canonical_key(canonical)
         key = url_to_key.get(ckey) if ckey else None
+
+        # Bridge historical UUID-based target-check rows to the stable public
+        # Amazon requisition ID used by collector.py.
+        stable_sid = None
+        m = re.search(r"/jobs/(\d+)(?:/|$)", str(canonical or ""), re.I)
+        if m:
+            stable_sid = m.group(1)
+            stable_key = job_key("Amazon", stable_sid)
+            if key is None and stable_key in current_open:
+                key = stable_key
+
         if key is None:
-            sid = raw.get("job_id")
+            sid = stable_sid or raw.get("job_id")
             if not sid:
                 continue
             key = job_key("Amazon", sid)
