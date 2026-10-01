@@ -13,6 +13,7 @@ OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 # Conservative, unambiguous title-only exclusions. Queue-noise policy refreshed 2026-10-01. There is deliberately no
 # positive-title whitelist and no Manager/Senior/Lead exclusion.
 HARD_EXCLUSION_RULES = (
+    ("m_and_a_title_user_exclusion", re.compile(r"\bM\s*(?:&|&amp;)\s*A\b", re.I)),
     ("internship", re.compile(r"\b(intern|internship|stage|apprentice|apprenticeship)\b", re.I)),
     ("software_engineering", re.compile(r"\b(software|backend|frontend|front-end|full[ -]?stack|mobile|platform|systems?)\s+(engineer|developer)\b|\bdeveloper\b", re.I)),
     ("technical_engineering", re.compile(r"\b(data engineer|machine learning engineer|ml engineer|security engineer|network engineer|cloud engineer|devops|site reliability engineer|solutions architect|solution architect|enterprise architect|data architect)\b", re.I)),
@@ -493,11 +494,11 @@ def sync_batch(batch: str) -> dict:
                 "analyzed_at": user_decision.get("decided_at") or utc_now(),
             })
             preserved += 1
-        elif exclusion and not bool(job.get("_priority_company")) and not re.search(
+        elif exclusion and (exclusion == "m_and_a_title_user_exclusion" or (not bool(job.get("_priority_company")) and not re.search(
             r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
             str(job.get("title") or ""),
             re.I,
-        ):
+        )):
             rec.update({
                 "needs_analysis": False,
                 "analysis_status": "ANALYZED",

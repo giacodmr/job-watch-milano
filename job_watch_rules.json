@@ -15,6 +15,7 @@
   },
   "max_experience_years": 5,
   "exclude": [
+    "Any vacancy with M&A in the job title (case-insensitive; user-wide hard exclusion)",
     "internship",
     "pure brand/product/performance/growth marketing when the role is not strategy, analytics, commercial planning, category, GTM or transformation led",
     "pure CRM/campaign operations when CRM is the core job rather than part of a broader commercial excellence, customer strategy, analytics or transformation role",
@@ -104,7 +105,15 @@
     "semantic_fit_not_keyword_only": true,
     "audit_required": true,
     "inventory_reconciliation_required": true,
-    "reporting_reconciliation_required": true
+    "reporting_reconciliation_required": true,
+    "m_and_a_title_hard_exclusion": {
+      "enabled": true,
+      "reason": "m_and_a_title_user_exclusion",
+      "title_pattern": "\\bM\\s*(?:&|&amp;)\\s*A\\b",
+      "case_insensitive": true,
+      "scope": "All batches and employers, including Amazon/Mastercard and protected-category roles; title only, not body text.",
+      "precedence": "Override priority-company and senior-title JD review; exclude from user-facing reports without deleting historical or APPLIED records."
+    }
   },
   "salary_policy": {
     "importance": "high",
@@ -560,7 +569,8 @@
       "APPLIED vacancies are excluded from the apply-now list but remain monitored for closure/update.",
       "NOT_INTERESTED vacancies are suppressed from normal user-facing reports while retaining history.",
       "Never generalize one vacancy decision into a company-wide, role-family or keyword exclusion without explicit user instruction.",
-      "Any vacancy first seen on or after never_disappear_since that is still unreviewed and never surfaced remains daily-actionable even if its lifecycle rolls to STILL_OPEN. Older pending rows are handled by backlog rescue without blocking daily completion."
+      "Any vacancy first seen on or after never_disappear_since that is still unreviewed and never surfaced remains daily-actionable even if its lifecycle rolls to STILL_OPEN. Older pending rows are handled by backlog rescue without blocking daily completion.",
+      "User explicitly instructed that every vacancy with M&A in the job title must be automatically excluded in all four batches irrespective of employer; M&A mentioned only in the job description does not trigger the rule."
     ],
     "morning_output": [
       "NEW_TODAY",
