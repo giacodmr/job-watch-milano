@@ -72,6 +72,18 @@ HARD_EXCLUSION_RULES = (
         r"\b(cybersecurity|cyber security|security architect|cloudops|cloud ops|sre expert|penetration testing|"
         r"red team|technical specialist|it support|service desk|network specialist|infrastructure engineer)\b", re.I,
     )),
+    ("accounting_payroll", re.compile(
+        r"\b(accountant|accounting specialist|accounts payable|accounts receivable|payroll specialist|general ledger specialist|"
+        r"tax compliance specialist|tax accountant|bookkeeper)\b", re.I,
+    )),
+    ("customer_service_frontline", re.compile(
+        r"\b(customer care representative|customer service associate|customer service representative|assistenza clienti|"
+        r"welcomist|stock assistant|stock supervisor|showroom dresser|catering supervisor)\b", re.I,
+    )),
+    ("pure_marketing_communications", re.compile(
+        r"\b(brand ambassador|paid media expert|performance marketing|content marketing specialist|corporate communications|"
+        r"events manager|event manager|public relations manager|pr manager)\b", re.I,
+    )),
 )
 
 # Marketing/CRM words are not sufficient for a hard exclusion when the title itself
