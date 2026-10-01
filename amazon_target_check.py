@@ -380,6 +380,7 @@ def compact_job(job, city, norm, scope_reason):
         "experience_reason": exp_reason,
         "basic_qualifications": basic,
         "preferred_qualifications": pref,
+        "description": str(value(job, "description", "job_description", "description_short", "body") or ""),
         "l68_status": l68_status,
         "l68_evidence": l68_evidence,
         "l68_requirement_location": l68_location,
