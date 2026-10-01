@@ -3031,7 +3031,11 @@ def amazon_family(company) -> bool:
 
 
 def _amazon_job_id(job):
-    for k in ("id", "id_icims", "job_id", "requisition_id"):
+    # Amazon search.json exposes both an opaque row UUID (`id`) and the
+    # stable public requisition/job identifier used in amazon.jobs URLs.
+    # Prefer the stable identifier so the same vacancy keeps the same
+    # job_key across collector runs.
+    for k in ("id_icims", "job_id", "requisition_id", "id"):
         v = job.get(k)
         if v not in (None, "", []):
             return str(v)
