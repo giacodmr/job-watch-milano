@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "generated_at": "2026-10-02T04:50:54Z",
+  "version": "1.1",
+  "generated_at": "2026-10-03T09:15:27Z",
   "run_id": "20260921T110019Z",
   "DAILY_COMPLETE": false,
   "FULL_SEMANTIC_COMPLETE": false,
@@ -14,8 +14,9 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 25,
-      "historical_backlog_remaining": 301,
+      "actionable_delta_pending": 47,
+      "historical_backlog_remaining": 309,
+      "applied_material_updates_pending": 0,
       "failed": 0,
       "not_checked": 0
     },
@@ -26,6 +27,7 @@
       "gpt_run_certified": false,
       "actionable_delta_pending": 29,
       "historical_backlog_remaining": 197,
+      "applied_material_updates_pending": 0,
       "failed": 0,
       "not_checked": 0
     },
@@ -34,8 +36,9 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 3,
+      "actionable_delta_pending": 14,
       "historical_backlog_remaining": 65,
+      "applied_material_updates_pending": 0,
       "failed": 0,
       "not_checked": 0
     },
@@ -44,16 +47,112 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 19,
-      "historical_backlog_remaining": 62,
+      "actionable_delta_pending": 36,
+      "historical_backlog_remaining": 65,
+      "applied_material_updates_pending": 0,
       "failed": 0,
       "not_checked": 0
     }
   },
+  "coverage": {
+    "JW1": {
+      "VERIFIED": 27,
+      "PARTIAL": 27,
+      "FAILED": 0,
+      "NOT_CHECKED": 0,
+      "verified_pct": 50.0
+    },
+    "JW2": {
+      "VERIFIED": 22,
+      "PARTIAL": 26,
+      "FAILED": 0,
+      "NOT_CHECKED": 0,
+      "verified_pct": 45.83
+    },
+    "JW3": {
+      "VERIFIED": 10,
+      "PARTIAL": 30,
+      "FAILED": 0,
+      "NOT_CHECKED": 0,
+      "verified_pct": 25.0
+    },
+    "JW4": {
+      "VERIFIED": 28,
+      "PARTIAL": 24,
+      "FAILED": 0,
+      "NOT_CHECKED": 0,
+      "verified_pct": 53.85
+    }
+  },
+  "unresolved_user_decisions": [
+    "Euronext::R27644"
+  ],
   "blocking_errors": [
-    "JW1: end-to-end run incomplete",
-    "JW2: end-to-end run incomplete",
-    "JW3: end-to-end run incomplete",
-    "JW4: end-to-end run incomplete"
-  ]
+    "JW1: SOURCE_SNAPSHOT_MISMATCH",
+    "JW2: SOURCE_SNAPSHOT_MISMATCH",
+    "JW3: SOURCE_SNAPSHOT_MISMATCH",
+    "JW4: SOURCE_SNAPSHOT_MISMATCH",
+    "AMAZON_PRIORITY_SNAPSHOT_MISMATCH",
+    "JW1: BATCH_DAILY_INCOMPLETE",
+    "JW2: BATCH_DAILY_INCOMPLETE",
+    "JW3: BATCH_DAILY_INCOMPLETE",
+    "JW4: BATCH_DAILY_INCOMPLETE",
+    "ACTIVE_USER_DECISION_NOT_RECONCILED: Euronext::R27644"
+  ],
+  "blocking_error_details": [
+    {
+      "code": "SOURCE_SNAPSHOT_MISMATCH",
+      "batch": "JW1",
+      "expected": "2026-10-02T04:44:42Z",
+      "actual": "2026-09-21T11:01:33Z"
+    },
+    {
+      "code": "SOURCE_SNAPSHOT_MISMATCH",
+      "batch": "JW2",
+      "expected": "2026-10-02T04:47:16Z",
+      "actual": "2026-09-21T11:04:17Z"
+    },
+    {
+      "code": "SOURCE_SNAPSHOT_MISMATCH",
+      "batch": "JW3",
+      "expected": "2026-10-02T04:48:21Z",
+      "actual": "2026-09-21T11:05:13Z"
+    },
+    {
+      "code": "SOURCE_SNAPSHOT_MISMATCH",
+      "batch": "JW4",
+      "expected": "2026-10-02T04:50:43Z",
+      "actual": "2026-09-21T11:08:07Z"
+    },
+    {
+      "code": "AMAZON_PRIORITY_SNAPSHOT_MISMATCH",
+      "expected": "2026-10-02T04:50:44.143875+00:00",
+      "actual": "2026-09-21T11:08:08.857620+00:00"
+    },
+    {
+      "code": "BATCH_DAILY_INCOMPLETE",
+      "batch": "JW1",
+      "actionable_delta_pending": 47
+    },
+    {
+      "code": "BATCH_DAILY_INCOMPLETE",
+      "batch": "JW2",
+      "actionable_delta_pending": 29
+    },
+    {
+      "code": "BATCH_DAILY_INCOMPLETE",
+      "batch": "JW3",
+      "actionable_delta_pending": 14
+    },
+    {
+      "code": "BATCH_DAILY_INCOMPLETE",
+      "batch": "JW4",
+      "actionable_delta_pending": 36
+    },
+    {
+      "code": "ACTIVE_USER_DECISION_NOT_RECONCILED",
+      "job_key": "Euronext::R27644"
+    }
+  ],
+  "certification_mode": "FAIL_CLOSED"
 }
