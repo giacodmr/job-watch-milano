@@ -94,15 +94,18 @@ jobs:
 
       - name: Syntax and guardrail tests
         run: |
-          python -m py_compile collector.py amazon_target_check.py sync_analysis_state.py audit_job_watch.py
+          python -m py_compile collector.py amazon_target_check.py reconcile_workday_target_paths.py sync_analysis_state.py audit_job_watch.py
           python -m py_compile harden_job_watch_state.py certify_job_watch.py validate_job_watch_state.py validate_job_watch_inputs.py validate_certified_run.py
-          python -m unittest -q test_job_watch_guardrails.py
+          python -m unittest -q test_job_watch_guardrails.py test_workday_path_reconciliation.py
 
       - name: Validate persistent inputs
         run: python validate_job_watch_inputs.py
 
       - name: Collect public ATS inventories
         run: python collector.py
+
+      - name: Reconcile Workday target roles from official job paths
+        run: python reconcile_workday_target_paths.py
 
       - name: Collect Amazon target inventory
         run: python amazon_target_check.py
@@ -147,6 +150,7 @@ jobs:
           regenerate() {
             echo "Regenerating Job Watch outputs on latest main..."
             python collector.py
+            python reconcile_workday_target_paths.py
             python amazon_target_check.py
             python sync_analysis_state.py
             python harden_job_watch_state.py
