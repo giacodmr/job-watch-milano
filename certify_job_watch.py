@@ -1,189 +1,115 @@
 #!/usr/bin/env python3
-"""Fail-closed final certification layer for persisted Job Watch health."""
-from __future__ import annotations
-
-import json
-from datetime import datetime, timezone
+"""Single deterministic authority for daily/full completion and readable health."""
 from pathlib import Path
-
+from pipeline_state import BATCHES, load, stable_dump, now, snapshot, priority_status, search_complete, error
 ROOT = Path(__file__).resolve().parent
-BATCHES = ("JW1", "JW2", "JW3", "JW4")
 
 
-def now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+def certify(root=ROOT):
+    token = snapshot(root)
+    priority = priority_status(root)
+    report = load('pipeline_execution.json',{'stages':{},'errors':[]},root)
+    audit = load('job_watch_audit.json',{'batches':{}},root)
+    work = load('daily_worklist.json',{'records':[],'lifecycle_updates':[]},root)
+    errors = list(report.get('errors',[]))
+    # Persisted source results remain authoritative when another stage runs.
+    for b in BATCHES:
+        try:
+            cur = load(f'current_jobs_{b}.json',{},root)
+            for company in cur.get('companies',[]):
+                for field in ('collection_error','reconciliation_error'):
+                    item = company.get(field)
+                    if item and item not in errors: errors.append(item)
+                for job in company.get('jobs',[]):
+                    item = job.get('reconciliation_error')
+                    if item and job.get('status') == 'UNKNOWN' and item not in errors: errors.append(item)
+        except (ValueError,OSError,TypeError,AttributeError): pass
+    remaining, batches, coverage = [], {}, {}
+    rules = load('job_watch_rules.json',{},root)
+    # Unresolved user roles are maintenance warnings, never an impossible review
+    # against a vacancy whose JD/source cannot currently be verified.
+    for row in work.get('unreconciled_user_decisions',[]):
+        item = error('LOCAL_RECORD_ERROR','reconciliation','ACTIVE_ROLE_UNRESOLVED','Locate official lifecycle; preserve user choice',job_key=row['job_key'])
+        if not any(e.get('job_key') == row['job_key'] for e in errors): errors.append(item)
+    for b in BATCHES:
+        name = b.upper()
+        metrics = audit.get('batches',{}).get(name,{})
+        checks = metrics.get('checks',{})
+        vac = metrics.get('vacancy_analysis_coverage',{})
+        cov = metrics.get('company_ats_coverage',{})
+        coverage[name] = cov
+        scoped = [e for e in errors if e.get('batch') in {name,None} and e['category'] == 'BATCH_ERROR']
+        local = [e for e in errors if e.get('batch') == name]
+        tasks = []
+        if scoped or not checks.get('inventory_reconciliation') or not checks.get('state_reconciliation'):
+            tasks.append({'batch':name,'action':'REPAIR_BATCH_STATE','reason':'Rerun failed stage or reconcile official inventory/state','stages':sorted({e['stage'] for e in scoped})})
+        if rules.get('run_certification_policy',{}).get('require_current_day'):
+            from datetime import datetime
+            from zoneinfo import ZoneInfo
+            try:
+                stamp = datetime.fromisoformat(str(token['source_generated_at'][name]).replace('Z','+00:00'))
+                fresh = stamp.astimezone(ZoneInfo('Europe/Rome')).date() == datetime.now(ZoneInfo('Europe/Rome')).date()
+            except (ValueError,TypeError): fresh = False
+            if not fresh: tasks.append({'batch':name,'action':'COLLECT_CURRENT_DAY','reason':'Official source snapshot is not from today Europe/Rome'})
+        semantic = int(vac.get('actionable_delta_pending',0) or 0)
+        reporting = max(0,int(vac.get('actionable_reportable',0) or 0)-int(vac.get('actionable_surfaced',0) or 0))
+        if semantic: tasks.append({'batch':name,'action':'SEMANTIC_REVIEW','count':semantic,'reason':'Review exact current fingerprints in daily worklist'})
+        if reporting: tasks.append({'batch':name,'action':'REPORT_OPPORTUNITIES','count':reporting,'reason':'Show decided opportunities/material updates; persist surfaced fingerprints'})
+        if not search_complete(b,root): tasks.append({'batch':name,'action':'AUTONOMOUS_SEARCH','reason':'Search official sources; record actual query/date/source/result in activity'})
+        required = {'jw1':'Mastercard','jw2':'Amazon'}.get(b)
+        if required and priority[required] in {'FAILED','NOT_RUN'}:
+            tasks.append({'batch':name,'action':'RETRY_PRIORITY_COLLECTION','company':required,'reason':'No usable priority inventory; retry official source'})
+        if int(cov.get('NOT_CHECKED',0) or 0): tasks.append({'batch':name,'action':'COLLECT_UNATTEMPTED_SOURCES','count':cov['NOT_CHECKED']})
+        warnings = bool(local or cov.get('PARTIAL') or cov.get('FAILED') or (required and priority[required] == 'PARTIAL'))
+        daily = not tasks
+        full = daily and int(vac.get('pending_analysis',0) or 0) == 0 and checks.get('reporting_reconciliation') is True
+        batches[name] = {'status':'NEEDS_REVIEW' if tasks else 'COMPLETE_WITH_WARNINGS' if warnings else 'COMPLETE',
+            'daily_complete':daily,'full_semantic_complete':full,'gpt_run_certified':daily,
+            'actionable_delta_pending':semantic,'reporting_pending':reporting,'historical_backlog_remaining':vac.get('historical_backlog_remaining',0),
+            'failed':cov.get('FAILED',0),'not_checked':cov.get('NOT_CHECKED',0),'remaining_work':tasks}
+        remaining.extend(tasks)
+    global_errors = [e for e in errors if e['category'] == 'GLOBAL_FATAL_ERROR']
+    remaining.extend({'action':'REPAIR_GLOBAL_INPUT','reason':e['message'],'file':e.get('file')} for e in global_errors)
+    if global_errors:
+        for row in batches.values(): row.update(status='BLOCKED_GLOBAL',daily_complete=False,full_semantic_complete=False,gpt_run_certified=False)
+    daily = not remaining
+    full = daily and all(row['full_semantic_complete'] for row in batches.values())
+    warnings = bool(errors or any(v['status']=='COMPLETE_WITH_WARNINGS' for v in batches.values()))
+    collection_errors = [e for e in errors if e['stage'] in {'collection','reconciliation','amazon'}]
+    status = 'BLOCKED_GLOBAL' if global_errors else 'NEEDS_REVIEW' if remaining else 'COMPLETE_WITH_WARNINGS' if warnings else 'COMPLETE'
+    counts = {scope:sum(e['scope']==scope for e in errors) for scope in ('record','source','batch','global')}
+    # Health is bound to authoritative sources, not old audit timestamps.
+    return {'version':'2.0','generated_at':now(),'run_id':token['run_id'],'snapshot':token,'status':status,
+        'collection_status':'COMPLETE_WITH_WARNINGS' if collection_errors else 'COMPLETE',
+        'DAILY_COMPLETE':daily,'FULL_SEMANTIC_COMPLETE':full,'priority_checks':priority,'batches':batches,'coverage':coverage,
+        'daily_actionable_remaining':sum(v['actionable_delta_pending']+v['reporting_pending'] for v in batches.values()),
+        'historical_backlog_remaining':sum(v['historical_backlog_remaining'] for v in batches.values()),
+        'source_failures':sum(c.get('FAILED',0) for c in coverage.values()),'partial_sources':sum(c.get('PARTIAL',0) for c in coverage.values()),
+        'error_counts':counts,'errors':errors,'stage_reports':{**report.get('stages',{}),'certification':{'status':'COMPLETE'}},'remaining_work':remaining,
+        'unresolved_user_decisions':[e['job_key'] for e in errors if e['scope']=='record' and e.get('job_key') and e['code'] in {'ROLE_UNRESOLVED','ACTIVE_ROLE_UNRESOLVED'}],
+        'blocking_errors':[e['code'] for e in global_errors], 'certification_mode':'SCOPED_FAIL_CLOSED'}
 
 
-def load(name: str, default=None):
-    path = ROOT / name
-    if not path.exists():
-        return default
-    return json.loads(path.read_text(encoding="utf-8"))
+def summary(h):
+    lines = ['JOB WATCH RUN', 'Run: '+h['run_id'], 'State: '+h['status'], 'Collection: '+h['collection_status']]
+    lines += [b+': '+r['status'] for b,r in h['batches'].items()]
+    lines += [c+': '+v for c,v in h['priority_checks'].items()]
+    lines += ['',f"Daily actionable remaining: {h['daily_actionable_remaining']}",f"Historical backlog: {h['historical_backlog_remaining']}"]
+    lines += [f"Source failures: {h['source_failures']}",f"Partial sources: {h['partial_sources']}"]
+    lines += [f"{scope} errors: {count}" for scope,count in h['error_counts'].items()]
+    lines += [f"DAILY_COMPLETE: {str(h['DAILY_COMPLETE']).lower()}",f"FULL_SEMANTIC_COMPLETE: {str(h['FULL_SEMANTIC_COMPLETE']).lower()}"]
+    lines += ['Remaining: '+str(t) for t in h['remaining_work']]
+    return '\n'.join(lines)+'\n'
 
 
-def dump(name: str, payload) -> None:
-    old = load(name, {})
-    if {k: v for k, v in old.items() if k != "generated_at"} == {k: v for k, v in payload.items() if k != "generated_at"}:
-        return
-    (ROOT / name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-
-def add_error(errors: list[dict], code: str, **fields) -> None:
-    errors.append({"code": code, **fields})
-
-
-def main() -> int:
-    state = load("job_watch_run_state.json", {}) or {}
-    audit = load("job_watch_audit.json", {}) or {}
-    amazon = load("amazon_target_check.json", {}) or {}
-    decisions = (load("user_job_decisions.json", {"records": {}}) or {}).get("records") or {}
-    current = {b: load(f"current_jobs_{b.lower()}.json", {}) or {} for b in BATCHES}
-    analysis = {b: load(f"analysis_results_{b.lower()}.json", {"records": {}}) or {} for b in BATCHES}
-
-    errors: list[dict] = []
-    for message in state.get("blocking_errors") or []:
-        add_error(errors, "MANIFEST_BLOCKING_ERROR", message=str(message))
-
-    for batch in BATCHES:
-        expected = current[batch].get("generated_at")
-        actual = (state.get("source_generated_at") or {}).get(batch)
-        if expected != actual:
-            add_error(errors, "SOURCE_SNAPSHOT_MISMATCH", batch=batch, expected=expected, actual=actual)
-
-    expected_amazon = amazon.get("checked_at")
-    actual_amazon = (state.get("priority_snapshot_at") or {}).get("Amazon")
-    if expected_amazon != actual_amazon:
-        add_error(errors, "AMAZON_PRIORITY_SNAPSHOT_MISMATCH", expected=expected_amazon, actual=actual_amazon)
-
-    audit_batches = audit.get("batches") or {}
-    for batch in BATCHES:
-        row = audit_batches.get(batch) or {}
-        if row.get("daily_complete") is not True:
-            add_error(
-                errors,
-                "BATCH_DAILY_INCOMPLETE",
-                batch=batch,
-                actionable_delta_pending=((row.get("vacancy_analysis_coverage") or {}).get("actionable_delta_pending")),
-            )
-        cert = row.get("run_certification") or {}
-        if cert.get("global_blocking_errors"):
-            add_error(errors, "BATCH_CERTIFICATION_HAS_GLOBAL_ERRORS", batch=batch, errors=cert.get("global_blocking_errors"))
-
-    # A persisted user decision is reconciled when either analysis state knows
-    # the vacancy or a current snapshot carries an explicit lifecycle row. This
-    # matters for TO_REVIEW/INTERESTED roles that close before ever entering the
-    # semantic state: CLOSED is a resolved lifecycle, not a missing vacancy.
-    all_state_keys = set()
-    for batch in BATCHES:
-        all_state_keys.update(((analysis[batch].get("records") or {}).keys()))
-
-    lifecycle_status: dict[str, str] = {}
-    for batch in BATCHES:
-        for company in current[batch].get("companies", []) or []:
-            company_name = company.get("company")
-            if not company_name:
-                continue
-            for job in company.get("jobs", []) or []:
-                if job.get("source_id") is None:
-                    continue
-                lifecycle_status[f"{company_name}::{job.get('source_id')}"] = str(job.get("status") or "UNKNOWN")
-
-    active_decision_keys = {
-        key for key, row in decisions.items()
-        if (row or {}).get("decision") in {"TO_REVIEW", "INTERESTED"}
-    }
-    unresolved_user_decisions = sorted(
-        key for key in active_decision_keys
-        if key not in all_state_keys and key not in lifecycle_status
-    )
-    closed_user_decisions = sorted(
-        key for key in active_decision_keys
-        if lifecycle_status.get(key) == "CLOSED"
-    )
-    for key in unresolved_user_decisions:
-        add_error(errors, "ACTIVE_USER_DECISION_NOT_RECONCILED", job_key=key)
-
-    coverage = {}
-    for batch in BATCHES:
-        row = audit_batches.get(batch) or {}
-        counts = row.get("company_ats_coverage") or {}
-        verified = int(counts.get("VERIFIED", 0) or 0)
-        partial = int(counts.get("PARTIAL", 0) or 0)
-        failed = int(counts.get("FAILED", 0) or 0)
-        not_checked = int(counts.get("NOT_CHECKED", 0) or 0)
-        total = verified + partial + failed + not_checked
-        coverage[batch] = {
-            "VERIFIED": verified,
-            "PARTIAL": partial,
-            "FAILED": failed,
-            "NOT_CHECKED": not_checked,
-            "verified_pct": round(verified / total * 100, 2) if total else 100.0,
-        }
-
-    batch_health = {}
-    all_batches_complete = True
-    all_full_complete = True
-    for batch in BATCHES:
-        row = audit_batches.get(batch) or {}
-        cert = row.get("run_certification") or {}
-        vac = row.get("vacancy_analysis_coverage") or {}
-        cov = row.get("company_ats_coverage") or {}
-        daily = row.get("daily_complete") is True
-        full = row.get("full_semantic_complete") is True
-        all_batches_complete = all_batches_complete and daily
-        all_full_complete = all_full_complete and full
-        batch_health[batch] = {
-            "source_generated_at": row.get("source_generated_at"),
-            "daily_complete": daily,
-            "full_semantic_complete": full,
-            "gpt_run_certified": cert.get("complete") is True,
-            "actionable_delta_pending": vac.get("actionable_delta_pending"),
-            "historical_backlog_remaining": vac.get("historical_backlog_remaining"),
-            "applied_material_updates_pending": sum(
-                1 for rec in (analysis[batch].get("records") or {}).values()
-                if rec.get("current_open") and rec.get("applied_material_update") and rec.get("needs_analysis")
-            ),
-            "failed": cov.get("FAILED"),
-            "not_checked": cov.get("NOT_CHECKED"),
-        }
-
-    daily_complete = bool(all_batches_complete and not errors)
-    full_complete = bool(all_full_complete and not errors)
-    compact_errors = []
-    for item in errors:
-        code = item.get("code")
-        if item.get("batch"):
-            compact_errors.append(f"{item['batch']}: {code}")
-        elif item.get("job_key"):
-            compact_errors.append(f"{code}: {item['job_key']}")
-        elif item.get("message"):
-            compact_errors.append(f"{code}: {item['message']}")
-        else:
-            compact_errors.append(str(code))
-
-    hardened = {
-        "version": "1.2",
-        "generated_at": now(),
-        "run_id": state.get("run_id"),
-        "DAILY_COMPLETE": daily_complete,
-        "FULL_SEMANTIC_COMPLETE": full_complete,
-        "priority_checks": state.get("priority_checks") or {},
-        "batches": batch_health,
-        "coverage": coverage,
-        "unresolved_user_decisions": unresolved_user_decisions,
-        "closed_user_decisions": closed_user_decisions,
-        "blocking_errors": compact_errors,
-        "blocking_error_details": errors,
-        "certification_mode": "FAIL_CLOSED",
-    }
-    dump("job_watch_healthcheck.json", hardened)
-    print(
-        f"Hardened healthcheck DAILY_COMPLETE={daily_complete} "
-        f"FULL_SEMANTIC_COMPLETE={full_complete} blocking_errors={len(errors)} "
-        f"closed_user_decisions={len(closed_user_decisions)}"
-    )
+def main():
+    health = certify(ROOT)
+    stable_dump('job_watch_healthcheck.json',health,ROOT)
+    text = summary(health)
+    path = ROOT/'job_watch_summary.txt'
+    if not path.exists() or path.read_text() != text: path.write_text(text)
+    print(text)
     return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+if __name__ == '__main__': main()

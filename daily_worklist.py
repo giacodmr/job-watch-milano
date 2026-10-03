@@ -35,11 +35,9 @@ def action_reason(rec):
 
 
 def build_worklist(backlog_limit=None):
-    manifest = load('job_watch_run_state.json', {})
+    from pipeline_state import snapshot, load as safe_load, record_error
     rules = load('job_watch_rules.json', {})
-    rules_sha = hashlib.sha256((ROOT / 'job_watch_rules.json').read_bytes()).hexdigest()
-    token = {'run_id': manifest.get('run_id'), 'source_generated_at': manifest.get('source_generated_at'),
-             'priority_snapshot_at': manifest.get('priority_snapshot_at'), 'rules_sha256': rules_sha}
+    token = snapshot(ROOT)
     previous = load('daily_worklist.json', {})
     limit = backlog_limit if backlog_limit is not None else rules.get('daily_worklist_policy', {}).get('backlog_limit', 20)
     records, historical, lifecycle, pending = [], [], [], 0
@@ -48,12 +46,20 @@ def build_worklist(backlog_limit=None):
               'apply_url', 'fingerprint', 'current_status', 'threshold', 'user_decision', 'user_decision_reason',
               'user_decision_stale', 'role_family', 'job_category')
     for batch in BATCHES:
-        state = load(f'analysis_results_{batch}.json', {'records': {}})
+        try:
+            state = load(f'analysis_results_{batch}.json', {'records': {}})
+            if not isinstance(state.get('records'),dict): raise ValueError('Invalid analysis store')
+        except (ValueError,OSError) as exc:
+            record_error('BATCH_ERROR','worklist','ANALYSIS_UNAVAILABLE',exc,root=ROOT,batch=batch.upper())
+            continue
         known_keys.update(state['records'])
         cache = load(f'semantic_jd_cache_{batch}.json', {'records': {}}).get('records', {})
         surfaced = load(f'surfaced_jobs_{batch}.json', {'records': {}}).get('records', {})
-        pending += sum(bool(r.get('current_open') and r.get('needs_analysis')) for r in state['records'].values())
+        pending += sum(bool(r.get('current_open') and r.get('needs_analysis')) for r in state['records'].values() if isinstance(r,dict))
         for key, rec in state['records'].items():
+            if not isinstance(rec,dict):
+                record_error('LOCAL_RECORD_ERROR','worklist','INVALID_ANALYSIS_RECORD','Invalid row',root=ROOT,batch=batch.upper(),job_key=key)
+                continue
             if rec.get('company') == 'ION Group':
                 continue
             if not rec.get('current_open'):
@@ -92,12 +98,15 @@ def build_worklist(backlog_limit=None):
     records.extend(selected)
     records.sort(key=lambda r: (r['action'] == 'HISTORICAL_BACKLOG', not r.get('needs_semantic_review'),
                              not r.get('priority_company'), r['batch'], r['job_key']))
+    from pipeline_state import search_complete, priority_status
+    tasks = [{'batch':b.upper(),'action':'AUTONOMOUS_SEARCH','reason':'Search official sources and persist query/date/source/result'} for b in BATCHES if not search_complete(b,ROOT)]
+    tasks += [{'action':'RETRY_PRIORITY_COLLECTION','company':c,'reason':'No usable current priority verification'} for c,v in priority_status(ROOT).items() if v in {'FAILED','NOT_RUN'}]
     return {'version': '1.0', 'snapshot': token, 'rules_file': 'job_watch_rules.json',
             'instructions_file': 'DAILY.md', 'backlog_assignment': assigned,
             'summary': {'records': len(records), 'daily_semantic_pending': sum(r['needs_semantic_review'] for r in records if r['action'] != 'HISTORICAL_BACKLOG'),
                         'backlog_assigned': len(selected), 'historical_backlog_remaining': len(historical),
                         'full_semantic_pending': pending},
-            'records': records, 'lifecycle_updates': lifecycle,
+            'records': records, 'lifecycle_updates': lifecycle, 'tasks':tasks,
             'unreconciled_user_decisions': [{'job_key': k, **v} for k, v in load('user_job_decisions.json', {'records': {}})['records'].items()
                 if k not in known_keys and v.get('decision') in {'TO_REVIEW', 'INTERESTED', 'APPLIED'} and not k.startswith('ION Group::')]}
 
@@ -108,7 +117,8 @@ def main():
     text = json.dumps(payload, ensure_ascii=False, indent=2) + '\n'
     path = ROOT / 'daily_worklist.json'
     if not path.exists() or path.read_text() != text:
-        path.write_text(text)
+        from pipeline_state import atomic_json
+        atomic_json(path,payload)
     print('Daily worklist:', payload['summary'])
 
 

@@ -7,3 +7,5 @@ Usa `discovery_candidates.json` come staging manuale: verifica ruoli ufficiali, 
 Backlog: completa le 20 righe assegnate dopo il delta. A regime si riduce quando il ritmo di completamento supera gli arrivi. Per recupero storico dedicato, rigenera localmente il worklist con un limite più alto usando `build_worklist(backlog_limit=...)`, poi usa gli stessi registri e validatori; non riclassificare il backlog come lavoro daily obbligatorio. Non scartare ruoli plausibili per arrivare a zero.
 
 Nessuna nuova automazione settimanale è installata da questa modifica. Può essere eseguita in una chat dedicata o nella manutenzione ordinaria del repository.
+
+Gli errori LOCAL_RECORD_ERROR/SOURCE_ERROR sono warning di manutenzione; riprova solo lo stage/source necessario. BATCH_ERROR espone una recovery action in health; gli altri batch restano utilizzabili. Static preflight e regressioni sono obbligatori nella CI `Validate Job Watch`; i workflow di produzione applicano guard runtime con isolamento e salvano checkpoint/health anche se la pubblicazione fallisce.

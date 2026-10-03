@@ -51,9 +51,25 @@ jobs:
 
       - name: Install runtime
         run: python -m pip install --disable-pip-version-check requests==2.32.5
-      - name: Preflight and regression tests
-        run: |
-          python preflight_job_watch.py
-          python -m unittest -q
       - name: Sync and publish semantic state
         run: python job_watch.py sync --publish
+
+      - name: Publish readable health summary
+        if: always()
+        run: |
+          if [ -f job_watch_summary.txt ]; then cat job_watch_summary.txt >> "$GITHUB_STEP_SUMMARY"; fi
+      - name: Preserve collected checkpoints and health on publication failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: job-watch-checkpoints-${{ github.run_id }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            current_jobs_jw*.json
+            amazon_target_check.json
+            job_watch_healthcheck.json
+            job_watch_summary.txt
+            pipeline_execution.json
+            daily_activity.json
+            rejected_daily_updates.json

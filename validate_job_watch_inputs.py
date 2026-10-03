@@ -120,16 +120,5 @@ for b in BATCHES:
         if not value.get("surfaced_at") or not value.get("surfaced_status"):
             raise SystemExit(f"INPUT ERROR: surfaced record {key} in {b} lacks timestamp/status")
 
-run_state = load("job_watch_run_state.json")
-if set((run_state.get("source_generated_at") or {}).keys()) != {"JW1","JW2","JW3","JW4"}:
-    raise SystemExit("INPUT ERROR: run-state source_generated_at must contain JW1-JW4")
-if set((run_state.get("batches") or {}).keys()) != {"JW1","JW2","JW3","JW4"}:
-    raise SystemExit("INPUT ERROR: run-state batches must contain JW1-JW4")
-if not isinstance(run_state.get("priority_checks"), dict):
-    raise SystemExit("INPUT ERROR: run-state priority_checks missing")
-if not isinstance(run_state.get("priority_snapshot_at"), dict):
-    raise SystemExit("INPUT ERROR: run-state priority_snapshot_at missing")
-if not isinstance(run_state.get("blocking_errors"), list):
-    raise SystemExit("INPUT ERROR: run-state blocking_errors must be a list")
-
+# Run identity, coverage and completion are derived, never trusted inputs.
 print("Job Watch persistent input validation passed.")

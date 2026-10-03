@@ -79,7 +79,8 @@ class RulesAndATS(unittest.TestCase):
         self.assertEqual([c.args[1]['offset'] for c in req.call_args_list],[0,1])
         self.assertEqual(result['jobs'][0]['canonical_url'],'https://test.wd3.myworkdayjobs.com/Careers/job/Milan/Analyst_R12345')
         with patch.object(collector,'post_json',side_effect=[pages[0],{'total':2,'jobPostings':[]}]*2):
-            with self.assertRaises(collector.NotCheckable):collector.collect_workday(mapped)
+            result=collector.collect_workday(mapped)
+            self.assertEqual(result['coverage'],'PARTIAL');self.assertEqual(len(result['jobs']),1)
 
     def test_unknown_survives_repeated_partial_and_closes_only_when_verified(self):
         old=collector.compact_job('Test','1',title='Analyst',location='Milan',canonical='https://official.example/1')
@@ -226,7 +227,7 @@ class RealPipeline(unittest.TestCase):
             for b in daily_worklist.BATCHES:
                 put(f'ats_mapping_{b}.json',{'batch':b.upper(),'companies':[{'company':b.upper()}]})
                 job={'source_id':'1','title':'Business Analyst','location':'Milan','fingerprint':'abc','status':'NEW','canonical_url':f'https://official.example/{b}/1'}
-                put(f'current_jobs_{b}.json',{'batch':b.upper(),'generated_at':stamps[b.upper()], 'summary':{'target_jobs_open':1,'VERIFIED':1},'companies':[{'company':b.upper(),'jobs':[job]}]})
+                put(f'current_jobs_{b}.json',{'batch':b.upper(),'generated_at':stamps[b.upper()], 'summary':{'target_jobs_open':1,'VERIFIED':1},'companies':[{'company':b.upper(),'jobs':[job]}]+([{'company':'Mastercard','coverage':'VERIFIED','jobs':[]}] if b=='jw1' else [])})
                 for stem in ['analysis_results','semantic_decisions','surfaced_jobs','semantic_jd_cache']:
                     records={f'{b.upper()}::1':full_decision()} if stem=='semantic_decisions' else {f'{b.upper()}::1':{'fingerprint':'abc','surfaced_at':'2026-10-03T08:00:00Z','surfaced_status':'NEW'}} if stem=='surfaced_jobs' else {}
                     put(f'{stem}_{b}.json',{'batch':b.upper(),'records':records})
@@ -237,15 +238,17 @@ class RealPipeline(unittest.TestCase):
             first=(root/'daily_worklist.json').read_bytes();self.assertEqual(run().returncode,0);self.assertEqual(first,(root/'daily_worklist.json').read_bytes())
             # Even a falsely-complete manifest cannot hide an invalid current fingerprint.
             decision=json.loads((root/'semantic_decisions_jw3.json').read_text());decision['records']['JW3::1']['fingerprint']='wrong';put('semantic_decisions_jw3.json',decision)
-            self.assertNotEqual(run().returncode,0)
+            self.assertEqual(run().returncode,0)
             self.assertFalse(json.loads((root/'job_watch_healthcheck.json').read_text())['DAILY_COMPLETE'])
             # A previous report is not proof that a materially updated vacancy was surfaced.
             current=json.loads((root/'current_jobs_jw3.json').read_text());current['companies'][0]['jobs'][0].update(fingerprint='changed',status='UPDATED');put('current_jobs_jw3.json',current)
             put('semantic_decisions_jw3.json',{'batch':'JW3','records':{'JW3::1':full_decision('changed')}})
-            self.assertNotEqual(run().returncode,0)
+            self.assertEqual(run().returncode,0)
             audit=json.loads((root/'job_watch_audit.json').read_text())['batches']['JW3']
             self.assertFalse(audit['checks']['actionable_reporting_reconciliation'])
             put('surfaced_jobs_jw3.json',{'batch':'JW3','records':{'JW3::1':{'fingerprint':'changed','surfaced_at':'2026-10-03T08:01:00Z','surfaced_status':'UPDATED'}}})
+            from pipeline_state import snapshot
+            put('daily_activity.json',{'batches':{b.upper():{'snapshot':snapshot(root),'searches':[{'query':'fixture','checked_at':'2026-10-03','source_url':'https://official.example','result':'none'}],'discoveries':[]} for b in daily_worklist.BATCHES}})
             result=run();self.assertEqual(result.returncode,0,result.stdout+result.stderr)
             self.assertTrue(json.loads((root/'job_watch_healthcheck.json').read_text())['DAILY_COMPLETE'])
             workflow=root/'.github/workflows';workflow.mkdir(parents=True);(workflow/'bad.yml').write_text('run: python removed_script.py')

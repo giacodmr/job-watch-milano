@@ -8,6 +8,7 @@ import json
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pipeline_state import atomic_json, record_error, attempt
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -48,13 +49,6 @@ SF_ZERO_PATTERNS = (
     re.compile(r"\b0\s+risultati\b", re.I),
 )
 
-# Explicitly known bad/stale structured mappings. These are intentionally NOT
-# requested: a known-wrong tenant/token is not an HTTP failure.
-KNOWN_NOT_CHECKED = {
-    "bolt": "Known Greenhouse token `bolt` is not a verified public board; skipped without HTTP request.",
-    "unilever": "Known Lever tenant `unilever` is not a verified public board; skipped without HTTP request.",
-}
-
 # Greenhouse board tokens already exercised successfully by collector v1.2.
 # Bolt is deliberately excluded: its old `bolt` token returned 404.
 KNOWN_GREENHOUSE_TOKENS = {
@@ -87,9 +81,7 @@ def read_json(path: Path, default=None):
 
 
 def write_json(path: Path, obj: Any) -> None:
-    with path.open("w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
-        f.write("\n")
+    atomic_json(path,obj)
 
 
 def get_session() -> requests.Session:
@@ -245,6 +237,16 @@ def key(company, source_id):
     return f"{company}::{source_id}"
 
 
+def normalization_error(company, exc, raw=None):
+    from pipeline_state import error
+    raw = raw if isinstance(raw,dict) else {}
+    sid = next((raw.get(f) for f in ('source_id','jobReqId','id','uuid','externalPath') if raw.get(f)), '<unidentified>')
+    item = error('LOCAL_RECORD_ERROR','collection','INVALID_ATS_RECORD',exc,company=company.get('company'),job_key=f"{company.get('company')}::{sid}")
+    progress = getattr(_thread_local,'collection_progress',None)
+    if progress is not None: progress['errors'].append(item)
+    else: record_error('LOCAL_RECORD_ERROR','collection','INVALID_ATS_RECORD',exc,root=ROOT,company=company.get('company'))
+
+
 def compact_job(
     company_name: str,
     source_id: Any,
@@ -260,7 +262,7 @@ def compact_job(
 ) -> dict:
     """Canonical metadata-first schema. `url` is retained as a v1.2 compatibility alias."""
     c = clean_text(canonical)
-    return {
+    job = {
         "source_id": str(source_id),
         "company": company_name,
         "title": clean_text(title),
@@ -274,6 +276,11 @@ def compact_job(
         "url": c,
         "apply_url": clean_text(apply_url),
     }
+
+    progress = getattr(_thread_local,'collection_progress',None)
+    if progress is not None and company_name == progress['company'] and source_id is not None and job['title'] and c and location_matches(job['location'],company_name):
+        progress['jobs'][str(source_id)] = dict(job)
+    return job
 
 
 # ---------------------------------------------------------------------------
@@ -305,24 +312,27 @@ def collect_lever(company):
 
     jobs = []
     for raw in all_jobs:
-        c = raw.get("categories") or {}
-        locs = c.get("allLocations") or []
-        loc = " | ".join(map(str, locs)) if locs else c.get("location")
-        j = compact_job(
-            name,
-            raw.get("id"),
-            title=raw.get("text"),
-            location=loc,
-            department=c.get("department"),
-            team=c.get("team"),
-            employment_type=c.get("commitment"),
-            published_at=epoch_millis_to_iso(raw.get("createdAt")),
-            updated_at=epoch_millis_to_iso(raw.get("updatedAt")),
-            canonical=raw.get("hostedUrl"),
-            apply_url=raw.get("applyUrl"),
-        )
-        if location_matches(j["location"]):
-            jobs.append(j)
+        try:
+            c = raw.get("categories") or {}
+            locs = c.get("allLocations") or []
+            loc = " | ".join(map(str, locs)) if locs else c.get("location")
+            j = compact_job(
+                name,
+                raw.get("id"),
+                title=raw.get("text"),
+                location=loc,
+                department=c.get("department"),
+                team=c.get("team"),
+                employment_type=c.get("commitment"),
+                published_at=epoch_millis_to_iso(raw.get("createdAt")),
+                updated_at=epoch_millis_to_iso(raw.get("updatedAt")),
+                canonical=raw.get("hostedUrl"),
+                apply_url=raw.get("applyUrl"),
+            )
+            if location_matches(j["location"]):
+                jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "lever_api_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": url}
 
 
@@ -340,27 +350,30 @@ def collect_ashby(company):
 
     jobs = []
     for raw in all_jobs:
-        locs = [clean_text(raw.get("location"))]
-        for item in raw.get("secondaryLocations") or []:
-            if isinstance(item, dict):
-                locs.append(clean_text(item.get("location")))
-        loc = " | ".join(x for x in locs if x)
-        source_id = raw.get("id") or raw.get("jobPostingId") or raw.get("title")
-        j = compact_job(
-            name,
-            source_id,
-            title=raw.get("title"),
-            location=loc,
-            department=raw.get("department"),
-            team=raw.get("team"),
-            employment_type=raw.get("employmentType"),
-            published_at=raw.get("publishedAt"),
-            updated_at=raw.get("updatedAt"),
-            canonical=raw.get("jobUrl") or raw.get("url"),
-            apply_url=raw.get("applyUrl"),
-        )
-        if location_matches(j["location"]):
-            jobs.append(j)
+        try:
+            locs = [clean_text(raw.get("location"))]
+            for item in raw.get("secondaryLocations") or []:
+                if isinstance(item, dict):
+                    locs.append(clean_text(item.get("location")))
+            loc = " | ".join(x for x in locs if x)
+            source_id = raw.get("id") or raw.get("jobPostingId") or raw.get("title")
+            j = compact_job(
+                name,
+                source_id,
+                title=raw.get("title"),
+                location=loc,
+                department=raw.get("department"),
+                team=raw.get("team"),
+                employment_type=raw.get("employmentType"),
+                published_at=raw.get("publishedAt"),
+                updated_at=raw.get("updatedAt"),
+                canonical=raw.get("jobUrl") or raw.get("url"),
+                apply_url=raw.get("applyUrl"),
+            )
+            if location_matches(j["location"]):
+                jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "ashby_public_api_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": url}
 
 
@@ -389,23 +402,26 @@ def collect_greenhouse(company):
 
     jobs = []
     for raw in all_jobs:
-        deps = raw.get("departments") or []
-        dept = " | ".join(
-            clean_text(x.get("name")) for x in deps if isinstance(x, dict) and clean_text(x.get("name"))
-        )
-        loc = clean_text((raw.get("location") or {}).get("name"))
-        j = compact_job(
-            name,
-            raw.get("id"),
-            title=raw.get("title"),
-            location=loc,
-            department=dept,
-            updated_at=raw.get("updated_at"),
-            canonical=raw.get("absolute_url"),
-            apply_url=raw.get("absolute_url"),
-        )
-        if location_matches(loc):
-            jobs.append(j)
+        try:
+            deps = raw.get("departments") or []
+            dept = " | ".join(
+                clean_text(x.get("name")) for x in deps if isinstance(x, dict) and clean_text(x.get("name"))
+            )
+            loc = clean_text((raw.get("location") or {}).get("name"))
+            j = compact_job(
+                name,
+                raw.get("id"),
+                title=raw.get("title"),
+                location=loc,
+                department=dept,
+                updated_at=raw.get("updated_at"),
+                canonical=raw.get("absolute_url"),
+                apply_url=raw.get("absolute_url"),
+            )
+            if location_matches(loc):
+                jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "greenhouse_job_board_api_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": url}
 
 
@@ -455,27 +471,30 @@ def collect_smartrecruiters(company):
 
     jobs = []
     for raw in all_jobs:
-        loc = raw.get("location") or {}
-        loc_text = ", ".join(str(x) for x in (loc.get("city"), loc.get("region"), loc.get("country")) if x)
-        if not location_matches(loc_text):
-            continue
-        dept = raw.get("department") or {}
-        employment = raw.get("typeOfEmployment") or {}
-        ref = clean_text(raw.get("ref"))
-        canonical = ref if ref and ref.startswith(("http://", "https://")) else None
-        j = compact_job(
-            name,
-            raw.get("id") or raw.get("uuid"),
-            title=raw.get("name"),
-            location=loc_text,
-            department=dept.get("label") if isinstance(dept, dict) else dept,
-            employment_type=employment.get("label") if isinstance(employment, dict) else employment,
-            published_at=raw.get("releasedDate"),
-            updated_at=raw.get("updatedDate") or raw.get("lastUpdatedDate"),
-            canonical=canonical,
-            apply_url=raw.get("applyUrl"),
-        )
-        jobs.append(j)
+        try:
+            loc = raw.get("location") or {}
+            loc_text = ", ".join(str(x) for x in (loc.get("city"), loc.get("region"), loc.get("country")) if x)
+            if not location_matches(loc_text):
+                continue
+            dept = raw.get("department") or {}
+            employment = raw.get("typeOfEmployment") or {}
+            ref = clean_text(raw.get("ref"))
+            canonical = ref if ref and ref.startswith(("http://", "https://")) else None
+            j = compact_job(
+                name,
+                raw.get("id") or raw.get("uuid"),
+                title=raw.get("name"),
+                location=loc_text,
+                department=dept.get("label") if isinstance(dept, dict) else dept,
+                employment_type=employment.get("label") if isinstance(employment, dict) else employment,
+                published_at=raw.get("releasedDate"),
+                updated_at=raw.get("updatedDate") or raw.get("lastUpdatedDate"),
+                canonical=canonical,
+                apply_url=raw.get("applyUrl"),
+            )
+            jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "smartrecruiters_posting_api_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": url}
 
 
@@ -520,64 +539,72 @@ def collect_workday(company):
     total = None
     all_jobs = []
 
-    for _ in range(MAX_PAGES):
-        payload = {"appliedFacets": {}, "limit": limit, "offset": offset, "searchText": ""}
-        data = post_json(
-            search_url,
-            payload,
-            headers={"Accept": "application/json", "Referer": referer, "Origin": f"https://{host}"},
-        )
-        page = data.get("jobPostings")
-        if not isinstance(page, list):
-            raise CollectorError("Unexpected Workday CXS response")
-        if total is None:
-            total = int(data.get("total", len(page)))
-        all_jobs.extend(page)
-        if len(all_jobs) >= total:
-            break
-        if not page:
-            raise CollectorError(f"Workday paging stopped early: retrieved={len(all_jobs)}, total={total}")
-        offset += len(page)
-    else:
-        raise CollectorError("Workday pagination safety limit")
+    incomplete = None
+    try:
+        for _ in range(MAX_PAGES):
+            payload = {"appliedFacets": {}, "limit": limit, "offset": offset, "searchText": ""}
+            data = post_json(
+                search_url,
+                payload,
+                headers={"Accept": "application/json", "Referer": referer, "Origin": f"https://{host}"},
+            )
+            page = data.get("jobPostings")
+            if not isinstance(page, list):
+                raise CollectorError("Unexpected Workday CXS response")
+            if total is None:
+                total = int(data.get("total", len(page)))
+            all_jobs.extend(page)
+            if len(all_jobs) >= total:
+                break
+            if not page:
+                raise CollectorError(f"Workday paging stopped early: retrieved={len(all_jobs)}, total={total}")
+            offset += len(page)
+        else:
+            raise CollectorError("Workday pagination safety limit")
 
-    if total is not None and len(all_jobs) != total:
-        raise CollectorError(f"Workday count mismatch: total={total}, retrieved={len(all_jobs)}")
+        if total is not None and len(all_jobs) != total:
+            raise CollectorError(f"Workday count mismatch: total={total}, retrieved={len(all_jobs)}")
+    except Exception as exc:
+        if not all_jobs: raise
+        incomplete = str(exc)
 
     jobs = []
     for raw in all_jobs:
-        loc = clean_text(raw.get("locationsText"))
-        if not location_matches(loc, name):
-            continue
-        external_path = clean_text(raw.get("externalPath"))
-        if not external_path:
-            # Inventory entry without a public path cannot be stably reconciled.
-            continue
-        canonical = f"https://{host}/{site}{external_path}"
-        bullet_fields = raw.get("bulletFields") or []
-        employment = None
-        if isinstance(bullet_fields, list):
-            # Some Workday inventories expose time type in bulletFields. Keep it
-            # only when it is explicit; never infer from title/description.
-            for value in bullet_fields:
-                s = clean_text(value)
-                if s and re.search(r"\b(full[ -]?time|part[ -]?time|intern(?:ship)?|temporary|contract)\b", s, re.I):
-                    employment = s
-                    break
-        j = compact_job(
-            name,
-            workday_source_id(raw, external_path),
-            title=raw.get("title"),
-            location=loc,
-            employment_type=employment,
-            published_at=raw.get("postedOn"),
-            updated_at=raw.get("updatedOn"),
-            canonical=canonical,
-            apply_url=canonical,
-        )
-        jobs.append(j)
+        try:
+            loc = clean_text(raw.get("locationsText"))
+            if not location_matches(loc, name):
+                continue
+            external_path = clean_text(raw.get("externalPath"))
+            if not external_path:
+                # Inventory entry without a public path cannot be stably reconciled.
+                continue
+            canonical = f"https://{host}/{site}{external_path}"
+            bullet_fields = raw.get("bulletFields") or []
+            employment = None
+            if isinstance(bullet_fields, list):
+                # Some Workday inventories expose time type in bulletFields. Keep it
+                # only when it is explicit; never infer from title/description.
+                for value in bullet_fields:
+                    s = clean_text(value)
+                    if s and re.search(r"\b(full[ -]?time|part[ -]?time|intern(?:ship)?|temporary|contract)\b", s, re.I):
+                        employment = s
+                        break
+            j = compact_job(
+                name,
+                workday_source_id(raw, external_path),
+                title=raw.get("title"),
+                location=loc,
+                employment_type=employment,
+                published_at=raw.get("postedOn"),
+                updated_at=raw.get("updatedOn"),
+                canonical=canonical,
+                apply_url=canonical,
+            )
+            jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
 
-    return {"coverage": "VERIFIED", "collector": "workday_cxs_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": search_url}
+    return {"coverage": "PARTIAL" if incomplete else "VERIFIED", "reason":incomplete, "collector": "workday_cxs_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": search_url}
 
 
 # ---------------------------------------------------------------------------
@@ -615,22 +642,25 @@ def collect_workable(company):
 
     jobs = []
     for raw in all_jobs:
-        loc = ", ".join(str(x) for x in (raw.get("city"), raw.get("state"), raw.get("country")) if x)
-        j = compact_job(
-            name,
-            raw.get("shortcode") or raw.get("code") or raw.get("id"),
-            title=raw.get("title"),
-            location=loc,
-            department=raw.get("department"),
-            employment_type=raw.get("employment_type"),
-            published_at=raw.get("published_on") or raw.get("created_at"),
-            updated_at=raw.get("updated_at"),
-            # Workable docs: application_url is the public job page; url is the application form.
-            canonical=raw.get("application_url") or raw.get("shortlink"),
-            apply_url=raw.get("url"),
-        )
-        if location_matches(j["location"]):
-            jobs.append(j)
+        try:
+            loc = ", ".join(str(x) for x in (raw.get("city"), raw.get("state"), raw.get("country")) if x)
+            j = compact_job(
+                name,
+                raw.get("shortcode") or raw.get("code") or raw.get("id"),
+                title=raw.get("title"),
+                location=loc,
+                department=raw.get("department"),
+                employment_type=raw.get("employment_type"),
+                published_at=raw.get("published_on") or raw.get("created_at"),
+                updated_at=raw.get("updated_at"),
+                # Workable docs: application_url is the public job page; url is the application form.
+                canonical=raw.get("application_url") or raw.get("shortlink"),
+                apply_url=raw.get("url"),
+            )
+            if location_matches(j["location"]):
+                jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "workable_public_jobs_metadata", "inventory_count": len(all_jobs), "jobs": jobs, "source_url": url}
 
 
@@ -959,19 +989,22 @@ def collect_successfactors(company):
 
     jobs = []
     for raw in inventory_jobs.values():
-        loc = clean_text(raw.get("location"))
-        if not location_matches(loc):
-            continue
-        j = compact_job(
-            name,
-            sf_job_source_id(raw["url"]),
-            title=raw.get("title"),
-            location=loc,
-            published_at=raw.get("published_at"),
-            canonical=raw.get("url"),
-            apply_url=raw.get("url"),
-        )
-        jobs.append(j)
+        try:
+            loc = clean_text(raw.get("location"))
+            if not location_matches(loc):
+                continue
+            j = compact_job(
+                name,
+                sf_job_source_id(raw["url"]),
+                title=raw.get("title"),
+                location=loc,
+                published_at=raw.get("published_at"),
+                canonical=raw.get("url"),
+                apply_url=raw.get("url"),
+            )
+            jobs.append(j)
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
 
     return {
         "coverage": "VERIFIED",
@@ -986,19 +1019,9 @@ def collect_successfactors(company):
 # Dispatch, reconciliation, concurrent batch execution
 # ---------------------------------------------------------------------------
 
-def known_skip_reason(company: dict) -> str | None:
-    name = (clean_text(company.get("company")) or "").casefold()
-    ats = company.get("ats") or {}
-    family = (clean_text(ats.get("family")) or "").casefold()
-    tenant = (clean_text(ats.get("tenant")) or "").casefold()
-    if name == "bolt" and "greenhouse" in family and (not tenant or tenant == "bolt"):
-        return KNOWN_NOT_CHECKED["bolt"]
-    if name == "unilever" and "lever" in family and (not tenant or tenant == "unilever"):
-        return KNOWN_NOT_CHECKED["unilever"]
-    return None
 
 
-def choose(company):
+def choose_structured(company):
     ats = company.get("ats") or {}
     family = (clean_text(ats.get("family")) or "").casefold()
     inventory = clean_text(ats.get("inventory_url")) or ""
@@ -1048,48 +1071,8 @@ def previous_index(path: Path) -> dict[str, dict]:
     return idx
 
 
-def unsupported_result(company, reason=None):
-    return {
-        "coverage": "NOT_CHECKED",
-        "collector": "unsupported_or_unverified_v1_3",
-        "inventory_count": None,
-        "jobs": [],
-        "reason": reason or "ATS family/method is not safely enumerable by collector v1.3",
-        "source_url": (company.get("ats") or {}).get("inventory_url"),
-    }
 
 
-def collect_company(company: dict) -> tuple[dict, bool]:
-    skip = known_skip_reason(company)
-    if skip:
-        return unsupported_result(company, skip), False
-
-    fn = choose(company)
-    if fn is None:
-        return unsupported_result(company), False
-
-    try:
-        result = fn(company)
-        result["reason"] = None
-        return result, True
-    except NotCheckable as e:
-        return {
-            "coverage": "PARTIAL",
-            "collector": getattr(fn, "__name__", "collector"),
-            "inventory_count": None,
-            "jobs": [],
-            "reason": f"NotCheckable after attempted official check: {e}",
-            "source_url": (company.get("ats") or {}).get("inventory_url"),
-        }, True
-    except Exception as e:
-        return {
-            "coverage": "FAILED",
-            "collector": getattr(fn, "__name__", "collector"),
-            "inventory_count": None,
-            "jobs": [],
-            "reason": f"{type(e).__name__}: {e}",
-            "source_url": (company.get("ats") or {}).get("inventory_url"),
-        }, True
 
 
 def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tuple[dict, dict[str, int]]:
@@ -1099,24 +1082,32 @@ def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tup
     counts = {"target_jobs_open": 0, "NEW": 0, "STILL_OPEN": 0, "UPDATED": 0, "CLOSED": 0, "UNKNOWN": 0}
 
     for j in result["jobs"]:
-        sid = str(j["source_id"])
-        k = key(name, sid)
-        old = prev.get(k)
-        j["fingerprint"] = metadata_fingerprint(j)
-        if old is None:
-            j["status"] = "NEW"
-        elif metadata_fingerprint(old) != j["fingerprint"]:
-            j["status"] = "UPDATED"
-        else:
-            j["status"] = "STILL_OPEN"
-        ids.add(sid)
-        current.append(j)
+        if not isinstance(j,dict) or not j.get('source_id') or not j.get('title'):
+            record_error('LOCAL_RECORD_ERROR','collection','INVALID_ATS_RECORD','Missing source ID/title; keep other valid records',root=ROOT,company=name,job_key=f"{name}::{j.get('source_id') if isinstance(j,dict) else '?'}")
+            result['coverage'] = 'PARTIAL'
+            continue
+        try:
+            sid = str(j["source_id"])
+            k = key(name, sid)
+            old = prev.get(k)
+            j["fingerprint"] = metadata_fingerprint(j)
+            if old is None:
+                j["status"] = "NEW"
+            elif metadata_fingerprint(old) != j["fingerprint"]:
+                j["status"] = "UPDATED"
+            else:
+                j["status"] = "STILL_OPEN"
+            ids.add(sid)
+            current.append(j)
+        except Exception as exc:
+            record_error('LOCAL_RECORD_ERROR','collection','INVALID_ATS_RECORD',exc,root=ROOT,company=name,job_key=f"{name}::{j.get('source_id')}")
+            result['coverage'] = 'PARTIAL'
 
     for k, old in prev.items():
         if not k.startswith(f"{name}::"):
             continue
         sid = str(old.get("source_id"))
-        if sid in ids or old.get("status") not in OPEN_STATUSES | {"UNKNOWN"}:
+        if sid in ids:
             continue
         x = dict(old)
         # Strip heavy v1.2-only payload when carrying a closed/unknown historical row.
@@ -1126,7 +1117,7 @@ def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tup
         x["canonical_url"] = canonical_url(x)
         x["url"] = x.get("canonical_url")
         x["fingerprint"] = metadata_fingerprint(x)
-        x["status"] = "CLOSED" if result["coverage"] == "VERIFIED" else "UNKNOWN"
+        x["status"] = "CLOSED" if old.get("status") == "CLOSED" or result["coverage"] == "VERIFIED" else "UNKNOWN"
         current.append(x)
 
     for j in current:
@@ -1151,7 +1142,7 @@ def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tup
     return company_out, counts
 
 
-def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
+def build_batch_snapshot(batch: str, workers: int = DEFAULT_WORKERS):
     mp = ROOT / f"ats_mapping_{batch}.json"
     out = ROOT / f"current_jobs_{batch}.json"
     mapping = read_json(mp)
@@ -1205,8 +1196,18 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
         result, supported = pair
         if supported:
             summary["collector_supported"] += 1
-        company_out, counts = reconcile_company(company, result, prev)
+        try:
+            company_out, counts = reconcile_company(company, result, prev)
+        except Exception as exc:
+            record_error('SOURCE_ERROR','collection','INVALID_SOURCE_RESULT',exc,root=ROOT,batch=batch.upper(),company=company.get('company'))
+            result = {'coverage':'FAILED','collector':'reconciliation_guard','inventory_count':None,'jobs':[],'reason':str(exc)}
+            company_out, counts = reconcile_company(company,result,prev)
+        for item in result.get('record_errors',[]):
+            record_error('LOCAL_RECORD_ERROR','collection',item['code'],item['message'],root=ROOT,batch=batch.upper(),company=company.get('company'),job_key=item.get('job_key'))
+        company_out['record_errors'] = result.get('record_errors',[])
         coverage = result["coverage"]
+        if coverage in {'PARTIAL','FAILED','NOT_CHECKED'}:
+            company_out['collection_error'] = record_error('SOURCE_ERROR','collection','SOURCE_'+coverage,result.get('reason') or 'Official enumeration incomplete',root=ROOT,batch=batch.upper(),company=company.get('company'))
         summary[coverage] += 1
         for k, v in counts.items():
             summary[k] += v
@@ -1243,8 +1244,6 @@ def parse_args(argv=None):
     p = argparse.ArgumentParser(description="Job Watch ATS collector")
     p.add_argument("--batch", default="all", choices=("all",) + BATCHES)
     p.add_argument("--workers", type=int, default=DEFAULT_WORKERS, help="Concurrent companies; capped at 6")
-    # Kept for workflow/backward compatibility; v1.3 does not sleep between companies.
-    p.add_argument("--sleep", type=float, default=0.0, help=argparse.SUPPRESS)
     return p.parse_args(argv)
 
 
@@ -1253,7 +1252,8 @@ def main(argv=None):
     batches = BATCHES if args.batch == "all" else (args.batch,)
     workers = max(1, min(args.workers, DEFAULT_WORKERS))
     for batch in batches:
-        r = collect_batch(batch, workers=workers)
+        r = attempt("collection",lambda:collect_batch(batch, workers=workers),batch=batch,root=ROOT)
+        if r is None: continue
         print(batch.upper(), json.dumps(r["summary"], ensure_ascii=False))
         for company in r.get("companies", []):
             if company.get("coverage") in {"FAILED", "NOT_CHECKED"} and company.get("reason"):
@@ -1288,13 +1288,13 @@ def is_sf_search_path(url: str) -> bool:
     return "/go/" in urlparse(url).path.casefold()
 
 
-_collect_workday_v13 = collect_workday
+_collect_workday_inventory = collect_workday
 
 def collect_workday(company):
     last_error = None
     for _attempt in range(2):
         try:
-            return _collect_workday_v13(company)
+            return _collect_workday_inventory(company)
         except requests.exceptions.JSONDecodeError as e:
             last_error = e
             continue
@@ -1310,13 +1310,13 @@ def collect_workday(company):
     raise NotCheckable(f"Workday inventory changed during enumeration after retry: {last_error}")
 
 
-_collect_smartrecruiters_v13 = collect_smartrecruiters
+_collect_smartrecruiters_inventory = collect_smartrecruiters
 
 def collect_smartrecruiters(company):
     last_error = None
     for _attempt in range(2):
         try:
-            return _collect_smartrecruiters_v13(company)
+            return _collect_smartrecruiters_inventory(company)
         except CollectorError as e:
             message = str(e).casefold()
             if "count mismatch" not in message and "paging stopped early" not in message:
@@ -1429,10 +1429,13 @@ def collect_teamtailor(company):
         raise NotCheckable(f"Teamtailor board count mismatch: retrieved={len(unique)}, total={expected}")
     jobs = []
     for sid, raw in unique.items():
-        loc = teamtailor_location(raw.get("context_parts") or [])
-        if not location_matches(loc):
-            continue
-        jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
+        try:
+            loc = teamtailor_location(raw.get("context_parts") or [])
+            if not location_matches(loc):
+                continue
+            jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "teamtailor_public_board_metadata", "inventory_count": len(unique), "jobs": jobs, "source_url": final_url}
 
 
@@ -1600,12 +1603,15 @@ def _collect_oracle_once(company):
         raise NotCheckable(f"Oracle count mismatch: retrieved={len(rows)}, total={total}")
     jobs = []
     for raw in rows:
-        sid = oracle_source_id(raw)
-        loc = oracle_location(raw)
-        if not sid or not location_matches(loc):
-            continue
-        canonical = f"{public_base}/job/{sid}"
-        jobs.append(compact_job(name, sid, title=raw.get("Title"), location=loc, department=raw.get("Department") or raw.get("Organization"), employment_type=clean_text(raw.get("JobType")) or clean_text(raw.get("ContractType")), published_at=raw.get("PostedDate"), canonical=canonical, apply_url=canonical))
+        try:
+            sid = oracle_source_id(raw)
+            loc = oracle_location(raw)
+            if not sid or not location_matches(loc):
+                continue
+            canonical = f"{public_base}/job/{sid}"
+            jobs.append(compact_job(name, sid, title=raw.get("Title"), location=loc, department=raw.get("Department") or raw.get("Organization"), employment_type=clean_text(raw.get("JobType")) or clean_text(raw.get("ContractType")), published_at=raw.get("PostedDate"), canonical=canonical, apply_url=canonical))
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {"coverage": "VERIFIED", "collector": "oracle_recruiting_cloud_ce_metadata", "inventory_count": len(rows), "jobs": jobs, "source_url": source_url or inventory}
 
 
@@ -1631,50 +1637,13 @@ def verified_smartrecruiters_feed(company):
     return bool("smartrecruiters" in family and "attrax" not in family and verification.get("full_inventory_possible") is True and tenant and SAFE_TENANT_RE.fullmatch(tenant) and feed and urlparse(feed).netloc.casefold() == "api.smartrecruiters.com")
 
 
-_choose_v13 = choose
-
-def choose(company):
-    if oracle_family(company):
-        inventory = clean_text((company.get("ats") or {}).get("inventory_url")) or ""
-        if oracle_site_from_inventory(inventory):
-            return collect_oracle
-    fn = _choose_v13(company)
-    if fn is not None:
-        return fn
-    ats = company.get("ats") or {}
-    family = (clean_text(ats.get("family")) or "").casefold()
-    verification = company.get("verification") or {}
-    if verified_smartrecruiters_feed(company):
-        return collect_smartrecruiters
-    if "teamtailor" in family and verification.get("full_inventory_possible") is True:
-        inventory = clean_text(ats.get("inventory_url")) or ""
-        if "/jobs" in urlparse(inventory).path.casefold():
-            return collect_teamtailor
-    return None
 
 
-_unsupported_result_v13 = unsupported_result
-
-def unsupported_result(company, reason=None):
-    result = _unsupported_result_v13(company, reason)
-    if result.get("collector") == "unsupported_or_unverified_v1_3":
-        result["collector"] = "unsupported_or_unverified_v1_4"
-    if result.get("reason"):
-        result["reason"] = result["reason"].replace("collector v1.3", "collector v1.4")
-    return result
 
 
-_collect_batch_v13 = collect_batch
 
-def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
-    payload = _collect_batch_v13(batch, workers=workers)
-    payload["version"] = "1.4"
-    scope = list(payload.get("collector_scope") or [])
-    for value in (ORACLE_SCOPE_NAME, TEAMTAILOR_SCOPE_NAME):
-        if value not in scope:
-            scope.append(value)
-    payload["collector_scope"] = scope
-    return payload
+
+
 
 
 # === JOB WATCH V1.5 SUCCESSFACTORS HARDENING ===
@@ -2087,20 +2056,23 @@ def _collect_successfactors_once(company):
 
     jobs = []
     for raw in inventory_jobs.values():
-        loc = clean_text(raw.get("location"))
-        if not location_matches(loc):
-            continue
-        jobs.append(
-            compact_job(
-                name,
-                sf_job_source_id(raw["url"]),
-                title=raw.get("title"),
-                location=loc,
-                published_at=raw.get("published_at"),
-                canonical=raw.get("url"),
-                apply_url=raw.get("url"),
+        try:
+            loc = clean_text(raw.get("location"))
+            if not location_matches(loc):
+                continue
+            jobs.append(
+                compact_job(
+                    name,
+                    sf_job_source_id(raw["url"]),
+                    title=raw.get("title"),
+                    location=loc,
+                    published_at=raw.get("published_at"),
+                    canonical=raw.get("url"),
+                    apply_url=raw.get("url"),
+                )
             )
-        )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
 
     return {
         "coverage": "VERIFIED",
@@ -2133,11 +2105,6 @@ def collect_successfactors(company):
     raise NotCheckable(f"SuccessFactors inventory remained unstable after retry: {last_error}")
 
 
-_collect_batch_v14 = collect_batch
-def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
-    payload = _collect_batch_v14(batch, workers=workers)
-    payload["version"] = "1.5"
-    return payload
 
 # === JOB WATCH V1.5 SUCCESSFACTORS STRICT INVENTORY ===
 # Tighten discovery and add Career Site Builder tile pagination. A mapped /go/
@@ -2917,17 +2884,20 @@ def _collect_yello_once(company):
 
     jobs = []
     for row in target_rows:
-        jobs.append(
-            compact_job(
-                name,
-                row["source_id"],
-                title=row.get("title"),
-                location=row.get("location"),
-                employment_type=row.get("employment_type"),
-                canonical=row.get("url"),
-                apply_url=row.get("url"),
+        try:
+            jobs.append(
+                compact_job(
+                    name,
+                    row["source_id"],
+                    title=row.get("title"),
+                    location=row.get("location"),
+                    employment_type=row.get("employment_type"),
+                    canonical=row.get("url"),
+                    apply_url=row.get("url"),
+                )
             )
-        )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {
         "coverage": "VERIFIED",
         "collector": "yello_recsolu_public_board_metadata_v16",
@@ -2960,22 +2930,8 @@ def collect_yello(company):
     raise NotCheckable(f"Yello inventory remained unstable after retry: {last_error}")
 
 
-_choose_v15 = choose
-def choose(company):
-    if yello_family(company):
-        return collect_yello
-    return _choose_v15(company)
 
 
-_collect_batch_v15 = collect_batch
-def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
-    payload = _collect_batch_v15(batch, workers=workers)
-    payload["version"] = "1.6"
-    scope = list(payload.get("collector_scope") or [])
-    if YELLO_SCOPE_NAME not in scope:
-        scope.append(YELLO_SCOPE_NAME)
-    payload["collector_scope"] = scope
-    return payload
 
 # === JOB WATCH V1.7 TARGET-COVERAGE + OFFICIAL PROBES ===
 # Adds first-class Amazon target-city enumeration, Banca Ifis deterministic
@@ -3166,20 +3122,23 @@ def collect_amazon(company):
 
     jobs = []
     for sid, raw in by_id.items():
-        loc = clean_text(raw.get("location")) or ", ".join(_amazon_norms(raw))
-        jobs.append(
-            compact_job(
-                name,
-                sid,
-                title=raw.get("title"),
-                location=loc,
-                department=raw.get("job_category") or raw.get("business_category"),
-                published_at=raw.get("posted_date") or raw.get("posted_at"),
-                updated_at=raw.get("updated_time"),
-                canonical=_amazon_job_url(raw),
-                apply_url=_amazon_job_url(raw),
+        try:
+            loc = clean_text(raw.get("location")) or ", ".join(_amazon_norms(raw))
+            jobs.append(
+                compact_job(
+                    name,
+                    sid,
+                    title=raw.get("title"),
+                    location=loc,
+                    department=raw.get("job_category") or raw.get("business_category"),
+                    published_at=raw.get("posted_date") or raw.get("posted_at"),
+                    updated_at=raw.get("updated_time"),
+                    canonical=_amazon_job_url(raw),
+                    apply_url=_amazon_job_url(raw),
+                )
             )
-        )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {
         "coverage": "VERIFIED",
         "collector": "amazon_jobs_search_json_target_inventory_v17",
@@ -3275,18 +3234,21 @@ def collect_banca_ifis(company):
 
     jobs = []
     for jid, row in found.items():
-        loc, canonical = _banca_ifis_detail(row["url"])
-        if location_matches(loc):
-            jobs.append(
-                compact_job(
-                    name,
-                    jid,
-                    title=row.get("title"),
-                    location=loc,
-                    canonical=canonical,
-                    apply_url=canonical,
+        try:
+            loc, canonical = _banca_ifis_detail(row["url"])
+            if location_matches(loc):
+                jobs.append(
+                    compact_job(
+                        name,
+                        jid,
+                        title=row.get("title"),
+                        location=loc,
+                        canonical=canonical,
+                        apply_url=canonical,
+                    )
                 )
-            )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {
         "coverage": "VERIFIED",
         "collector": "banca_ifis_paginated_inventory_v17",
@@ -3331,25 +3293,28 @@ def collect_prima_official(company):
 
     jobs = []
     for sid, row in rows.items():
-        detail, canonical = get_html(row["url"])
-        dp = BasicTextLinkParser()
-        dp.feed(detail)
-        loc = None
-        for part in dp.text_parts:
-            if len(part) <= 100 and TARGET_LOCATION_RE.search(part):
-                loc = clean_text(part)
-                break
-        if location_matches(loc):
-            jobs.append(
-                compact_job(
-                    name,
-                    sid,
-                    title=row.get("title") or (dp.text_parts[0] if dp.text_parts else None),
-                    location=loc,
-                    canonical=canonical,
-                    apply_url=canonical,
+        try:
+            detail, canonical = get_html(row["url"])
+            dp = BasicTextLinkParser()
+            dp.feed(detail)
+            loc = None
+            for part in dp.text_parts:
+                if len(part) <= 100 and TARGET_LOCATION_RE.search(part):
+                    loc = clean_text(part)
+                    break
+            if location_matches(loc):
+                jobs.append(
+                    compact_job(
+                        name,
+                        sid,
+                        title=row.get("title") or (dp.text_parts[0] if dp.text_parts else None),
+                        location=loc,
+                        canonical=canonical,
+                        apply_url=canonical,
+                    )
                 )
-            )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {
         "coverage": "PARTIAL",
         "collector": "prima_first_party_rendered_list_v17",
@@ -3495,25 +3460,28 @@ def collect_bolt(company):
     stale_details = 0
     for sid, url in found.items():
         try:
-            detail = _bolt_detail(url)
-        except requests.HTTPError as e:
-            if getattr(e.response, "status_code", None) == 404:
-                stale_details += 1
-                continue
-            raise
-        if location_matches(detail.get("location")):
-            jobs.append(
-                compact_job(
-                    name,
-                    sid,
-                    title=detail.get("title"),
-                    location=detail.get("location"),
-                    department=detail.get("department"),
-                    employment_type=detail.get("employment_type"),
-                    canonical=detail.get("url"),
-                    apply_url=detail.get("url"),
+            try:
+                detail = _bolt_detail(url)
+            except requests.HTTPError as e:
+                if getattr(e.response, "status_code", None) == 404:
+                    stale_details += 1
+                    continue
+                raise
+            if location_matches(detail.get("location")):
+                jobs.append(
+                    compact_job(
+                        name,
+                        sid,
+                        title=detail.get("title"),
+                        location=detail.get("location"),
+                        department=detail.get("department"),
+                        employment_type=detail.get("employment_type"),
+                        canonical=detail.get("url"),
+                        apply_url=detail.get("url"),
+                    )
                 )
-            )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
     return {
         "coverage": "PARTIAL" if stale_details else "VERIFIED",
         "collector": "bolt_paginated_positions_inventory_v18",
@@ -3640,23 +3608,26 @@ def collect_occ(company):
     stale = 0
     for sid, row in found.items():
         try:
-            location, canonical = _occ_detail(row["url"])
-        except requests.HTTPError as e:
-            if getattr(e.response, "status_code", None) in {404, 410}:
-                stale += 1
-                continue
-            raise
-        if location_matches(location):
-            jobs.append(
-                compact_job(
-                    name,
-                    sid,
-                    title=row.get("title"),
-                    location=location,
-                    canonical=canonical,
-                    apply_url=canonical,
+            try:
+                location, canonical = _occ_detail(row["url"])
+            except requests.HTTPError as e:
+                if getattr(e.response, "status_code", None) in {404, 410}:
+                    stale += 1
+                    continue
+                raise
+            if location_matches(location):
+                jobs.append(
+                    compact_job(
+                        name,
+                        sid,
+                        title=row.get("title"),
+                        location=location,
+                        canonical=canonical,
+                        apply_url=canonical,
+                    )
                 )
-            )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
 
     return {
         "coverage": "PARTIAL" if stale else "VERIFIED",
@@ -3831,32 +3802,35 @@ def collect_phenom(company):
 
     jobs = []
     for sid, raw in rows_by_id.items():
-        loc = _phenom_location(raw)
-        if not location_matches(loc, name):
-            continue
-        title = clean_text(raw.get("title")) or clean_text(raw.get("jobTitle"))
-        job_url = clean_text(raw.get("jobUrl"))
-        if job_url:
-            canonical = urljoin(cfg["origin"] + "/", job_url)
-        else:
-            safe_title = re.sub(r"[^A-Za-z0-9]+", "-", title or "job").strip("-")
-            canonical = f'{cfg["origin"]}/{cfg["url_prefix"]}/job/{sid}/{safe_title or "job"}'
-        apply_url = clean_text(raw.get("applyUrl"))
-        if apply_url:
-            apply_url = urljoin(cfg["origin"] + "/", apply_url)
-        jobs.append(
-            compact_job(
-                name,
-                sid,
-                title=title,
-                location=loc,
-                department=raw.get("category"),
-                employment_type=raw.get("type") or raw.get("jobType"),
-                published_at=raw.get("postedDate") or raw.get("dateCreated"),
-                canonical=canonical,
-                apply_url=apply_url or canonical,
+        try:
+            loc = _phenom_location(raw)
+            if not location_matches(loc, name):
+                continue
+            title = clean_text(raw.get("title")) or clean_text(raw.get("jobTitle"))
+            job_url = clean_text(raw.get("jobUrl"))
+            if job_url:
+                canonical = urljoin(cfg["origin"] + "/", job_url)
+            else:
+                safe_title = re.sub(r"[^A-Za-z0-9]+", "-", title or "job").strip("-")
+                canonical = f'{cfg["origin"]}/{cfg["url_prefix"]}/job/{sid}/{safe_title or "job"}'
+            apply_url = clean_text(raw.get("applyUrl"))
+            if apply_url:
+                apply_url = urljoin(cfg["origin"] + "/", apply_url)
+            jobs.append(
+                compact_job(
+                    name,
+                    sid,
+                    title=title,
+                    location=loc,
+                    department=raw.get("category"),
+                    employment_type=raw.get("type") or raw.get("jobType"),
+                    published_at=raw.get("postedDate") or raw.get("dateCreated"),
+                    canonical=canonical,
+                    apply_url=apply_url or canonical,
+                )
             )
-        )
+        except Exception as exc:
+            normalization_error(company,exc,locals().get('raw',{}))
 
     return {
         "coverage": "VERIFIED",
@@ -3867,7 +3841,6 @@ def collect_phenom(company):
     }
 
 
-_choose_v16 = choose
 def choose(company):
     if phenom_family(company):
         return collect_phenom
@@ -3881,45 +3854,44 @@ def choose(company):
         return collect_occ
     if prima_family(company):
         return collect_prima_official
-    fn = _choose_v16(company)
-    if fn is not None:
-        return fn
+    if yello_family(company): return collect_yello
+    inventory = clean_text((company.get('ats') or {}).get('inventory_url')) or ''
+    if oracle_family(company) and oracle_site_from_inventory(inventory): return collect_oracle
+    fn = choose_structured(company)
+    if fn is not None: return fn
+    if verified_smartrecruiters_feed(company): return collect_smartrecruiters
+    family = (clean_text((company.get('ats') or {}).get('family')) or '').casefold()
+    if 'teamtailor' in family and (company.get('verification') or {}).get('full_inventory_possible') is True and '/jobs' in urlparse(inventory).path.casefold(): return collect_teamtailor
     return probe_official_inventory
 
 
 def collect_company(company: dict) -> tuple[dict, bool]:
+    """An adapter owns enumeration; normalized observed jobs survive later errors."""
     fn = choose(company)
+    _thread_local.collection_progress = {'company':company.get('company'),'jobs':{},'errors':[]}
     try:
         result = fn(company)
-        if "reason" not in result:
-            result["reason"] = None
+        result.setdefault('reason',None)
+        if _thread_local.collection_progress['errors']:
+            result['coverage'] = 'PARTIAL'
+            result['record_errors'] = _thread_local.collection_progress['errors']
+            result['reason'] = 'Some malformed records were isolated; valid records retained'
         return result, True
-    except NotCheckable as e:
-        return {
-            "coverage": "PARTIAL",
-            "collector": getattr(fn, "__name__", "collector"),
-            "inventory_count": None,
-            "jobs": [],
-            "reason": f"Official check incomplete: {e}",
-            "source_url": (company.get("ats") or {}).get("inventory_url"),
-        }, True
-    except Exception as e:
-        return {
-            "coverage": "FAILED",
-            "collector": getattr(fn, "__name__", "collector"),
-            "inventory_count": None,
-            "jobs": [],
-            "reason": f"{type(e).__name__}: {e}",
-            "source_url": (company.get("ats") or {}).get("inventory_url"),
-        }, True
+    except Exception as exc:
+        observed = list(_thread_local.collection_progress['jobs'].values())
+        return {'coverage':'PARTIAL' if observed or isinstance(exc,NotCheckable) else 'FAILED',
+                'collector':getattr(fn,'__name__','collector'),'inventory_count':None,'jobs':observed,
+                'reason':f'{type(exc).__name__}: {exc}; retained {len(observed)} validated observed jobs',
+                'source_url':(company.get('ats') or {}).get('inventory_url'),'record_errors':_thread_local.collection_progress['errors']}, True
+    finally:
+        del _thread_local.collection_progress
 
 
-_collect_batch_v16 = collect_batch
 def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
-    payload = _collect_batch_v16(batch, workers=workers)
+    payload = build_batch_snapshot(batch, workers=workers)
     payload["version"] = "1.8"
     scope = list(payload.get("collector_scope") or [])
-    for value in (PHENOM_SCOPE_NAME, AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OCC_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
+    for value in (ORACLE_SCOPE_NAME, TEAMTAILOR_SCOPE_NAME, YELLO_SCOPE_NAME, PHENOM_SCOPE_NAME, AMAZON_SCOPE_NAME, BANCA_IFIS_SCOPE_NAME, BOLT_SCOPE_NAME, OCC_SCOPE_NAME, OFFICIAL_PROBE_SCOPE_NAME):
         if value not in scope:
             scope.append(value)
     payload["collector_scope"] = scope

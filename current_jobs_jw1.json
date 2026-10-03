@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW1",
   "batch_name": "Finance, Payments, Banking & Insurance",
-  "generated_at": "2026-10-03T11:55:02Z",
+  "generated_at": "2026-10-03T19:40:48Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -41,7 +41,7 @@
     "STILL_OPEN": 856,
     "UPDATED": 0,
     "CLOSED": 0,
-    "UNKNOWN": 0
+    "UNKNOWN": 3
   },
   "companies": [
     {
@@ -50,7 +50,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1044,
+      "inventory_count": 1038,
       "target_jobs_count": 44,
       "source_url": "https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
       "reason": null,
@@ -759,7 +759,8 @@
           "fingerprint": "04c33a0931b9c961",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Visa",
@@ -1395,8 +1396,51 @@
           "apply_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/GB---London-United-Kingdom/Senior-Consultant--Client-Success_REF077280W",
           "fingerprint": "194a5e3ff23c5378",
           "status": "STILL_OPEN"
+        },
+        {
+          "title": "Business Analyst Consultant",
+          "location": "GB - London, United Kingdom",
+          "canonical_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
+          "apply_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
+          "fingerprint": "b2d187cfe292224b",
+          "company": "Visa",
+          "source_id": "/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
+          "status": "UNKNOWN",
+          "reconciliation_state": "UNRESOLVED",
+          "reconciliation_error": {
+            "category": "LOCAL_RECORD_ERROR",
+            "scope": "record",
+            "stage": "reconciliation",
+            "code": "ROLE_UNRESOLVED",
+            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "company": "Visa",
+            "job_key": "Visa::/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W"
+          },
+          "url": "https://visa.wd5.myworkdayjobs.com/Visa/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W"
+        },
+        {
+          "title": "Consulting Analyst",
+          "location": "IT - Milan, Italy",
+          "canonical_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
+          "apply_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
+          "fingerprint": "4a1543f3785e24c7",
+          "company": "Visa",
+          "source_id": "/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
+          "status": "UNKNOWN",
+          "reconciliation_state": "UNRESOLVED",
+          "reconciliation_error": {
+            "category": "LOCAL_RECORD_ERROR",
+            "scope": "record",
+            "stage": "reconciliation",
+            "code": "ROLE_UNRESOLVED",
+            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "company": "Visa",
+            "job_key": "Visa::/job/IT---Milan-Italy/Consulting-Analyst_REF081405W"
+          },
+          "url": "https://visa.wd5.myworkdayjobs.com/Visa/job/IT---Milan-Italy/Consulting-Analyst_REF081405W"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "American Express",
@@ -1404,7 +1448,7 @@
       "ats_family": "Oracle Recruiting Cloud / Oracle HCM",
       "coverage": "VERIFIED",
       "collector": "oracle_recruiting_cloud_ce_metadata",
-      "inventory_count": 439,
+      "inventory_count": 437,
       "target_jobs_count": 25,
       "source_url": "https://egug.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=findReqs%3BsiteNumber%3DCX_1%2Climit%3D25%2Coffset%3D0",
       "reason": null,
@@ -1809,7 +1853,8 @@
           "fingerprint": "3084d8bbbc7cf120",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Nexi",
@@ -1820,8 +1865,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.nexigroup.com/it/people/lavora-in-nexi/posizioni-aperte/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 129663 bytes) but no safe exhaustive collector is implemented yet for Custom / embedded ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 129663 bytes) but no safe exhaustive collector is implemented yet for Custom / embedded ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 129663 bytes) but no safe exhaustive collector is implemented yet for Custom / embedded ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Nexi"
+      }
     },
     {
       "company": "Prima Assicurazioni",
@@ -1898,7 +1953,17 @@
           "fingerprint": "a3f65585f27d7ef3",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "Official Prima job-detail list was enumerated as rendered, but the board exposes no independent total/pagination contract; completeness cannot be certified.",
+        "batch": "JW1",
+        "company": "Prima Assicurazioni"
+      }
     },
     {
       "company": "Satispay",
@@ -2823,7 +2888,8 @@
           "fingerprint": "4a16a1762604a8b0",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Qonto",
@@ -3028,7 +3094,8 @@
           "fingerprint": "f7e2650b6c7e27d6",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Facile.it",
@@ -3039,8 +3106,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://people.facile.it/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 113893 bytes) but no safe exhaustive collector is implemented yet for Custom career site; ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 113893 bytes) but no safe exhaustive collector is implemented yet for Custom career site; ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 113893 bytes) but no safe exhaustive collector is implemented yet for Custom career site; ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Facile.it"
+      }
     },
     {
       "company": "Scalapay",
@@ -3165,7 +3242,8 @@
           "fingerprint": "92f8e10ebbd35530",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Moneyfarm",
@@ -3386,7 +3464,8 @@
           "fingerprint": "52c9d5404b6423ff",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Adyen",
@@ -3495,7 +3574,8 @@
           "fingerprint": "fd0dc163b9342d15",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Revolut",
@@ -3506,8 +3586,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.revolut.com/careers/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 456944 bytes) but no safe exhaustive collector is implemented yet for Custom global career platform; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 458651 bytes) but no safe exhaustive collector is implemented yet for Custom global career platform; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 458651 bytes) but no safe exhaustive collector is implemented yet for Custom global career platform; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Revolut"
+      }
     },
     {
       "company": "Intesa Sanpaolo",
@@ -4992,7 +5082,8 @@
           "fingerprint": "c9e91aa9d8a0f530",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "UniCredit",
@@ -5003,8 +5094,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.unicredit.eu/en_GB/jobsuche/SearchJobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 260099 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 260108 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 260108 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "UniCredit"
+      }
     },
     {
       "company": "FinecoBank",
@@ -5015,8 +5116,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://about.finecobank.com/it/careers/diventa-un-dipendente/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 42448 bytes) but no safe exhaustive collector is implemented yet for Custom corporate careers page; ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 42448 bytes) but no safe exhaustive collector is implemented yet for Custom corporate careers page; ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 42448 bytes) but no safe exhaustive collector is implemented yet for Custom corporate careers page; ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "FinecoBank"
+      }
     },
     {
       "company": "Banca Ifis",
@@ -5221,7 +5332,8 @@
           "fingerprint": "d2ae15796496d475",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "illimity",
@@ -5232,8 +5344,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.illimity.com/en/open-position",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 212 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic career site; ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 212 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic career site; ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 212 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic career site; ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "illimity"
+      }
     },
     {
       "company": "BNP Paribas",
@@ -5244,8 +5366,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://group.bnpparibas/en/careers/all-job-offers/italy",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom BNP Paribas group career platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom BNP Paribas group career platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom BNP Paribas group career platform; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "BNP Paribas"
+      }
     },
     {
       "company": "Mediobanca",
@@ -5256,8 +5388,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.mediobanca.com/en/work-with-us/open-positions.html",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 193444 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 193443 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 193443 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Mediobanca"
+      }
     },
     {
       "company": "Deutsche Bank",
@@ -5268,8 +5410,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.db.com/professionals/search-roles/index",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 93636 bytes) but no safe exhaustive collector is implemented yet for Custom global careers search; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 93636 bytes) but no safe exhaustive collector is implemented yet for Custom global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 93636 bytes) but no safe exhaustive collector is implemented yet for Custom global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Deutsche Bank"
+      }
     },
     {
       "company": "Banca Sella",
@@ -5362,7 +5514,8 @@
           "fingerprint": "69e5f1f1d2d5f46b",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Generali",
@@ -5373,8 +5526,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://gogenerali.com/home/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 71476 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 71476 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 71476 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Generali"
+      }
     },
     {
       "company": "Unipol",
@@ -5385,8 +5548,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.unipol.com/it/persone/lavora-con-noi/job-posting",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 137251 bytes) but no safe exhaustive collector is implemented yet for Custom official job-posting portal",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 137253 bytes) but no safe exhaustive collector is implemented yet for Custom official job-posting portal; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 137253 bytes) but no safe exhaustive collector is implemented yet for Custom official job-posting portal; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Unipol"
+      }
     },
     {
       "company": "Allianz",
@@ -5397,8 +5570,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.allianz.com/global/en/search-results",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 485332 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 483899 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 483899 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Allianz"
+      }
     },
     {
       "company": "AXA",
@@ -5409,8 +5592,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.axa.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 607470 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 607470 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 607470 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "AXA"
+      }
     },
     {
       "company": "Zurich",
@@ -5418,7 +5611,7 @@
       "ats_family": "SAP SuccessFactors Recruiting",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 772,
+      "inventory_count": 769,
       "target_jobs_count": 23,
       "source_url": "https://www.careers.zurich.com/search/",
       "reason": null,
@@ -5791,7 +5984,8 @@
           "fingerprint": "0bbe411f765a7e02",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Aon",
@@ -5802,8 +5996,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.aon.com/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 378612 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 378611 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 378611 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Aon"
+      }
     },
     {
       "company": "Marsh",
@@ -5814,8 +6018,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.marsh.com/eu/en/search-results",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 110212 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 110212 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 110212 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Marsh"
+      }
     },
     {
       "company": "Howden",
@@ -6644,7 +6858,8 @@
           "fingerprint": "e444b4ab869a583d",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Wise",
@@ -6652,7 +6867,7 @@
       "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
-      "inventory_count": 412,
+      "inventory_count": 410,
       "target_jobs_count": 189,
       "source_url": "https://api.smartrecruiters.com/v1/companies/Wise/postings",
       "reason": null,
@@ -9681,7 +9896,8 @@
           "fingerprint": "17d00c54256602d5",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Worldline",
@@ -9692,8 +9908,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.worldline.com/viewalljobs/",
-      "reason": "Official check incomplete: SuccessFactors inventory exposes total=65 but no stable public job links",
-      "jobs": []
+      "reason": "NotCheckable: SuccessFactors inventory exposes total=65 but no stable public job links; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: SuccessFactors inventory exposes total=65 but no stable public job links; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Worldline"
+      }
     },
     {
       "company": "Scalable Capital",
@@ -9705,7 +9931,8 @@
       "target_jobs_count": 0,
       "source_url": "https://api.smartrecruiters.com/v1/companies/ScalableGmbH/postings",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "N26",
@@ -9734,7 +9961,8 @@
           "fingerprint": "ee31cc83118f8119",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Mollie",
@@ -9745,8 +9973,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.mollie.com/vacancies",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 823466 bytes) but no safe exhaustive collector is implemented yet for Custom Mollie career site; backend ATS unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 823466 bytes) but no safe exhaustive collector is implemented yet for Custom Mollie career site; backend ATS unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 823466 bytes) but no safe exhaustive collector is implemented yet for Custom Mollie career site; backend ATS unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Mollie"
+      }
     },
     {
       "company": "SumUp",
@@ -9754,7 +9992,7 @@
       "ats_family": "Greenhouse embedded in SumUp careers",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 341,
+      "inventory_count": 342,
       "target_jobs_count": 21,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/sumup/jobs",
       "reason": null,
@@ -10095,7 +10333,8 @@
           "fingerprint": "197386ae4e09e80f",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "PayPal",
@@ -10106,8 +10345,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.pypl.com/search-results/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 55049 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic PayPal careers platform; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 55049 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic PayPal careers platform; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 55049 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic PayPal careers platform; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "PayPal"
+      }
     },
     {
       "company": "Dojo",
@@ -10118,8 +10367,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://dojo.careers/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 76752 bytes) but no safe exhaustive collector is implemented yet for Greenhouse for core roles; Lever also observed for some field-sales recruiting",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 76752 bytes) but no safe exhaustive collector is implemented yet for Greenhouse for core roles; Lever also observed for some field-sales recruiting; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 76752 bytes) but no safe exhaustive collector is implemented yet for Greenhouse for core roles; Lever also observed for some field-sales recruiting; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Dojo"
+      }
     },
     {
       "company": "Trade Republic",
@@ -10196,7 +10455,8 @@
           "fingerprint": "942104bf3d2b710f",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Stripe",
@@ -10204,7 +10464,7 @@
       "ats_family": "Greenhouse",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 715,
+      "inventory_count": 716,
       "target_jobs_count": 50,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs",
       "reason": null,
@@ -11009,7 +11269,8 @@
           "fingerprint": "58842f48b1448bfd",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Checkout.com",
@@ -11020,8 +11281,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.checkout.com/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 212686 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic Checkout.com careers platform; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 212686 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic Checkout.com careers platform; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 212686 bytes) but no safe exhaustive collector is implemented yet for Custom dynamic Checkout.com careers platform; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Checkout.com"
+      }
     },
     {
       "company": "Airwallex",
@@ -11962,7 +12233,8 @@
           "fingerprint": "23fdabdb1e920a07",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Euronext",
@@ -12742,8 +13014,27 @@
           "apply_url": "https://hrhub.wd3.myworkdayjobs.com/Euronext_Career_Page/job/Milan/Site-Reliability-Engineer_R25984",
           "fingerprint": "2aaa06f81b8ddb5d",
           "status": "STILL_OPEN"
+        },
+        {
+          "company": "Euronext",
+          "source_id": "R27644",
+          "fingerprint": "f741bf82f97eebd4",
+          "status": "UNKNOWN",
+          "reconciliation_state": "UNRESOLVED",
+          "reconciliation_error": {
+            "category": "LOCAL_RECORD_ERROR",
+            "scope": "record",
+            "stage": "reconciliation",
+            "code": "ROLE_UNRESOLVED",
+            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "company": "Euronext",
+            "job_key": "Euronext::R27644"
+          },
+          "canonical_url": null,
+          "url": null
         }
       ],
+      "record_errors": [],
       "path_location_reconciled": true,
       "path_location_source_url": "https://hrhub.wd3.myworkdayjobs.com/wday/cxs/hrhub/Euronext_Career_Page/jobs"
     },
@@ -13014,7 +13305,8 @@
           "fingerprint": "982ef438c8159319",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "ING Italia",
@@ -13427,7 +13719,8 @@
           "fingerprint": "9cc4338dcac2847d",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Crédit Agricole Italia",
@@ -13438,8 +13731,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.credit-agricole.it/Pages/Offre/ListeOffre.aspx?lcid=2057&showSearchUrl=1",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 66814 bytes) but no safe exhaustive collector is implemented yet for Custom/legacy official Crédit Agricole recruitment portal (vendor unresolved)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 66814 bytes) but no safe exhaustive collector is implemented yet for Custom/legacy official Crédit Agricole recruitment portal (vendor unresolved); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 66814 bytes) but no safe exhaustive collector is implemented yet for Custom/legacy official Crédit Agricole recruitment portal (vendor unresolved); retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Crédit Agricole Italia"
+      }
     },
     {
       "company": "Société Générale Italia",
@@ -13450,8 +13753,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.societegenerale.com/en/search?from=home",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 648604 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 648605 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 648605 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Société Générale Italia"
+      }
     },
     {
       "company": "Banca Mediolanum",
@@ -13462,8 +13775,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.bancamediolanum.it/corporate/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 76191 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 76190 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 76190 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Banca Mediolanum"
+      }
     },
     {
       "company": "BFF Bank",
@@ -13474,8 +13797,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.bff.com/jobs.php",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 718 bytes) but no safe exhaustive collector is implemented yet for Custom BFF careers portal; country-specific application providers may vary",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 718 bytes) but no safe exhaustive collector is implemented yet for Custom BFF careers portal; country-specific application providers may vary; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 718 bytes) but no safe exhaustive collector is implemented yet for Custom BFF careers portal; country-specific application providers may vary; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "BFF Bank"
+      }
     },
     {
       "company": "AIG",
@@ -13483,7 +13816,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 484,
+      "inventory_count": 475,
       "target_jobs_count": 29,
       "source_url": "https://aig.wd1.myworkdayjobs.com/wday/cxs/aig/aig/jobs",
       "reason": null,
@@ -13952,7 +14285,8 @@
           "fingerprint": "dfa870a2472b8515",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Chubb",
@@ -14189,7 +14523,8 @@
           "fingerprint": "d8f7fbfcb9c925c2",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Swiss Re",
@@ -14197,7 +14532,7 @@
       "ats_family": "SAP SuccessFactors Recruiting",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 249,
+      "inventory_count": 248,
       "target_jobs_count": 11,
       "source_url": "https://careers.swissre.com/go/Search-Jobs/2744601/",
       "reason": null,
@@ -14378,7 +14713,8 @@
           "fingerprint": "f8d18e390f270620",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Munich Re",
@@ -14389,8 +14725,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.munichre.com/en/search-jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 934455 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 934441 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 934441 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Munich Re"
+      }
     },
     {
       "company": "MetLife",
@@ -14401,8 +14747,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.metlifecareers.com/en_US/ml/SearchJobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 104865 bytes) but no safe exhaustive collector is implemented yet for Avature",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 104860 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 104860 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "MetLife"
+      }
     }
   ],
   "workday_path_reconciliation": {

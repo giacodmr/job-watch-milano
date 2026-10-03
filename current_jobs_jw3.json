@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW3",
   "batch_name": "Energy, Infrastructure & Industrial",
-  "generated_at": "2026-10-03T11:58:26Z",
+  "generated_at": "2026-10-03T19:44:10Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -53,8 +53,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.eni.com/it-IT/sites/CX_1001",
-      "reason": "Official check incomplete: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified",
-      "jobs": []
+      "reason": "NotCheckable: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Eni"
+      }
     },
     {
       "company": "Enel",
@@ -65,8 +75,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.enel.com/it_IT/careers/JobOpeningsItaly",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 154846 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 154850 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 154850 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Enel"
+      }
     },
     {
       "company": "Prysmian",
@@ -74,7 +94,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 599,
+      "inventory_count": 598,
       "target_jobs_count": 45,
       "source_url": "https://prysmiangroup.wd3.myworkdayjobs.com/wday/cxs/prysmiangroup/Careers/jobs",
       "reason": null,
@@ -799,7 +819,8 @@
           "fingerprint": "0cc53eca3ec31b5f",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Leonardo",
@@ -810,8 +831,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.leonardo.com/",
-      "reason": "Official check incomplete: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for custom / enterprise ATS (unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for custom / enterprise ATS (unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for custom / enterprise ATS (unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Leonardo"
+      }
     },
     {
       "company": "Sanlorenzo",
@@ -822,8 +853,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.sanlorenzoyacht.com/it/people/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 112638 bytes) but no safe exhaustive collector is implemented yet for custom",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 112638 bytes) but no safe exhaustive collector is implemented yet for custom; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 112638 bytes) but no safe exhaustive collector is implemented yet for custom; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Sanlorenzo"
+      }
     },
     {
       "company": "A2A",
@@ -834,8 +875,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.gruppoa2a.it/it/carriere/opportunita-lavoro-nostre-career-areas",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1035572 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 1035573 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 1035573 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "A2A"
+      }
     },
     {
       "company": "Snam",
@@ -1248,7 +1299,8 @@
           "fingerprint": "35d88a8b1e85757b",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Edison",
@@ -1259,8 +1311,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://edison.join-us.it/",
-      "reason": "Official check incomplete: Official inventory was attempted but TLS validation failed; no exhaustive parser for custom recruitment portal",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for custom recruitment portal; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for custom recruitment portal; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Edison"
+      }
     },
     {
       "company": "Maire",
@@ -1271,8 +1333,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.mairetecnimont.com/",
-      "reason": "Official check incomplete: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for enterprise career portal (unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for enterprise career portal (unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but the runner request failed (ConnectionError); no exhaustive parser for enterprise career portal (unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Maire"
+      }
     },
     {
       "company": "Webuild",
@@ -2005,7 +2077,8 @@
           "fingerprint": "88372f136ac256f5",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "TIM",
@@ -2016,8 +2089,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.gruppotim.it/it/gruppo/lavora-con-noi.html",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom recruiting portals",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom recruiting portals; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom recruiting portals; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "TIM"
+      }
     },
     {
       "company": "Fastweb + Vodafone Italia",
@@ -2028,8 +2111,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.fastwebvodafone.it/lavora-con-noi/job-opportunities/",
-      "reason": "Official check incomplete: Official inventory was attempted but TLS validation failed; no exhaustive parser for LinkedIn-mediated / official portal transition",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for LinkedIn-mediated / official portal transition; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for LinkedIn-mediated / official portal transition; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Fastweb + Vodafone Italia"
+      }
     },
     {
       "company": "iliad Italia",
@@ -2040,8 +2133,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://corporate.iliad.it/lavorare-in-iliad",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 691218 bytes) but no safe exhaustive collector is implemented yet for custom",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 691218 bytes) but no safe exhaustive collector is implemented yet for custom; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 691218 bytes) but no safe exhaustive collector is implemented yet for custom; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "iliad Italia"
+      }
     },
     {
       "company": "Terna",
@@ -2052,8 +2155,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.terna.it/",
-      "reason": "Official check incomplete: Evidenced SuccessFactors search page has no reconcilable inventory total",
-      "jobs": []
+      "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Terna"
+      }
     },
     {
       "company": "Axpo",
@@ -2064,8 +2177,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.axpo.com/it/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 414407 bytes) but no safe exhaustive collector is implemented yet for custom career platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 414395 bytes) but no safe exhaustive collector is implemented yet for custom career platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 414395 bytes) but no safe exhaustive collector is implemented yet for custom career platform; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Axpo"
+      }
     },
     {
       "company": "Italgas",
@@ -2077,7 +2200,8 @@
       "target_jobs_count": 0,
       "source_url": "https://carriere.italgas.it/search/",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Statkraft",
@@ -2088,8 +2212,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.statkraft.com/careers/job-opportunities/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 213626 bytes) but no safe exhaustive collector is implemented yet for enterprise recruitment portal (vendor unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 213626 bytes) but no safe exhaustive collector is implemented yet for enterprise recruitment portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 213626 bytes) but no safe exhaustive collector is implemented yet for enterprise recruitment portal (vendor unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Statkraft"
+      }
     },
     {
       "company": "E.ON Italia",
@@ -2150,7 +2284,8 @@
           "fingerprint": "9acc23caf147ec77",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "ENGIE Italia",
@@ -2161,8 +2296,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.engie.com/",
-      "reason": "Official check incomplete: No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal",
-      "jobs": []
+      "reason": "NotCheckable: No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "ENGIE Italia"
+      }
     },
     {
       "company": "Sorgenia",
@@ -2173,8 +2318,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://gruppo.sorgenia.it/posizioni-aperte",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 403; no exhaustive parser for custom first-party listing",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for custom first-party listing; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for custom first-party listing; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Sorgenia"
+      }
     },
     {
       "company": "RWE Italia",
@@ -2185,8 +2340,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.rwe.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 44933 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 44933 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 44933 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "RWE Italia"
+      }
     },
     {
       "company": "Iberdrola Italia",
@@ -2197,8 +2362,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.iberdrola.com/careers/careers-iberdrola",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 403; no exhaustive parser for custom / enterprise global employment channel",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for custom / enterprise global employment channel; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for custom / enterprise global employment channel; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Iberdrola Italia"
+      }
     },
     {
       "company": "Saipem",
@@ -2209,8 +2384,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.saipem.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 4561 bytes) but no safe exhaustive collector is implemented yet for custom first-party job board",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 4561 bytes) but no safe exhaustive collector is implemented yet for custom first-party job board; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 4561 bytes) but no safe exhaustive collector is implemented yet for custom first-party job board; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Saipem"
+      }
     },
     {
       "company": "TotalEnergies Italia",
@@ -2221,8 +2406,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.totalenergies.com/en",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 127184 bytes) but no safe exhaustive collector is implemented yet for global custom career platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 127184 bytes) but no safe exhaustive collector is implemented yet for global custom career platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 127184 bytes) but no safe exhaustive collector is implemented yet for global custom career platform; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "TotalEnergies Italia"
+      }
     },
     {
       "company": "Shell",
@@ -2233,8 +2428,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.shell.com/careers.html",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 9379 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 9378 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 9378 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Shell"
+      }
     },
     {
       "company": "Alpiq",
@@ -2245,8 +2450,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.alpiq.com/career/open-jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 89279 bytes) but no safe exhaustive collector is implemented yet for custom first-party inventory",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 89279 bytes) but no safe exhaustive collector is implemented yet for custom first-party inventory; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 89279 bytes) but no safe exhaustive collector is implemented yet for custom first-party inventory; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Alpiq"
+      }
     },
     {
       "company": "MET Group",
@@ -2403,7 +2618,8 @@
           "fingerprint": "22f306bad527fc2d",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Octopus Energy Italy",
@@ -3088,7 +3304,8 @@
           "fingerprint": "433f405ae40a5660",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Acea",
@@ -3100,7 +3317,8 @@
       "target_jobs_count": 0,
       "source_url": "https://jobs.acea.it/search/",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Mundys",
@@ -3129,7 +3347,8 @@
           "fingerprint": "fba9f384f47b8b88",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Autostrade per l'Italia",
@@ -3140,8 +3359,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.autostrade.it/it/persone/entra-nel-team",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 177480 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 177481 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 177481 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Autostrade per l'Italia"
+      }
     },
     {
       "company": "Ferrovie dello Stato Italiane",
@@ -3152,8 +3381,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.fsitaliane.it/it/persone/lavora-con-noi.html",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom / enterprise recruiting portal",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom / enterprise recruiting portal; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom / enterprise recruiting portal; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Ferrovie dello Stato Italiane"
+      }
     },
     {
       "company": "Aeroporti di Roma",
@@ -3164,8 +3403,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.adr.it/lavorare-in-adr",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 404; no exhaustive parser for subsidiary career portal (Mundys ecosystem)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for subsidiary career portal (Mundys ecosystem); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for subsidiary career portal (Mundys ecosystem); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Aeroporti di Roma"
+      }
     },
     {
       "company": "SEA Milano",
@@ -3176,8 +3425,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.seamilano.eu/it/lavora-con-noi",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "SEA Milano"
+      }
     },
     {
       "company": "ERG",
@@ -3188,8 +3447,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.erg.eu/it/lavorare-in-erg/entra-nella-squadra",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 487406 bytes) but no safe exhaustive collector is implemented yet for custom first-party recruiting",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 487406 bytes) but no safe exhaustive collector is implemented yet for custom first-party recruiting; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 487406 bytes) but no safe exhaustive collector is implemented yet for custom first-party recruiting; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "ERG"
+      }
     },
     {
       "company": "Nadara",
@@ -3200,8 +3469,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://nadara.com/work-with-us",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 146951 bytes) but no safe exhaustive collector is implemented yet for embedded first-party jobs inventory (vendor unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 146951 bytes) but no safe exhaustive collector is implemented yet for embedded first-party jobs inventory (vendor unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 146951 bytes) but no safe exhaustive collector is implemented yet for embedded first-party jobs inventory (vendor unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Nadara"
+      }
     },
     {
       "company": "GE Vernova",
@@ -3209,7 +3488,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 2128,
+      "inventory_count": 2127,
       "target_jobs_count": 1,
       "source_url": "https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs",
       "reason": null,
@@ -3230,7 +3509,8 @@
           "fingerprint": "26586ac730cb2175",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Schneider Electric",
@@ -3241,8 +3521,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.se.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 838559 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 838559 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 838559 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Schneider Electric"
+      }
     },
     {
       "company": "Siemens Energy",
@@ -3253,8 +3543,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.siemens-energy.com/en_US/jobs/Jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 142600 bytes) but no safe exhaustive collector is implemented yet for Avature",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 142599 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 142599 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Siemens Energy"
+      }
     },
     {
       "company": "Hitachi Energy",
@@ -3265,8 +3565,26 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.hitachi.com/search/hitachi-energy/jobs/in/country/italy",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 404; no exhaustive parser for Hitachi global branded career portal (vendor unconfirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for Hitachi global branded career portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for Hitachi global branded career portal (vendor unconfirmed); retained 0 validated observed jobs",
+        "batch": "JW3",
+        "company": "Hitachi Energy"
+      }
     }
-  ]
+  ],
+  "workday_path_reconciliation": {
+    "companies": [
+      "Euronext"
+    ],
+    "recovered_count": 0,
+    "active_decision_targeted_search": true,
+    "official_corporate_listing_fallback": true
+  }
 }
