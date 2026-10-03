@@ -125,7 +125,7 @@ jobs:
 
       - name: Syntax and guardrail tests
         run: |
-          python -m py_compile collector.py amazon_target_check.py reconcile_workday_target_paths.py initialize_daily_run_state.py sync_analysis_state.py audit_job_watch.py
+          python -m py_compile collector.py amazon_target_check.py reconcile_external_lifecycle.py reconcile_workday_target_paths.py initialize_daily_run_state.py sync_analysis_state.py audit_job_watch.py
           python -m py_compile harden_job_watch_state.py certify_job_watch.py validate_job_watch_state.py validate_job_watch_inputs.py validate_certified_run.py
           python -m unittest -q test_job_watch_guardrails.py test_workday_path_reconciliation.py
 
@@ -134,6 +134,9 @@ jobs:
 
       - name: Collect public ATS inventories
         run: python collector.py
+
+      - name: Reconcile persisted decisions against current first-party inventories
+        run: python reconcile_external_lifecycle.py
 
       - name: Reconcile Workday target roles from official job paths and persisted decisions
         run: python reconcile_workday_target_paths.py
@@ -184,6 +187,7 @@ jobs:
           regenerate() {
             echo "Regenerating Job Watch outputs on latest main..."
             python collector.py
+            python reconcile_external_lifecycle.py
             python reconcile_workday_target_paths.py
             python amazon_target_check.py
             python initialize_daily_run_state.py
