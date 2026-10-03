@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "policy": {
+    "purpose": "Persist official first-party vacancy details for roles explicitly kept by the user when the broad ATS inventory/search does not enumerate them.",
+    "verification": "A fallback record may be reconciled only if its canonical URL is on the mapped official ATS host/site, its source ID matches the URL/detail response, its geography is in scope, and the official Workday CXS detail endpoint is live.",
+    "lifecycle": "These records are discovery/reconciliation hints only; user_job_decisions.json remains authoritative for TO_REVIEW/INTERESTED/APPLIED/NOT_INTERESTED."
+  },
+  "records": {
+    "Euronext::R27644": {
+      "company": "Euronext",
+      "source_id": "R27644",
+      "title": "Business Operations Analyst",
+      "location": "Milan",
+      "canonical_url": "https://hrhub.wd3.myworkdayjobs.com/Euronext_Career_Page/job/Milan/Business-Operations-Analyst_R27644",
+      "validated_source": "official_workday_detail",
+      "validated_at": "2026-10-03T10:22:00Z"
+    }
+  }
+}
