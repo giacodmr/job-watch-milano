@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-03T22:43:00Z",
+  "generated_at": "2026-10-03T22:45:42Z",
   "run_id": "a35bd3fcf7fc0f8efcb5c83a",
   "snapshot": {
     "run_id": "a35bd3fcf7fc0f8efcb5c83a",
@@ -24,9 +24,9 @@
       "job_watch_batches.json": "c5664761f93b5a2a71dcfcce51dfbcd163fcbbe6a7c80559a827334cf0a27470"
     }
   },
-  "status": "NEEDS_REVIEW",
+  "status": "COMPLETE_WITH_WARNINGS",
   "collection_status": "COMPLETE_WITH_WARNINGS",
-  "DAILY_COMPLETE": false,
+  "DAILY_COMPLETE": true,
   "FULL_SEMANTIC_COMPLETE": false,
   "priority_checks": {
     "Amazon": "VERIFIED",
@@ -34,76 +34,52 @@
   },
   "batches": {
     "JW1": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
+      "status": "COMPLETE_WITH_WARNINGS",
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 325,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW2": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
+      "status": "COMPLETE_WITH_WARNINGS",
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 228,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW3": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
+      "status": "COMPLETE_WITH_WARNINGS",
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 83,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW4": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
+      "status": "COMPLETE_WITH_WARNINGS",
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 98,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     }
   },
   "coverage": {
@@ -1183,6 +1159,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1193,18 +1172,6 @@
       "status": "COMPLETE"
     },
     "semantic_sync:JW4": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW1": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW2": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW3": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW4": {
       "status": "COMPLETE"
     },
     "worklist": {
@@ -1229,28 +1196,7 @@
       "status": "COMPLETE"
     }
   },
-  "remaining_work": [
-    {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    }
-  ],
+  "remaining_work": [],
   "unresolved_user_decisions": [
     "Visa::/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
     "Visa::/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
