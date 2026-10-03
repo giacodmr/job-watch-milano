@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "generated_at": "2026-10-03T19:46:32Z",
+  "generated_at": "2026-10-03T22:42:40Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -36,11 +36,11 @@
     "PARTIAL": 24,
     "FAILED": 0,
     "NOT_CHECKED": 0,
-    "target_jobs_open": 426,
+    "target_jobs_open": 419,
     "NEW": 0,
-    "STILL_OPEN": 426,
+    "STILL_OPEN": 419,
     "UPDATED": 0,
-    "CLOSED": 0,
+    "CLOSED": 7,
     "UNKNOWN": 1
   },
   "companies": [
@@ -50,7 +50,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 4578,
+      "inventory_count": 4585,
       "target_jobs_count": 39,
       "source_url": "https://careers.essilorluxottica.com/search/",
       "reason": null,
@@ -961,7 +961,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.pirelli.com/search/",
-      "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+      "reason": "NotCheckable: No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -969,7 +969,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+        "message": "NotCheckable: No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Pirelli"
       }
@@ -1005,7 +1005,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://it.coca-colahellenic.com/en/working-with-us/search-and-apply",
-      "reason": "NotCheckable: Official inventory is reachable (200, 1911 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 1903 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -1013,7 +1013,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 1911 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 1903 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Coca-Cola HBC Italia"
       }
@@ -1046,22 +1046,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1433583133",
-          "company": "Ferrero",
-          "title": "Revenue Growth Manager - RGM 12 months FTC",
-          "location": "London, ENG, GB Oct 2, 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Oct 2, 2026",
-          "updated_at": null,
-          "canonical_url": "https://jobs.ferrero.com/job/London-Revenue-Growth-Manager-RGM-12-months-FTC-ENG/1433583133/",
-          "url": "https://jobs.ferrero.com/job/London-Revenue-Growth-Manager-RGM-12-months-FTC-ENG/1433583133/",
-          "apply_url": "https://jobs.ferrero.com/job/London-Revenue-Growth-Manager-RGM-12-months-FTC-ENG/1433583133/",
-          "fingerprint": "5902e547c67e94d3",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1433581233",
           "company": "Ferrero",
           "title": "National Account Executive - Tesco",
@@ -1075,6 +1059,22 @@
           "url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Tesco-ENG/1433581233/",
           "apply_url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Tesco-ENG/1433581233/",
           "fingerprint": "efddfc345c9d1e8e",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1433583133",
+          "company": "Ferrero",
+          "title": "Revenue Growth Manager - RGM 12 months FTC",
+          "location": "London, ENG, GB Oct 2, 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Oct 2, 2026",
+          "updated_at": null,
+          "canonical_url": "https://jobs.ferrero.com/job/London-Revenue-Growth-Manager-RGM-12-months-FTC-ENG/1433583133/",
+          "url": "https://jobs.ferrero.com/job/London-Revenue-Growth-Manager-RGM-12-months-FTC-ENG/1433583133/",
+          "apply_url": "https://jobs.ferrero.com/job/London-Revenue-Growth-Manager-RGM-12-months-FTC-ENG/1433583133/",
+          "fingerprint": "5902e547c67e94d3",
           "status": "STILL_OPEN"
         },
         {
@@ -1094,22 +1094,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1429220933",
-          "company": "Ferrero",
-          "title": "National Account Executive - Discounters",
-          "location": "London, ENG, GB Sep 22, 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Sep 22, 2026",
-          "updated_at": null,
-          "canonical_url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Discounters-ENG/1429220933/",
-          "url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Discounters-ENG/1429220933/",
-          "apply_url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Discounters-ENG/1429220933/",
-          "fingerprint": "753f30cf83f0bd01",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1429293433",
           "company": "Ferrero",
           "title": "D2C Commercial Operations Manager",
@@ -1123,6 +1107,22 @@
           "url": "https://jobs.ferrero.com/job/London-D2C-Commercial-Operations-Manager-LND/1429293433/",
           "apply_url": "https://jobs.ferrero.com/job/London-D2C-Commercial-Operations-Manager-LND/1429293433/",
           "fingerprint": "5fbb841c0a960ccd",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1429220933",
+          "company": "Ferrero",
+          "title": "National Account Executive - Discounters",
+          "location": "London, ENG, GB Sep 22, 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Sep 22, 2026",
+          "updated_at": null,
+          "canonical_url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Discounters-ENG/1429220933/",
+          "url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Discounters-ENG/1429220933/",
+          "apply_url": "https://jobs.ferrero.com/job/London-National-Account-Executive-Discounters-ENG/1429220933/",
+          "fingerprint": "753f30cf83f0bd01",
           "status": "STILL_OPEN"
         },
         {
@@ -1188,8 +1188,8 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 243,
-      "target_jobs_count": 57,
+      "inventory_count": 241,
+      "target_jobs_count": 56,
       "source_url": "https://jobs.pradagroup.com/search/",
       "reason": null,
       "jobs": [
@@ -1271,22 +1271,6 @@
           "url": "https://jobs.pradagroup.com/job/Milano-Shoes-Product-Intern/1433317633/",
           "apply_url": "https://jobs.pradagroup.com/job/Milano-Shoes-Product-Intern/1433317633/",
           "fingerprint": "b934d83e08f53b35",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "1433362133",
-          "company": "Prada Group",
-          "title": "Catering Supervisor",
-          "location": "Marchesi 1824 Milano, IT Food and Beverage",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
-          "url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
-          "apply_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
-          "fingerprint": "daf30e73da2f3810",
           "status": "STILL_OPEN"
         },
         {
@@ -2104,6 +2088,22 @@
           "apply_url": "https://jobs.pradagroup.com/job/Milano-IT-End-User-Support-Intern/1413458933/",
           "fingerprint": "dce87168e02ffe8a",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1433362133",
+          "company": "Prada Group",
+          "title": "Catering Supervisor",
+          "location": "Marchesi 1824 Milano, IT Food and Beverage",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
+          "url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
+          "apply_url": "https://jobs.pradagroup.com/job/Milano-Catering-Supervisor/1433362133/",
+          "fingerprint": "daf30e73da2f3810",
+          "status": "CLOSED"
         }
       ],
       "record_errors": []
@@ -2114,8 +2114,8 @@
       "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
-      "inventory_count": 1915,
-      "target_jobs_count": 21,
+      "inventory_count": 1898,
+      "target_jobs_count": 20,
       "source_url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings",
       "reason": null,
       "jobs": [
@@ -2312,22 +2312,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "744000152501424",
-          "company": "H&M",
-          "title": "Sales Advisor  | Part Time | Roma",
-          "location": "Roma, Lazio, it",
-          "department": "H&M",
-          "team": null,
-          "employment_type": "Part-time",
-          "published_at": "2026-09-29T17:15:07.333Z",
-          "updated_at": null,
-          "canonical_url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings/744000152501424",
-          "url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings/744000152501424",
-          "apply_url": null,
-          "fingerprint": "9551b26c1ee0cf00",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "744000152377818",
           "company": "H&M",
           "title": "Area Visual Manager",
@@ -2454,6 +2438,22 @@
           "apply_url": null,
           "fingerprint": "0ccc2466d37df7c8",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "744000152501424",
+          "company": "H&M",
+          "title": "Sales Advisor  | Part Time | Roma",
+          "location": "Roma, Lazio, it",
+          "department": "H&M",
+          "team": null,
+          "employment_type": "Part-time",
+          "published_at": "2026-09-29T17:15:07.333Z",
+          "updated_at": null,
+          "canonical_url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings/744000152501424",
+          "url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings/744000152501424",
+          "apply_url": null,
+          "fingerprint": "9551b26c1ee0cf00",
+          "status": "CLOSED"
         }
       ],
       "record_errors": []
@@ -3359,7 +3359,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.lvmh.com/en/join-us/our-job-offers",
-      "reason": "NotCheckable: Official inventory is reachable (200, 2142657 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 2144519 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -3367,7 +3367,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 2142657 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 2144519 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "LVMH"
       }
@@ -3381,7 +3381,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kering.com/careers",
-      "reason": "NotCheckable: Official inventory is reachable (200, 218160 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 218168 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -3389,7 +3389,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 218160 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 218168 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Kering"
       }
@@ -3403,7 +3403,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.astrazeneca.com/search-jobs/",
-      "reason": "NotCheckable: Official inventory is reachable (200, 251037 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 251085 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -3411,7 +3411,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 251037 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 251085 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "AstraZeneca"
       }
@@ -3435,7 +3435,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 809,
+      "inventory_count": 805,
       "target_jobs_count": 6,
       "source_url": "https://sanofi.wd3.myworkdayjobs.com/wday/cxs/sanofi/SanofiCareers/jobs",
       "reason": null,
@@ -3670,7 +3670,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://join.pmicareers.com/it/it/search-results",
-      "reason": "NotCheckable: Official inventory is reachable (200, 125392 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 432827 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -3678,7 +3678,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 125392 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 432827 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Philip Morris International"
       }
@@ -3705,7 +3705,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.impbrands.com/jobs/search",
-      "reason": "NotCheckable: Official inventory is reachable (200, 164645 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 162274 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -3713,7 +3713,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 164645 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 162274 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Imperial Brands"
       }
@@ -3727,7 +3727,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.ikea.com/en/search-jobs/",
-      "reason": "NotCheckable: Official inventory is reachable (200, 835474 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 1114744 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -3735,7 +3735,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 835474 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 1114744 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "IKEA"
       }
@@ -3798,7 +3798,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 239,
+      "inventory_count": 238,
       "target_jobs_count": 0,
       "source_url": "https://unilever.wd3.myworkdayjobs.com/wday/cxs/unilever/Unilever_Experienced_Professionals/jobs",
       "reason": null,
@@ -4055,8 +4055,8 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1122,
-      "target_jobs_count": 44,
+      "inventory_count": 1119,
+      "target_jobs_count": 42,
       "source_url": "https://cc.wd3.myworkdayjobs.com/wday/cxs/cc/ChanelCareers/jobs",
       "reason": null,
       "jobs": [
@@ -4573,22 +4573,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
-          "company": "Chanel",
-          "title": "WELCOMIST - TEMPORARY CONTRACT",
-          "location": "Roma",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted 24 Days Ago",
-          "updated_at": null,
-          "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
-          "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
-          "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
-          "fingerprint": "805b6b5f43b57cf8",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "/job/London/Lead--Treasury-Accountant_JOBREQ00116729",
           "company": "Chanel",
           "title": "Lead, Treasury Accountant",
@@ -4634,22 +4618,6 @@
           "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---Sephora-White-City_JOBREQ00116544",
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Part-Time-Fragrance---Beauty-Sales-Consultant---Sephora-White-City_JOBREQ00116544",
           "fingerprint": "30f343ec94396a3a",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
-          "company": "Chanel",
-          "title": "Fashion Advisor Part-Time - Temporary Contract",
-          "location": "Roma",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted 30+ Days Ago",
-          "updated_at": null,
-          "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
-          "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
-          "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
-          "fingerprint": "1c0a5bb5275a63d9",
           "status": "STILL_OPEN"
         },
         {
@@ -4763,6 +4731,38 @@
           "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/London/Fashion-Advisor--Harrods-RTW_JOBREQ00113745-1",
           "fingerprint": "07db2859662add36",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
+          "company": "Chanel",
+          "title": "WELCOMIST - TEMPORARY CONTRACT",
+          "location": "Roma",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted 24 Days Ago",
+          "updated_at": null,
+          "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
+          "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
+          "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/WELCOMIST---TEMPORARY-CONTRACT_JOBREQ00116806",
+          "fingerprint": "805b6b5f43b57cf8",
+          "status": "CLOSED"
+        },
+        {
+          "source_id": "/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
+          "company": "Chanel",
+          "title": "Fashion Advisor Part-Time - Temporary Contract",
+          "location": "Roma",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted 30+ Days Ago",
+          "updated_at": null,
+          "canonical_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
+          "url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
+          "apply_url": "https://cc.wd3.myworkdayjobs.com/ChanelCareers/job/Roma/Fashion-Advisor-Part-Time---Temporary-Contract_JOBREQ00116526",
+          "fingerprint": "1c0a5bb5275a63d9",
+          "status": "CLOSED"
         }
       ],
       "record_errors": []
@@ -4776,7 +4776,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pgcareers.com/global/en/search-results/",
-      "reason": "NotCheckable: Official inventory is reachable (200, 178080 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 280300 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -4784,7 +4784,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 178080 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 280300 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Procter & Gamble"
       }
@@ -4795,8 +4795,8 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1814,
-      "target_jobs_count": 12,
+      "inventory_count": 1801,
+      "target_jobs_count": 11,
       "source_url": "https://jj.wd5.myworkdayjobs.com/wday/cxs/jj/JJ/jobs",
       "reason": null,
       "jobs": [
@@ -4913,22 +4913,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "R-101286",
-          "company": "Johnson & Johnson",
-          "title": "MSL - Oncologia - Lung - Emilia Romagna, Marche",
-          "location": "Milano, Italy",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted 9 Days Ago",
-          "updated_at": null,
-          "canonical_url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/MSL---Oncologia---Lung---Emilia-Romagna--Marche_R-101286",
-          "url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/MSL---Oncologia---Lung---Emilia-Romagna--Marche_R-101286",
-          "apply_url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/MSL---Oncologia---Lung---Emilia-Romagna--Marche_R-101286",
-          "fingerprint": "c899fa52b12f1762",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "R-101051",
           "company": "Johnson & Johnson",
           "title": "Medical Affairs Manager",
@@ -4991,6 +4975,22 @@
           "apply_url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/International-Recruitment-and-Development-Program-Internship-2026-Italy_R-040723",
           "fingerprint": "c0cc1885eb508fa4",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "R-101286",
+          "company": "Johnson & Johnson",
+          "title": "MSL - Oncologia - Lung - Emilia Romagna, Marche",
+          "location": "Milano, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted 9 Days Ago",
+          "updated_at": null,
+          "canonical_url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/MSL---Oncologia---Lung---Emilia-Romagna--Marche_R-101286",
+          "url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/MSL---Oncologia---Lung---Emilia-Romagna--Marche_R-101286",
+          "apply_url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Milano-Italy/MSL---Oncologia---Lung---Emilia-Romagna--Marche_R-101286",
+          "fingerprint": "c899fa52b12f1762",
+          "status": "CLOSED"
         }
       ],
       "record_errors": []
@@ -5026,7 +5026,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.henkel.com/careers/find-your-job-apply",
-      "reason": "NotCheckable: Official inventory is reachable (200, 420588 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 420592 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5034,7 +5034,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 420588 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 420592 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Henkel"
       }
@@ -5092,7 +5092,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kraftheinz.com/",
-      "reason": "NotCheckable: Official inventory is reachable (200, 13184 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 13196 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5100,7 +5100,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 13184 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 13196 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "Kraft Heinz"
       }
@@ -5272,8 +5272,8 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 86,
-      "target_jobs_count": 17,
+      "inventory_count": 85,
+      "target_jobs_count": 16,
       "source_url": "https://jobs.dolcegabbana.com/search/",
       "reason": null,
       "jobs": [
@@ -5323,22 +5323,6 @@
           "url": "https://jobs.dolcegabbana.com/job/Milano-Corporate-Controller-Internship-MI/1442295933/",
           "apply_url": "https://jobs.dolcegabbana.com/job/Milano-Corporate-Controller-Internship-MI/1442295933/",
           "fingerprint": "30c1858037420cd6",
-          "status": "STILL_OPEN"
-        },
-        {
-          "source_id": "1411253233",
-          "company": "Dolce & Gabbana",
-          "title": "Alta Sartoria Senior Pattern Maker",
-          "location": "Artisan Manufacturing Milano, IT",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.dolcegabbana.com/job/Milano-Alta-Sartoria-Senior-Pattern-Maker/1411253233/",
-          "url": "https://jobs.dolcegabbana.com/job/Milano-Alta-Sartoria-Senior-Pattern-Maker/1411253233/",
-          "apply_url": "https://jobs.dolcegabbana.com/job/Milano-Alta-Sartoria-Senior-Pattern-Maker/1411253233/",
-          "fingerprint": "36f685e5ae5d0b8a",
           "status": "STILL_OPEN"
         },
         {
@@ -5548,6 +5532,22 @@
           "apply_url": "https://jobs.dolcegabbana.com/job/Milano-Wholesale-Account-Specialist-Europe-Casa-Division-MI/1376594833/",
           "fingerprint": "bbfef8f2985de970",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1411253233",
+          "company": "Dolce & Gabbana",
+          "title": "Alta Sartoria Senior Pattern Maker",
+          "location": "Artisan Manufacturing Milano, IT",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.dolcegabbana.com/job/Milano-Alta-Sartoria-Senior-Pattern-Maker/1411253233/",
+          "url": "https://jobs.dolcegabbana.com/job/Milano-Alta-Sartoria-Senior-Pattern-Maker/1411253233/",
+          "apply_url": "https://jobs.dolcegabbana.com/job/Milano-Alta-Sartoria-Senior-Pattern-Maker/1411253233/",
+          "fingerprint": "36f685e5ae5d0b8a",
+          "status": "CLOSED"
         }
       ],
       "record_errors": []
@@ -5682,22 +5682,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1441095533",
-          "company": "Valentino",
-          "title": "Facilitiy Specialist - Fixed Term - Categorie Protette (L.68/99)",
-          "location": "Roma, IT CORPORATE & STAFF FUNCTIONS",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term-Categorie-Protette-%28L_6899%29/1441095533/",
-          "url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term-Categorie-Protette-%28L_6899%29/1441095533/",
-          "apply_url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term-Categorie-Protette-%28L_6899%29/1441095533/",
-          "fingerprint": "babc60b6cce0b53b",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1441047933",
           "company": "Valentino",
           "title": "Retail Planning Intern",
@@ -5711,6 +5695,22 @@
           "url": "https://jobs.valentino.com/job/Milano-Retail-Planning-Intern/1441047933/",
           "apply_url": "https://jobs.valentino.com/job/Milano-Retail-Planning-Intern/1441047933/",
           "fingerprint": "471b218783a12914",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1441095533",
+          "company": "Valentino",
+          "title": "Facilitiy Specialist - Fixed Term - Categorie Protette (L.68/99)",
+          "location": "Roma, IT CORPORATE & STAFF FUNCTIONS",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term-Categorie-Protette-%28L_6899%29/1441095533/",
+          "url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term-Categorie-Protette-%28L_6899%29/1441095533/",
+          "apply_url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term-Categorie-Protette-%28L_6899%29/1441095533/",
+          "fingerprint": "babc60b6cce0b53b",
           "status": "STILL_OPEN"
         },
         {
@@ -5746,22 +5746,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1440564233",
-          "company": "Valentino",
-          "title": "Woman and Man Builders Merchandising Intern",
-          "location": "Milano, IT STORE PLANNING, VISUAL CONCEPTS & MERCHANDISING",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.valentino.com/job/Milano-Woman-and-Man-Builders-Merchandising-Intern/1440564233/",
-          "url": "https://jobs.valentino.com/job/Milano-Woman-and-Man-Builders-Merchandising-Intern/1440564233/",
-          "apply_url": "https://jobs.valentino.com/job/Milano-Woman-and-Man-Builders-Merchandising-Intern/1440564233/",
-          "fingerprint": "3c518352e6e4828a",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1440659933",
           "company": "Valentino",
           "title": "IT Finance Intern",
@@ -5775,6 +5759,22 @@
           "url": "https://jobs.valentino.com/job/Milano-IT-Finance-Intern/1440659933/",
           "apply_url": "https://jobs.valentino.com/job/Milano-IT-Finance-Intern/1440659933/",
           "fingerprint": "b7b683a2cca7c60c",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1440564233",
+          "company": "Valentino",
+          "title": "Woman and Man Builders Merchandising Intern",
+          "location": "Milano, IT STORE PLANNING, VISUAL CONCEPTS & MERCHANDISING",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.valentino.com/job/Milano-Woman-and-Man-Builders-Merchandising-Intern/1440564233/",
+          "url": "https://jobs.valentino.com/job/Milano-Woman-and-Man-Builders-Merchandising-Intern/1440564233/",
+          "apply_url": "https://jobs.valentino.com/job/Milano-Woman-and-Man-Builders-Merchandising-Intern/1440564233/",
+          "fingerprint": "3c518352e6e4828a",
           "status": "STILL_OPEN"
         },
         {
@@ -5794,22 +5794,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1436926433",
-          "company": "Valentino",
-          "title": "Logistics Process & Project Coordinator",
-          "location": "Milano, IT CORPORATE & STAFF FUNCTIONS",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.valentino.com/job/Milano-Logistics-Process-&-Project-Coordinator/1436926433/",
-          "url": "https://jobs.valentino.com/job/Milano-Logistics-Process-&-Project-Coordinator/1436926433/",
-          "apply_url": "https://jobs.valentino.com/job/Milano-Logistics-Process-&-Project-Coordinator/1436926433/",
-          "fingerprint": "bc8aeb0d847dab6d",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1437064033",
           "company": "Valentino",
           "title": "Client Advisor - Montenapoleone (fixed term)",
@@ -5826,19 +5810,19 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1436833133",
+          "source_id": "1436926433",
           "company": "Valentino",
-          "title": "Transformation Project Coordinator - Supply Chain & Inventory",
-          "location": "Milano, IT PRODUCT DEVELOPMENT, PRODUCTION & LOGISTICS",
+          "title": "Logistics Process & Project Coordinator",
+          "location": "Milano, IT CORPORATE & STAFF FUNCTIONS",
           "department": null,
           "team": null,
           "employment_type": null,
           "published_at": null,
           "updated_at": null,
-          "canonical_url": "https://jobs.valentino.com/job/Milano-Transformation-Project-Coordinator-Supply-Chain-&-Inventory/1436833133/",
-          "url": "https://jobs.valentino.com/job/Milano-Transformation-Project-Coordinator-Supply-Chain-&-Inventory/1436833133/",
-          "apply_url": "https://jobs.valentino.com/job/Milano-Transformation-Project-Coordinator-Supply-Chain-&-Inventory/1436833133/",
-          "fingerprint": "b0009ccbfa75c66d",
+          "canonical_url": "https://jobs.valentino.com/job/Milano-Logistics-Process-&-Project-Coordinator/1436926433/",
+          "url": "https://jobs.valentino.com/job/Milano-Logistics-Process-&-Project-Coordinator/1436926433/",
+          "apply_url": "https://jobs.valentino.com/job/Milano-Logistics-Process-&-Project-Coordinator/1436926433/",
+          "fingerprint": "bc8aeb0d847dab6d",
           "status": "STILL_OPEN"
         },
         {
@@ -5871,6 +5855,22 @@
           "url": "https://jobs.valentino.com/job/Milano-Transformation-Monitoring-&-Reporting-Analyst/1436833833/",
           "apply_url": "https://jobs.valentino.com/job/Milano-Transformation-Monitoring-&-Reporting-Analyst/1436833833/",
           "fingerprint": "178e6a1c01ac8ab9",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1436833133",
+          "company": "Valentino",
+          "title": "Transformation Project Coordinator - Supply Chain & Inventory",
+          "location": "Milano, IT PRODUCT DEVELOPMENT, PRODUCTION & LOGISTICS",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.valentino.com/job/Milano-Transformation-Project-Coordinator-Supply-Chain-&-Inventory/1436833133/",
+          "url": "https://jobs.valentino.com/job/Milano-Transformation-Project-Coordinator-Supply-Chain-&-Inventory/1436833133/",
+          "apply_url": "https://jobs.valentino.com/job/Milano-Transformation-Project-Coordinator-Supply-Chain-&-Inventory/1436833133/",
+          "fingerprint": "b0009ccbfa75c66d",
           "status": "STILL_OPEN"
         },
         {
@@ -6248,7 +6248,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 514,
+      "inventory_count": 510,
       "target_jobs_count": 0,
       "source_url": "https://pfizer.wd1.myworkdayjobs.com/wday/cxs/pfizer/PfizerCareers/jobs",
       "reason": null,
@@ -6328,22 +6328,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1428285533",
-          "company": "Boehringer Ingelheim",
-          "title": "Staff AI Scientist",
-          "location": "London, UK, United Kingdom, London, City of",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Staff-AI-Scientist-Unit/1428285533/",
-          "url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Staff-AI-Scientist-Unit/1428285533/",
-          "apply_url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Staff-AI-Scientist-Unit/1428285533/",
-          "fingerprint": "db89fb9f2bcb815d",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1396992233",
           "company": "Boehringer Ingelheim",
           "title": "Senior Category Manager",
@@ -6357,6 +6341,22 @@
           "url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Senior-Category-Manager-Unit/1396992233/",
           "apply_url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Senior-Category-Manager-Unit/1396992233/",
           "fingerprint": "9b033556cf35d979",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1428285533",
+          "company": "Boehringer Ingelheim",
+          "title": "Staff AI Scientist",
+          "location": "London, UK, United Kingdom, London, City of",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Staff-AI-Scientist-Unit/1428285533/",
+          "url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Staff-AI-Scientist-Unit/1428285533/",
+          "apply_url": "https://jobs.boehringer-ingelheim.com/job/London%2C-UK-Staff-AI-Scientist-Unit/1428285533/",
+          "fingerprint": "db89fb9f2bcb815d",
           "status": "STILL_OPEN"
         },
         {
@@ -6451,7 +6451,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.abbvie.com/en/jobs",
-      "reason": "NotCheckable: Official inventory is reachable (200, 209749 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 209691 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -6459,7 +6459,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 209749 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 209691 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
         "batch": "JW4",
         "company": "AbbVie"
       }
@@ -6470,27 +6470,11 @@
       "ats_family": "Custom MSD careers frontend + Workday backend",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1003,
-      "target_jobs_count": 7,
+      "inventory_count": 995,
+      "target_jobs_count": 6,
       "source_url": "https://msd.wd5.myworkdayjobs.com/wday/cxs/msd/SearchJobs/jobs",
       "reason": null,
       "jobs": [
-        {
-          "source_id": "/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
-          "company": "MSD",
-          "title": "Sr. Spclst, Value Market Access New Products Oncology",
-          "location": "ITA - Lazio - Roma",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": "Posted Yesterday",
-          "updated_at": null,
-          "canonical_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
-          "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
-          "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
-          "fingerprint": "753f1a5bb25cdf20",
-          "status": "STILL_OPEN"
-        },
         {
           "source_id": "R416995",
           "company": "MSD",
@@ -6586,6 +6570,22 @@
           "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/GBR---London---London-Moorgate-WeWork/Director-Structured-Content-Authoring--Regulatory-Affairs_R419027",
           "fingerprint": "35826a2ac311ad02",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
+          "company": "MSD",
+          "title": "Sr. Spclst, Value Market Access New Products Oncology",
+          "location": "ITA - Lazio - Roma",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": "Posted Yesterday",
+          "updated_at": null,
+          "canonical_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
+          "url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
+          "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Sr-Spclst--Value-Market-Access-New-Products-Oncology_R399429-2",
+          "fingerprint": "753f1a5bb25cdf20",
+          "status": "CLOSED"
         }
       ],
       "record_errors": []
@@ -7478,7 +7478,7 @@
       "ats_family": "Workday CXS",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 817,
+      "inventory_count": 814,
       "target_jobs_count": 18,
       "source_url": "https://nike.wd1.myworkdayjobs.com/wday/cxs/nike/nke/jobs",
       "reason": null,
