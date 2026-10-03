@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1","jw2","jw3","jw4")
 CORPORATE_LISTING_METHOD = "official_corporate_listing_contains_workday_link"
+CURRENT_INVENTORY_METHOD = "official_current_inventory_absence_or_presence"
 REQUIRED_CONFIG = (
     "job_watch_rules.json",
     "job_watch_batches.json",
@@ -65,7 +66,7 @@ for key, value in user_decisions["records"].items():
             raise SystemExit(f"INPUT ERROR: NOT_INTERESTED user decision {key} lacks fingerprint")
         print(
             f"INPUT WARNING: user decision {key} lacks fingerprint; "
-            "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the collector sees the vacancy and sync backfills it."
+            "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the vacancy is reconciled."
         )
 
 external = load("externally_validated_roles.json")
@@ -86,15 +87,22 @@ for key, value in external["records"].items():
         raise SystemExit(f"INPUT ERROR: external role {key} URL does not contain its source id")
     if not value.get("title") or not value.get("location") or not value.get("validated_at"):
         raise SystemExit(f"INPUT ERROR: external role {key} lacks title/location/validated_at")
+
     method = value.get("validation_method")
-    if method != CORPORATE_LISTING_METHOD:
+    if method == CORPORATE_LISTING_METHOD:
+        listing_url = str(value.get("official_listing_url") or "")
+        listing = urlparse(listing_url)
+        if listing.scheme != "https" or not listing.netloc:
+            raise SystemExit(f"INPUT ERROR: external role {key} lacks a valid HTTPS official_listing_url")
+        if "myworkdayjobs.com" in listing.netloc.casefold():
+            raise SystemExit(f"INPUT ERROR: external role {key} corporate listing must be independent of Workday")
+    elif method == CURRENT_INVENTORY_METHOD:
+        inventory_url = str(value.get("current_inventory_url") or "")
+        inventory = urlparse(inventory_url)
+        if inventory.scheme != "https" or (inventory.hostname or "").casefold().lstrip("www.") != "euronext.com":
+            raise SystemExit(f"INPUT ERROR: external role {key} current_inventory_url must be HTTPS euronext.com")
+    else:
         raise SystemExit(f"INPUT ERROR: external role {key} uses unsupported validation_method {method!r}")
-    listing_url = str(value.get("official_listing_url") or "")
-    listing = urlparse(listing_url)
-    if listing.scheme != "https" or not listing.netloc:
-        raise SystemExit(f"INPUT ERROR: external role {key} lacks a valid HTTPS official_listing_url")
-    if "myworkdayjobs.com" in listing.netloc.casefold():
-        raise SystemExit(f"INPUT ERROR: external role {key} corporate listing must be independent of Workday")
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
