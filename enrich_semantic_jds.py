@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse, unquote
 import requests
+from daily_worklist import build_worklist
 
 ROOT=Path(__file__).resolve().parent
 BATCHES=("jw1","jw2","jw3","jw4")
@@ -118,10 +119,30 @@ def ashby(url,source_id,mapping):
     if len(text)<120: raise FetchError("Ashby detail text too short")
     return text,api,"ashby_board_detail"
 
-def fallback(url):
-    text=get_text(url)
-    if len(text)<180: raise FetchError("public page text too short")
-    return text,url,"official_html"
+def fallback(url, title):
+    response=s.get(url,timeout=25,allow_redirects=True)
+    response.raise_for_status()
+    raw=response.text
+    # Prefer structured official JobPosting text to navigation/legal boilerplate.
+    for block in re.findall(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',raw,re.I|re.S):
+        try:
+            data=json.loads(block)
+        except ValueError:
+            continue
+        rows=data if isinstance(data,list) else [data]
+        for row in rows:
+            candidates=(row.get("@graph") or [row]) if isinstance(row,dict) else []
+            for item in candidates:
+                if isinstance(item,dict) and "JobPosting" in str(item.get("@type")):
+                    text=clean_html(item.get("description"))
+                    if len(text)>=120:
+                        return text,response.url,"official_jobposting_jsonld"
+    text=clean_html(raw)
+    if len(text)<180 or not title or str(title).casefold() not in text.casefold():
+        raise FetchError("official page does not expose a matching job description")
+    if re.search(r'captcha|access denied|job (?:is )?no longer available|position (?:has been|is) closed',text,re.I):
+        raise FetchError("official job page blocked or unavailable")
+    return text,response.url,"official_html"
 
 def fetch_jd(rec,mapping):
     url=rec.get("canonical_url") or rec.get("apply_url") or ""
@@ -132,32 +153,37 @@ def fetch_jd(rec,mapping):
     if "smartrecruiters" in fam or "smartrecruiters.com" in host: return smartrecruiters(url,rec.get("source_id"),mapping)
     if "lever" in fam or "lever.co" in host: return lever(url,rec.get("source_id"),mapping)
     if "ashby" in fam or "ashbyhq.com" in host: return ashby(url,rec.get("source_id"),mapping)
-    return fallback(url)
-
-def actionable(r,cutoff):
-    if r.get("user_decision") in {"APPLIED","NOT_INTERESTED"}: return False
-    if r.get("current_status") in {"NEW","UPDATED"}: return True
-    if r.get("user_decision") in {"TO_REVIEW","INTERESTED"}: return True
-    fs=r.get("first_seen_at") or ""
-    return bool(r.get("never_reviewed") and r.get("never_surfaced") and fs and fs>=cutoff)
+    return fallback(url, rec.get("title"))
 
 def main():
-    rules=load("job_watch_rules.json",{}) or {}
-    cutoff=((rules.get("user_decision_policy") or {}).get("never_disappear_since") or "2026-09-21T11:25:00Z")
+    worklist = build_worklist()
+    amazon = load("amazon_target_check.json", {}) or {}
+    amazon_by_url = {str(r.get("apply_url", "")).rstrip("/"): r for r in amazon.get("target_jobs", [])}
     for b in BATCHES:
-        q=load(f"semantic_queue_{b}.json",{}) or {}
         mapping=load(f"ats_mapping_{b}.json",{}) or {}
         byco={x.get("company"):x for x in mapping.get("companies",[]) if x.get("company")}
         cache=load(f"semantic_jd_cache_{b}.json",{}) or {"version":"1.0","batch":b,"records":{}}
         cache.setdefault("records",{})
-        todo=[r for r in q.get("records",[]) if actionable(r,cutoff)]
+        todo=[r for r in worklist["records"] if r["batch"] == b.upper() and r["needs_semantic_review"]]
         ok=fail=reuse=0
         for i,r in enumerate(todo,1):
             k=r.get("job_key"); fp=r.get("fingerprint"); old=cache["records"].get(k)
             if old and old.get("fingerprint")==fp and old.get("status")=="OK" and len(old.get("text") or "")>=120:
                 reuse+=1; continue
+            if old and old.get("fingerprint")==fp and old.get("status")=="FAILED":
+                try:
+                    age=(datetime.now(timezone.utc)-datetime.fromisoformat(old["fetched_at"].replace("Z","+00:00"))).total_seconds()
+                except (KeyError, ValueError):
+                    age=86400
+                if age < 21600:  # failed endpoints get a six-hour cooldown
+                    fail+=1; continue
             try:
-                txt,source,method=fetch_jd(r,byco.get(r.get("company"),{}))
+                raw=amazon_by_url.get(str(r.get("canonical_url") or r.get("apply_url") or "").rstrip("/")) if r.get("company")=="Amazon" else None
+                if raw and raw.get("fingerprint")==fp and raw.get("description"):
+                    txt="\n".join(clean_html(raw.get(f)) for f in ("description","basic_qualifications","preferred_qualifications") if raw.get(f))
+                    source=raw["apply_url"]; method="amazon_collected_official_jd"
+                else:
+                    txt,source,method=fetch_jd(r,byco.get(r.get("company"),{}))
                 cache["records"][k]={"fingerprint":fp,"status":"OK","fetched_at":now(),"company":r.get("company"),"title":r.get("title"),"location":r.get("location"),"source_url":source,"method":method,"text":txt[:40000]}
                 ok+=1
             except Exception as e:

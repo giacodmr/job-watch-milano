@@ -12,9 +12,9 @@
     "OPAQUE": "Official system is too closed, authenticated, anti-bot, or technically opaque for reliable verification."
   },
   "summary": {
-    "companies_analyzed": 54,
-    "FULL": 25,
-    "STRONG": 21,
+    "companies_analyzed": 53,
+    "FULL": 26,
+    "STRONG": 19,
     "PARTIAL": 8,
     "OPAQUE": 0
   },
@@ -409,39 +409,6 @@
       "limitations": [
         "Dynamic/lazy-loaded results prevent a clean backend enumeration with the currently mapped method.",
         "ATS/vendor and public feed were not independently identified."
-      ],
-      "last_mapped": "2026-09-14"
-    },
-    {
-      "company": "ION Group",
-      "batch": "JW1",
-      "ats": {
-        "family": "Lever",
-        "tenant": "ion",
-        "career_site": "https://iongroup.com/jobs/",
-        "inventory_url": "https://jobs.lever.co/ion",
-        "public_api_or_feed": null
-      },
-      "verification": {
-        "level": "FULL",
-        "method": "official_hosted_ats_board",
-        "location_filter_supported": true,
-        "locations": [
-          "Italy",
-          "Milan",
-          "Rome",
-          "London"
-        ],
-        "pagination": "none on hosted board / complete published posting list",
-        "total_count_available": true,
-        "full_inventory_possible": true
-      },
-      "job_watch_method": {
-        "primary": "Enumerate the Lever board for ion and select target locations from each posting's location metadata.",
-        "fallback": "Cross-check against the ION corporate jobs page and its displayed openings if the Lever board changes."
-      },
-      "limitations": [
-        "The generic Lever Postings API is documented, but the exact ION API request was not independently tested here."
       ],
       "last_mapped": "2026-09-14"
     },

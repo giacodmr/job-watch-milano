@@ -1,0 +1,26 @@
+name: Validate Job Watch
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths: ["*.py", ".github/workflows/**", "job_watch_rules.json", "job_watch_batches.json", "ats_mapping_*.json"]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check requests==2.32.5
+      - run: python preflight_job_watch.py
+      - run: python validate_job_watch_inputs.py
+      - run: python -m unittest -q
+      - run: python job_watch.py sync
+      - name: Worklist has a stable projection
+        run: |
+          cp daily_worklist.json /tmp/first-worklist.json
+          python job_watch.py sync
+          cmp daily_worklist.json /tmp/first-worklist.json

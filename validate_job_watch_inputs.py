@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate persistent Job Watch inputs before any state regeneration."""
 import json
+from rejection_reasons import REJECTION_REASONS, infer_rejection_reason, reason_is_vague
 import subprocess
 from pathlib import Path
 
@@ -64,6 +65,25 @@ for key, value in user_decisions["records"].items():
             f"INPUT WARNING: user decision {key} lacks fingerprint; "
             "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the vacancy is reconciled."
         )
+
+# Existing records without a historic reason are preserved. New/revised rejections need feedback.
+try:
+    previous_user = json.loads(subprocess.run(["git", "show", "HEAD:user_job_decisions.json"], cwd=ROOT,
+                               capture_output=True, text=True, check=True).stdout).get("records", {})
+except Exception:
+    previous_user = {}
+for key, row in user_decisions["records"].items():
+    category = row.get("rejection_reason")
+    if category is not None and category not in REJECTION_REASONS:
+        raise SystemExit(f"INPUT ERROR: invalid rejection_reason for {key}")
+    prior = previous_user.get(key, {})
+    changed = any(row.get(f) != prior.get(f) for f in ("decision", "reason", "decided_at", "fingerprint"))
+    if row.get("decision") == "NOT_INTERESTED" and changed:
+        if not category or reason_is_vague(row.get("reason")):
+            raise SystemExit(f"INPUT ERROR: {key}: ask user for rejection reason before persisting NOT_INTERESTED")
+        inferred = infer_rejection_reason(row.get("reason"))
+        if inferred and inferred != category:
+            raise SystemExit(f"INPUT ERROR: {key}: rejection_reason conflicts with explicit reason")
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):

@@ -1,9 +1,18 @@
 {
   "version": "1.0",
   "batch": "JW2",
-  "generated_at": "2026-10-03T11:13:14Z",
+  "generated_at": "2026-10-03T12:09:24Z",
   "pending_count": 242,
   "instructions": "ChatGPT may close only clearly impossible roles from title+metadata; any plausibly relevant role requires the full official JD. Manager/Senior/Lead is never an automatic exclusion and business-compatible Manager/Senior/Lead roles require full-JD review. Persist completed decisions in the matching semantic_decisions file using job_key and the exact fingerprint.",
+  "triage_decision_fields": [
+    "fingerprint",
+    "analysis_status",
+    "analysis_method=chatgpt_semantic_triage",
+    "decision=REJECT",
+    "reason",
+    "rationale",
+    "analyzed_at"
+  ],
   "required_decision_fields": [
     "fingerprint",
     "analysis_status=ANALYZED",
@@ -7286,8 +7295,5 @@
       "guardrail_reason": null,
       "applied_material_update": false
     }
-  ],
-  "guardrails_applied_at": "2026-10-03T11:13:14Z",
-  "guardrail_schema_resets": 0,
-  "guardrail_applied_updates": 0
+  ]
 }

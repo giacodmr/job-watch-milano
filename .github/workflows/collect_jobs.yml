@@ -2,6 +2,12 @@ name: Collect Job Watch vacancies
 
 on:
   workflow_dispatch:
+    inputs:
+      stage:
+        description: "Collect inventories or retry JD enrichment"
+        type: choice
+        options: [collect, enrich]
+        default: collect
   push:
     branches:
       - main
@@ -12,8 +18,6 @@ on:
     - cron: "30 6 * * *"
       timezone: "Europe/Rome"
     - cron: "15 7 * * *"
-      timezone: "Europe/Rome"
-    - cron: "0 8 * * *"
       timezone: "Europe/Rome"
 
 permissions:
@@ -70,6 +74,11 @@ jobs:
                       fresh = False
                       reason = f"{batch.upper()} snapshot timestamp missing/invalid"
                       break
+                  summary = data.get("summary") or {}
+                  if int(summary.get("FAILED", 0)) or int(summary.get("NOT_CHECKED", 0)):
+                      fresh = False
+                      reason = f"{batch.upper()} has failed/unattempted sources"
+                      break
                   if dt.date() != today:
                       fresh = False
                       reason = f"{batch.upper()} snapshot is not from today"
@@ -90,6 +99,9 @@ jobs:
                   if amazon_date != today:
                       fresh = False
                       reason = "Amazon priority snapshot is not from today"
+                  elif any(row.get("coverage") != "VERIFIED" for row in (amazon.get("locations") or {}).values()):
+                      fresh = False
+                      reason = "Amazon target inventory is incomplete"
                   elif (state.get("priority_snapshot_at") or {}).get("Amazon") != amazon_checked:
                       fresh = False
                       reason = "run-state Amazon snapshot does not match today's Amazon check"
@@ -107,7 +119,7 @@ jobs:
     needs: freshness
     if: needs.freshness.outputs.should_run == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 40
 
     steps:
       - name: Check out repository
@@ -123,102 +135,12 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests==2.32.5
 
-      - name: Syntax and guardrail tests
+      - name: Preflight and regression tests
         run: |
-          python -m py_compile collector.py amazon_target_check.py reconcile_workday_target_paths.py initialize_daily_run_state.py sync_analysis_state.py audit_job_watch.py
-          python -m py_compile harden_job_watch_state.py certify_job_watch.py validate_job_watch_state.py validate_job_watch_inputs.py validate_certified_run.py
-          python -m unittest -q test_job_watch_guardrails.py test_workday_path_reconciliation.py
+          python preflight_job_watch.py
+          python -m unittest -q
 
-      - name: Validate persistent inputs
-        run: python validate_job_watch_inputs.py
-
-      - name: Collect public ATS inventories
-        run: python collector.py
-
-      - name: Reconcile Workday target roles from official job paths and persisted decisions
-        run: python reconcile_workday_target_paths.py
-
-      - name: Collect Amazon target inventory
-        run: python amazon_target_check.py
-
-      - name: Initialize fresh pending daily manifest
-        run: python initialize_daily_run_state.py
-
-      - name: Sync and harden persistent analysis state
-        run: |
-          python sync_analysis_state.py
-          python harden_job_watch_state.py
-
-      - name: Validate analysis queue
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          incomplete = []
-          for batch in ("jw1", "jw2", "jw3", "jw4"):
-              data = json.loads(Path(f"analysis_results_{batch}.json").read_text(encoding="utf-8"))
-              pending = int((data.get("summary") or {}).get("pending_analysis", 0) or 0)
-              if pending:
-                  incomplete.append(f"{batch.upper()}: {pending} vacancy pending semantic analysis")
-          if incomplete:
-              print("FULL SEMANTIC BACKLOG REMAINS:")
-              print("\n".join(incomplete))
-              print("Historical backlog does not by itself block DAILY_COMPLETE; certification separately validates today's actionable delta.")
-          PY
-
-      - name: Generate fail-closed completeness audit
-        run: |
-          python audit_job_watch.py
-          python certify_job_watch.py
-          python validate_job_watch_state.py
-          python validate_certified_run.py
-
-      - name: Commit updated vacancy snapshots
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          GENERATED_FILES="current_jobs_jw1.json current_jobs_jw2.json current_jobs_jw3.json current_jobs_jw4.json amazon_target_check.json analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json job_watch_run_state.json job_watch_audit.json job_watch_healthcheck.json user_job_decisions.json"
-
-          regenerate() {
-            echo "Regenerating Job Watch outputs on latest main..."
-            python collector.py
-            python reconcile_workday_target_paths.py
-            python amazon_target_check.py
-            python initialize_daily_run_state.py
-            python sync_analysis_state.py
-            python harden_job_watch_state.py
-            python audit_job_watch.py
-            python certify_job_watch.py
-            python validate_job_watch_state.py
-            python validate_certified_run.py
-          }
-
-          for attempt in 1 2 3; do
-            git fetch origin main
-            if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
-              echo "main advanced during the run; resetting to latest main before publishing generated files."
-              git reset --hard origin/main
-              regenerate
-            fi
-
-            git add $GENERATED_FILES
-            if git diff --cached --quiet; then
-              echo "No changes to commit."
-              exit 0
-            fi
-
-            git commit -m "Update Job Watch vacancy snapshots"
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-
-            echo "Push raced with another main update; retrying from latest main (attempt $attempt/3)."
-            git fetch origin main
-            git reset --hard origin/main
-            regenerate
-          done
-
-          echo "Could not publish generated Job Watch snapshots after 3 concurrency-safe retries."
-          exit 1
+      - name: Prepare and publish current snapshot
+        env:
+          STAGE: ${{ inputs.stage || 'collect' }}
+        run: python job_watch.py "$STAGE" --publish

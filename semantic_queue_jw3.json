@@ -1,9 +1,18 @@
 {
   "version": "1.0",
   "batch": "JW3",
-  "generated_at": "2026-10-03T11:13:14Z",
+  "generated_at": "2026-10-03T12:09:24Z",
   "pending_count": 84,
   "instructions": "ChatGPT may close only clearly impossible roles from title+metadata; any plausibly relevant role requires the full official JD. Manager/Senior/Lead is never an automatic exclusion and business-compatible Manager/Senior/Lead roles require full-JD review. Persist completed decisions in the matching semantic_decisions file using job_key and the exact fingerprint.",
+  "triage_decision_fields": [
+    "fingerprint",
+    "analysis_status",
+    "analysis_method=chatgpt_semantic_triage",
+    "decision=REJECT",
+    "reason",
+    "rationale",
+    "analyzed_at"
+  ],
   "required_decision_fields": [
     "fingerprint",
     "analysis_status=ANALYZED",
@@ -53,7 +62,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1253,7 +1262,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1283,7 +1292,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1313,7 +1322,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1343,7 +1352,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1373,7 +1382,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1403,7 +1412,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -1823,7 +1832,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -2363,7 +2372,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -2393,7 +2402,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -2423,7 +2432,7 @@
       "required_min_years": null,
       "experience_status_hint": null,
       "experience_reason_hint": null,
-      "guardrail_reason": "semantic_decision_missing_fields:experience_required,mandatory_years_experience,preferred_years_experience,people_management_required,individual_contributor_possible,decision_scope_and_ownership",
+      "guardrail_reason": null,
       "applied_material_update": false
     },
     {
@@ -2546,8 +2555,5 @@
       "guardrail_reason": null,
       "applied_material_update": false
     }
-  ],
-  "guardrails_applied_at": "2026-10-03T11:13:15Z",
-  "guardrail_schema_resets": 11,
-  "guardrail_applied_updates": 0
+  ]
 }
