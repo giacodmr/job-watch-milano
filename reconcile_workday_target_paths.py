@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 """Recover target-geography Workday roles that the normal inventory can miss.
 
-Two conservative recovery paths are supported:
-1. explicit target-city segments in Workday ``externalPath`` when
-   ``locationsText`` is too coarse;
-2. targeted Workday searches for persisted TO_REVIEW / INTERESTED / APPLIED
-   decisions that are absent from the current snapshot.
+Recovery is deliberately conservative and uses only official Workday sources:
+1. explicit target-city segments in Workday ``externalPath``;
+2. targeted CXS searches for persisted TO_REVIEW / INTERESTED / APPLIED roles;
+3. an official CXS job-detail fallback for explicitly externally-validated roles
+   when Workday's broad inventory and search omit a still-live job.
 
-The second path is important for jobs that remain reachable on the official
-Workday site but disappear from the blank-search inventory. Recovery is always
-performed against the official Workday CXS endpoint and requires an exact
-source-id match plus a target-geography check. A user decision is never deleted
-or silently closed merely because the broad inventory omitted the job.
+A user decision is never deleted or silently closed merely because the broad
+inventory omitted the vacancy.
 """
 from __future__ import annotations
 
@@ -24,6 +21,7 @@ from collector import (
     MAX_PAGES,
     OPEN_STATUSES,
     compact_job,
+    get_json,
     location_matches,
     metadata_fingerprint,
     post_json,
@@ -60,7 +58,6 @@ def safe_path_location(external_path: str | None) -> str | None:
 
     normalized = re.sub(r"[-_]+", " ", slug).strip()
     folded = normalized.casefold()
-
     if folded in {"milan", "milano"}:
         return normalized
     if re.match(r"^(milan|milano)\b", normalized, re.I) and re.search(r"\b(italy|it)\b", normalized, re.I):
@@ -84,7 +81,6 @@ def enumerate_workday(company: dict) -> tuple[list[dict], str, str, str]:
     offset = 0
     total = None
     rows: list[dict] = []
-
     for _ in range(MAX_PAGES):
         data = post_json(
             search_url,
@@ -104,19 +100,12 @@ def enumerate_workday(company: dict) -> tuple[list[dict], str, str, str]:
         offset += len(page)
     else:
         raise RuntimeError("Workday path reconciliation pagination safety limit")
-
     if total is None or len(rows) != total:
         raise RuntimeError(f"Workday path reconciliation mismatch: retrieved={len(rows)}, total={total}")
     return rows, host, site, search_url
 
 
 def targeted_workday_search(company: dict, search_text: str) -> tuple[list[dict], str, str, str]:
-    """Search the official Workday endpoint for one persisted source id.
-
-    Workday can omit a live role from an empty-search inventory while returning
-    it for an explicit requisition-id search. We intentionally do not trust a
-    fuzzy match: callers must still compare the exact canonical source id.
-    """
     host, tenant, site = workday_config(company)
     search_url = f"https://{host}/wday/cxs/{tenant}/{site}/jobs"
     referer = f"https://{host}/{site}"
@@ -135,7 +124,6 @@ def candidate_from_raw(company_name: str, raw: dict, host: str, site: str, *, al
     external_path = str(raw.get("externalPath") or "").strip()
     path_location = safe_path_location(external_path)
     raw_location = str(raw.get("locationsText") or "").strip()
-
     if path_location:
         location = path_location if not raw_location else f"{path_location} | {raw_location}"
     elif allow_metadata_location and location_matches(raw_location, company_name):
@@ -144,15 +132,12 @@ def candidate_from_raw(company_name: str, raw: dict, host: str, site: str, *, al
         return None
 
     canonical = f"https://{host}/{site}{external_path}"
-    bullet_fields = raw.get("bulletFields") or []
     employment = None
-    if isinstance(bullet_fields, list):
-        for value in bullet_fields:
-            text = str(value or "").strip()
-            if text and re.search(r"\b(full[ -]?time|part[ -]?time|intern(?:ship)?|temporary|contract)\b", text, re.I):
-                employment = text
-                break
-
+    for value in raw.get("bulletFields") or []:
+        text = str(value or "").strip()
+        if text and re.search(r"\b(full[ -]?time|part[ -]?time|intern(?:ship)?|temporary|contract)\b", text, re.I):
+            employment = text
+            break
     job = compact_job(
         company_name,
         workday_source_id(raw, external_path),
@@ -168,26 +153,79 @@ def candidate_from_raw(company_name: str, raw: dict, host: str, site: str, *, al
     return job
 
 
+def official_detail_candidate(company_name: str, source_id: str, mapped: dict) -> dict | None:
+    """Validate an externally-known role against the official Workday detail API."""
+    registry = (read_json("externally_validated_roles.json", {"records": {}}) or {}).get("records") or {}
+    row = registry.get(f"{company_name}::{source_id}")
+    if not isinstance(row, dict):
+        return None
+
+    host, tenant, site = workday_config(mapped)
+    canonical = str(row.get("canonical_url") or "").strip()
+    parsed = urlparse(canonical)
+    expected_prefix = f"/{site}/job/"
+    if parsed.scheme != "https" or parsed.netloc.casefold() != host.casefold() or not parsed.path.startswith(expected_prefix):
+        raise RuntimeError(f"{company_name}::{source_id}: external fallback URL is not on the mapped Workday host/site")
+    if source_id.casefold() not in unquote(parsed.path).casefold():
+        raise RuntimeError(f"{company_name}::{source_id}: external fallback URL does not contain the source id")
+
+    external_path = parsed.path[len(f"/{site}"):]
+    path_location = safe_path_location(external_path)
+    registry_location = str(row.get("location") or "").strip()
+    if not path_location and not location_matches(registry_location, company_name):
+        raise RuntimeError(f"{company_name}::{source_id}: external fallback is outside target geography")
+
+    detail_url = f"https://{host}/wday/cxs/{tenant}/{site}{external_path}"
+    detail = get_json(
+        detail_url,
+        headers={"Accept": "application/json", "Referer": canonical, "Origin": f"https://{host}"},
+    )
+    if not isinstance(detail, dict) or not detail:
+        raise RuntimeError(f"{company_name}::{source_id}: official Workday detail response is empty")
+    info = detail.get("jobPostingInfo") if isinstance(detail.get("jobPostingInfo"), dict) else detail
+    detail_id = next(
+        (str(info.get(field)) for field in ("jobReqId", "jobRequisitionId", "requisitionId") if info.get(field)),
+        None,
+    )
+    if detail_id and detail_id != source_id:
+        raise RuntimeError(f"{company_name}::{source_id}: official detail returned mismatched requisition {detail_id}")
+
+    title = info.get("title") or row.get("title")
+    location = info.get("location") or info.get("locationText") or path_location or registry_location
+    if not location_matches(location, company_name) and not path_location:
+        raise RuntimeError(f"{company_name}::{source_id}: official detail no longer resolves to a target geography")
+    if path_location and path_location.casefold() not in str(location).casefold():
+        location = f"{path_location} | {location}" if location else path_location
+
+    job = compact_job(
+        company_name,
+        source_id,
+        title=title,
+        location=location,
+        employment_type=info.get("timeType") or info.get("workerType"),
+        published_at=info.get("postedOn") or info.get("startDate"),
+        updated_at=info.get("updatedOn"),
+        canonical=canonical,
+        apply_url=canonical,
+    )
+    job["fingerprint"] = metadata_fingerprint(job)
+    job["reconciliation_source"] = "official_workday_detail"
+    return job
+
+
 def upsert_recovered(jobs: list[dict], candidate: dict, *, persisted_decision: bool = False) -> bool:
     sid = str(candidate.get("source_id"))
     curl = str(candidate.get("canonical_url") or "").rstrip("/").casefold()
     existing = next((j for j in jobs if str(j.get("source_id")) == sid), None)
     if existing is None and curl:
-        existing = next(
-            (j for j in jobs if str(j.get("canonical_url") or "").rstrip("/").casefold() == curl),
-            None,
-        )
-
+        existing = next((j for j in jobs if str(j.get("canonical_url") or "").rstrip("/").casefold() == curl), None)
     if existing and existing.get("status") in OPEN_STATUSES:
         return False
-
     if existing:
         old_fp = existing.get("fingerprint")
         candidate["status"] = "STILL_OPEN" if old_fp == candidate.get("fingerprint") else "UPDATED"
         jobs[jobs.index(existing)] = candidate
     else:
-        # A persisted user decision proves that this is not conceptually a new
-        # discovery for the user even if it is newly recovered by the collector.
         candidate["status"] = "STILL_OPEN" if persisted_decision else "NEW"
         jobs.append(candidate)
     return True
@@ -196,16 +234,14 @@ def upsert_recovered(jobs: list[dict], candidate: dict, *, persisted_decision: b
 def active_decisions_for_company(company_name: str) -> list[tuple[str, dict]]:
     decisions = (read_json("user_job_decisions.json", {"records": {}}) or {}).get("records") or {}
     prefix = f"{company_name}::"
-    out = []
-    for job_key, row in decisions.items():
-        if not job_key.startswith(prefix) or (row or {}).get("decision") not in ACTIVE_USER_DECISIONS:
-            continue
-        out.append((job_key[len(prefix):], row or {}))
-    return out
+    return [
+        (job_key[len(prefix):], row or {})
+        for job_key, row in decisions.items()
+        if job_key.startswith(prefix) and (row or {}).get("decision") in ACTIVE_USER_DECISIONS
+    ]
 
 
 def reconcile_persisted_decisions(company_name: str, mapped: dict, jobs: list[dict]) -> int:
-    """Recover active user decisions that vanished from the broad Workday inventory."""
     recovered = 0
     open_ids = {str(j.get("source_id")) for j in jobs if j.get("status") in OPEN_STATUSES}
     for source_id, decision in active_decisions_for_company(company_name):
@@ -218,15 +254,21 @@ def reconcile_persisted_decisions(company_name: str, mapped: dict, jobs: list[di
             actual_id = str(workday_source_id(raw, external_path))
             if actual_id == source_id or source_id.casefold() in external_path.casefold():
                 exact.append(raw)
-        if len(exact) != 1:
-            if len(exact) > 1:
-                raise RuntimeError(f"{company_name}::{source_id}: targeted Workday search returned multiple exact matches")
-            print(f"Targeted Workday decision search did not find {company_name}::{source_id}")
-            continue
+        if len(exact) > 1:
+            raise RuntimeError(f"{company_name}::{source_id}: targeted Workday search returned multiple exact matches")
 
-        candidate = candidate_from_raw(company_name, exact[0], host, site, allow_metadata_location=True)
-        if candidate is None:
-            raise RuntimeError(f"{company_name}::{source_id}: exact targeted Workday match is outside target geography")
+        candidate = None
+        if len(exact) == 1:
+            candidate = candidate_from_raw(company_name, exact[0], host, site, allow_metadata_location=True)
+            if candidate is None:
+                raise RuntimeError(f"{company_name}::{source_id}: exact targeted Workday match is outside target geography")
+        else:
+            candidate = official_detail_candidate(company_name, source_id, mapped)
+            if candidate is None:
+                print(f"Targeted Workday decision search did not find {company_name}::{source_id}")
+                continue
+            print(f"Recovered official Workday detail fallback: {company_name}::{source_id} | {candidate.get('title')}")
+
         if upsert_recovered(jobs, candidate, persisted_decision=True):
             recovered += 1
             open_ids.add(source_id)
@@ -253,7 +295,6 @@ def reconcile_batch(batch: str) -> int:
         family = str(((mapped.get("ats") or {}).get("family") or "")).casefold()
         if "workday" not in family:
             continue
-
         jobs = list(company_row.get("jobs") or [])
 
         if company_name in PATH_LOCATION_COMPANIES:
@@ -262,10 +303,7 @@ def reconcile_batch(batch: str) -> int:
                 candidate = candidate_from_raw(company_name, raw, host, site)
                 if candidate and upsert_recovered(jobs, candidate):
                     changed += 1
-                    print(
-                        f"{batch.upper()} recovered Workday path-target role: "
-                        f"{company_name}::{candidate.get('source_id')} | {candidate.get('title')}"
-                    )
+                    print(f"{batch.upper()} recovered Workday path-target role: {company_name}::{candidate.get('source_id')} | {candidate.get('title')}")
             company_row["path_location_reconciled"] = True
             company_row["path_location_source_url"] = search_url
 
@@ -273,7 +311,6 @@ def reconcile_batch(batch: str) -> int:
         changed += targeted
         if targeted:
             company_row["active_decision_reconciled"] = True
-
         company_row["jobs"] = jobs
         company_row["target_jobs_count"] = sum(1 for j in jobs if j.get("status") in OPEN_STATUSES)
 
@@ -287,15 +324,14 @@ def reconcile_batch(batch: str) -> int:
             "companies": sorted(PATH_LOCATION_COMPANIES),
             "recovered_count": changed,
             "active_decision_targeted_search": True,
+            "official_detail_fallback": True,
         }
         write_json(current_name, current)
     return changed
 
 
 def main() -> int:
-    total = 0
-    for batch in BATCHES:
-        total += reconcile_batch(batch)
+    total = sum(reconcile_batch(batch) for batch in BATCHES)
     print(f"Workday target-path/decision reconciliation complete: recovered={total}")
     return 0
 
