@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1","jw2","jw3","jw4")
+CORPORATE_LISTING_METHOD = "official_corporate_listing_contains_workday_link"
 REQUIRED_CONFIG = (
     "job_watch_rules.json",
     "job_watch_batches.json",
@@ -85,6 +86,15 @@ for key, value in external["records"].items():
         raise SystemExit(f"INPUT ERROR: external role {key} URL does not contain its source id")
     if not value.get("title") or not value.get("location") or not value.get("validated_at"):
         raise SystemExit(f"INPUT ERROR: external role {key} lacks title/location/validated_at")
+    method = value.get("validation_method")
+    if method != CORPORATE_LISTING_METHOD:
+        raise SystemExit(f"INPUT ERROR: external role {key} uses unsupported validation_method {method!r}")
+    listing_url = str(value.get("official_listing_url") or "")
+    listing = urlparse(listing_url)
+    if listing.scheme != "https" or not listing.netloc:
+        raise SystemExit(f"INPUT ERROR: external role {key} lacks a valid HTTPS official_listing_url")
+    if "myworkdayjobs.com" in listing.netloc.casefold():
+        raise SystemExit(f"INPUT ERROR: external role {key} corporate listing must be independent of Workday")
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
