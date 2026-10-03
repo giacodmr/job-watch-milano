@@ -1,77 +1,65 @@
 {
-  "version": "1.0",
-  "run_id": "20260921T110019Z",
-  "started_at": "2026-09-21T11:00:19Z",
-  "completed_at": "2026-09-21T11:31:00Z",
+  "version": "1.1",
+  "run_id": "20261003T102121Z",
+  "run_phase": "COLLECTED_PENDING_SEMANTIC",
+  "started_at": "2026-10-03T10:15:14Z",
+  "completed_at": "2026-10-03T10:21:21Z",
   "source_generated_at": {
-    "JW1": "2026-09-21T11:01:33Z",
-    "JW2": "2026-09-21T11:04:17Z",
-    "JW3": "2026-09-21T11:05:13Z",
-    "JW4": "2026-09-21T11:08:07Z"
+    "JW1": "2026-10-03T10:15:14Z",
+    "JW2": "2026-10-03T10:17:42Z",
+    "JW3": "2026-10-03T10:18:39Z",
+    "JW4": "2026-10-03T10:21:01Z"
   },
   "batches": {
     "JW1": {
-      "semantic_delta_complete": true,
-      "autonomous_search_complete": true,
-      "priority_check_complete": true,
-      "autonomous_delta_count": 1,
-      "autonomous_validated_count": 1,
-      "errors": [],
-      "autonomous_search_evidence": [
-        "Independent 2026-09-21 finance/payments search validated ING Business Analyst Business Banking Digital Channels & Onboarding on ING official careers; not present in current JW1 snapshot.",
-        "Independent search also revalidated Intesa Sanpaolo Business Analyst - Digital Asset Projects already represented in JW1 inventory."
-      ],
-      "priority_check_evidence": [
-        "Mastercard official careers/Workday priority search checked for Milan, Rome, Luxembourg and London; current priority inventory reviewed."
-      ]
-    },
-    "JW2": {
-      "semantic_delta_complete": true,
-      "autonomous_search_complete": true,
-      "priority_check_complete": true,
-      "autonomous_delta_count": 1,
-      "autonomous_validated_count": 1,
-      "errors": [],
-      "autonomous_search_evidence": [
-        "Independent 2026-09-21 strategy/tech search validated Accenture Strategy Consultant – AI, Data & GenAI for Milan/Rome on Accenture official careers; not present in current JW2 snapshot.",
-        "Kearney Business Analyst 2026 independently revalidated on official Kearney careers and already represented in inventory."
-      ],
-      "priority_check_evidence": [
-        "Amazon target inventory reconciled for Milan, Rome, Luxembourg and London against amazon_target_check.json."
-      ]
-    },
-    "JW3": {
-      "semantic_delta_complete": true,
-      "autonomous_search_complete": true,
-      "priority_check_complete": true,
+      "semantic_delta_complete": false,
+      "autonomous_search_complete": false,
+      "priority_check_complete": false,
       "autonomous_delta_count": 0,
       "autonomous_validated_count": 0,
       "errors": [],
-      "autonomous_search_evidence": [
-        "Independent 2026-09-21 energy/industrial search performed; Octopus Customer Operations role validated on official Octopus careers but is outside target strategy/analytics scope; no additional first-party actionable delta."
-      ],
+      "autonomous_search_evidence": [],
+      "priority_check_evidence": []
+    },
+    "JW2": {
+      "semantic_delta_complete": false,
+      "autonomous_search_complete": false,
+      "priority_check_complete": false,
+      "autonomous_delta_count": 0,
+      "autonomous_validated_count": 0,
+      "errors": [],
+      "autonomous_search_evidence": [],
+      "priority_check_evidence": []
+    },
+    "JW3": {
+      "semantic_delta_complete": false,
+      "autonomous_search_complete": false,
+      "priority_check_complete": false,
+      "autonomous_delta_count": 0,
+      "autonomous_validated_count": 0,
+      "errors": [],
+      "autonomous_search_evidence": [],
       "priority_check_evidence": []
     },
     "JW4": {
-      "semantic_delta_complete": true,
-      "autonomous_search_complete": true,
-      "priority_check_complete": true,
+      "semantic_delta_complete": false,
+      "autonomous_search_complete": false,
+      "priority_check_complete": false,
       "autonomous_delta_count": 0,
       "autonomous_validated_count": 0,
       "errors": [],
-      "autonomous_search_evidence": [
-        "Independent 2026-09-21 consumer/luxury/corporate search revalidated VERSACE Retail Business Analyst, FP&A on Prada Group official careers; already represented in current JW4 inventory.",
-        "Current Prada/Nike/Sky/Chanel delta reviewed; no additional first-party autonomous delta."
-      ],
+      "autonomous_search_evidence": [],
       "priority_check_evidence": []
     }
   },
   "priority_checks": {
-    "Amazon": true,
-    "Mastercard": true
+    "Amazon": false,
+    "Mastercard": false
   },
   "blocking_errors": [],
   "priority_snapshot_at": {
-    "Amazon": "2026-09-21T11:08:08.857620+00:00"
-  }
+    "Amazon": "2026-10-03T10:21:09.388223+00:00"
+  },
+  "collection_complete": true,
+  "semantic_manifest_status": "PENDING"
 }

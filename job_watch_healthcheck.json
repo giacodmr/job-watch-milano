@@ -1,16 +1,16 @@
 {
   "version": "1.1",
-  "generated_at": "2026-10-03T09:56:11Z",
-  "run_id": "20260921T110019Z",
+  "generated_at": "2026-10-03T10:21:22Z",
+  "run_id": "20261003T102121Z",
   "DAILY_COMPLETE": false,
   "FULL_SEMANTIC_COMPLETE": false,
   "priority_checks": {
-    "Amazon": true,
-    "Mastercard": true
+    "Amazon": false,
+    "Mastercard": false
   },
   "batches": {
     "JW1": {
-      "source_generated_at": "2026-10-03T09:49:54Z",
+      "source_generated_at": "2026-10-03T10:15:14Z",
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
@@ -21,7 +21,7 @@
       "not_checked": 0
     },
     "JW2": {
-      "source_generated_at": "2026-10-03T09:52:32Z",
+      "source_generated_at": "2026-10-03T10:17:42Z",
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
@@ -32,7 +32,7 @@
       "not_checked": 0
     },
     "JW3": {
-      "source_generated_at": "2026-10-03T09:53:28Z",
+      "source_generated_at": "2026-10-03T10:18:39Z",
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
@@ -43,7 +43,7 @@
       "not_checked": 0
     },
     "JW4": {
-      "source_generated_at": "2026-10-03T09:55:54Z",
+      "source_generated_at": "2026-10-03T10:21:01Z",
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
@@ -88,11 +88,6 @@
     "Euronext::R27644"
   ],
   "blocking_errors": [
-    "JW1: SOURCE_SNAPSHOT_MISMATCH",
-    "JW2: SOURCE_SNAPSHOT_MISMATCH",
-    "JW3: SOURCE_SNAPSHOT_MISMATCH",
-    "JW4: SOURCE_SNAPSHOT_MISMATCH",
-    "AMAZON_PRIORITY_SNAPSHOT_MISMATCH",
     "JW1: BATCH_DAILY_INCOMPLETE",
     "JW2: BATCH_DAILY_INCOMPLETE",
     "JW3: BATCH_DAILY_INCOMPLETE",
@@ -100,35 +95,6 @@
     "ACTIVE_USER_DECISION_NOT_RECONCILED: Euronext::R27644"
   ],
   "blocking_error_details": [
-    {
-      "code": "SOURCE_SNAPSHOT_MISMATCH",
-      "batch": "JW1",
-      "expected": "2026-10-03T09:49:54Z",
-      "actual": "2026-09-21T11:01:33Z"
-    },
-    {
-      "code": "SOURCE_SNAPSHOT_MISMATCH",
-      "batch": "JW2",
-      "expected": "2026-10-03T09:52:32Z",
-      "actual": "2026-09-21T11:04:17Z"
-    },
-    {
-      "code": "SOURCE_SNAPSHOT_MISMATCH",
-      "batch": "JW3",
-      "expected": "2026-10-03T09:53:28Z",
-      "actual": "2026-09-21T11:05:13Z"
-    },
-    {
-      "code": "SOURCE_SNAPSHOT_MISMATCH",
-      "batch": "JW4",
-      "expected": "2026-10-03T09:55:54Z",
-      "actual": "2026-09-21T11:08:07Z"
-    },
-    {
-      "code": "AMAZON_PRIORITY_SNAPSHOT_MISMATCH",
-      "expected": "2026-10-03T09:55:59.963757+00:00",
-      "actual": "2026-09-21T11:08:08.857620+00:00"
-    },
     {
       "code": "BATCH_DAILY_INCOMPLETE",
       "batch": "JW1",
