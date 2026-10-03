@@ -1,9 +1,9 @@
 {
-  "version": "1.1",
+  "version": "1.2",
   "policy": {
-    "purpose": "Persist official first-party vacancy details for roles explicitly kept by the user when the broad ATS inventory/search does not enumerate them.",
-    "verification": "A fallback record may be reconciled only from first-party evidence. For Workday roles, the canonical URL must match the mapped ATS host/site. If the Workday detail API is blocked, an official corporate careers listing may prove the role live only when that page contains the exact title and a link/path carrying the same Workday source ID.",
-    "lifecycle": "These records are discovery/reconciliation hints only; user_job_decisions.json remains authoritative for TO_REVIEW/INTERESTED/APPLIED/NOT_INTERESTED."
+    "purpose": "Persist first-party reconciliation hints for roles explicitly kept by the user when the mapped ATS inventory/search does not enumerate them.",
+    "verification": "Open/closed lifecycle must be established from a current first-party inventory whenever available. Historical vacancy/detail pages are not sufficient evidence that a role remains open.",
+    "lifecycle": "These records are reconciliation hints only; user_job_decisions.json remains authoritative for TO_REVIEW/INTERESTED/APPLIED/NOT_INTERESTED. A CLOSED lifecycle does not delete or rewrite the user's historical decision."
   },
   "records": {
     "Euronext::R27644": {
@@ -12,10 +12,11 @@
       "title": "Business Operations Analyst",
       "location": "Milan",
       "canonical_url": "https://hrhub.wd3.myworkdayjobs.com/Euronext_Career_Page/job/Milan/Business-Operations-Analyst_R27644",
-      "official_listing_url": "https://www.euronext.com/it/about/careers/vacancies/98",
-      "validation_method": "official_corporate_listing_contains_workday_link",
-      "validated_source": "official_euronext_careers_listing",
-      "validated_at": "2026-10-03T10:33:00Z"
+      "current_inventory_url": "https://www.euronext.com/en/about/careers/open-positions",
+      "historical_reference_url": "https://www.euronext.com/it/about/careers/vacancies/98",
+      "validation_method": "official_current_inventory_absence_or_presence",
+      "validated_source": "official_euronext_current_open_positions",
+      "validated_at": "2026-10-03T10:49:00Z"
     }
   }
 }
