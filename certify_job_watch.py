@@ -32,7 +32,6 @@ def add_error(errors: list[dict], code: str, **fields) -> None:
 def main() -> int:
     state = load("job_watch_run_state.json", {}) or {}
     audit = load("job_watch_audit.json", {}) or {}
-    health = load("job_watch_healthcheck.json", {}) or {}
     amazon = load("amazon_target_check.json", {}) or {}
     decisions = (load("user_job_decisions.json", {"records": {}}) or {}).get("records") or {}
     current = {b: load(f"current_jobs_{b.lower()}.json", {}) or {} for b in BATCHES}
@@ -67,12 +66,36 @@ def main() -> int:
         if cert.get("global_blocking_errors"):
             add_error(errors, "BATCH_CERTIFICATION_HAS_GLOBAL_ERRORS", batch=batch, errors=cert.get("global_blocking_errors"))
 
+    # A persisted user decision is reconciled when either analysis state knows
+    # the vacancy or a current snapshot carries an explicit lifecycle row. This
+    # matters for TO_REVIEW/INTERESTED roles that close before ever entering the
+    # semantic state: CLOSED is a resolved lifecycle, not a missing vacancy.
     all_state_keys = set()
     for batch in BATCHES:
         all_state_keys.update(((analysis[batch].get("records") or {}).keys()))
-    unresolved_user_decisions = sorted(
+
+    lifecycle_status: dict[str, str] = {}
+    for batch in BATCHES:
+        for company in current[batch].get("companies", []) or []:
+            company_name = company.get("company")
+            if not company_name:
+                continue
+            for job in company.get("jobs", []) or []:
+                if job.get("source_id") is None:
+                    continue
+                lifecycle_status[f"{company_name}::{job.get('source_id')}"] = str(job.get("status") or "UNKNOWN")
+
+    active_decision_keys = {
         key for key, row in decisions.items()
-        if (row or {}).get("decision") in {"TO_REVIEW", "INTERESTED"} and key not in all_state_keys
+        if (row or {}).get("decision") in {"TO_REVIEW", "INTERESTED"}
+    }
+    unresolved_user_decisions = sorted(
+        key for key in active_decision_keys
+        if key not in all_state_keys and key not in lifecycle_status
+    )
+    closed_user_decisions = sorted(
+        key for key in active_decision_keys
+        if lifecycle_status.get(key) == "CLOSED"
     )
     for key in unresolved_user_decisions:
         add_error(errors, "ACTIVE_USER_DECISION_NOT_RECONCILED", job_key=key)
@@ -136,7 +159,7 @@ def main() -> int:
             compact_errors.append(str(code))
 
     hardened = {
-        "version": "1.1",
+        "version": "1.2",
         "generated_at": now(),
         "run_id": state.get("run_id"),
         "DAILY_COMPLETE": daily_complete,
@@ -145,6 +168,7 @@ def main() -> int:
         "batches": batch_health,
         "coverage": coverage,
         "unresolved_user_decisions": unresolved_user_decisions,
+        "closed_user_decisions": closed_user_decisions,
         "blocking_errors": compact_errors,
         "blocking_error_details": errors,
         "certification_mode": "FAIL_CLOSED",
@@ -152,7 +176,8 @@ def main() -> int:
     dump("job_watch_healthcheck.json", hardened)
     print(
         f"Hardened healthcheck DAILY_COMPLETE={daily_complete} "
-        f"FULL_SEMANTIC_COMPLETE={full_complete} blocking_errors={len(errors)}"
+        f"FULL_SEMANTIC_COMPLETE={full_complete} blocking_errors={len(errors)} "
+        f"closed_user_decisions={len(closed_user_decisions)}"
     )
     return 0
 
