@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-03T21:35:26Z",
+  "generated_at": "2026-10-03T22:12:05Z",
   "run_id": "4a0ead7bd06a2eaf04cc730f",
   "snapshot": {
     "run_id": "4a0ead7bd06a2eaf04cc730f",
@@ -46,6 +46,11 @@
       "remaining_work": [
         {
           "batch": "JW1",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
+        {
+          "batch": "JW1",
           "action": "REPORT_OPPORTUNITIES",
           "count": 18,
           "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
@@ -63,15 +68,20 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 116,
+      "reporting_pending": 113,
       "historical_backlog_remaining": 228,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
         {
           "batch": "JW2",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
+        {
+          "batch": "JW2",
           "action": "REPORT_OPPORTUNITIES",
-          "count": 116,
+          "count": 113,
           "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
         },
         {
@@ -92,6 +102,11 @@
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW3",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
         {
           "batch": "JW3",
           "action": "REPORT_OPPORTUNITIES",
@@ -116,6 +131,11 @@
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW4",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
         {
           "batch": "JW4",
           "action": "REPORT_OPPORTUNITIES",
@@ -156,12 +176,12 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 141,
+  "daily_actionable_remaining": 138,
   "historical_backlog_remaining": 736,
   "source_failures": 0,
   "partial_sources": 108,
   "error_counts": {
-    "record": 7,
+    "record": 10,
     "source": 108,
     "batch": 0,
     "global": 0
@@ -1181,7 +1201,7 @@
       "stage": "semantic_patch",
       "code": "INVALID_USER_UPDATE",
       "message": "Ask user for rejection reason",
-      "job_key": "Amazon::10466298"
+      "job_key": "Amazon::10500096"
     },
     {
       "category": "LOCAL_RECORD_ERROR",
@@ -1189,7 +1209,7 @@
       "stage": "semantic_patch",
       "code": "INVALID_USER_UPDATE",
       "message": "Ask user for rejection reason",
-      "job_key": "Amazon::10475721"
+      "job_key": "Amazon::10502112"
     },
     {
       "category": "LOCAL_RECORD_ERROR",
@@ -1197,7 +1217,31 @@
       "stage": "semantic_patch",
       "code": "INVALID_USER_UPDATE",
       "message": "Ask user for rejection reason",
-      "job_key": "Amazon::10477188"
+      "job_key": "Amazon::10503181"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "semantic_patch",
+      "code": "INVALID_USER_UPDATE",
+      "message": "Ask user for rejection reason",
+      "job_key": "Amazon::10507828"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "semantic_patch",
+      "code": "INVALID_USER_UPDATE",
+      "message": "Ask user for rejection reason",
+      "job_key": "Amazon::10510170"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "semantic_patch",
+      "code": "INVALID_USER_UPDATE",
+      "message": "Ask user for rejection reason",
+      "job_key": "Amazon::10511799"
     }
   ],
   "stage_reports": {
@@ -1271,6 +1315,11 @@
   "remaining_work": [
     {
       "batch": "JW1",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
+    },
+    {
+      "batch": "JW1",
       "action": "REPORT_OPPORTUNITIES",
       "count": 18,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
@@ -1282,14 +1331,24 @@
     },
     {
       "batch": "JW2",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
+    },
+    {
+      "batch": "JW2",
       "action": "REPORT_OPPORTUNITIES",
-      "count": 116,
+      "count": 113,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
       "batch": "JW2",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW3",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
     },
     {
       "batch": "JW3",
@@ -1301,6 +1360,11 @@
       "batch": "JW3",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW4",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
     },
     {
       "batch": "JW4",
