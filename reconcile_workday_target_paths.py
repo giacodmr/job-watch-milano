@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """Recover target-geography Workday roles that the normal inventory can miss.
 
-Recovery is deliberately conservative and uses only official Workday sources:
+Recovery is deliberately conservative and first-party only:
 1. explicit target-city segments in Workday ``externalPath``;
 2. targeted CXS searches for persisted TO_REVIEW / INTERESTED / APPLIED roles;
-3. an official CXS job-detail fallback for explicitly externally-validated roles
-   when Workday's broad inventory and search omit a still-live job.
+3. an externally-validated official corporate careers listing when Workday's
+   broad inventory/search omit a still-live job and the Workday detail API is
+   blocked.
 
 A user decision is never deleted or silently closed merely because the broad
 inventory omitted the vacancy.
 """
 from __future__ import annotations
 
+import html as html_lib
 import json
 import re
 from pathlib import Path
@@ -21,7 +23,7 @@ from collector import (
     MAX_PAGES,
     OPEN_STATUSES,
     compact_job,
-    get_json,
+    get_html,
     location_matches,
     metadata_fingerprint,
     post_json,
@@ -33,6 +35,7 @@ ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 PATH_LOCATION_COMPANIES = {"Euronext"}
 ACTIVE_USER_DECISIONS = {"TO_REVIEW", "INTERESTED", "APPLIED"}
+CORPORATE_LISTING_METHOD = "official_corporate_listing_contains_workday_link"
 
 
 def read_json(name: str, default=None):
@@ -153,63 +156,72 @@ def candidate_from_raw(company_name: str, raw: dict, host: str, site: str, *, al
     return job
 
 
-def official_detail_candidate(company_name: str, source_id: str, mapped: dict) -> dict | None:
-    """Validate an externally-known role against the official Workday detail API."""
+def same_first_party_host(listing_url: str, career_url: str) -> bool:
+    listing_host = (urlparse(listing_url).hostname or "").casefold().lstrip("www.")
+    career_host = (urlparse(career_url).hostname or "").casefold().lstrip("www.")
+    if not listing_host or not career_host:
+        return False
+    return listing_host == career_host or listing_host.endswith("." + career_host) or career_host.endswith("." + listing_host)
+
+
+def official_listing_candidate(company_name: str, source_id: str, mapped: dict) -> dict | None:
+    """Validate a registry fallback against a first-party corporate careers listing.
+
+    The fallback is fail-closed: the Workday canonical URL must belong to the
+    mapped ATS, the listing must belong to the mapped corporate careers host,
+    and the live HTML must contain both the exact role title and the exact
+    Workday job-path marker (which carries the source id).
+    """
     registry = (read_json("externally_validated_roles.json", {"records": {}}) or {}).get("records") or {}
     row = registry.get(f"{company_name}::{source_id}")
     if not isinstance(row, dict):
         return None
+    if row.get("validation_method") != CORPORATE_LISTING_METHOD:
+        return None
 
-    host, tenant, site = workday_config(mapped)
+    host, _tenant, site = workday_config(mapped)
     canonical = str(row.get("canonical_url") or "").strip()
     parsed = urlparse(canonical)
     expected_prefix = f"/{site}/job/"
     if parsed.scheme != "https" or parsed.netloc.casefold() != host.casefold() or not parsed.path.startswith(expected_prefix):
-        raise RuntimeError(f"{company_name}::{source_id}: external fallback URL is not on the mapped Workday host/site")
+        raise RuntimeError(f"{company_name}::{source_id}: fallback URL is not on the mapped Workday host/site")
     if source_id.casefold() not in unquote(parsed.path).casefold():
-        raise RuntimeError(f"{company_name}::{source_id}: external fallback URL does not contain the source id")
+        raise RuntimeError(f"{company_name}::{source_id}: fallback URL does not contain the source id")
 
-    external_path = parsed.path[len(f"/{site}"):]
-    path_location = safe_path_location(external_path)
+    path_location = safe_path_location(parsed.path[len(f"/{site}"):])
     registry_location = str(row.get("location") or "").strip()
     if not path_location and not location_matches(registry_location, company_name):
-        raise RuntimeError(f"{company_name}::{source_id}: external fallback is outside target geography")
+        raise RuntimeError(f"{company_name}::{source_id}: fallback is outside target geography")
 
-    detail_url = f"https://{host}/wday/cxs/{tenant}/{site}{external_path}"
-    detail = get_json(
-        detail_url,
-        headers={"Accept": "application/json", "Referer": canonical, "Origin": f"https://{host}"},
-    )
-    if not isinstance(detail, dict) or not detail:
-        raise RuntimeError(f"{company_name}::{source_id}: official Workday detail response is empty")
-    info = detail.get("jobPostingInfo") if isinstance(detail.get("jobPostingInfo"), dict) else detail
-    detail_id = next(
-        (str(info.get(field)) for field in ("jobReqId", "jobRequisitionId", "requisitionId") if info.get(field)),
-        None,
-    )
-    if detail_id and detail_id != source_id:
-        raise RuntimeError(f"{company_name}::{source_id}: official detail returned mismatched requisition {detail_id}")
+    listing_url = str(row.get("official_listing_url") or "").strip()
+    career_url = str(((mapped.get("ats") or {}).get("career_site") or "")).strip()
+    if not listing_url or urlparse(listing_url).scheme != "https" or not same_first_party_host(listing_url, career_url):
+        raise RuntimeError(f"{company_name}::{source_id}: official listing is not on the mapped first-party careers host")
 
-    title = info.get("title") or row.get("title")
-    location = info.get("location") or info.get("locationText") or path_location or registry_location
-    if not location_matches(location, company_name) and not path_location:
-        raise RuntimeError(f"{company_name}::{source_id}: official detail no longer resolves to a target geography")
-    if path_location and path_location.casefold() not in str(location).casefold():
-        location = f"{path_location} | {location}" if location else path_location
+    listing_html, final_url = get_html(listing_url)
+    if not same_first_party_host(final_url, career_url):
+        raise RuntimeError(f"{company_name}::{source_id}: official listing redirected off the first-party careers host")
+    decoded = html_lib.unescape(listing_html)
+    title = str(row.get("title") or "").strip()
+    workday_path_marker = unquote(parsed.path.split("/job/", 1)[1])
+    normalized_text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", decoded)).casefold()
+    if title.casefold() not in normalized_text:
+        raise RuntimeError(f"{company_name}::{source_id}: role title is absent from the official corporate listing")
+    if source_id.casefold() not in decoded.casefold() or workday_path_marker.casefold() not in decoded.casefold():
+        raise RuntimeError(f"{company_name}::{source_id}: official listing does not contain the exact Workday job link")
 
+    location = path_location or registry_location
     job = compact_job(
         company_name,
         source_id,
         title=title,
         location=location,
-        employment_type=info.get("timeType") or info.get("workerType"),
-        published_at=info.get("postedOn") or info.get("startDate"),
-        updated_at=info.get("updatedOn"),
         canonical=canonical,
-        apply_url=canonical,
+        apply_url=canonical + "/apply",
     )
     job["fingerprint"] = metadata_fingerprint(job)
-    job["reconciliation_source"] = "official_workday_detail"
+    job["reconciliation_source"] = "official_corporate_listing"
+    job["official_listing_url"] = final_url
     return job
 
 
@@ -257,17 +269,16 @@ def reconcile_persisted_decisions(company_name: str, mapped: dict, jobs: list[di
         if len(exact) > 1:
             raise RuntimeError(f"{company_name}::{source_id}: targeted Workday search returned multiple exact matches")
 
-        candidate = None
         if len(exact) == 1:
             candidate = candidate_from_raw(company_name, exact[0], host, site, allow_metadata_location=True)
             if candidate is None:
                 raise RuntimeError(f"{company_name}::{source_id}: exact targeted Workday match is outside target geography")
         else:
-            candidate = official_detail_candidate(company_name, source_id, mapped)
+            candidate = official_listing_candidate(company_name, source_id, mapped)
             if candidate is None:
                 print(f"Targeted Workday decision search did not find {company_name}::{source_id}")
                 continue
-            print(f"Recovered official Workday detail fallback: {company_name}::{source_id} | {candidate.get('title')}")
+            print(f"Recovered official corporate-listing fallback: {company_name}::{source_id} | {candidate.get('title')}")
 
         if upsert_recovered(jobs, candidate, persisted_decision=True):
             recovered += 1
@@ -324,7 +335,7 @@ def reconcile_batch(batch: str) -> int:
             "companies": sorted(PATH_LOCATION_COMPANIES),
             "recovered_count": changed,
             "active_decision_targeted_search": True,
-            "official_detail_fallback": True,
+            "official_corporate_listing_fallback": True,
         }
         write_json(current_name, current)
     return changed
