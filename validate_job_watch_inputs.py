@@ -3,6 +3,7 @@
 import json
 import subprocess
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1","jw2","jw3","jw4")
@@ -13,6 +14,7 @@ REQUIRED_CONFIG = (
     "watchlist_additions.json",
     "discovery_candidates.json",
     "user_job_decisions.json",
+    "externally_validated_roles.json",
 )
 
 def load(name):
@@ -64,6 +66,25 @@ for key, value in user_decisions["records"].items():
             f"INPUT WARNING: user decision {key} lacks fingerprint; "
             "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the collector sees the vacancy and sync backfills it."
         )
+
+external = load("externally_validated_roles.json")
+if not isinstance(external.get("records"), dict):
+    raise SystemExit("INPUT ERROR: externally_validated_roles.json records must be an object")
+for key, value in external["records"].items():
+    if not isinstance(key, str) or not isinstance(value, dict):
+        raise SystemExit("INPUT ERROR: invalid externally validated role record")
+    company = str(value.get("company") or "")
+    source_id = str(value.get("source_id") or "")
+    if key != f"{company}::{source_id}" or not company or not source_id:
+        raise SystemExit(f"INPUT ERROR: external role key mismatch for {key}")
+    url = str(value.get("canonical_url") or "")
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or "myworkdayjobs.com" not in parsed.netloc.casefold() or "/job/" not in parsed.path:
+        raise SystemExit(f"INPUT ERROR: external role {key} lacks a valid official Workday job URL")
+    if source_id.casefold() not in parsed.path.casefold():
+        raise SystemExit(f"INPUT ERROR: external role {key} URL does not contain its source id")
+    if not value.get("title") or not value.get("location") or not value.get("validated_at"):
+        raise SystemExit(f"INPUT ERROR: external role {key} lacks title/location/validated_at")
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
