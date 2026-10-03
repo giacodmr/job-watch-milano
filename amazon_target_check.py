@@ -8,7 +8,8 @@ from pathlib import Path
 import requests
 
 API = "https://www.amazon.jobs/en/search.json"
-OUTPUT = Path("amazon_target_check.json")
+OUTPUT = Path(__file__).resolve().parent / "amazon_target_check.json"
+from pipeline_state import atomic_json, record_error
 HEADERS = {
     "User-Agent": "Mozilla/5.0 JobWatch/2.0",
     "Accept": "application/json,text/plain,*/*",
@@ -453,58 +454,73 @@ def main():
     nonbusiness_by_id = {}
     all_open_ids = set()
     for city, spec in TARGETS.items():
-        norms, probe_url, probe_hits = discover_norms(city, spec)
-        city_jobs, total_inventory, search_urls = [], 0, []
-        seen_city = set()
-        for norm in norms:
-            jobs, hits, urls = enumerate_norm(norm)
-            total_inventory += hits
-            search_urls.extend(urls)
-            for job in jobs:
-                jid = job_id(job)
-                if not jid or jid in seen_city:
-                    continue
-                seen_city.add(jid)
-                all_open_ids.add(jid)
-                city_jobs.append((job, norm))
+        city_jobs = []
+        try:
+            norms, probe_url, probe_hits = discover_norms(city, spec)
+            city_jobs, total_inventory, search_urls = [], 0, []
+            seen_city = set()
+            for norm in norms:
+                jobs, hits, urls = enumerate_norm(norm)
+                total_inventory += hits
+                search_urls.extend(urls)
+                for job in jobs:
+                    jid = job_id(job)
+                    if not jid or jid in seen_city:
+                        continue
+                    seen_city.add(jid)
+                    all_open_ids.add(jid)
+                    city_jobs.append((job, norm))
 
-        business_count = target_count = excluded_exp_count = 0
-        for job, norm in city_jobs:
-            in_scope, scope_reason = is_business_role(job)
-            if not in_scope:
+            business_count = target_count = excluded_exp_count = 0
+            for job, norm in city_jobs:
+                in_scope, scope_reason = is_business_role(job)
+                if not in_scope:
+                    item = compact_job(job, city, norm, scope_reason)
+                    item["fingerprint"] = fingerprint(item)
+                    nonbusiness_by_id.setdefault(item["job_id"], item)
+                    continue
+                business_count += 1
                 item = compact_job(job, city, norm, scope_reason)
                 item["fingerprint"] = fingerprint(item)
-                nonbusiness_by_id.setdefault(item["job_id"], item)
-                continue
-            business_count += 1
-            item = compact_job(job, city, norm, scope_reason)
-            item["fingerprint"] = fingerprint(item)
-            if item["experience_status"] == "OUT":
-                excluded_exp_count += 1
-                excluded_by_id[item["job_id"]] = item
-                continue
-            old = previous.get(item["job_id"])
-            if old is None:
-                item["status"] = "NEW"
-            elif old.get("fingerprint") and old.get("fingerprint") != item["fingerprint"]:
-                item["status"] = "UPDATED"
-            else:
-                item["status"] = "STILL_OPEN"
-            current_by_id.setdefault(item["job_id"], item)
-            target_count += 1
+                if item["experience_status"] == "OUT":
+                    excluded_exp_count += 1
+                    excluded_by_id[item["job_id"]] = item
+                    continue
+                old = previous.get(item["job_id"])
+                if old is None:
+                    item["status"] = "NEW"
+                elif old.get("fingerprint") and old.get("fingerprint") != item["fingerprint"]:
+                    item["status"] = "UPDATED"
+                else:
+                    item["status"] = "STILL_OPEN"
+                current_by_id.setdefault(item["job_id"], item)
+                target_count += 1
 
-        result["locations"][city] = {
-            "coverage": "VERIFIED",
-            "normalized_locations": norms,
-            "probe_hits": probe_hits,
-            "inventory_count": len(city_jobs),
-            "api_reported_hits_sum": total_inventory,
-            "business_jobs_count": business_count,
-            "target_or_review_jobs_count": target_count,
-            "excluded_explicit_gt5_count": excluded_exp_count,
-            "probe_url": probe_url,
-            "search_urls": search_urls,
-        }
+            result["locations"][city] = {
+                "coverage": "VERIFIED",
+                "normalized_locations": norms,
+                "probe_hits": probe_hits,
+                "inventory_count": len(city_jobs),
+                "api_reported_hits_sum": total_inventory,
+                "business_jobs_count": business_count,
+                "target_or_review_jobs_count": target_count,
+                "excluded_explicit_gt5_count": excluded_exp_count,
+                "probe_url": probe_url,
+                "search_urls": search_urls,
+            }
+        except Exception as exc:
+            record_error('SOURCE_ERROR','amazon','CITY_INVENTORY_FAILED',exc,root=OUTPUT.parent,company='Amazon',city=city)
+            result['locations'][city] = {'coverage':'PARTIAL' if city_jobs else 'FAILED','reason':str(exc),'inventory_count':len(city_jobs) if city_jobs else None,'api_reported_hits_sum':None}
+            for raw,norm in city_jobs:
+                try:
+                    item = compact_job(raw,city,norm,is_business_role(raw)[1])
+                    item['fingerprint'] = fingerprint(item)
+                    if is_business_role(raw)[0] and item['experience_status'] != 'OUT':
+                        old = previous.get(item['job_id'])
+                        item['status'] = 'NEW' if old is None else 'UPDATED' if old.get('fingerprint') != item['fingerprint'] else 'STILL_OPEN'
+                        current_by_id.setdefault(item['job_id'],item)
+                except Exception as record_exc:
+                    record_error('LOCAL_RECORD_ERROR','amazon','INVALID_AMAZON_RECORD',record_exc,root=OUTPUT.parent,company='Amazon',job_key='Amazon::'+str(job_id(raw)))
 
     city_rank = {"Milan": 0, "Rome": 1, "Luxembourg": 2, "London": 3}
     deduped = {}
@@ -538,9 +554,9 @@ def main():
     result["excluded_nonbusiness_jobs"] = list(nonbusiness_by_id.values())
 
     for jid, old in previous.items():
-        if jid not in current_by_id and jid not in all_open_ids and old.get("status") != "CLOSED":
+        if jid not in current_by_id and jid not in all_open_ids:
             closed = dict(old)
-            closed["status"] = "CLOSED"
+            closed["status"] = "CLOSED" if old.get("status") == "CLOSED" or all(r.get("coverage") == "VERIFIED" for r in result["locations"].values()) else "UNKNOWN"
             result["target_jobs"].append(closed)
 
     result["target_jobs"].sort(key=lambda x: (city_rank.get(x.get("target_city"), 99), x.get("status") or "", (x.get("title") or "").casefold(), x.get("job_id") or ""))
@@ -567,7 +583,7 @@ def main():
         "L68_AMBIGUOUS": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "AMBIGUOUS" for x in result["target_jobs"]),
     }
 
-    OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_json(OUTPUT,result)
     print("AMAZON", json.dumps(result["summary"], ensure_ascii=False))
     for x in result["target_jobs"]:
         if x.get("status") in {"NEW", "UPDATED", "CLOSED"}:

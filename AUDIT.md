@@ -1,3 +1,5 @@
+> Audit storico del primo intervento. Per l’architettura e il risultato correnti vedere [REFACTOR_REPORT.md](REFACTOR_REPORT.md) e [STRUCTURAL_AUDIT.md](STRUCTURAL_AUDIT.md).
+
 # Audit e semplificazione JobWatch — 3 ottobre 2026
 
 ## Stato reale di partenza

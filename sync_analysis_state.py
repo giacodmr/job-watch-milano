@@ -254,13 +254,8 @@ def read_json(path: Path, default):
 
 
 def write_json(path: Path, obj) -> None:
-    old = read_json(path, {})
-    volatile = {"synced_at", "generated_at"}
-    if {k: v for k, v in old.items() if k not in volatile} == {k: v for k, v in obj.items() if k not in volatile}:
-        return
-    with path.open("w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
-        f.write("\n")
+    from pipeline_state import stable_dump
+    stable_dump(path.name,obj,path.parent)
 
 
 def job_key(company: str, source_id) -> str:
@@ -298,7 +293,7 @@ def add_standard_jobs(current: dict):
         if company_name == "ION Group":
             continue
         for job in company.get("jobs", []):
-            if not company_name or job.get("source_id") is None:
+            if not isinstance(job,dict) or not company_name or job.get("source_id") is None:
                 continue
             key = job_key(company_name, job.get("source_id"))
             item = dict(job)
@@ -321,7 +316,9 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
         return
     source = read_json(ROOT / "amazon_target_check.json", {})
     for raw in source.get("target_jobs", []):
-        if raw.get("status") not in OPEN_STATUSES:
+        if not isinstance(raw,dict): continue
+        unknown = raw.get('status') == 'UNKNOWN'
+        if raw.get("status") not in OPEN_STATUSES and not unknown:
             continue
         canonical = raw.get("apply_url")
         ckey = canonical_key(canonical)
@@ -337,6 +334,15 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
             if key is None and stable_key in current_open:
                 key = stable_key
 
+        if unknown:
+            item = current_open.get(key)
+            # Retain the last verified JD fingerprint only if a separate official
+            # inventory still verifies identical metadata. An unavailable detail
+            # source cannot manufacture a material change or a new open role.
+            if not item: continue
+            if str(item.get('title') or '').casefold() != str(raw.get('title') or '').casefold(): continue
+            if str(item.get('location') or '').casefold() != str(raw.get('location') or raw.get('normalized_location') or raw.get('target_city') or '').casefold(): continue
+            item['_priority_jd_stale'] = True
         if key is None:
             sid = stable_sid or raw.get("job_id")
             if not sid:
@@ -389,7 +395,7 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
         # the correct freshness key for semantic analysis.
         if raw.get("fingerprint"):
             item["fingerprint"] = raw.get("fingerprint")
-        item["status"] = raw.get("status")
+        if not unknown: item["status"] = raw.get("status")
         item["location"] = raw.get("location") or item.get("location")
 
 
@@ -428,18 +434,25 @@ def sync_batch(batch: str) -> dict:
     for key, job in current_open.items():
         company_name = job.get("_company_name")
         fingerprint = job.get("fingerprint")
-        old = old_records.get(key) or {}
-        exclusion = hard_exclusion_reason(job.get("title"))
+        def safe_row(store):
+            row = store.get(key) or {}
+            if not isinstance(row,dict):
+                from pipeline_state import record_error
+                record_error('LOCAL_RECORD_ERROR','semantic_sync','INVALID_REGISTRY_RECORD','Ignore malformed row, retain registry history and reopen review',root=ROOT,batch=batch.upper(),job_key=key)
+                return {}
+            return row
+        old = safe_row(old_records)
+        exclusion = hard_exclusion_reason(str(job.get("title") or ""))
         # Exclude US London (Kentucky) rows already captured in this snapshot.
         loc = str(job.get("location") or "")
         if (re.search(r"\bLondon\s*,\s*(?:KY|Kentucky)\b", loc, re.I)
                 and not re.search(r"\bLondon\s*,?\s*(?:UK|GB|England|United Kingdom)\b", loc, re.I)):
             exclusion = "outside_target_geography"
-        decision = decisions.get(key) or {}
+        decision = safe_row(decisions)
         if salary_below_floor(job) or (decision.get("fingerprint") == fingerprint and salary_below_floor(decision)):
             exclusion = "salary_below_floor"
-        surfaced = surfaced_registry.get(key) or {}
-        user_decision = user_decisions.get(key) or {}
+        surfaced = safe_row(surfaced_registry)
+        user_decision = safe_row(user_decisions)
         if user_decision and not user_decision.get("fingerprint") and fingerprint:
             user_decision["fingerprint"] = fingerprint
             user_decisions[key] = user_decision
@@ -460,6 +473,7 @@ def sync_batch(batch: str) -> dict:
             "location": job.get("location"),
             "target_city": job.get("target_city"),
             "priority_company": bool(job.get("_priority_company")),
+            "priority_jd_stale": bool(job.get("_priority_jd_stale")),
             "role_family": job.get("role_family"),
             "job_category": job.get("job_category"),
             "canonical_url": job.get("canonical_url") or job.get("url"),
@@ -467,7 +481,7 @@ def sync_batch(batch: str) -> dict:
             "fingerprint": fingerprint,
             "current_status": job.get("status"),
             "current_open": True,
-            "threshold": threshold_for(job.get("target_city") or job.get("location")),
+            "threshold": threshold_for(str(job.get("target_city") or job.get("location") or "")),
             "first_seen_at": old.get("first_seen_at") or current.get("generated_at") or utc_now(),
             "last_seen_at": current.get("generated_at") or utc_now(),
             "surfaced_at": surfaced.get("surfaced_at") or old.get("surfaced_at"),
@@ -604,6 +618,10 @@ def sync_batch(batch: str) -> dict:
     for key, old in old_records.items():
         if key in records:
             continue
+        if not isinstance(old,dict):
+            from pipeline_state import record_error
+            record_error('LOCAL_RECORD_ERROR','semantic_sync','INVALID_HISTORY_ROW','History retained in source store',root=ROOT,batch=batch.upper(),job_key=key)
+            continue
         rec = dict(old)
         rec["current_open"] = False
         if rec.get("company") == "ION Group":
@@ -613,6 +631,17 @@ def sync_batch(batch: str) -> dict:
             rec["current_status"] = current_all[key].get("status")
             rec["last_seen_at"] = current.get("generated_at") or utc_now()
         records[key] = rec
+
+    # A never-analyzed persisted choice can still have a real UNKNOWN/CLOSED
+    # lifecycle row. Include it without manufacturing a semantic decision.
+    for key,job in current_all.items():
+        if key in records or job.get('status') in OPEN_STATUSES: continue
+        user = user_decisions.get(key,{})
+        if not isinstance(user,dict): user = {}
+        records[key] = {'company':job.get('_company_name'),'source_id':str(job.get('source_id')),
+                        'title':job.get('title'),'location':job.get('location'),'canonical_url':job.get('canonical_url'),'apply_url':job.get('apply_url'),
+                        'fingerprint':job.get('fingerprint'),'current_status':job.get('status'),'current_open':False,'needs_analysis':False,
+                        'user_decision':user.get('decision'),'reconciliation_state':job.get('reconciliation_state')}
 
     open_records = [r for r in records.values() if r.get("current_open")]
     pending_records = [(k, r) for k, r in records.items() if r.get("current_open") and r.get("needs_analysis")]
@@ -704,7 +733,9 @@ def sync_batch(batch: str) -> dict:
 
 def main() -> int:
     for batch in BATCHES:
-        p = sync_batch(batch)
+        from pipeline_state import attempt
+        p = attempt("semantic_sync",lambda:sync_batch(batch),batch=batch,root=ROOT)
+        if p is None: continue
         s = p["summary"]
         print(
             f"{batch.upper()} open={s['open_extracted']} analyzed={s['analyzed_current']} "

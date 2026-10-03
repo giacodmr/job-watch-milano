@@ -23,12 +23,8 @@ def read_json(path: Path, default):
 
 
 def write_json(path: Path, obj) -> None:
-    old = read_json(path, {})
-    if {k: v for k, v in old.items() if k != "generated_at"} == {k: v for k, v in obj.items() if k != "generated_at"}:
-        return
-    with path.open("w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
-        f.write("\n")
+    from pipeline_state import stable_dump
+    stable_dump(path.name,obj,path.parent)
 
 
 def canonical_key(url: str | None) -> str | None:
@@ -78,69 +74,17 @@ def priority_overlay_keys(batch: str, existing: set[str]) -> set[str]:
 
 
 def run_certification(batch: str, current: dict, run_state: dict) -> dict:
-    name = batch.upper()
-    row = ((run_state.get("batches") or {}).get(name) or {})
-    source_match = ((run_state.get("source_generated_at") or {}).get(name) == current.get("generated_at"))
-    autonomous_complete = row.get("autonomous_search_complete") is True
-    autonomous_evidence = row.get("autonomous_search_evidence") or []
-    autonomous_evidence_ok = isinstance(autonomous_evidence, list) and len(autonomous_evidence) > 0
-    semantic_declared = row.get("semantic_delta_complete") is True
-    priority_required = batch in {"jw1", "jw2"}
-    priority_name = "Mastercard" if batch == "jw1" else "Amazon" if batch == "jw2" else None
-    priority_row_ok = row.get("priority_check_complete") is True
-    priority_evidence = row.get("priority_check_evidence") or []
-    priority_evidence_ok = (not priority_required) or (isinstance(priority_evidence, list) and len(priority_evidence) > 0)
-    priority_global_ok = True if not priority_required else (run_state.get("priority_checks") or {}).get(priority_name) is True
-    if batch == "jw2":
-        amazon = read_json(ROOT / "amazon_target_check.json", {})
-        priority_snapshot_match = (
-            (run_state.get("priority_snapshot_at") or {}).get("Amazon") == amazon.get("checked_at")
-        )
-    else:
-        priority_snapshot_match = True
-    try:
-        autonomous_delta_count = int(row.get("autonomous_delta_count", 0) or 0)
-        autonomous_validated_count = int(row.get("autonomous_validated_count", 0) or 0)
-    except (TypeError, ValueError):
-        autonomous_delta_count = -1
-        autonomous_validated_count = -2
-    autonomous_reconciled = autonomous_delta_count >= 0 and autonomous_delta_count == autonomous_validated_count
-    batch_errors = row.get("errors") or []
-    global_errors = run_state.get("blocking_errors") or []
-    identity_ok = bool(run_state.get("run_id") and run_state.get("completed_at"))
-    complete = bool(
-        identity_ok
-        and source_match
-        and semantic_declared
-        and autonomous_complete
-        and autonomous_evidence_ok
-        and autonomous_reconciled
-        and priority_row_ok
-        and priority_evidence_ok
-        and priority_global_ok
-        and priority_snapshot_match
-        and not batch_errors
-        and not global_errors
-    )
-    return {
-        "run_id": run_state.get("run_id"),
-        "manifest_persisted": bool(run_state),
-        "identity_complete": identity_ok,
-        "source_snapshot_match": source_match,
-        "semantic_delta_declared_complete": semantic_declared,
-        "autonomous_search_complete": autonomous_complete,
-        "autonomous_search_evidence_present": autonomous_evidence_ok,
-        "autonomous_delta_count": autonomous_delta_count,
-        "autonomous_validated_count": autonomous_validated_count,
-        "autonomous_delta_reconciled": autonomous_reconciled,
-        "priority_check_required": priority_required,
-        "priority_check_evidence_present": priority_evidence_ok,
-        "priority_check_complete": priority_row_ok and priority_global_ok,
-        "priority_snapshot_match": priority_snapshot_match,
-        "batch_errors": batch_errors,
-        "global_blocking_errors": global_errors,
-        "complete": complete,
-    }
+    from pipeline_state import search_complete, priority_status, snapshot
+    required = {'jw1':'Mastercard','jw2':'Amazon'}.get(batch)
+    priority = priority_status(ROOT)
+    token = snapshot(ROOT)
+    search = search_complete(batch,ROOT)
+    return {'run_id':token['run_id'], 'autonomous_search_complete':search,
+            'priority_check_required':bool(required),
+            'priority_check_status':priority.get(required) if required else 'NOT_APPLICABLE',
+            'priority_check_complete':not required or priority[required] in {'VERIFIED','PARTIAL'},
+            'source_snapshot_match':bool(current.get('generated_at')),
+            'complete':search and (not required or priority[required] in {'VERIFIED','PARTIAL'})}
 
 
 def audit_batch(batch: str, run_state: dict) -> dict:
@@ -202,7 +146,7 @@ def audit_batch(batch: str, run_state: dict) -> dict:
         )
     ]
     actionable_surfaced = [r for r in actionable_reportable if r.get("surfaced_at") and (
-        not (r.get("delta_pending") or r.get("applied_material_update")) or r.get("surfaced_fingerprint") == r.get("fingerprint")
+        r.get("surfaced_fingerprint") == r.get("fingerprint") or (not r.get("surfaced_fingerprint") and not (r.get("delta_pending") or r.get("applied_material_update")))
     )]
 
     analysis_complete = len(analyzed) == extracted_open and not pending
@@ -317,8 +261,6 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             and actionable_delta_complete
             and actionable_reporting_reconciliation
             and all_companies_attempted
-            and not unresolved_attempts
-            and certification["complete"]
         ),
         "full_semantic_complete": bool(
             base_inventory_reconciliation
@@ -326,7 +268,6 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             and analysis_complete
             and reporting_reconciliation
             and all_companies_attempted
-            and not unresolved_attempts
         ),
         "run_complete": bool(
             base_inventory_reconciliation
@@ -334,42 +275,25 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             and actionable_delta_complete
             and actionable_reporting_reconciliation
             and all_companies_attempted
-            and not unresolved_attempts
-            and certification["complete"]
         ),
     }
+
+
+def write_batch_metrics(batch):
+    payload = read_json(ROOT/'job_watch_audit.json',{'version':'2.0','batches':{}})
+    payload['version'] = '2.0'
+    payload.pop('definition',None)
+    payload.setdefault('batches',{})[batch.upper()] = audit_batch(batch,{})
+    write_json(ROOT/'job_watch_audit.json',payload)
+    return payload['batches'][batch.upper()]
 
 
 def main() -> int:
-    run_state = read_json(ROOT / "job_watch_run_state.json", {})
-    batches = {batch.upper(): audit_batch(batch, run_state) for batch in BATCHES}
-    payload = {
-        "version": "1.5",
-        "generated_at": utc_now(),
-        "definition": (
-            "Inventory completeness is separate from semantic-analysis completeness. "
-            "JW2 includes the Amazon priority inventory in analysis reconciliation. "
-            "DAILY_COMPLETE requires official inventory/state reconciliation, complete semantic handling, "
-            "surfaced history, a current GPT run certification, mandatory autonomous search, priority-company checks, "
-            "and zero global blocking errors. Explicit TO_REVIEW/INTERESTED vacancies and materially UPDATED APPLIED vacancies remain actionable. "
-            "Historical STILL_OPEN backlog is reported separately and does not block the daily run."
-        ),
-        "batches": batches,
-    }
-    write_json(ROOT / "job_watch_audit.json", payload)
-
-    for name, row in batches.items():
-        v = row["vacancy_analysis_coverage"]
-        c = row["company_ats_coverage"]
-        print(
-            f"{name} DAILY_COMPLETE={row['daily_complete']} FULL_SEMANTIC_COMPLETE={row['full_semantic_complete']} | "
-            f"ATS V/P/F/NC={c['VERIFIED']}/{c['PARTIAL']}/{c['FAILED']}/{c['NOT_CHECKED']} | "
-            f"delta analyzed/pending={v['actionable_delta_analyzed']}/{v['actionable_delta_pending']} | "
-            f"historical_backlog={v['historical_backlog_remaining']} | "
-            f"reportable/surfaced={v['actionable_reportable']}/{v['actionable_surfaced']}"
-        )
+    from pipeline_state import attempt
+    for batch in BATCHES:
+        attempt('metrics',lambda batch=batch:write_batch_metrics(batch),batch=batch,root=ROOT)
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

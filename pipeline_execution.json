@@ -1,170 +1,73 @@
 {
-  "version": "2.0",
-  "generated_at": "2026-10-03T19:48:28Z",
-  "run_id": "4a0ead7bd06a2eaf04cc730f",
-  "snapshot": {
-    "run_id": "4a0ead7bd06a2eaf04cc730f",
-    "source_generated_at": {
-      "JW1": "2026-10-03T19:40:48Z",
-      "JW2": "2026-10-03T19:43:09Z",
-      "JW3": "2026-10-03T19:44:10Z",
-      "JW4": "2026-10-03T19:46:32Z"
+  "version": "1.0",
+  "status": "COLLECTED",
+  "stages": {
+    "collection:JW1": {
+      "status": "COMPLETE_WITH_WARNINGS"
     },
-    "priority_snapshot_at": {
-      "Amazon": "2026-10-03T19:46:39.504965+00:00"
+    "collection:JW2": {
+      "status": "COMPLETE_WITH_WARNINGS"
     },
-    "rules_sha256": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
-    "source_sha256": {
-      "current_jobs_jw1.json": "127d162e6904dc1f56254867080c05f07b8a4f85763dd5f7cc42b6b21d554c8e",
-      "current_jobs_jw2.json": "9b7d52109c218b32ada4dc1f602d0bd8a07b5f0621bd4b110ba54c1ebe489593",
-      "current_jobs_jw3.json": "4a9c4c410e42dcd8a0565aabd7eaf5809ed74ac15221ec71338c73fd0670d3a3",
-      "current_jobs_jw4.json": "5177f32694d3a2017d6e958eccb3fbe33ff9888dc2d7652629a07fe01a31484e",
-      "amazon_target_check.json": "71c931acf61052df3b4e2dae55bc35e560fa996c174f284d3a1d7261d15c6342",
-      "job_watch_rules.json": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
-      "job_watch_batches.json": "c5664761f93b5a2a71dcfcce51dfbcd163fcbbe6a7c80559a827334cf0a27470"
+    "collection:JW3": {
+      "status": "COMPLETE_WITH_WARNINGS"
+    },
+    "collection:JW4": {
+      "status": "COMPLETE_WITH_WARNINGS"
+    },
+    "reconciliation:JW1": {
+      "status": "COMPLETE_WITH_WARNINGS"
+    },
+    "reconciliation:JW2": {
+      "status": "COMPLETE"
+    },
+    "reconciliation:JW3": {
+      "status": "COMPLETE"
+    },
+    "reconciliation:JW4": {
+      "status": "COMPLETE_WITH_WARNINGS"
+    },
+    "amazon": {
+      "status": "COMPLETE"
+    },
+    "snapshot": {
+      "status": "COMPLETE"
+    },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
+    "semantic_sync:JW1": {
+      "status": "COMPLETE"
+    },
+    "semantic_sync:JW2": {
+      "status": "COMPLETE"
+    },
+    "semantic_sync:JW3": {
+      "status": "COMPLETE"
+    },
+    "semantic_sync:JW4": {
+      "status": "COMPLETE"
+    },
+    "worklist": {
+      "status": "COMPLETE"
+    },
+    "metrics:JW1": {
+      "status": "COMPLETE"
+    },
+    "metrics:JW2": {
+      "status": "COMPLETE"
+    },
+    "metrics:JW3": {
+      "status": "COMPLETE"
+    },
+    "metrics:JW4": {
+      "status": "COMPLETE"
+    },
+    "validation": {
+      "status": "COMPLETE"
+    },
+    "certification": {
+      "status": "COMPLETE"
     }
-  },
-  "status": "NEEDS_REVIEW",
-  "collection_status": "COMPLETE_WITH_WARNINGS",
-  "DAILY_COMPLETE": false,
-  "FULL_SEMANTIC_COMPLETE": false,
-  "priority_checks": {
-    "Amazon": "VERIFIED",
-    "Mastercard": "VERIFIED"
-  },
-  "batches": {
-    "JW1": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
-      "full_semantic_complete": false,
-      "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
-      "reporting_pending": 18,
-      "historical_backlog_remaining": 325,
-      "failed": 0,
-      "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW1",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 18,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
-    },
-    "JW2": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
-      "full_semantic_complete": false,
-      "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
-      "reporting_pending": 146,
-      "historical_backlog_remaining": 228,
-      "failed": 0,
-      "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW2",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 146,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
-    },
-    "JW3": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
-      "full_semantic_complete": false,
-      "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
-      "reporting_pending": 1,
-      "historical_backlog_remaining": 83,
-      "failed": 0,
-      "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW3",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 1,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
-    },
-    "JW4": {
-      "status": "NEEDS_REVIEW",
-      "daily_complete": false,
-      "full_semantic_complete": false,
-      "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
-      "reporting_pending": 6,
-      "historical_backlog_remaining": 100,
-      "failed": 0,
-      "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW4",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 6,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
-    }
-  },
-  "coverage": {
-    "JW1": {
-      "VERIFIED": 26,
-      "PARTIAL": 27,
-      "FAILED": 0,
-      "NOT_CHECKED": 0
-    },
-    "JW2": {
-      "VERIFIED": 21,
-      "PARTIAL": 27,
-      "FAILED": 0,
-      "NOT_CHECKED": 0
-    },
-    "JW3": {
-      "VERIFIED": 10,
-      "PARTIAL": 30,
-      "FAILED": 0,
-      "NOT_CHECKED": 0
-    },
-    "JW4": {
-      "VERIFIED": 28,
-      "PARTIAL": 24,
-      "FAILED": 0,
-      "NOT_CHECKED": 0
-    }
-  },
-  "daily_actionable_remaining": 171,
-  "historical_backlog_remaining": 736,
-  "source_failures": 0,
-  "partial_sources": 108,
-  "error_counts": {
-    "record": 4,
-    "source": 108,
-    "batch": 0,
-    "global": 0
   },
   "errors": [
     {
@@ -1175,127 +1078,5 @@
       "company": "Nike",
       "job_key": "Nike::R-91871"
     }
-  ],
-  "stage_reports": {
-    "collection:JW1": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "collection:JW2": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "collection:JW3": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "collection:JW4": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "reconciliation:JW1": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "reconciliation:JW2": {
-      "status": "COMPLETE"
-    },
-    "reconciliation:JW3": {
-      "status": "COMPLETE"
-    },
-    "reconciliation:JW4": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "amazon": {
-      "status": "COMPLETE"
-    },
-    "snapshot": {
-      "status": "COMPLETE"
-    },
-    "semantic_patch": {
-      "status": "COMPLETE"
-    },
-    "semantic_sync:JW1": {
-      "status": "COMPLETE"
-    },
-    "semantic_sync:JW2": {
-      "status": "COMPLETE"
-    },
-    "semantic_sync:JW3": {
-      "status": "COMPLETE"
-    },
-    "semantic_sync:JW4": {
-      "status": "COMPLETE"
-    },
-    "worklist": {
-      "status": "COMPLETE"
-    },
-    "metrics:JW1": {
-      "status": "COMPLETE"
-    },
-    "metrics:JW2": {
-      "status": "COMPLETE"
-    },
-    "metrics:JW3": {
-      "status": "COMPLETE"
-    },
-    "metrics:JW4": {
-      "status": "COMPLETE"
-    },
-    "validation": {
-      "status": "COMPLETE"
-    },
-    "certification": {
-      "status": "COMPLETE"
-    }
-  },
-  "remaining_work": [
-    {
-      "batch": "JW1",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 18,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW2",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 146,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW3",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 1,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW4",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 6,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    }
-  ],
-  "unresolved_user_decisions": [
-    "Visa::/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
-    "Visa::/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
-    "Euronext::R27644",
-    "Nike::R-91871"
-  ],
-  "blocking_errors": [],
-  "certification_mode": "SCOPED_FAIL_CLOSED"
+  ]
 }

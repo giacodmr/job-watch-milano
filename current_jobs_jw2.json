@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW2",
   "batch_name": "Strategy, Consulting & Tech",
-  "generated_at": "2026-10-03T11:57:24Z",
+  "generated_at": "2026-10-03T19:43:09Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -54,7 +54,8 @@
       "target_jobs_count": 0,
       "source_url": "https://accenture.wd103.myworkdayjobs.com/wday/cxs/accenture/AccentureCareers/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Deloitte / Monitor Deloitte",
@@ -65,8 +66,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://deloittecm.avature.net/en_US/careers/SearchJobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 77853 bytes) but no safe exhaustive collector is implemented yet for Avature",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 77877 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 77877 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Deloitte / Monitor Deloitte"
+      }
     },
     {
       "company": "EY / EY-Parthenon",
@@ -77,8 +88,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.ey.com/viewalljobs/",
-      "reason": "Official check incomplete: SuccessFactors inventory exceeds safe exhaustive-page limit",
-      "jobs": []
+      "reason": "NotCheckable: SuccessFactors inventory exceeds safe exhaustive-page limit; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: SuccessFactors inventory exceeds safe exhaustive-page limit; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "EY / EY-Parthenon"
+      }
     },
     {
       "company": "PwC / Strategy&",
@@ -89,8 +110,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs-it.pwc.com/it/en/search-results",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 166993 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 167122 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 167122 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated); retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "PwC / Strategy&"
+      }
     },
     {
       "company": "KPMG",
@@ -103,22 +134,6 @@
       "source_url": "https://careers.kpmg.it/search/",
       "reason": null,
       "jobs": [
-        {
-          "source_id": "1365971257",
-          "company": "KPMG",
-          "title": "Junior Microsoft Developer",
-          "location": "Milano, IT + altre 1… 3 ott 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-Developer/1365971257/",
-          "url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-Developer/1365971257/",
-          "apply_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-Developer/1365971257/",
-          "fingerprint": "0a69ce92cfeb3ba7",
-          "status": "STILL_OPEN"
-        },
         {
           "source_id": "1365965257",
           "company": "KPMG",
@@ -248,22 +263,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1365974057",
-          "company": "KPMG",
-          "title": "Junior Microsoft F&O Developer",
-          "location": "Milano, IT 3 ott 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-F&O-Developer/1365974057/",
-          "url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-F&O-Developer/1365974057/",
-          "apply_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-F&O-Developer/1365974057/",
-          "fingerprint": "0b07d0f9bb660242",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1360917357",
           "company": "KPMG",
           "title": "Senior Consultant - SAP Concur",
@@ -293,6 +292,38 @@
           "url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-ServiceNow/1371333157/",
           "apply_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-ServiceNow/1371333157/",
           "fingerprint": "72d4f46fc9b9098e",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1365971257",
+          "company": "KPMG",
+          "title": "Junior Microsoft Developer",
+          "location": "Milano, IT + altre 1… 3 ott 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-Developer/1365971257/",
+          "url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-Developer/1365971257/",
+          "apply_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-Developer/1365971257/",
+          "fingerprint": "0a69ce92cfeb3ba7",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1365974057",
+          "company": "KPMG",
+          "title": "Junior Microsoft F&O Developer",
+          "location": "Milano, IT 3 ott 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-F&O-Developer/1365974057/",
+          "url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-F&O-Developer/1365974057/",
+          "apply_url": "https://careers.kpmg.it/job/Milano-Junior-Microsoft-F&O-Developer/1365974057/",
+          "fingerprint": "0b07d0f9bb660242",
           "status": "STILL_OPEN"
         },
         {
@@ -1592,22 +1623,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1372063857",
-          "company": "KPMG",
-          "title": "Senior Consultant - Microsoft Dynamics F&O | Finance",
-          "location": "Milano, IT + altre 2… 14 set 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Microsoft-Dynamics-F&O-Finance/1372063857/",
-          "url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Microsoft-Dynamics-F&O-Finance/1372063857/",
-          "apply_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Microsoft-Dynamics-F&O-Finance/1372063857/",
-          "fingerprint": "be064f255c98b63c",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1372062957",
           "company": "KPMG",
           "title": "Senior Consultant - SAP FI",
@@ -1621,6 +1636,22 @@
           "url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-SAP-FI/1372062957/",
           "apply_url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-SAP-FI/1372062957/",
           "fingerprint": "284b2dd1d3704382",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1372063857",
+          "company": "KPMG",
+          "title": "Senior Consultant - Microsoft Dynamics F&O | Finance",
+          "location": "Milano, IT + altre 2… 14 set 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Microsoft-Dynamics-F&O-Finance/1372063857/",
+          "url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Microsoft-Dynamics-F&O-Finance/1372063857/",
+          "apply_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Microsoft-Dynamics-F&O-Finance/1372063857/",
+          "fingerprint": "be064f255c98b63c",
           "status": "STILL_OPEN"
         },
         {
@@ -1896,22 +1927,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1366391357",
-          "company": "KPMG",
-          "title": "IT Business Analyst SAP - Consumer and Industrial Market (Intern)",
-          "location": "Milano, IT 9 set 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://careers.kpmg.it/job/Milano-IT-Business-Analyst-SAP-Consumer-and-Industrial-Market-%28Intern%29/1366391357/",
-          "url": "https://careers.kpmg.it/job/Milano-IT-Business-Analyst-SAP-Consumer-and-Industrial-Market-%28Intern%29/1366391357/",
-          "apply_url": "https://careers.kpmg.it/job/Milano-IT-Business-Analyst-SAP-Consumer-and-Industrial-Market-%28Intern%29/1366391357/",
-          "fingerprint": "21cdf0881daac32c",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1366391457",
           "company": "KPMG",
           "title": "Junior ServiceNow Developer (Internship)",
@@ -1925,6 +1940,22 @@
           "url": "https://careers.kpmg.it/job/Roma-Junior-ServiceNow-Developer-%28Internship%29/1366391457/",
           "apply_url": "https://careers.kpmg.it/job/Roma-Junior-ServiceNow-Developer-%28Internship%29/1366391457/",
           "fingerprint": "41bd6a8532dbdf33",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1366391357",
+          "company": "KPMG",
+          "title": "IT Business Analyst SAP - Consumer and Industrial Market (Intern)",
+          "location": "Milano, IT 9 set 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://careers.kpmg.it/job/Milano-IT-Business-Analyst-SAP-Consumer-and-Industrial-Market-%28Intern%29/1366391357/",
+          "url": "https://careers.kpmg.it/job/Milano-IT-Business-Analyst-SAP-Consumer-and-Industrial-Market-%28Intern%29/1366391357/",
+          "apply_url": "https://careers.kpmg.it/job/Milano-IT-Business-Analyst-SAP-Consumer-and-Industrial-Market-%28Intern%29/1366391357/",
+          "fingerprint": "21cdf0881daac32c",
           "status": "STILL_OPEN"
         },
         {
@@ -2152,22 +2183,6 @@
           "status": "STILL_OPEN"
         },
         {
-          "source_id": "1355450057",
-          "company": "KPMG",
-          "title": "Senior Consultant | Financial Services Roma",
-          "location": "Roma, IT 6 set 2026",
-          "department": null,
-          "team": null,
-          "employment_type": null,
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-Financial-Services-Roma/1355450057/",
-          "url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-Financial-Services-Roma/1355450057/",
-          "apply_url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-Financial-Services-Roma/1355450057/",
-          "fingerprint": "5fa2b5ddf1e25153",
-          "status": "STILL_OPEN"
-        },
-        {
           "source_id": "1366270357",
           "company": "KPMG",
           "title": "Impiegato amministrativo contabile - Company Members Administration",
@@ -2181,6 +2196,22 @@
           "url": "https://careers.kpmg.it/job/Milano-Impiegato-amministrativo-contabile-Company-Members-Administration/1366270357/",
           "apply_url": "https://careers.kpmg.it/job/Milano-Impiegato-amministrativo-contabile-Company-Members-Administration/1366270357/",
           "fingerprint": "3d772c5c505ec2c5",
+          "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "1355450057",
+          "company": "KPMG",
+          "title": "Senior Consultant | Financial Services Roma",
+          "location": "Roma, IT 6 set 2026",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-Financial-Services-Roma/1355450057/",
+          "url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-Financial-Services-Roma/1355450057/",
+          "apply_url": "https://careers.kpmg.it/job/Roma-Senior-Consultant-Financial-Services-Roma/1355450057/",
+          "fingerprint": "5fa2b5ddf1e25153",
           "status": "STILL_OPEN"
         },
         {
@@ -2295,7 +2326,8 @@
           "fingerprint": "2020646902bc9a4c",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Capgemini Invent",
@@ -2306,8 +2338,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.capgemini.com/viewalljobs/",
-      "reason": "Official check incomplete: Evidenced SuccessFactors search page has no reconcilable inventory total",
-      "jobs": []
+      "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Capgemini Invent"
+      }
     },
     {
       "company": "BearingPoint",
@@ -2400,7 +2442,8 @@
           "fingerprint": "d575629f7036088f",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Oliver Wyman",
@@ -2411,8 +2454,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.marshmclennan.com/global/en/oliver-wyman-search/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 104729 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 104900 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 104900 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform); retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Oliver Wyman"
+      }
     },
     {
       "company": "Roland Berger",
@@ -2521,7 +2574,8 @@
           "fingerprint": "512e4dce50b5a446",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Kearney",
@@ -2532,8 +2586,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://kearney.recsolu.com/job_boards/1",
-      "reason": "Official check incomplete: Yello pagination repeated requisition ID EqW1a30MjkvB5CQtRbj82w",
-      "jobs": []
+      "reason": "NotCheckable: Yello pagination repeated requisition ID EqW1a30MjkvB5CQtRbj82w; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Yello pagination repeated requisition ID EqW1a30MjkvB5CQtRbj82w; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Kearney"
+      }
     },
     {
       "company": "Protiviti",
@@ -2802,7 +2866,8 @@
           "fingerprint": "d001c8cdc3e5ae44",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Bain & Company",
@@ -2813,8 +2878,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.bain.com/careers/find-a-role/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 79275 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 79274 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 79274 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Bain & Company"
+      }
     },
     {
       "company": "Amazon",
@@ -2836,7 +2911,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  5, 2026",
-          "updated_at": "about 18 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10530580/cloud-operations-architect-es-emea-south-italy",
           "url": "https://www.amazon.jobs/en/jobs/10530580/cloud-operations-architect-es-emea-south-italy",
           "apply_url": "https://www.amazon.jobs/en/jobs/10530580/cloud-operations-architect-es-emea-south-italy",
@@ -2852,7 +2927,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August  3, 2026",
-          "updated_at": "about 21 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10490139/data-center-engineering-operations-senior-technician-aws-owned-dc-dceo",
           "url": "https://www.amazon.jobs/en/jobs/10490139/data-center-engineering-operations-senior-technician-aws-owned-dc-dceo",
           "apply_url": "https://www.amazon.jobs/en/jobs/10490139/data-center-engineering-operations-senior-technician-aws-owned-dc-dceo",
@@ -2868,7 +2943,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 23 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10567734/business-analyst-intern-6-months-2027",
           "url": "https://www.amazon.jobs/en/jobs/10567734/business-analyst-intern-6-months-2027",
           "apply_url": "https://www.amazon.jobs/en/jobs/10567734/business-analyst-intern-6-months-2027",
@@ -2996,7 +3071,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 22, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10556287/transportation-manager-network-and-speed-3p-operations-transportation",
           "url": "https://www.amazon.jobs/en/jobs/10556287/transportation-manager-network-and-speed-3p-operations-transportation",
           "apply_url": "https://www.amazon.jobs/en/jobs/10556287/transportation-manager-network-and-speed-3p-operations-transportation",
@@ -3172,7 +3247,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 22, 2026",
-          "updated_at": "11 days",
+          "updated_at": "12 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10555793/data-center-engineering-operations-technician-aws-owned-dc-dceo",
           "url": "https://www.amazon.jobs/en/jobs/10555793/data-center-engineering-operations-technician-aws-owned-dc-dceo",
           "apply_url": "https://www.amazon.jobs/en/jobs/10555793/data-center-engineering-operations-technician-aws-owned-dc-dceo",
@@ -3188,7 +3263,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 22, 2026",
-          "updated_at": "11 days",
+          "updated_at": "12 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10555791/data-center-engineering-operations-technician-aws-owned-dc-dceo",
           "url": "https://www.amazon.jobs/en/jobs/10555791/data-center-engineering-operations-technician-aws-owned-dc-dceo",
           "apply_url": "https://www.amazon.jobs/en/jobs/10555791/data-center-engineering-operations-technician-aws-owned-dc-dceo",
@@ -3300,7 +3375,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 17, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10551804/senior-business-developer-commercial-amazon-shipping",
           "url": "https://www.amazon.jobs/en/jobs/10551804/senior-business-developer-commercial-amazon-shipping",
           "apply_url": "https://www.amazon.jobs/en/jobs/10551804/senior-business-developer-commercial-amazon-shipping",
@@ -3316,7 +3391,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 17, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10551803/senior-business-developer-commercial-amazon-shipping",
           "url": "https://www.amazon.jobs/en/jobs/10551803/senior-business-developer-commercial-amazon-shipping",
           "apply_url": "https://www.amazon.jobs/en/jobs/10551803/senior-business-developer-commercial-amazon-shipping",
@@ -3572,7 +3647,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "May 21, 2026",
-          "updated_at": "24 days",
+          "updated_at": "25 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10426381/data-center-engineering-operations-senior-technician-aws-owned-dc-dceo",
           "url": "https://www.amazon.jobs/en/jobs/10426381/data-center-engineering-operations-senior-technician-aws-owned-dc-dceo",
           "apply_url": "https://www.amazon.jobs/en/jobs/10426381/data-center-engineering-operations-senior-technician-aws-owned-dc-dceo",
@@ -3620,7 +3695,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July 27, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10484409/operations-logistics-internship-lombardia-talent-pool",
           "url": "https://www.amazon.jobs/en/jobs/10484409/operations-logistics-internship-lombardia-talent-pool",
           "apply_url": "https://www.amazon.jobs/en/jobs/10484409/operations-logistics-internship-lombardia-talent-pool",
@@ -4148,7 +4223,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "about 20 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10559108/business-affairs-executive",
           "url": "https://www.amazon.jobs/en/jobs/10559108/business-affairs-executive",
           "apply_url": "https://www.amazon.jobs/en/jobs/10559108/business-affairs-executive",
@@ -4164,7 +4239,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "May 13, 2026",
-          "updated_at": "about 20 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10417953/senior-theatrical-marketing-manager-amazon-mgm-studios-theatrical-marketing",
           "url": "https://www.amazon.jobs/en/jobs/10417953/senior-theatrical-marketing-manager-amazon-mgm-studios-theatrical-marketing",
           "apply_url": "https://www.amazon.jobs/en/jobs/10417953/senior-theatrical-marketing-manager-amazon-mgm-studios-theatrical-marketing",
@@ -4180,7 +4255,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 23 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10567730/hr-specialist-with-italian-english-fixed-term-contract-12-months-disability-leave-services",
           "url": "https://www.amazon.jobs/en/jobs/10567730/hr-specialist-with-italian-english-fixed-term-contract-12-months-disability-leave-services",
           "apply_url": "https://www.amazon.jobs/en/jobs/10567730/hr-specialist-with-italian-english-fixed-term-contract-12-months-disability-leave-services",
@@ -4244,7 +4319,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July 27, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10484439/operations-logistics-internship-lazio-talent-pool",
           "url": "https://www.amazon.jobs/en/jobs/10484439/operations-logistics-internship-lazio-talent-pool",
           "apply_url": "https://www.amazon.jobs/en/jobs/10484439/operations-logistics-internship-lazio-talent-pool",
@@ -4292,7 +4367,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 19 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10567996/finance-manager-eu-fleet-finance",
           "url": "https://www.amazon.jobs/en/jobs/10567996/finance-manager-eu-fleet-finance",
           "apply_url": "https://www.amazon.jobs/en/jobs/10567996/finance-manager-eu-fleet-finance",
@@ -4308,7 +4383,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 23 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10567780/business-analyst-intern-6-months-2027",
           "url": "https://www.amazon.jobs/en/jobs/10567780/business-analyst-intern-6-months-2027",
           "apply_url": "https://www.amazon.jobs/en/jobs/10567780/business-analyst-intern-6-months-2027",
@@ -4500,7 +4575,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10559192/principal-product-manager-technical-circular-economy-extended-producer-responsbility",
           "url": "https://www.amazon.jobs/en/jobs/10559192/principal-product-manager-technical-circular-economy-extended-producer-responsbility",
           "apply_url": "https://www.amazon.jobs/en/jobs/10559192/principal-product-manager-technical-circular-economy-extended-producer-responsbility",
@@ -4516,7 +4591,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554528/executive-assistant-fullfilment-center",
           "url": "https://www.amazon.jobs/en/jobs/10554528/executive-assistant-fullfilment-center",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554528/executive-assistant-fullfilment-center",
@@ -4532,7 +4607,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10559058/talent-intelligence-lead-eu-operations-leadership-development",
           "url": "https://www.amazon.jobs/en/jobs/10559058/talent-intelligence-lead-eu-operations-leadership-development",
           "apply_url": "https://www.amazon.jobs/en/jobs/10559058/talent-intelligence-lead-eu-operations-leadership-development",
@@ -4548,7 +4623,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 18, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554093/applied-scientist-scot-fo-snt",
           "url": "https://www.amazon.jobs/en/jobs/10554093/applied-scientist-scot-fo-snt",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554093/applied-scientist-scot-fo-snt",
@@ -4564,7 +4639,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 25, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10560445/same-day-supply-chain-analyst-eu-fc-supply-chain-operations",
           "url": "https://www.amazon.jobs/en/jobs/10560445/same-day-supply-chain-analyst-eu-fc-supply-chain-operations",
           "apply_url": "https://www.amazon.jobs/en/jobs/10560445/same-day-supply-chain-analyst-eu-fc-supply-chain-operations",
@@ -4580,7 +4655,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 22, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10556138/senior-financial-analyst-global-procurement-finance",
           "url": "https://www.amazon.jobs/en/jobs/10556138/senior-financial-analyst-global-procurement-finance",
           "apply_url": "https://www.amazon.jobs/en/jobs/10556138/senior-financial-analyst-global-procurement-finance",
@@ -5172,7 +5247,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 14, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10538609/new-product-lead-amazon-robotics-supply-chain",
           "url": "https://www.amazon.jobs/en/jobs/10538609/new-product-lead-amazon-robotics-supply-chain",
           "apply_url": "https://www.amazon.jobs/en/jobs/10538609/new-product-lead-amazon-robotics-supply-chain",
@@ -5188,7 +5263,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 17, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10551620/network-planning-manager-mmnc-middle-mile-network-control",
           "url": "https://www.amazon.jobs/en/jobs/10551620/network-planning-manager-mmnc-middle-mile-network-control",
           "apply_url": "https://www.amazon.jobs/en/jobs/10551620/network-planning-manager-mmnc-middle-mile-network-control",
@@ -5204,7 +5279,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July 29, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10486992/sr-innovation-engineer-ww-amzl-innovation-engineering",
           "url": "https://www.amazon.jobs/en/jobs/10486992/sr-innovation-engineer-ww-amzl-innovation-engineering",
           "apply_url": "https://www.amazon.jobs/en/jobs/10486992/sr-innovation-engineer-ww-amzl-innovation-engineering",
@@ -5428,7 +5503,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  9, 2026",
-          "updated_at": "24 days",
+          "updated_at": "25 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10533881/enterprise-account-manager-benelux",
           "url": "https://www.amazon.jobs/en/jobs/10533881/enterprise-account-manager-benelux",
           "apply_url": "https://www.amazon.jobs/en/jobs/10533881/enterprise-account-manager-benelux",
@@ -5524,7 +5599,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10529083/senior-solutions-architect-benelux-solutions-architecture",
           "url": "https://www.amazon.jobs/en/jobs/10529083/senior-solutions-architect-benelux-solutions-architecture",
           "apply_url": "https://www.amazon.jobs/en/jobs/10529083/senior-solutions-architect-benelux-solutions-architecture",
@@ -5540,7 +5615,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10529077/investigation-specialist-ii-global-product-verification-gpv-perfect-order-experience",
           "url": "https://www.amazon.jobs/en/jobs/10529077/investigation-specialist-ii-global-product-verification-gpv-perfect-order-experience",
           "apply_url": "https://www.amazon.jobs/en/jobs/10529077/investigation-specialist-ii-global-product-verification-gpv-perfect-order-experience",
@@ -5556,7 +5631,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528571/advanced-materials-engineer-global-materials-science",
           "url": "https://www.amazon.jobs/en/jobs/10528571/advanced-materials-engineer-global-materials-science",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528571/advanced-materials-engineer-global-materials-science",
@@ -5572,7 +5647,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August  7, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10495546/sr-procurement-manager-surface-transportation-procurement",
           "url": "https://www.amazon.jobs/en/jobs/10495546/sr-procurement-manager-surface-transportation-procurement",
           "apply_url": "https://www.amazon.jobs/en/jobs/10495546/sr-procurement-manager-surface-transportation-procurement",
@@ -5588,7 +5663,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 25, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10513794/system-development-engineer-shiptech-analytics",
           "url": "https://www.amazon.jobs/en/jobs/10513794/system-development-engineer-shiptech-analytics",
           "apply_url": "https://www.amazon.jobs/en/jobs/10513794/system-development-engineer-shiptech-analytics",
@@ -6148,7 +6223,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 15 hours",
+          "updated_at": "about 23 hours",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10568306/mktg-production-manager-sports-pvi-marketing-production",
           "url": "https://www.amazon.jobs/en/jobs/10568306/mktg-production-manager-sports-pvi-marketing-production",
           "apply_url": "https://www.amazon.jobs/en/jobs/10568306/mktg-production-manager-sports-pvi-marketing-production",
@@ -6164,7 +6239,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 15 hours",
+          "updated_at": "about 23 hours",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10568299/localization-producer-theatrical-prime-video-global-operations-central-marketing-localization",
           "url": "https://www.amazon.jobs/en/jobs/10568299/localization-producer-theatrical-prime-video-global-operations-central-marketing-localization",
           "apply_url": "https://www.amazon.jobs/en/jobs/10568299/localization-producer-theatrical-prime-video-global-operations-central-marketing-localization",
@@ -6180,7 +6255,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "June  1, 2026",
-          "updated_at": "about 18 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10435683/technical-account-manager-es-emea-isv",
           "url": "https://www.amazon.jobs/en/jobs/10435683/technical-account-manager-es-emea-isv",
           "apply_url": "https://www.amazon.jobs/en/jobs/10435683/technical-account-manager-es-emea-isv",
@@ -6196,7 +6271,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 18 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10568104/analytics-consultant-analytics-insights-amazon-ads",
           "url": "https://www.amazon.jobs/en/jobs/10568104/analytics-consultant-analytics-insights-amazon-ads",
           "apply_url": "https://www.amazon.jobs/en/jobs/10568104/analytics-consultant-analytics-insights-amazon-ads",
@@ -6212,7 +6287,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July  8, 2026",
-          "updated_at": "about 18 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10468776/controls-design-engineer-epms-electrical-power-monitoring-system",
           "url": "https://www.amazon.jobs/en/jobs/10468776/controls-design-engineer-epms-electrical-power-monitoring-system",
           "apply_url": "https://www.amazon.jobs/en/jobs/10468776/controls-design-engineer-epms-electrical-power-monitoring-system",
@@ -6228,7 +6303,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July 28, 2026",
-          "updated_at": "about 19 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10486040/technical-account-manager-enterprise-support-ukgi-ps",
           "url": "https://www.amazon.jobs/en/jobs/10486040/technical-account-manager-enterprise-support-ukgi-ps",
           "apply_url": "https://www.amazon.jobs/en/jobs/10486040/technical-account-manager-enterprise-support-ukgi-ps",
@@ -6244,7 +6319,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 17, 2026",
-          "updated_at": "about 20 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10551893/partner-development-manager-wwps-distribution",
           "url": "https://www.amazon.jobs/en/jobs/10551893/partner-development-manager-wwps-distribution",
           "apply_url": "https://www.amazon.jobs/en/jobs/10551893/partner-development-manager-wwps-distribution",
@@ -6260,7 +6335,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  2, 2026",
-          "updated_at": "about 21 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10567834/associate-director-brand-content-marketing-uk-maternity-cover",
           "url": "https://www.amazon.jobs/en/jobs/10567834/associate-director-brand-content-marketing-uk-maternity-cover",
           "apply_url": "https://www.amazon.jobs/en/jobs/10567834/associate-director-brand-content-marketing-uk-maternity-cover",
@@ -6276,7 +6351,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "about 22 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554740/principal-gtm-specialist-amazon-quick-wwso-emea-wwso",
           "url": "https://www.amazon.jobs/en/jobs/10554740/principal-gtm-specialist-amazon-quick-wwso-emea-wwso",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554740/principal-gtm-specialist-amazon-quick-wwso-emea-wwso",
@@ -6292,7 +6367,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "June  1, 2026",
-          "updated_at": "about 22 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10435292/principal-genai-gtm-specialist-wwso",
           "url": "https://www.amazon.jobs/en/jobs/10435292/principal-genai-gtm-specialist-wwso",
           "apply_url": "https://www.amazon.jobs/en/jobs/10435292/principal-genai-gtm-specialist-wwso",
@@ -6308,7 +6383,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  1, 2026",
-          "updated_at": "about 22 hours",
+          "updated_at": "1 day",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10523814/sr-ai-dlc-gtm-specialist-wwso",
           "url": "https://www.amazon.jobs/en/jobs/10523814/sr-ai-dlc-gtm-specialist-wwso",
           "apply_url": "https://www.amazon.jobs/en/jobs/10523814/sr-ai-dlc-gtm-specialist-wwso",
@@ -6452,7 +6527,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "January  8, 2026",
-          "updated_at": "1 day",
+          "updated_at": "2 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/3155480/ux-designer-amazon-developer-alexa-device-applications-devices-experience-design",
           "url": "https://www.amazon.jobs/en/jobs/3155480/ux-designer-amazon-developer-alexa-device-applications-devices-experience-design",
           "apply_url": "https://www.amazon.jobs/en/jobs/3155480/ux-designer-amazon-developer-alexa-device-applications-devices-experience-design",
@@ -6468,7 +6543,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  1, 2026",
-          "updated_at": "1 day",
+          "updated_at": "2 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10567325/manager-original-content-18-month-contract",
           "url": "https://www.amazon.jobs/en/jobs/10567325/manager-original-content-18-month-contract",
           "apply_url": "https://www.amazon.jobs/en/jobs/10567325/manager-original-content-18-month-contract",
@@ -6868,7 +6943,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  1, 2026",
-          "updated_at": "2 days",
+          "updated_at": "3 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10566335/reliability-maintenance-engineering-technician-amzl",
           "url": "https://www.amazon.jobs/en/jobs/10566335/reliability-maintenance-engineering-technician-amzl",
           "apply_url": "https://www.amazon.jobs/en/jobs/10566335/reliability-maintenance-engineering-technician-amzl",
@@ -6884,7 +6959,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  1, 2026",
-          "updated_at": "2 days",
+          "updated_at": "3 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10566328/production-planning-analyst-supply-chain-local-trans-supply-chain",
           "url": "https://www.amazon.jobs/en/jobs/10566328/production-planning-analyst-supply-chain-local-trans-supply-chain",
           "apply_url": "https://www.amazon.jobs/en/jobs/10566328/production-planning-analyst-supply-chain-local-trans-supply-chain",
@@ -6900,7 +6975,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 13, 2026",
-          "updated_at": "2 days",
+          "updated_at": "3 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10500681/aws-academy-regional-lead-aws-academy",
           "url": "https://www.amazon.jobs/en/jobs/10500681/aws-academy-regional-lead-aws-academy",
           "apply_url": "https://www.amazon.jobs/en/jobs/10500681/aws-academy-regional-lead-aws-academy",
@@ -6916,7 +6991,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "April 17, 2026",
-          "updated_at": "2 days",
+          "updated_at": "3 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10394552/delivery-consultant-data-public-sector-professional-services-uk",
           "url": "https://www.amazon.jobs/en/jobs/10394552/delivery-consultant-data-public-sector-professional-services-uk",
           "apply_url": "https://www.amazon.jobs/en/jobs/10394552/delivery-consultant-data-public-sector-professional-services-uk",
@@ -6932,7 +7007,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "October  1, 2026",
-          "updated_at": "2 days",
+          "updated_at": "3 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10566311/delivery-consultant-aws-professional-services",
           "url": "https://www.amazon.jobs/en/jobs/10566311/delivery-consultant-aws-professional-services",
           "apply_url": "https://www.amazon.jobs/en/jobs/10566311/delivery-consultant-aws-professional-services",
@@ -7348,7 +7423,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 30, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10565201/ai-data-associate-dutch-artificial-general-intelligence",
           "url": "https://www.amazon.jobs/en/jobs/10565201/ai-data-associate-dutch-artificial-general-intelligence",
           "apply_url": "https://www.amazon.jobs/en/jobs/10565201/ai-data-associate-dutch-artificial-general-intelligence",
@@ -7364,7 +7439,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554983/sr-partner-success-manager-eero",
           "url": "https://www.amazon.jobs/en/jobs/10554983/sr-partner-success-manager-eero",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554983/sr-partner-success-manager-eero",
@@ -7380,7 +7455,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554920/executive-assistant-dsp-international",
           "url": "https://www.amazon.jobs/en/jobs/10554920/executive-assistant-dsp-international",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554920/executive-assistant-dsp-international",
@@ -7396,7 +7471,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554965/visual-designer-brand-innovation-lab",
           "url": "https://www.amazon.jobs/en/jobs/10554965/visual-designer-brand-innovation-lab",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554965/visual-designer-brand-innovation-lab",
@@ -7412,7 +7487,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 22, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10555866/transportation-manager-network-and-speed-3p-operations-transportation",
           "url": "https://www.amazon.jobs/en/jobs/10555866/transportation-manager-network-and-speed-3p-operations-transportation",
           "apply_url": "https://www.amazon.jobs/en/jobs/10555866/transportation-manager-network-and-speed-3p-operations-transportation",
@@ -7428,7 +7503,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 25, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10560374/enterprise-account-manager-uki-x-industry-commercial-team",
           "url": "https://www.amazon.jobs/en/jobs/10560374/enterprise-account-manager-uki-x-industry-commercial-team",
           "apply_url": "https://www.amazon.jobs/en/jobs/10560374/enterprise-account-manager-uki-x-industry-commercial-team",
@@ -7444,7 +7519,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 25, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10560452/abm-program-manager-ai-data-operational-solutions-abm-global-practice-team",
           "url": "https://www.amazon.jobs/en/jobs/10560452/abm-program-manager-ai-data-operational-solutions-abm-global-practice-team",
           "apply_url": "https://www.amazon.jobs/en/jobs/10560452/abm-program-manager-ai-data-operational-solutions-abm-global-practice-team",
@@ -7460,7 +7535,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 23, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10557378/meteorologist-wwos-resilience",
           "url": "https://www.amazon.jobs/en/jobs/10557378/meteorologist-wwos-resilience",
           "apply_url": "https://www.amazon.jobs/en/jobs/10557378/meteorologist-wwos-resilience",
@@ -7476,7 +7551,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554594/standards-and-innovation-sr-process-engineer-latam-engineering",
           "url": "https://www.amazon.jobs/en/jobs/10554594/standards-and-innovation-sr-process-engineer-latam-engineering",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554594/standards-and-innovation-sr-process-engineer-latam-engineering",
@@ -7492,7 +7567,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10559717/senior-product-manager-amazon-freight",
           "url": "https://www.amazon.jobs/en/jobs/10559717/senior-product-manager-amazon-freight",
           "apply_url": "https://www.amazon.jobs/en/jobs/10559717/senior-product-manager-amazon-freight",
@@ -7508,7 +7583,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10559580/tech-infra-program-manager-non-standard-infrastructure-delivery-nsid",
           "url": "https://www.amazon.jobs/en/jobs/10559580/tech-infra-program-manager-non-standard-infrastructure-delivery-nsid",
           "apply_url": "https://www.amazon.jobs/en/jobs/10559580/tech-infra-program-manager-non-standard-infrastructure-delivery-nsid",
@@ -7524,7 +7599,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 23, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10557742/production-planning-analyst-supply-chain-local-trans-supply-chain",
           "url": "https://www.amazon.jobs/en/jobs/10557742/production-planning-analyst-supply-chain-local-trans-supply-chain",
           "apply_url": "https://www.amazon.jobs/en/jobs/10557742/production-planning-analyst-supply-chain-local-trans-supply-chain",
@@ -7540,7 +7615,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10558910/category-manager-packaging-global-procurement-operations-gpo",
           "url": "https://www.amazon.jobs/en/jobs/10558910/category-manager-packaging-global-procurement-operations-gpo",
           "apply_url": "https://www.amazon.jobs/en/jobs/10558910/category-manager-packaging-global-procurement-operations-gpo",
@@ -7556,7 +7631,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 23, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10558054/executive-assistant-fullfilment-center",
           "url": "https://www.amazon.jobs/en/jobs/10558054/executive-assistant-fullfilment-center",
           "apply_url": "https://www.amazon.jobs/en/jobs/10558054/executive-assistant-fullfilment-center",
@@ -7572,7 +7647,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554933/manager-technical-programmatic-solutions-consultants-amazon-ads",
           "url": "https://www.amazon.jobs/en/jobs/10554933/manager-technical-programmatic-solutions-consultants-amazon-ads",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554933/manager-technical-programmatic-solutions-consultants-amazon-ads",
@@ -7588,7 +7663,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 25, 2026",
-          "updated_at": "3 days",
+          "updated_at": "4 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10560363/enterprise-account-manager-uk-energy-team",
           "url": "https://www.amazon.jobs/en/jobs/10560363/enterprise-account-manager-uk-energy-team",
           "apply_url": "https://www.amazon.jobs/en/jobs/10560363/enterprise-account-manager-uk-energy-team",
@@ -7892,7 +7967,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 22, 2026",
-          "updated_at": "4 days",
+          "updated_at": "5 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10556003/head-of-ai-specialist-sales-public-sector-uk-germany-and-international-orgs",
           "url": "https://www.amazon.jobs/en/jobs/10556003/head-of-ai-specialist-sales-public-sector-uk-germany-and-international-orgs",
           "apply_url": "https://www.amazon.jobs/en/jobs/10556003/head-of-ai-specialist-sales-public-sector-uk-germany-and-international-orgs",
@@ -8132,7 +8207,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 27, 2026",
-          "updated_at": "6 days",
+          "updated_at": "7 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10561018/software-development-engineer-aws-security",
           "url": "https://www.amazon.jobs/en/jobs/10561018/software-development-engineer-aws-security",
           "apply_url": "https://www.amazon.jobs/en/jobs/10561018/software-development-engineer-aws-security",
@@ -8628,7 +8703,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 24, 2026",
-          "updated_at": "9 days",
+          "updated_at": "10 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10558634/principal-digital-innovation-awsi-digital-innovation-prototyping",
           "url": "https://www.amazon.jobs/en/jobs/10558634/principal-digital-innovation-awsi-digital-innovation-prototyping",
           "apply_url": "https://www.amazon.jobs/en/jobs/10558634/principal-digital-innovation-awsi-digital-innovation-prototyping",
@@ -8900,7 +8975,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "June  2, 2026",
-          "updated_at": "10 days",
+          "updated_at": "11 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10437547/sr-supply-chain-risk-manager-aws-public-sector-supply-chain",
           "url": "https://www.amazon.jobs/en/jobs/10437547/sr-supply-chain-risk-manager-aws-public-sector-supply-chain",
           "apply_url": "https://www.amazon.jobs/en/jobs/10437547/sr-supply-chain-risk-manager-aws-public-sector-supply-chain",
@@ -9076,7 +9151,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 14, 2026",
-          "updated_at": "11 days",
+          "updated_at": "12 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10538509/s-op-analyst-eu-trans-s-op",
           "url": "https://www.amazon.jobs/en/jobs/10538509/s-op-analyst-eu-trans-s-op",
           "apply_url": "https://www.amazon.jobs/en/jobs/10538509/s-op-analyst-eu-trans-s-op",
@@ -9092,7 +9167,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 14, 2026",
-          "updated_at": "11 days",
+          "updated_at": "12 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10538510/s-op-senior-analyst-eu-trans-s-op",
           "url": "https://www.amazon.jobs/en/jobs/10538510/s-op-senior-analyst-eu-trans-s-op",
           "apply_url": "https://www.amazon.jobs/en/jobs/10538510/s-op-senior-analyst-eu-trans-s-op",
@@ -9108,7 +9183,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 10, 2026",
-          "updated_at": "11 days",
+          "updated_at": "12 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10535763/sr-capacity-planning-analyst-tap",
           "url": "https://www.amazon.jobs/en/jobs/10535763/sr-capacity-planning-analyst-tap",
           "apply_url": "https://www.amazon.jobs/en/jobs/10535763/sr-capacity-planning-analyst-tap",
@@ -9124,7 +9199,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "June 18, 2026",
-          "updated_at": "11 days",
+          "updated_at": "12 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10452930/senior-program-manager-gref-global-support-operations",
           "url": "https://www.amazon.jobs/en/jobs/10452930/senior-program-manager-gref-global-support-operations",
           "apply_url": "https://www.amazon.jobs/en/jobs/10452930/senior-program-manager-gref-global-support-operations",
@@ -9364,7 +9439,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "12 days",
+          "updated_at": "13 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554353/account-executive-startup-sales-cloud-sales-center",
           "url": "https://www.amazon.jobs/en/jobs/10554353/account-executive-startup-sales-cloud-sales-center",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554353/account-executive-startup-sales-cloud-sales-center",
@@ -9380,7 +9455,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 15, 2026",
-          "updated_at": "12 days",
+          "updated_at": "13 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10541331/principal-tech-business-dev-amazon-ads-device-advertising-amazon-ads-media-entertainment-advertising",
           "url": "https://www.amazon.jobs/en/jobs/10541331/principal-tech-business-dev-amazon-ads-device-advertising-amazon-ads-media-entertainment-advertising",
           "apply_url": "https://www.amazon.jobs/en/jobs/10541331/principal-tech-business-dev-amazon-ads-device-advertising-amazon-ads-media-entertainment-advertising",
@@ -9396,7 +9471,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "May  8, 2026",
-          "updated_at": "12 days",
+          "updated_at": "13 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10414981/ai-design-technologist-marketing-productivity-amazon-ads-marketing",
           "url": "https://www.amazon.jobs/en/jobs/10414981/ai-design-technologist-marketing-productivity-amazon-ads-marketing",
           "apply_url": "https://www.amazon.jobs/en/jobs/10414981/ai-design-technologist-marketing-productivity-amazon-ads-marketing",
@@ -9412,7 +9487,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "May 29, 2026",
-          "updated_at": "12 days",
+          "updated_at": "13 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10434225/key-account-manager-automotive-amazon",
           "url": "https://www.amazon.jobs/en/jobs/10434225/key-account-manager-automotive-amazon",
           "apply_url": "https://www.amazon.jobs/en/jobs/10434225/key-account-manager-automotive-amazon",
@@ -9428,7 +9503,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "12 days",
+          "updated_at": "13 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554338/executive-assistant-eu-stores-retail-hardlines",
           "url": "https://www.amazon.jobs/en/jobs/10554338/executive-assistant-eu-stores-retail-hardlines",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554338/executive-assistant-eu-stores-retail-hardlines",
@@ -9444,7 +9519,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 21, 2026",
-          "updated_at": "12 days",
+          "updated_at": "13 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10554333/learning-experience-designer-vendor-education",
           "url": "https://www.amazon.jobs/en/jobs/10554333/learning-experience-designer-vendor-education",
           "apply_url": "https://www.amazon.jobs/en/jobs/10554333/learning-experience-designer-vendor-education",
@@ -9508,7 +9583,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  9, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10534062/technical-account-manager-data-collection-excellence",
           "url": "https://www.amazon.jobs/en/jobs/10534062/technical-account-manager-data-collection-excellence",
           "apply_url": "https://www.amazon.jobs/en/jobs/10534062/technical-account-manager-data-collection-excellence",
@@ -9524,7 +9599,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 16, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10544257/transaction-manager-global-realty",
           "url": "https://www.amazon.jobs/en/jobs/10544257/transaction-manager-global-realty",
           "apply_url": "https://www.amazon.jobs/en/jobs/10544257/transaction-manager-global-realty",
@@ -9540,7 +9615,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 15, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10542510/area-partner-marketing-manager-uki-ftc-aws-partner-marketing",
           "url": "https://www.amazon.jobs/en/jobs/10542510/area-partner-marketing-manager-uki-ftc-aws-partner-marketing",
           "apply_url": "https://www.amazon.jobs/en/jobs/10542510/area-partner-marketing-manager-uki-ftc-aws-partner-marketing",
@@ -9556,7 +9631,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 10, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10535843/commissioning-engineer-emea-acx",
           "url": "https://www.amazon.jobs/en/jobs/10535843/commissioning-engineer-emea-acx",
           "apply_url": "https://www.amazon.jobs/en/jobs/10535843/commissioning-engineer-emea-acx",
@@ -9572,7 +9647,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 17, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10551861/supply-chain-manager-amazon-r2l-intl-supply-chain",
           "url": "https://www.amazon.jobs/en/jobs/10551861/supply-chain-manager-amazon-r2l-intl-supply-chain",
           "apply_url": "https://www.amazon.jobs/en/jobs/10551861/supply-chain-manager-amazon-r2l-intl-supply-chain",
@@ -9588,7 +9663,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  4, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10529968/capacity-planning-manager-mmn-capacity-planning",
           "url": "https://www.amazon.jobs/en/jobs/10529968/capacity-planning-manager-mmn-capacity-planning",
           "apply_url": "https://www.amazon.jobs/en/jobs/10529968/capacity-planning-manager-mmn-capacity-planning",
@@ -9604,7 +9679,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  2, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10525793/solutions-architect-i-aws-wwps-shared-services-sa",
           "url": "https://www.amazon.jobs/en/jobs/10525793/solutions-architect-i-aws-wwps-shared-services-sa",
           "apply_url": "https://www.amazon.jobs/en/jobs/10525793/solutions-architect-i-aws-wwps-shared-services-sa",
@@ -9620,7 +9695,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 16, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10544617/security-engineer-aws-security",
           "url": "https://www.amazon.jobs/en/jobs/10544617/security-engineer-aws-security",
           "apply_url": "https://www.amazon.jobs/en/jobs/10544617/security-engineer-aws-security",
@@ -9636,7 +9711,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 10, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10535820/senior-proserve-cloud-architect-fsi-uki-proserve",
           "url": "https://www.amazon.jobs/en/jobs/10535820/senior-proserve-cloud-architect-fsi-uki-proserve",
           "apply_url": "https://www.amazon.jobs/en/jobs/10535820/senior-proserve-cloud-architect-fsi-uki-proserve",
@@ -9652,7 +9727,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July 29, 2026",
-          "updated_at": "13 days",
+          "updated_at": "14 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10486996/sr-innovation-engineer-ww-amzl-innovation-engineering",
           "url": "https://www.amazon.jobs/en/jobs/10486996/sr-innovation-engineer-ww-amzl-innovation-engineering",
           "apply_url": "https://www.amazon.jobs/en/jobs/10486996/sr-innovation-engineer-ww-amzl-innovation-engineering",
@@ -10036,7 +10111,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "16 days",
+          "updated_at": "17 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528781/ux-designer-international-seller-services",
           "url": "https://www.amazon.jobs/en/jobs/10528781/ux-designer-international-seller-services",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528781/ux-designer-international-seller-services",
@@ -10180,7 +10255,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 16, 2026",
-          "updated_at": "17 days",
+          "updated_at": "18 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10544095/application-security-engineer-amazon-application-security",
           "url": "https://www.amazon.jobs/en/jobs/10544095/application-security-engineer-amazon-application-security",
           "apply_url": "https://www.amazon.jobs/en/jobs/10544095/application-security-engineer-amazon-application-security",
@@ -10196,7 +10271,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September 16, 2026",
-          "updated_at": "17 days",
+          "updated_at": "18 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10544091/security-engineer-sdo-appsec",
           "url": "https://www.amazon.jobs/en/jobs/10544091/security-engineer-sdo-appsec",
           "apply_url": "https://www.amazon.jobs/en/jobs/10544091/security-engineer-sdo-appsec",
@@ -10436,7 +10511,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 16, 2026",
-          "updated_at": "18 days",
+          "updated_at": "19 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10503181/program-manager-central-rme",
           "url": "https://www.amazon.jobs/en/jobs/10503181/program-manager-central-rme",
           "apply_url": "https://www.amazon.jobs/en/jobs/10503181/program-manager-central-rme",
@@ -10452,7 +10527,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 16, 2026",
-          "updated_at": "18 days",
+          "updated_at": "19 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10503180/senior-program-manager-central-rme",
           "url": "https://www.amazon.jobs/en/jobs/10503180/senior-program-manager-central-rme",
           "apply_url": "https://www.amazon.jobs/en/jobs/10503180/senior-program-manager-central-rme",
@@ -10644,7 +10719,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 18, 2026",
-          "updated_at": "20 days",
+          "updated_at": "21 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10504818/senior-product-manager-tech-prime-video-commerce",
           "url": "https://www.amazon.jobs/en/jobs/10504818/senior-product-manager-tech-prime-video-commerce",
           "apply_url": "https://www.amazon.jobs/en/jobs/10504818/senior-product-manager-tech-prime-video-commerce",
@@ -10820,7 +10895,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  8, 2026",
-          "updated_at": "24 days",
+          "updated_at": "25 days",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10531850/principal-executive-ai-strategist-business-development-amazon-connect-applied-ai-solutions",
           "url": "https://www.amazon.jobs/en/jobs/10531850/principal-executive-ai-strategist-business-development-amazon-connect-applied-ai-solutions",
           "apply_url": "https://www.amazon.jobs/en/jobs/10531850/principal-executive-ai-strategist-business-development-amazon-connect-applied-ai-solutions",
@@ -11284,7 +11359,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528918/sr-partner-marketing-manager-eu-amazon-leo",
           "url": "https://www.amazon.jobs/en/jobs/10528918/sr-partner-marketing-manager-eu-amazon-leo",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528918/sr-partner-marketing-manager-eu-amazon-leo",
@@ -11300,7 +11375,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528916/senior-performance-marketing-manager-amazon-leo-emea-b2c",
           "url": "https://www.amazon.jobs/en/jobs/10528916/senior-performance-marketing-manager-amazon-leo-emea-b2c",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528916/senior-performance-marketing-manager-amazon-leo-emea-b2c",
@@ -11316,7 +11391,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528915/licensing-specialist-amazon-leo-global-licensing-emea",
           "url": "https://www.amazon.jobs/en/jobs/10528915/licensing-specialist-amazon-leo-global-licensing-emea",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528915/licensing-specialist-amazon-leo-global-licensing-emea",
@@ -11332,7 +11407,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "July 10, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10471009/global-account-manager-energy-and-utilities-emea-awsi-awsi-ibu-e-u",
           "url": "https://www.amazon.jobs/en/jobs/10471009/global-account-manager-energy-and-utilities-emea-awsi-awsi-ibu-e-u",
           "apply_url": "https://www.amazon.jobs/en/jobs/10471009/global-account-manager-energy-and-utilities-emea-awsi-awsi-ibu-e-u",
@@ -11348,7 +11423,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528561/production-manager-originals-prime-video-international",
           "url": "https://www.amazon.jobs/en/jobs/10528561/production-manager-originals-prime-video-international",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528561/production-manager-originals-prime-video-international",
@@ -11364,7 +11439,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "September  3, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10528393/systems-development-manager-aws-managed-operations",
           "url": "https://www.amazon.jobs/en/jobs/10528393/systems-development-manager-aws-managed-operations",
           "apply_url": "https://www.amazon.jobs/en/jobs/10528393/systems-development-manager-aws-managed-operations",
@@ -11380,7 +11455,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 11, 2026",
-          "updated_at": "30 days",
+          "updated_at": "about 1 month",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10498291/delivery-consultant-connect-and-lex-amazon-connect-center-of-delivery-excellence",
           "url": "https://www.amazon.jobs/en/jobs/10498291/delivery-consultant-connect-and-lex-amazon-connect-center-of-delivery-excellence",
           "apply_url": "https://www.amazon.jobs/en/jobs/10498291/delivery-consultant-connect-and-lex-amazon-connect-center-of-delivery-excellence",
@@ -12500,7 +12575,7 @@
           "team": null,
           "employment_type": null,
           "published_at": "August 19, 2026",
-          "updated_at": "about 1 month",
+          "updated_at": "about 2 months",
           "canonical_url": "https://www.amazon.jobs/en/jobs/10506879/principal-gtm-specialist-physical-ai-emea-wwso-emea-advanced-compute",
           "url": "https://www.amazon.jobs/en/jobs/10506879/principal-gtm-specialist-physical-ai-emea-wwso-emea-advanced-compute",
           "apply_url": "https://www.amazon.jobs/en/jobs/10506879/principal-gtm-specialist-physical-ai-emea-wwso-emea-advanced-compute",
@@ -14475,7 +14550,8 @@
           "fingerprint": "c08cef0e2f6657f2",
           "status": "CLOSED"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Google",
@@ -14486,8 +14562,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.google.com/about/careers/applications/jobs/results/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1404621 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 1404627 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 1404627 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Google"
+      }
     },
     {
       "company": "Uber",
@@ -14498,8 +14584,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.uber.com/en/jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 226379 bytes) but no safe exhaustive collector is implemented yet for Uber Careers custom platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 233247 bytes) but no safe exhaustive collector is implemented yet for Uber Careers custom platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 233247 bytes) but no safe exhaustive collector is implemented yet for Uber Careers custom platform; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Uber"
+      }
     },
     {
       "company": "Microsoft",
@@ -14510,8 +14606,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://apply.careers.microsoft.com/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 680321 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 680321 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 680321 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Microsoft"
+      }
     },
     {
       "company": "SAP",
@@ -14523,7 +14629,8 @@
       "target_jobs_count": 0,
       "source_url": "https://jobs.sap.com/en/jobs/",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "IBM",
@@ -14534,8 +14641,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://ibmglobal.avature.net/en_US/careers/OpenJobs",
-      "reason": "Official check incomplete: Official inventory is reachable (202, 1999 bytes) but no safe exhaustive collector is implemented yet for Avature",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (202, 1999 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (202, 1999 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "IBM"
+      }
     },
     {
       "company": "Cisco",
@@ -14980,7 +15097,8 @@
           "fingerprint": "08cb0b456d6ce16c",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "ServiceNow",
@@ -14988,7 +15106,7 @@
       "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
-      "inventory_count": 705,
+      "inventory_count": 706,
       "target_jobs_count": 13,
       "source_url": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings",
       "reason": null,
@@ -15201,7 +15319,8 @@
           "fingerprint": "d24aab726db561e9",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Salesforce",
@@ -15209,7 +15328,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1526,
+      "inventory_count": 1524,
       "target_jobs_count": 95,
       "source_url": "https://salesforce.wd12.myworkdayjobs.com/wday/cxs/salesforce/External_Career_Site/jobs",
       "reason": null,
@@ -16734,7 +16853,8 @@
           "fingerprint": "14ca2b4ec383da7c",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Booking.com",
@@ -16745,8 +16865,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.booking.com/booking/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 283075 bytes) but no safe exhaustive collector is implemented yet for iCIMS Jibe / JibeApply",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 283075 bytes) but no safe exhaustive collector is implemented yet for iCIMS Jibe / JibeApply; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 283075 bytes) but no safe exhaustive collector is implemented yet for iCIMS Jibe / JibeApply; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Booking.com"
+      }
     },
     {
       "company": "Expedia Group",
@@ -16757,8 +16887,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.expediagroup.com/jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 126955 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 126913 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 126913 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed); retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Expedia Group"
+      }
     },
     {
       "company": "Deliveroo",
@@ -16819,7 +16959,8 @@
           "fingerprint": "63d8d7cb9130c81b",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Bending Spoons",
@@ -16830,8 +16971,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.bendingspoons.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 620657 bytes) but no safe exhaustive collector is implemented yet for Bending Spoons custom career platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 620657 bytes) but no safe exhaustive collector is implemented yet for Bending Spoons custom career platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 620657 bytes) but no safe exhaustive collector is implemented yet for Bending Spoons custom career platform; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Bending Spoons"
+      }
     },
     {
       "company": "Prometeia",
@@ -16972,7 +17123,8 @@
           "fingerprint": "dd21579353c470c9",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Simon-Kucher",
@@ -16983,8 +17135,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://simon-kucher.csod.com/ux/ats/careersite/6/home/?c=simon-kucher",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 5499 bytes) but no safe exhaustive collector is implemented yet for Cornerstone OnDemand (CSOD)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 5499 bytes) but no safe exhaustive collector is implemented yet for Cornerstone OnDemand (CSOD); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 5499 bytes) but no safe exhaustive collector is implemented yet for Cornerstone OnDemand (CSOD); retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Simon-Kucher"
+      }
     },
     {
       "company": "Porsche Consulting",
@@ -16995,8 +17157,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.porsche.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 33890 bytes) but no safe exhaustive collector is implemented yet for Porsche Career Portal / custom e-recruiting",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 33890 bytes) but no safe exhaustive collector is implemented yet for Porsche Career Portal / custom e-recruiting; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 33890 bytes) but no safe exhaustive collector is implemented yet for Porsche Career Portal / custom e-recruiting; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Porsche Consulting"
+      }
     },
     {
       "company": "AlixPartners",
@@ -17297,7 +17469,8 @@
           "fingerprint": "732853fab7e5e6fd",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Alvarez & Marsal",
@@ -17309,7 +17482,8 @@
       "target_jobs_count": 0,
       "source_url": "https://alvarezandmarsal.wd1.myworkdayjobs.com/wday/cxs/alvarezandmarsal/alvarezandmarsal/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "LSC Lifesciences Consultants",
@@ -17370,7 +17544,8 @@
           "fingerprint": "863e16f29884224f",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Glovo",
@@ -17381,8 +17556,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.glovoapp.com/careers/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 83160 bytes) but no safe exhaustive collector is implemented yet for SmartRecruiters (shared DeliveryHero tenant) + Glovo custom front-end",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 83160 bytes) but no safe exhaustive collector is implemented yet for SmartRecruiters (shared DeliveryHero tenant) + Glovo custom front-end; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 83160 bytes) but no safe exhaustive collector is implemented yet for SmartRecruiters (shared DeliveryHero tenant) + Glovo custom front-end; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Glovo"
+      }
     },
     {
       "company": "Gruppo Excellence",
@@ -17393,8 +17578,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://gruppoexcellence.com/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 219432 bytes) but no safe exhaustive collector is implemented yet for Custom",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 219432 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 219432 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Gruppo Excellence"
+      }
     },
     {
       "company": "Be Shaping the Future",
@@ -17405,8 +17600,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.be-tse.it/it/jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 33397 bytes) but no safe exhaustive collector is implemented yet for Custom",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 33397 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 33397 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Be Shaping the Future"
+      }
     },
     {
       "company": "Arthur D. Little",
@@ -17417,8 +17622,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careerswe-adlittle.icims.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 122456 bytes) but no safe exhaustive collector is implemented yet for iCIMS",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 122456 bytes) but no safe exhaustive collector is implemented yet for iCIMS; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 122456 bytes) but no safe exhaustive collector is implemented yet for iCIMS; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Arthur D. Little"
+      }
     },
     {
       "company": "OC&C Strategy Consultants",
@@ -17429,8 +17644,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.occstrategy.com/vacancies/vacancy-search-results.aspx",
-      "reason": "Official check incomplete: OC&C inventory reconciliation mismatch: retrieved=12, total=14",
-      "jobs": []
+      "reason": "NotCheckable: OC&C inventory reconciliation mismatch: retrieved=12, total=14; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: OC&C inventory reconciliation mismatch: retrieved=12, total=14; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "OC&C Strategy Consultants"
+      }
     },
     {
       "company": "FTI Consulting",
@@ -18227,7 +18452,8 @@
           "fingerprint": "fd03fa1499c7ab2c",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Bolt",
@@ -18238,8 +18464,18 @@
       "inventory_count": 214,
       "target_jobs_count": 0,
       "source_url": "https://bolt.eu/en/careers/positions/",
-      "reason": "5 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
-      "jobs": []
+      "reason": "6 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "6 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
+        "batch": "JW2",
+        "company": "Bolt"
+      }
     },
     {
       "company": "Flix",
@@ -18247,11 +18483,12 @@
       "ats_family": "Greenhouse + Flix custom career front-end",
       "coverage": "VERIFIED",
       "collector": "greenhouse_job_board_api_metadata",
-      "inventory_count": 152,
+      "inventory_count": 153,
       "target_jobs_count": 0,
       "source_url": "https://boards-api.greenhouse.io/v1/boards/flix/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "FREENOW",
@@ -18296,7 +18533,8 @@
           "fingerprint": "38c638391d925350",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "eBay",
@@ -18453,7 +18691,8 @@
           "fingerprint": "f7153eddeacc5b6a",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "TikTok",
@@ -18464,8 +18703,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://lifeattiktok.com/search?recruitment_id_list=&job_category_id_list=&subject_id_list=&location_code_list=&keyword=&limit=12&offset=0",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 109669 bytes) but no safe exhaustive collector is implemented yet for TikTok LifeAtTikTok custom careers platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 109670 bytes) but no safe exhaustive collector is implemented yet for TikTok LifeAtTikTok custom careers platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 109670 bytes) but no safe exhaustive collector is implemented yet for TikTok LifeAtTikTok custom careers platform; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "TikTok"
+      }
     },
     {
       "company": "Altman Solon",
@@ -18476,8 +18725,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.altmansolon.com/careers/job-opportunities",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 93463 bytes) but no safe exhaustive collector is implemented yet for Altman Solon custom experienced-hire careers board",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 93463 bytes) but no safe exhaustive collector is implemented yet for Altman Solon custom experienced-hire careers board; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 93463 bytes) but no safe exhaustive collector is implemented yet for Altman Solon custom experienced-hire careers board; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Altman Solon"
+      }
     },
     {
       "company": "Value Partners",
@@ -18488,8 +18747,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.valuepartners.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 131639 bytes) but no safe exhaustive collector is implemented yet for Value Partners custom careers",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 131639 bytes) but no safe exhaustive collector is implemented yet for Value Partners custom careers; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 131639 bytes) but no safe exhaustive collector is implemented yet for Value Partners custom careers; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Value Partners"
+      }
     },
     {
       "company": "Eight Sleep",
@@ -18614,7 +18883,8 @@
           "fingerprint": "775c112ebb894b1d",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "JD.COM / Joybuy",
@@ -19763,7 +20033,8 @@
           "fingerprint": "9e2b6e98ea771513",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "zeb consulting",
@@ -19774,8 +20045,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://zeb-career.com/en/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 240122 bytes) but no safe exhaustive collector is implemented yet for zeb custom careers inventory",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 240122 bytes) but no safe exhaustive collector is implemented yet for zeb custom careers inventory; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 240122 bytes) but no safe exhaustive collector is implemented yet for zeb custom careers inventory; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "zeb consulting"
+      }
     },
     {
       "company": "Kyndryl",
@@ -19786,8 +20067,26 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.kyndryl.com/us/en/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 415196 bytes) but no safe exhaustive collector is implemented yet for Kyndryl enterprise careers platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 415196 bytes) but no safe exhaustive collector is implemented yet for Kyndryl enterprise careers platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 415196 bytes) but no safe exhaustive collector is implemented yet for Kyndryl enterprise careers platform; retained 0 validated observed jobs",
+        "batch": "JW2",
+        "company": "Kyndryl"
+      }
     }
-  ]
+  ],
+  "workday_path_reconciliation": {
+    "companies": [
+      "Euronext"
+    ],
+    "recovered_count": 0,
+    "active_decision_targeted_search": true,
+    "official_corporate_listing_fallback": true
+  }
 }

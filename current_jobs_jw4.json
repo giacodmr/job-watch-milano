@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "generated_at": "2026-10-03T12:00:48Z",
+  "generated_at": "2026-10-03T19:46:32Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -41,7 +41,7 @@
     "STILL_OPEN": 426,
     "UPDATED": 0,
     "CLOSED": 0,
-    "UNKNOWN": 0
+    "UNKNOWN": 1
   },
   "companies": [
     {
@@ -50,7 +50,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 4569,
+      "inventory_count": 4578,
       "target_jobs_count": 39,
       "source_url": "https://careers.essilorluxottica.com/search/",
       "reason": null,
@@ -679,7 +679,8 @@
           "fingerprint": "2f18b0ee90c697b7",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Campari Group",
@@ -948,7 +949,8 @@
           "fingerprint": "7c69d9751dd8e5da",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Pirelli",
@@ -959,8 +961,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.pirelli.com/search/",
-      "reason": "Official check incomplete: Evidenced SuccessFactors search page has no reconcilable inventory total",
-      "jobs": []
+      "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Pirelli"
+      }
     },
     {
       "company": "Heineken Italia",
@@ -971,8 +983,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.theheinekencompany.com/search/",
-      "reason": "Official check incomplete: SuccessFactors public inventory not enumerable from runner (HTTP 404)",
-      "jobs": []
+      "reason": "NotCheckable: SuccessFactors public inventory not enumerable from runner (HTTP 404); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: SuccessFactors public inventory not enumerable from runner (HTTP 404); retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Heineken Italia"
+      }
     },
     {
       "company": "Coca-Cola HBC Italia",
@@ -983,8 +1005,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://it.coca-colahellenic.com/en/working-with-us/search-and-apply",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1911 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 1911 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 1911 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Coca-Cola HBC Italia"
+      }
     },
     {
       "company": "Ferrero",
@@ -1125,7 +1157,8 @@
           "fingerprint": "373b0ca3944eaff4",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Moncler Group",
@@ -1136,8 +1169,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.moncler.com/search/",
-      "reason": "Official check incomplete: SuccessFactors public inventory is not safely enumerable because TLS validation failed",
-      "jobs": []
+      "reason": "NotCheckable: SuccessFactors public inventory is not safely enumerable because TLS validation failed; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: SuccessFactors public inventory is not safely enumerable because TLS validation failed; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Moncler Group"
+      }
     },
     {
       "company": "Prada Group",
@@ -2062,7 +2105,8 @@
           "fingerprint": "dce87168e02ffe8a",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "H&M",
@@ -2070,7 +2114,7 @@
       "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
-      "inventory_count": 1913,
+      "inventory_count": 1915,
       "target_jobs_count": 21,
       "source_url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings",
       "reason": null,
@@ -2411,7 +2455,8 @@
           "fingerprint": "0ccc2466d37df7c8",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Amplifon",
@@ -2808,7 +2853,8 @@
           "fingerprint": "d8db2f23d5bf39cb",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Sky Italia",
@@ -3301,7 +3347,8 @@
           "fingerprint": "097f9a5cf601f2f0",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "LVMH",
@@ -3312,8 +3359,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.lvmh.com/en/join-us/our-job-offers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 2142657 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 2142657 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 2142657 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "LVMH"
+      }
     },
     {
       "company": "Kering",
@@ -3324,8 +3381,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kering.com/careers",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 218160 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS)",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 218160 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 218160 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Kering"
+      }
     },
     {
       "company": "AstraZeneca",
@@ -3336,8 +3403,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.astrazeneca.com/search-jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 251090 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 251037 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 251037 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "AstraZeneca"
+      }
     },
     {
       "company": "Roche",
@@ -3345,11 +3422,12 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1190,
+      "inventory_count": 1179,
       "target_jobs_count": 0,
       "source_url": "https://roche.wd3.myworkdayjobs.com/wday/cxs/roche/roche-ext/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Sanofi",
@@ -3357,7 +3435,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 810,
+      "inventory_count": 809,
       "target_jobs_count": 6,
       "source_url": "https://sanofi.wd3.myworkdayjobs.com/wday/cxs/sanofi/SanofiCareers/jobs",
       "reason": null,
@@ -3458,7 +3536,8 @@
           "fingerprint": "9f32f35326e1a8b4",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Nestlé Italia",
@@ -3469,8 +3548,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.nestle.it/jobs/search-jobs",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom Nestlé careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom Nestlé careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom Nestlé careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Nestlé Italia"
+      }
     },
     {
       "company": "PepsiCo",
@@ -3481,8 +3570,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pepsicojobs.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 1097106 bytes) but no safe exhaustive collector is implemented yet for Custom PepsiCo careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 1097106 bytes) but no safe exhaustive collector is implemented yet for Custom PepsiCo careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 1097106 bytes) but no safe exhaustive collector is implemented yet for Custom PepsiCo careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "PepsiCo"
+      }
     },
     {
       "company": "Reckitt",
@@ -3490,7 +3589,7 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 397,
+      "inventory_count": 398,
       "target_jobs_count": 4,
       "source_url": "https://careers.reckitt.com/search/",
       "reason": null,
@@ -3559,7 +3658,8 @@
           "fingerprint": "b7676ed1f9bdf521",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Philip Morris International",
@@ -3570,8 +3670,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://join.pmicareers.com/it/it/search-results",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 125392 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 125392 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 125392 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Philip Morris International"
+      }
     },
     {
       "company": "JTI",
@@ -3579,11 +3689,12 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 360,
+      "inventory_count": 359,
       "target_jobs_count": 0,
       "source_url": "https://jobs.jti.com/search/",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Imperial Brands",
@@ -3594,8 +3705,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.impbrands.com/jobs/search",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 164645 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 164645 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 164645 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Imperial Brands"
+      }
     },
     {
       "company": "IKEA",
@@ -3606,8 +3727,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.ikea.com/en/search-jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 835474 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 835474 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 835474 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "IKEA"
+      }
     },
     {
       "company": "Avolta / Autogrill",
@@ -3636,7 +3767,8 @@
           "fingerprint": "14046ac6290daf1d",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "L'Oréal",
@@ -3647,8 +3779,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.loreal.com/en_US/jobs/SearchJobs",
-      "reason": "Official check incomplete: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom L'Oréal careers frontend; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom L'Oréal careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for Custom L'Oréal careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "L'Oréal"
+      }
     },
     {
       "company": "Unilever",
@@ -3656,11 +3798,12 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 237,
+      "inventory_count": 239,
       "target_jobs_count": 0,
       "source_url": "https://unilever.wd3.myworkdayjobs.com/wday/cxs/unilever/Unilever_Experienced_Professionals/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Bolton Group",
@@ -3881,7 +4024,8 @@
           "fingerprint": "173236130fea0ff2",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Richemont",
@@ -3892,8 +4036,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.richemont.com/en/jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 178697 bytes) but no safe exhaustive collector is implemented yet for Custom Richemont careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 178697 bytes) but no safe exhaustive collector is implemented yet for Custom Richemont careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 178697 bytes) but no safe exhaustive collector is implemented yet for Custom Richemont careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Richemont"
+      }
     },
     {
       "company": "Chanel",
@@ -3901,7 +4055,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1123,
+      "inventory_count": 1122,
       "target_jobs_count": 44,
       "source_url": "https://cc.wd3.myworkdayjobs.com/wday/cxs/cc/ChanelCareers/jobs",
       "reason": null,
@@ -4610,7 +4764,8 @@
           "fingerprint": "07db2859662add36",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Procter & Gamble",
@@ -4621,8 +4776,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.pgcareers.com/global/en/search-results/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 178080 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 178080 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 178080 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Procter & Gamble"
+      }
     },
     {
       "company": "Johnson & Johnson",
@@ -4630,7 +4795,7 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1817,
+      "inventory_count": 1814,
       "target_jobs_count": 12,
       "source_url": "https://jj.wd5.myworkdayjobs.com/wday/cxs/jj/JJ/jobs",
       "reason": null,
@@ -4827,7 +4992,8 @@
           "fingerprint": "c0cc1885eb508fa4",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Danone",
@@ -4838,8 +5004,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.danone.com/uki/en/jobs.html?countries=Italy",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 292222 bytes) but no safe exhaustive collector is implemented yet for Custom Danone careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 292222 bytes) but no safe exhaustive collector is implemented yet for Custom Danone careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 292222 bytes) but no safe exhaustive collector is implemented yet for Custom Danone careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Danone"
+      }
     },
     {
       "company": "Henkel",
@@ -4850,8 +5026,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.henkel.com/careers/find-your-job-apply",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 420588 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 420588 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 420588 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Henkel"
+      }
     },
     {
       "company": "Mars",
@@ -4862,8 +5048,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.mars.com/global/en/search-results",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 125969 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style Mars careers frontend; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 125944 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style Mars careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 125944 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style Mars careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Mars"
+      }
     },
     {
       "company": "Mondelez International",
@@ -4874,8 +5070,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.mondelezinternational.com/careers/jobs/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 937113 bytes) but no safe exhaustive collector is implemented yet for Custom Mondelēz careers search; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 937113 bytes) but no safe exhaustive collector is implemented yet for Custom Mondelēz careers search; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 937113 bytes) but no safe exhaustive collector is implemented yet for Custom Mondelēz careers search; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Mondelez International"
+      }
     },
     {
       "company": "Kraft Heinz",
@@ -4886,8 +5092,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.kraftheinz.com/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 13184 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 13184 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 13184 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Kraft Heinz"
+      }
     },
     {
       "company": "Diageo",
@@ -5012,7 +5228,8 @@
           "fingerprint": "df6ca78021da6e2d",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Pernod Ricard",
@@ -5024,7 +5241,8 @@
       "target_jobs_count": 0,
       "source_url": "https://pernodricard.wd3.myworkdayjobs.com/wday/cxs/pernodricard/pernod-ricard/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Giorgio Armani",
@@ -5035,8 +5253,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.giorgioarmani.com/",
-      "reason": "Official check incomplete: Official inventory was attempted but TLS validation failed; no exhaustive parser for Custom Giorgio Armani careers portal; backend not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for Custom Giorgio Armani careers portal; backend not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for Custom Giorgio Armani careers portal; backend not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Giorgio Armani"
+      }
     },
     {
       "company": "Dolce & Gabbana",
@@ -5321,7 +5549,8 @@
           "fingerprint": "bbfef8f2985de970",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Ermenegildo Zegna",
@@ -5332,8 +5561,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.zegnagroup.com/?cngLanguage=ENG",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 59796 bytes) but no safe exhaustive collector is implemented yet for Custom Zegna Group careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 59796 bytes) but no safe exhaustive collector is implemented yet for Custom Zegna Group careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 59796 bytes) but no safe exhaustive collector is implemented yet for Custom Zegna Group careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Ermenegildo Zegna"
+      }
     },
     {
       "company": "Valentino",
@@ -5682,7 +5921,8 @@
           "fingerprint": "829f6472d8014896",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Novartis",
@@ -5999,7 +6239,8 @@
           "fingerprint": "08166ae99a439a50",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Pfizer",
@@ -6007,11 +6248,12 @@
       "ats_family": "Workday",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 515,
+      "inventory_count": 514,
       "target_jobs_count": 0,
       "source_url": "https://pfizer.wd1.myworkdayjobs.com/wday/cxs/pfizer/PfizerCareers/jobs",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Bayer",
@@ -6019,11 +6261,12 @@
       "ats_family": "SAP SuccessFactors",
       "coverage": "VERIFIED",
       "collector": "successfactors_jobs2web_metadata_v15",
-      "inventory_count": 609,
+      "inventory_count": 606,
       "target_jobs_count": 0,
       "source_url": "https://jobs.bayer.com/search/",
       "reason": null,
-      "jobs": []
+      "jobs": [],
+      "record_errors": []
     },
     {
       "company": "Boehringer Ingelheim",
@@ -6196,7 +6439,8 @@
           "fingerprint": "68a2abd50ded889b",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "AbbVie",
@@ -6207,8 +6451,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.abbvie.com/en/jobs",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 209748 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 209749 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 209749 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "AbbVie"
+      }
     },
     {
       "company": "MSD",
@@ -6216,7 +6470,7 @@
       "ats_family": "Custom MSD careers frontend + Workday backend",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1005,
+      "inventory_count": 1003,
       "target_jobs_count": 7,
       "source_url": "https://msd.wd5.myworkdayjobs.com/wday/cxs/msd/SearchJobs/jobs",
       "reason": null,
@@ -6333,7 +6587,8 @@
           "fingerprint": "35826a2ac311ad02",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "NielsenIQ",
@@ -6341,7 +6596,7 @@
       "ats_family": "SmartRecruiters",
       "coverage": "VERIFIED",
       "collector": "smartrecruiters_posting_api_metadata",
-      "inventory_count": 413,
+      "inventory_count": 412,
       "target_jobs_count": 9,
       "source_url": "https://api.smartrecruiters.com/v1/companies/NielsenIQ/postings",
       "reason": null,
@@ -6490,7 +6745,8 @@
           "fingerprint": "1a77d0762db90048",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "IQVIA",
@@ -6498,7 +6754,7 @@
       "ats_family": "Workday CXS",
       "coverage": "VERIFIED",
       "collector": "workday_cxs_metadata",
-      "inventory_count": 1875,
+      "inventory_count": 1878,
       "target_jobs_count": 43,
       "source_url": "https://iqvia.wd1.myworkdayjobs.com/wday/cxs/iqvia/IQVIA/jobs",
       "reason": null,
@@ -7191,7 +7447,8 @@
           "fingerprint": "c7125bcb9583700e",
           "status": "STILL_OPEN"
         }
-      ]
+      ],
+      "record_errors": []
     },
     {
       "company": "Carlsberg Group",
@@ -7202,8 +7459,18 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.carlsbergitalia.it/contatti/job-opportunities/",
-      "reason": "Official check incomplete: Official inventory is reachable (200, 126888 bytes) but no safe exhaustive collector is implemented yet for Carlsberg Italia custom job-opportunities page",
-      "jobs": []
+      "reason": "NotCheckable: Official inventory is reachable (200, 126115 bytes) but no safe exhaustive collector is implemented yet for Carlsberg Italia custom job-opportunities page; retained 0 validated observed jobs",
+      "jobs": [],
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_PARTIAL",
+        "message": "NotCheckable: Official inventory is reachable (200, 126115 bytes) but no safe exhaustive collector is implemented yet for Carlsberg Italia custom job-opportunities page; retained 0 validated observed jobs",
+        "batch": "JW4",
+        "company": "Carlsberg Group"
+      }
     },
     {
       "company": "Nike",
@@ -7503,8 +7770,38 @@
           "apply_url": "https://nike.wd1.myworkdayjobs.com/nke/job/Milano-Italy/CATEGORIA-PROTETTA--L68-99----Responsabile-vendite-Athlete-NIKE-MILANO-SCALO-21H_R-83823",
           "fingerprint": "989f61ff471b9f63",
           "status": "STILL_OPEN"
+        },
+        {
+          "title": "Brand Marketing Specialist",
+          "location": "Milano, Italy",
+          "canonical_url": "https://nike.wd1.myworkdayjobs.com/nke/job/Milano-Italy/Brand-Marketing-Specialist_R-91871",
+          "apply_url": "https://nike.wd1.myworkdayjobs.com/nke/job/Milano-Italy/Brand-Marketing-Specialist_R-91871",
+          "fingerprint": "c28b802d562bb47d",
+          "company": "Nike",
+          "source_id": "R-91871",
+          "status": "UNKNOWN",
+          "reconciliation_state": "UNRESOLVED",
+          "reconciliation_error": {
+            "category": "LOCAL_RECORD_ERROR",
+            "scope": "record",
+            "stage": "reconciliation",
+            "code": "ROLE_UNRESOLVED",
+            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "company": "Nike",
+            "job_key": "Nike::R-91871"
+          },
+          "url": "https://nike.wd1.myworkdayjobs.com/nke/job/Milano-Italy/Brand-Marketing-Specialist_R-91871"
         }
-      ]
+      ],
+      "record_errors": []
     }
-  ]
+  ],
+  "workday_path_reconciliation": {
+    "companies": [
+      "Euronext"
+    ],
+    "recovered_count": 0,
+    "active_decision_targeted_search": true,
+    "official_corporate_listing_fallback": true
+  }
 }

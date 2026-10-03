@@ -15,8 +15,11 @@ class FetchError(Exception): pass
 def load(name, default=None):
     p=ROOT/name
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
-def dump(name,obj):
-    (ROOT/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+def dump(name, obj):
+    from pipeline_state import stable_dump
+    stable_dump(name,obj,ROOT)
+
+
 def now(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
 def clean_html(x):
     if not x: return ""
@@ -155,11 +158,11 @@ def fetch_jd(rec,mapping):
     if "ashby" in fam or "ashbyhq.com" in host: return ashby(url,rec.get("source_id"),mapping)
     return fallback(url, rec.get("title"))
 
-def main():
+def main(batches=BATCHES):
     worklist = build_worklist()
     amazon = load("amazon_target_check.json", {}) or {}
     amazon_by_url = {str(r.get("apply_url", "")).rstrip("/"): r for r in amazon.get("target_jobs", [])}
-    for b in BATCHES:
+    for b in batches:
         mapping=load(f"ats_mapping_{b}.json",{}) or {}
         byco={x.get("company"):x for x in mapping.get("companies",[]) if x.get("company")}
         cache=load(f"semantic_jd_cache_{b}.json",{}) or {"version":"1.0","batch":b,"records":{}}
@@ -176,6 +179,8 @@ def main():
                 except (KeyError, ValueError):
                     age=86400
                 if age < 21600:  # failed endpoints get a six-hour cooldown
+                    from pipeline_state import record_error
+                    record_error('LOCAL_RECORD_ERROR','enrichment','JD_UNAVAILABLE',old.get('error') or 'JD fetch cooldown',root=ROOT,batch=b.upper(),company=r.get('company'),job_key=k)
                     fail+=1; continue
             try:
                 raw=amazon_by_url.get(str(r.get("canonical_url") or r.get("apply_url") or "").rstrip("/")) if r.get("company")=="Amazon" else None
@@ -187,6 +192,8 @@ def main():
                 cache["records"][k]={"fingerprint":fp,"status":"OK","fetched_at":now(),"company":r.get("company"),"title":r.get("title"),"location":r.get("location"),"source_url":source,"method":method,"text":txt[:40000]}
                 ok+=1
             except Exception as e:
+                from pipeline_state import record_error
+                record_error('LOCAL_RECORD_ERROR','enrichment','JD_UNAVAILABLE',e,root=ROOT,batch=b.upper(),company=r.get('company'),job_key=k)
                 cache["records"][k]={"fingerprint":fp,"status":"FAILED","fetched_at":now(),"company":r.get("company"),"title":r.get("title"),"location":r.get("location"),"source_url":r.get("canonical_url") or r.get("apply_url"),"method":"failed","error":str(e)[:500],"text":""}
                 fail+=1
             if i%25==0: print(f"{b}: {i}/{len(todo)} ok={ok} fail={fail} reuse={reuse}",flush=True)

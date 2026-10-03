@@ -1,17 +1,26 @@
 {
   "version": "1.0",
   "snapshot": {
-    "run_id": "20261003T120112Z",
+    "run_id": "4a0ead7bd06a2eaf04cc730f",
     "source_generated_at": {
-      "JW1": "2026-10-03T11:55:02Z",
-      "JW2": "2026-10-03T11:57:24Z",
-      "JW3": "2026-10-03T11:58:26Z",
-      "JW4": "2026-10-03T12:00:48Z"
+      "JW1": "2026-10-03T19:40:48Z",
+      "JW2": "2026-10-03T19:43:09Z",
+      "JW3": "2026-10-03T19:44:10Z",
+      "JW4": "2026-10-03T19:46:32Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-10-03T12:00:58.388815+00:00"
+      "Amazon": "2026-10-03T19:46:39.504965+00:00"
     },
-    "rules_sha256": "be9426f77cba49032071a25490864454237be47b743be3c4bb825ac727a035bb"
+    "rules_sha256": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
+    "source_sha256": {
+      "current_jobs_jw1.json": "127d162e6904dc1f56254867080c05f07b8a4f85763dd5f7cc42b6b21d554c8e",
+      "current_jobs_jw2.json": "9b7d52109c218b32ada4dc1f602d0bd8a07b5f0621bd4b110ba54c1ebe489593",
+      "current_jobs_jw3.json": "4a9c4c410e42dcd8a0565aabd7eaf5809ed74ac15221ec71338c73fd0670d3a3",
+      "current_jobs_jw4.json": "5177f32694d3a2017d6e958eccb3fbe33ff9888dc2d7652629a07fe01a31484e",
+      "amazon_target_check.json": "71c931acf61052df3b4e2dae55bc35e560fa996c174f284d3a1d7261d15c6342",
+      "job_watch_rules.json": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
+      "job_watch_batches.json": "c5664761f93b5a2a71dcfcce51dfbcd163fcbbe6a7c80559a827334cf0a27470"
+    }
   },
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
@@ -5892,7 +5901,7 @@
       "canonical_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
       "apply_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/IT---Milan-Italy/Consulting-Analyst_REF081405W",
       "fingerprint": "4a1543f3785e24c7",
-      "current_status": "CLOSED",
+      "current_status": "UNKNOWN",
       "threshold": 70,
       "user_decision": "INTERESTED",
       "user_decision_reason": "User kept Visa Consulting Analyst Milan; full official JD, salary and experience to be assessed.",
@@ -5910,11 +5919,20 @@
       "canonical_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
       "apply_url": "https://visa.wd5.myworkdayjobs.com/Visa/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W",
       "fingerprint": "b2d187cfe292224b",
-      "current_status": "CLOSED",
+      "current_status": "UNKNOWN",
       "threshold": 80,
       "user_decision": "TO_REVIEW",
       "user_decision_reason": "Strong London business-analysis/consulting fit from current JW1 inventory; user decision needed.",
       "user_decision_stale": false
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Euronext::R27644",
+      "action": "LIFECYCLE_UPDATE",
+      "company": "Euronext",
+      "source_id": "R27644",
+      "current_status": "UNKNOWN",
+      "user_decision": "TO_REVIEW"
     },
     {
       "batch": "JW2",
@@ -6246,20 +6264,34 @@
       "canonical_url": "https://nike.wd1.myworkdayjobs.com/nke/job/Milano-Italy/Brand-Marketing-Specialist_R-91871",
       "apply_url": "https://nike.wd1.myworkdayjobs.com/nke/job/Milano-Italy/Brand-Marketing-Specialist_R-91871",
       "fingerprint": "c28b802d562bb47d",
-      "current_status": "CLOSED",
+      "current_status": "UNKNOWN",
       "threshold": 70,
       "user_decision": "TO_REVIEW",
       "user_decision_reason": "Recovered from historical semantic backlog after user identified it; requires immediate full-JD review and explicit user decision.",
       "user_decision_stale": false
     }
   ],
-  "unreconciled_user_decisions": [
+  "tasks": [
     {
-      "job_key": "Euronext::R27644",
-      "decision": "TO_REVIEW",
-      "reason": "User explicitly asked to keep the externally validated Euronext Business Operations Analyst role for review; role was validated on the official ATS but is not yet present in the current collector snapshot.",
-      "fingerprint": null,
-      "decided_at": "2026-09-29T13:45:00Z"
+      "batch": "JW1",
+      "action": "AUTONOMOUS_SEARCH",
+      "reason": "Search official sources and persist query/date/source/result"
+    },
+    {
+      "batch": "JW2",
+      "action": "AUTONOMOUS_SEARCH",
+      "reason": "Search official sources and persist query/date/source/result"
+    },
+    {
+      "batch": "JW3",
+      "action": "AUTONOMOUS_SEARCH",
+      "reason": "Search official sources and persist query/date/source/result"
+    },
+    {
+      "batch": "JW4",
+      "action": "AUTONOMOUS_SEARCH",
+      "reason": "Search official sources and persist query/date/source/result"
     }
-  ]
+  ],
+  "unreconciled_user_decisions": []
 }

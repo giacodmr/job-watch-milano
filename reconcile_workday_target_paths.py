@@ -17,6 +17,7 @@ import html as html_lib
 import json
 import re
 from pathlib import Path
+from pipeline_state import atomic_json, record_error
 from urllib.parse import unquote, urlparse
 
 from collector import (
@@ -46,7 +47,7 @@ def read_json(name: str, default=None):
 
 
 def write_json(name: str, payload) -> None:
-    (ROOT / name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_json(ROOT / name, payload)
 
 
 def safe_path_location(external_path: str | None) -> str | None:
@@ -259,34 +260,46 @@ def reconcile_persisted_decisions(company_name: str, mapped: dict, jobs: list[di
     for source_id, decision in active_decisions_for_company(company_name):
         if source_id in open_ids:
             continue
-        rows, host, site, _ = targeted_workday_search(mapped, source_id)
-        exact = []
-        for raw in rows:
-            external_path = str(raw.get("externalPath") or "").strip()
-            actual_id = str(workday_source_id(raw, external_path))
-            if actual_id == source_id or source_id.casefold() in external_path.casefold():
-                exact.append(raw)
-        if len(exact) > 1:
-            raise RuntimeError(f"{company_name}::{source_id}: targeted Workday search returned multiple exact matches")
+        try:
+            rows, host, site, _ = targeted_workday_search(mapped, source_id)
+            exact = []
+            for raw in rows:
+                external_path = str(raw.get("externalPath") or "").strip()
+                actual_id = str(workday_source_id(raw, external_path))
+                if actual_id == source_id or source_id.casefold() in external_path.casefold():
+                    exact.append(raw)
+            if len(exact) > 1:
+                raise RuntimeError(f"{company_name}::{source_id}: targeted Workday search returned multiple exact matches")
 
-        if len(exact) == 1:
-            candidate = candidate_from_raw(company_name, exact[0], host, site, allow_metadata_location=True)
-            if candidate is None:
-                raise RuntimeError(f"{company_name}::{source_id}: exact targeted Workday match is outside target geography")
-        else:
-            candidate = official_listing_candidate(company_name, source_id, mapped)
-            if candidate is None:
-                print(f"Targeted Workday decision search did not find {company_name}::{source_id}")
-                continue
-            print(f"Recovered official corporate-listing fallback: {company_name}::{source_id} | {candidate.get('title')}")
+            if len(exact) == 1:
+                candidate = candidate_from_raw(company_name, exact[0], host, site, allow_metadata_location=True)
+                if candidate is None:
+                    raise RuntimeError(f"{company_name}::{source_id}: exact targeted Workday match is outside target geography")
+            else:
+                candidate = official_listing_candidate(company_name, source_id, mapped)
+                if candidate is None:
+                    raise ValueError("Role not found in official inventory/listing; absence not sufficient to prove closure")
+                print(f"Recovered official corporate-listing fallback: {company_name}::{source_id} | {candidate.get('title')}")
 
-        if upsert_recovered(jobs, candidate, persisted_decision=True):
-            recovered += 1
-            open_ids.add(source_id)
-            print(
-                f"Recovered persisted Workday decision: {company_name}::{source_id} | "
-                f"{candidate.get('title')} | decision={decision.get('decision')}"
-            )
+            if upsert_recovered(jobs, candidate, persisted_decision=True):
+                recovered += 1
+                open_ids.add(source_id)
+                print(
+                    f"Recovered persisted Workday decision: {company_name}::{source_id} | "
+                    f"{candidate.get('title')} | decision={decision.get('decision')}"
+                )
+        except Exception as exc:
+            key = f"{company_name}::{source_id}"
+            item = record_error('LOCAL_RECORD_ERROR','reconciliation','ROLE_UNRESOLVED',exc,root=ROOT,company=company_name,job_key=key)
+            existing = next((j for j in jobs if str(j.get('source_id')) == source_id),None)
+            if existing is None:
+                # Retain metadata from the analysis history when available. The
+                # user registry remains untouched, even without a historical JD.
+                history = next((read_json(f'analysis_results_{b}.json',{}).get('records',{}).get(key) for b in BATCHES if key in read_json(f'analysis_results_{b}.json',{}).get('records',{})),{}) or {}
+                existing = {f:history.get(f) for f in ('title','location','canonical_url','apply_url','fingerprint') if history.get(f) is not None}
+                existing.update(company=company_name,source_id=source_id,fingerprint=existing.get('fingerprint') or decision.get('fingerprint'))
+                jobs.append(existing)
+            existing.update(status='UNKNOWN',reconciliation_state='UNRESOLVED',reconciliation_error=item)
     return recovered
 
 
@@ -308,16 +321,20 @@ def reconcile_batch(batch: str) -> int:
             continue
         jobs = list(company_row.get("jobs") or [])
 
-        if company_name in PATH_LOCATION_COMPANIES:
-            rows, host, site, search_url = enumerate_workday(mapped)
-            for raw in rows:
-                candidate = candidate_from_raw(company_name, raw, host, site)
-                if candidate and upsert_recovered(jobs, candidate):
-                    changed += 1
-                    print(f"{batch.upper()} recovered Workday path-target role: {company_name}::{candidate.get('source_id')} | {candidate.get('title')}")
-            company_row["path_location_reconciled"] = True
-            company_row["path_location_source_url"] = search_url
+        try:
+            if company_name in PATH_LOCATION_COMPANIES:
+                rows, host, site, search_url = enumerate_workday(mapped)
+                for raw in rows:
+                    candidate = candidate_from_raw(company_name, raw, host, site)
+                    if candidate and upsert_recovered(jobs, candidate):
+                        changed += 1
+                        print(f"{batch.upper()} recovered Workday path-target role: {company_name}::{candidate.get('source_id')} | {candidate.get('title')}")
+                company_row["path_location_reconciled"] = True
+                company_row["path_location_source_url"] = search_url
 
+        except Exception as exc:
+            item = record_error('SOURCE_ERROR','reconciliation','PATH_INVENTORY_UNAVAILABLE',exc,root=ROOT,batch=batch.upper(),company=company_name)
+            company_row['reconciliation_error'] = item
         targeted = reconcile_persisted_decisions(company_name, mapped, jobs)
         changed += targeted
         if targeted:
@@ -325,7 +342,9 @@ def reconcile_batch(batch: str) -> int:
         company_row["jobs"] = jobs
         company_row["target_jobs_count"] = sum(1 for j in jobs if j.get("status") in OPEN_STATUSES)
 
-    if changed:
+    # Persist recovered records and scoped unresolved lifecycle rows even when
+    # no vacancy was recovered. Other companies and batches always continue.
+    if current.get("companies"):
         all_jobs = [job for company in current.get("companies", []) for job in (company.get("jobs") or [])]
         summary = current.setdefault("summary", {})
         summary["target_jobs_open"] = sum(1 for job in all_jobs if job.get("status") in OPEN_STATUSES)
@@ -342,7 +361,8 @@ def reconcile_batch(batch: str) -> int:
 
 
 def main() -> int:
-    total = sum(reconcile_batch(batch) for batch in BATCHES)
+    from pipeline_state import attempt
+    total = sum(attempt("reconciliation",lambda batch=batch:reconcile_batch(batch),batch=batch,root=ROOT) or 0 for batch in BATCHES)
     print(f"Workday target-path/decision reconciliation complete: recovered={total}")
     return 0
 

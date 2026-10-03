@@ -335,10 +335,10 @@
     "reason": "Avoid triggering one sync workflow per vacancy or per file and reduce GitHub Actions churn/race opportunities.",
     "exception": "If a critical write must be persisted before continuing, write it immediately; otherwise batch.",
     "atomic_commit_preferred": true,
-    "atomic_commit_rule": "Persist semantic_decisions, surfaced history, and job_watch_run_state for all affected JW modules in one Git commit via Git data/tree operations when connector capabilities allow. This prevents multiple push-triggered semantic-sync runs and preserves one coherent GPT run. Preserve all existing registry keys. New surfaced writes include exact fingerprint.",
+    "atomic_commit_rule": "Persist source registries, actual activity evidence and derived run health in one Git commit. Local writers hold a filesystem lock; registry mutations use a recoverable journal and snapshot compare before commit. Preserve all historical keys. Surfaced writes include exact fingerprint.",
     "post_write_verification": "After persistence, verify the resulting semantic-sync workflow and re-read job_watch_healthcheck.json. Do not report completion until repository evidence confirms the write and healthcheck.",
     "delta_patch_file": "daily_updates.json",
-    "delta_patch_rule": "ChatGPT can write only changed records and current snapshot token to daily_updates.json. job_watch.py sync validates and merges these into the existing decision/surface/user registries and manifest, preserving all untouched history, then removes the consumed patch. Never set completion flags before doing the actual work."
+    "delta_patch_rule": "ChatGPT submits changed records and exact snapshot token to daily_updates.json. Sync merges valid semantic/surfaced/user rows and actual activity evidence atomically, preserving all history. Invalid rows are quarantined, stale-snapshot patches are retained for reload. Completion flags are never inputs."
   },
   "protected_categories_policy": {
     "enabled": true,
@@ -559,25 +559,23 @@
     "enabled": true,
     "manifest_file": "job_watch_run_state.json",
     "healthcheck_file": "job_watch_healthcheck.json",
-    "source_snapshot_rule": "The GPT run manifest must match current_jobs_jw1..jw4 generated_at exactly. JW2 must also match amazon_target_check.json checked_at.",
+    "activity_file": "daily_activity.json",
+    "require_current_day": true,
+    "source_snapshot_rule": "Content hashes, source timestamps and rules hash determine run identity. Derive run state automatically; never submit manual completion flags.",
     "required_per_batch": [
-      "semantic_delta_complete=true only after all actionable NEW/UPDATED/AUTONOMOUS_DELTA items are decided",
-      "autonomous_search_complete=true only after independent autonomous research has actually been executed for the batch",
-      "autonomous_search_evidence must be a non-empty list recording the searches/sources actually checked in that batch",
-      "priority_check_complete=true for JW1/Mastercard and JW2/Amazon; JW3/JW4 use true as not-applicable completion",
-      "JW1/JW2 priority_check_evidence must be a non-empty list tied to the official priority-company verification performed in the run",
-      "autonomous_delta_count must equal autonomous_validated_count after first-party validation/reconciliation",
-      "errors must be empty"
+      "Official inventory/state and semantic queue reconcile",
+      "Every actionable current fingerprint is decided and required reporting is persisted",
+      "Actual autonomous search evidence is bound to this snapshot and discovered keys exist in official inventories",
+      "JW1/Mastercard and JW2/Amazon have VERIFIED or PARTIAL priority collection; PARTIAL produces warnings",
+      "NOT_CHECKED sources require collection; attempted FAILED sources are scoped warnings with UNKNOWN lifecycle"
     ],
     "overall_required": [
-      "run_id and completed_at are present",
-      "blocking_errors is empty",
-      "priority_checks.Mastercard=true",
-      "priority_checks.Amazon=true",
-      "priority_snapshot_at.Amazon matches amazon_target_check.checked_at",
-      "job_watch_healthcheck.json DAILY_COMPLETE=true after semantic sync"
+      "No GLOBAL_FATAL_ERROR",
+      "No outstanding functional daily task; historical backlog alone does not block DAILY_COMPLETE",
+      "Read persisted final health after sync, never infer completion from a green collector Action"
     ],
-    "reporting_rule": "Never state DAILY_COMPLETE from assistant memory, collector success, or audit text alone. Read the persisted healthcheck generated after the GPT persistence/sync cycle."
+    "failure_policy": "Local record and source errors degrade coverage; BATCH_ERROR blocks only the affected batch and lists a recovery action. VERIFIED absence alone can close a vacancy. Unknown/unresolved roles preserve user choices.",
+    "reporting_rule": "DAILY_COMPLETE is computed only by certify_job_watch.py from current data and actual evidence. FULL_SEMANTIC_COMPLETE also requires zero historical semantic pending and reconciled full reporting."
   },
   "github_connector_read_policy": {
     "large_file_rule": "A connector response with content='' is not evidence that a repository file is empty. Check repository metadata size/SHA and use blob reads or line-range reads for large files before diagnosing corruption.",
