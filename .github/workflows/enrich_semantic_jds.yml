@@ -11,21 +11,21 @@ permissions:
   contents: write
 
 concurrency:
-  group: enrich-semantic-jds
-  cancel-in-progress: true
+  group: job-watch-state-writer
+  cancel-in-progress: false
 
 jobs:
   enrich:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install runtime
-        run: pip install requests
+        run: pip install requests==2.32.5
       - name: Fetch official JD details
         run: python enrich_semantic_jds.py
       - name: Publish JD cache safely

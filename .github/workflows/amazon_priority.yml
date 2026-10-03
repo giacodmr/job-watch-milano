@@ -22,23 +22,23 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
       - name: Install dependency
-        run: python -m pip install --disable-pip-version-check requests
+        run: python -m pip install --disable-pip-version-check requests==2.32.5
 
-      - name: Syntax check
+      - name: Syntax and guardrail tests
         run: |
-          python -m py_compile amazon_target_check.py
-          python -m py_compile sync_analysis_state.py
-          python -m py_compile audit_job_watch.py
-          python -m py_compile validate_job_watch_state.py
-          python -m py_compile validate_job_watch_inputs.py
+          python -m py_compile amazon_target_check.py sync_analysis_state.py audit_job_watch.py harden_job_watch_state.py certify_job_watch.py
+          python -m py_compile validate_job_watch_state.py validate_job_watch_inputs.py validate_certified_run.py
+          python -m unittest -q test_job_watch_guardrails.py
 
       - name: Validate persistent inputs
         run: python validate_job_watch_inputs.py
@@ -49,8 +49,11 @@ jobs:
       - name: Sync Amazon changes into semantic state
         run: |
           python sync_analysis_state.py
+          python harden_job_watch_state.py
           python audit_job_watch.py
+          python certify_job_watch.py
           python validate_job_watch_state.py
+          python validate_certified_run.py
 
       - name: Validate target-city coverage
         run: |
@@ -65,10 +68,7 @@ jobs:
               if x.get("coverage") != "VERIFIED":
                   failed.append(f"{city}: coverage={x.get('coverage')}")
               if int(x.get("inventory_count", -1)) != int(x.get("api_reported_hits_sum", -2)):
-                  failed.append(
-                      f"{city}: inventory_count={x.get('inventory_count')} "
-                      f"api_reported_hits_sum={x.get('api_reported_hits_sum')}"
-                  )
+                  failed.append(f"{city}: inventory_count={x.get('inventory_count')} api_reported_hits_sum={x.get('api_reported_hits_sum')}")
           if failed:
               raise SystemExit("AMAZON PRIORITY INCOMPLETE\n" + "\n".join(failed))
           print("Amazon Milan/Rome/Luxembourg/London official inventories fully reconciled.")
@@ -86,8 +86,11 @@ jobs:
             echo "Regenerating Amazon priority and derived state on latest main..."
             python amazon_target_check.py
             python sync_analysis_state.py
+            python harden_job_watch_state.py
             python audit_job_watch.py
+            python certify_job_watch.py
             python validate_job_watch_state.py
+            python validate_certified_run.py
           }
 
           for attempt in 1 2 3; do
