@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Recover target-geography Workday roles whose locationsText is too coarse.
+"""Recover target-geography Workday roles that the normal inventory can miss.
 
-Some official Workday inventories expose a country-only locationsText (for
-example `Italy`) while the canonical externalPath still contains an explicit,
-official location segment such as `/job/Milan/...`. The base collector filters
-on locationsText, so those roles can otherwise disappear despite remaining
-open on the official ATS.
+Two conservative recovery paths are supported:
+1. explicit target-city segments in Workday ``externalPath`` when
+   ``locationsText`` is too coarse;
+2. targeted Workday searches for persisted TO_REVIEW / INTERESTED / APPLIED
+   decisions that are absent from the current snapshot.
 
-This reconciliation is intentionally conservative: it only trusts explicit
-Workday path segments for Milan/Milano, Rome/Roma, or UK London and currently
-runs only for companies listed in PATH_LOCATION_COMPANIES. It enumerates the
-same official Workday CXS inventory to exhaustion and never upgrades coverage
-without exact total reconciliation.
+The second path is important for jobs that remain reachable on the official
+Workday site but disappear from the blank-search inventory. Recovery is always
+performed against the official Workday CXS endpoint and requires an exact
+source-id match plus a target-geography check. A user decision is never deleted
+or silently closed merely because the broad inventory omitted the job.
 """
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ from collector import (
     MAX_PAGES,
     OPEN_STATUSES,
     compact_job,
+    location_matches,
     metadata_fingerprint,
     post_json,
     workday_config,
@@ -33,6 +34,7 @@ from collector import (
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 PATH_LOCATION_COMPANIES = {"Euronext"}
+ACTIVE_USER_DECISIONS = {"TO_REVIEW", "INTERESTED", "APPLIED"}
 
 
 def read_json(name: str, default=None):
@@ -108,14 +110,39 @@ def enumerate_workday(company: dict) -> tuple[list[dict], str, str, str]:
     return rows, host, site, search_url
 
 
-def candidate_from_raw(company_name: str, raw: dict, host: str, site: str) -> dict | None:
+def targeted_workday_search(company: dict, search_text: str) -> tuple[list[dict], str, str, str]:
+    """Search the official Workday endpoint for one persisted source id.
+
+    Workday can omit a live role from an empty-search inventory while returning
+    it for an explicit requisition-id search. We intentionally do not trust a
+    fuzzy match: callers must still compare the exact canonical source id.
+    """
+    host, tenant, site = workday_config(company)
+    search_url = f"https://{host}/wday/cxs/{tenant}/{site}/jobs"
+    referer = f"https://{host}/{site}"
+    data = post_json(
+        search_url,
+        {"appliedFacets": {}, "limit": 20, "offset": 0, "searchText": str(search_text)},
+        headers={"Accept": "application/json", "Referer": referer, "Origin": f"https://{host}"},
+    )
+    page = data.get("jobPostings")
+    if not isinstance(page, list):
+        raise RuntimeError("Unexpected Workday CXS response during targeted decision reconciliation")
+    return page, host, site, search_url
+
+
+def candidate_from_raw(company_name: str, raw: dict, host: str, site: str, *, allow_metadata_location: bool = False) -> dict | None:
     external_path = str(raw.get("externalPath") or "").strip()
     path_location = safe_path_location(external_path)
-    if not path_location:
+    raw_location = str(raw.get("locationsText") or "").strip()
+
+    if path_location:
+        location = path_location if not raw_location else f"{path_location} | {raw_location}"
+    elif allow_metadata_location and location_matches(raw_location, company_name):
+        location = raw_location
+    else:
         return None
 
-    raw_location = str(raw.get("locationsText") or "").strip()
-    location = path_location if not raw_location else f"{path_location} | {raw_location}"
     canonical = f"https://{host}/{site}{external_path}"
     bullet_fields = raw.get("bulletFields") or []
     employment = None
@@ -141,6 +168,75 @@ def candidate_from_raw(company_name: str, raw: dict, host: str, site: str) -> di
     return job
 
 
+def upsert_recovered(jobs: list[dict], candidate: dict, *, persisted_decision: bool = False) -> bool:
+    sid = str(candidate.get("source_id"))
+    curl = str(candidate.get("canonical_url") or "").rstrip("/").casefold()
+    existing = next((j for j in jobs if str(j.get("source_id")) == sid), None)
+    if existing is None and curl:
+        existing = next(
+            (j for j in jobs if str(j.get("canonical_url") or "").rstrip("/").casefold() == curl),
+            None,
+        )
+
+    if existing and existing.get("status") in OPEN_STATUSES:
+        return False
+
+    if existing:
+        old_fp = existing.get("fingerprint")
+        candidate["status"] = "STILL_OPEN" if old_fp == candidate.get("fingerprint") else "UPDATED"
+        jobs[jobs.index(existing)] = candidate
+    else:
+        # A persisted user decision proves that this is not conceptually a new
+        # discovery for the user even if it is newly recovered by the collector.
+        candidate["status"] = "STILL_OPEN" if persisted_decision else "NEW"
+        jobs.append(candidate)
+    return True
+
+
+def active_decisions_for_company(company_name: str) -> list[tuple[str, dict]]:
+    decisions = (read_json("user_job_decisions.json", {"records": {}}) or {}).get("records") or {}
+    prefix = f"{company_name}::"
+    out = []
+    for job_key, row in decisions.items():
+        if not job_key.startswith(prefix) or (row or {}).get("decision") not in ACTIVE_USER_DECISIONS:
+            continue
+        out.append((job_key[len(prefix):], row or {}))
+    return out
+
+
+def reconcile_persisted_decisions(company_name: str, mapped: dict, jobs: list[dict]) -> int:
+    """Recover active user decisions that vanished from the broad Workday inventory."""
+    recovered = 0
+    open_ids = {str(j.get("source_id")) for j in jobs if j.get("status") in OPEN_STATUSES}
+    for source_id, decision in active_decisions_for_company(company_name):
+        if source_id in open_ids:
+            continue
+        rows, host, site, _ = targeted_workday_search(mapped, source_id)
+        exact = []
+        for raw in rows:
+            external_path = str(raw.get("externalPath") or "").strip()
+            actual_id = str(workday_source_id(raw, external_path))
+            if actual_id == source_id or source_id.casefold() in external_path.casefold():
+                exact.append(raw)
+        if len(exact) != 1:
+            if len(exact) > 1:
+                raise RuntimeError(f"{company_name}::{source_id}: targeted Workday search returned multiple exact matches")
+            print(f"Targeted Workday decision search did not find {company_name}::{source_id}")
+            continue
+
+        candidate = candidate_from_raw(company_name, exact[0], host, site, allow_metadata_location=True)
+        if candidate is None:
+            raise RuntimeError(f"{company_name}::{source_id}: exact targeted Workday match is outside target geography")
+        if upsert_recovered(jobs, candidate, persisted_decision=True):
+            recovered += 1
+            open_ids.add(source_id)
+            print(
+                f"Recovered persisted Workday decision: {company_name}::{source_id} | "
+                f"{candidate.get('title')} | decision={decision.get('decision')}"
+            )
+    return recovered
+
+
 def reconcile_batch(batch: str) -> int:
     current_name = f"current_jobs_{batch}.json"
     mapping_name = f"ats_mapping_{batch}.json"
@@ -151,53 +247,35 @@ def reconcile_batch(batch: str) -> int:
     changed = 0
     for company_row in current.get("companies", []):
         company_name = company_row.get("company")
-        if company_name not in PATH_LOCATION_COMPANIES:
-            continue
         mapped = mapping_by_company.get(company_name)
         if not mapped:
-            raise RuntimeError(f"{batch.upper()} {company_name}: ATS mapping missing")
+            continue
         family = str(((mapped.get("ats") or {}).get("family") or "")).casefold()
         if "workday" not in family:
-            raise RuntimeError(f"{batch.upper()} {company_name}: expected Workday mapping, got {family!r}")
+            continue
 
-        rows, host, site, search_url = enumerate_workday(mapped)
         jobs = list(company_row.get("jobs") or [])
-        by_source = {str(j.get("source_id")): j for j in jobs if j.get("source_id") is not None}
-        by_url = {
-            str(j.get("canonical_url") or "").rstrip("/").casefold(): j
-            for j in jobs
-            if j.get("canonical_url")
-        }
 
-        for raw in rows:
-            candidate = candidate_from_raw(company_name, raw, host, site)
-            if not candidate:
-                continue
-            sid = str(candidate.get("source_id"))
-            curl = str(candidate.get("canonical_url") or "").rstrip("/").casefold()
-            existing = by_source.get(sid) or by_url.get(curl)
+        if company_name in PATH_LOCATION_COMPANIES:
+            rows, host, site, search_url = enumerate_workday(mapped)
+            for raw in rows:
+                candidate = candidate_from_raw(company_name, raw, host, site)
+                if candidate and upsert_recovered(jobs, candidate):
+                    changed += 1
+                    print(
+                        f"{batch.upper()} recovered Workday path-target role: "
+                        f"{company_name}::{candidate.get('source_id')} | {candidate.get('title')}"
+                    )
+            company_row["path_location_reconciled"] = True
+            company_row["path_location_source_url"] = search_url
 
-            # The normal collector already captured it; no reconciliation needed.
-            if existing and existing.get("status") in OPEN_STATUSES:
-                continue
-
-            if existing:
-                old_fp = existing.get("fingerprint")
-                candidate["status"] = "STILL_OPEN" if old_fp == candidate.get("fingerprint") else "UPDATED"
-                idx = jobs.index(existing)
-                jobs[idx] = candidate
-            else:
-                candidate["status"] = "NEW"
-                jobs.append(candidate)
-            by_source[sid] = candidate
-            by_url[curl] = candidate
-            changed += 1
-            print(f"{batch.upper()} recovered Workday path-target role: {company_name}::{sid} | {candidate.get('title')}")
+        targeted = reconcile_persisted_decisions(company_name, mapped, jobs)
+        changed += targeted
+        if targeted:
+            company_row["active_decision_reconciled"] = True
 
         company_row["jobs"] = jobs
         company_row["target_jobs_count"] = sum(1 for j in jobs if j.get("status") in OPEN_STATUSES)
-        company_row["path_location_reconciled"] = True
-        company_row["path_location_source_url"] = search_url
 
     if changed:
         all_jobs = [job for company in current.get("companies", []) for job in (company.get("jobs") or [])]
@@ -208,6 +286,7 @@ def reconcile_batch(batch: str) -> int:
         current["workday_path_reconciliation"] = {
             "companies": sorted(PATH_LOCATION_COMPANIES),
             "recovered_count": changed,
+            "active_decision_targeted_search": True,
         }
         write_json(current_name, current)
     return changed
@@ -217,7 +296,7 @@ def main() -> int:
     total = 0
     for batch in BATCHES:
         total += reconcile_batch(batch)
-    print(f"Workday target-path reconciliation complete: recovered={total}")
+    print(f"Workday target-path/decision reconciliation complete: recovered={total}")
     return 0
 
 
