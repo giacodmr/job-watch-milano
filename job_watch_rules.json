@@ -1,6 +1,6 @@
 {
-  "version": "1.7",
-  "updated": "2026-10-01",
+  "version": "1.8",
+  "updated": "2026-10-03",
   "locations": {
     "primary": [
       "Milan",
@@ -102,8 +102,8 @@
     "luxembourg": 80
   },
   "analysis_policy": {
-    "score_all_extracted_target_geography_vacancies": true,
-    "preliminary_title_keyword_filter": false,
+    "score_all_extracted_target_geography_vacancies": false,
+    "preliminary_title_keyword_filter": true,
     "read_full_jd_for_plausibly_relevant_roles": true,
     "distinguish_must_have_from_preferred": true,
     "semantic_fit_not_keyword_only": true,
@@ -123,7 +123,8 @@
       "scope": "Clearly unrelated title-specialist roles only; applies to all batches. Priority Amazon/Mastercard and protected-category vacancies remain JD-gated unless M&A-title exclusion applies.",
       "exceptions": "Do not exclude generic Manager, Senior, Lead, Sales, Business Development, Consulting, Analyst, Strategy, Category or Product titles by those words alone.",
       "historical_origin": "Reviewed pending queues on 2026-10-01; preserve user decisions and history."
-    }
+    },
+    "deterministic_filter_policy": "Conservative existing negative title rules only; no positive whitelist; protected/priority JD guards remain except global M&A-title, internship and certain documented salary-cap/geography exclusions."
   },
   "salary_policy": {
     "importance": "high",
@@ -143,7 +144,8 @@
       "discover vacancies missed by primary ATS/mapping",
       "discover hidden-gem companies and roles"
     ],
-    "aggregators_are_discovery_only": true
+    "aggregators_are_discovery_only": true,
+    "daily_scope": "Lightweight targeted searches for recent official roles and hidden gems; record actual evidence per internal batch; persist validated roles in snapshots before semantic sync. Deep discovery/mapping and candidate promotion/pruning weekly."
   },
   "daily_output_policy": {
     "omit_known_unchanged_still_open": true,
@@ -213,33 +215,46 @@
   "semantic_analysis_execution": {
     "owner": "ChatGPT recurring JW task",
     "github_role": "enumerate inventory, preserve state, generate semantic queue and audit",
-    "chatgpt_role": "open/read full JD, map mandatory vs preferred requirements, assess real seniority and fit, persist decision",
+    "chatgpt_role": "Review only worklist entries with needs_semantic_review=true, using matching cached official JD; persist decisions and actual reporting history.",
     "decision_files": "semantic_decisions_jw1.json ... semantic_decisions_jw4.json",
     "queue_files": "semantic_queue_jw1.json ... semantic_queue_jw4.json",
     "surfaced_files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
-    "rule": "A run may not claim semantic completeness while semantic_queue contains pending records.",
+    "rule": "DAILY_COMPLETE requires no pending mandatory daily work. FULL_SEMANTIC_COMPLETE requires no pending historical queue records.",
     "mode": "two_stage",
     "title_metadata_rule": "ChatGPT may close a role from title/company/location/metadata only when it is clearly impossible to reach the fit threshold.",
     "full_jd_rule": "Any plausibly relevant role requires full official-JD mapping; business-compatible Manager/Senior/Lead always requires full-JD review and is never excluded by title.",
     "analysis_methods": [
       "chatgpt_semantic_title_metadata",
-      "chatgpt_semantic_full_jd"
-    ]
+      "chatgpt_semantic_full_jd",
+      "chatgpt_semantic_triage"
+    ],
+    "worklist_file": "daily_worklist.json",
+    "triage_fields": [
+      "fingerprint",
+      "analysis_status=ANALYZED",
+      "analysis_method=chatgpt_semantic_triage",
+      "decision=REJECT",
+      "reason=WRONG_FUNCTION|WRONG_LOCATION|PURE_SALES|TOO_TECHNICAL",
+      "rationale",
+      "analyzed_at"
+    ],
+    "triage_rule": "Obvious title/metadata rejection only; never use for Manager/Senior/Lead/Head/Director, priority-company or protected-category ambiguity. Full review retains all existing JD fields."
   },
   "surface_registry_policy": {
     "files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
     "key": "job_key",
     "required_fields": [
       "surfaced_at",
-      "surfaced_status"
+      "surfaced_status",
+      "fingerprint (for new reporting writes)"
     ],
     "preserve_history": true,
     "standard_roles": "Do not repeat unchanged STILL_OPEN roles after they have been surfaced; re-surface only NEW, materially UPDATED, newly reportable, or explicitly requested.",
-    "priority_roles": "Amazon in JW2 and Mastercard in JW1 are re-surfaced every daily run while open and in scope.",
+    "priority_roles": "Reuse valid decisions; report NEW/UPDATED/newly reportable priority roles and concise counts. No repeated unchanged inventory.",
     "write_order": "Persist semantic decision first; write surfaced history only for roles actually included in the user-visible output; then re-run/sync state when possible."
   },
   "partial_remediation_policy": {
-    "required_every_run": true,
+    "required_every_run": false,
     "priority": [
       "FAILED or NOT_CHECKED first",
       "mapping level FULL but current coverage PARTIAL",
@@ -248,7 +263,8 @@
     "method": "Attempt a safer structured/public ATS endpoint, pagination contract, count reconciliation or official first-party inventory parser. Never upgrade coverage merely by changing a label.",
     "verified_rule": "Promote to VERIFIED only when the current run can exhaust and reconcile the official inventory.",
     "non_blocking": true,
-    "logging": "Keep unresolved portals PARTIAL with the concrete technical reason so the next run can retry or remap them."
+    "logging": "Keep unresolved portals PARTIAL with the concrete technical reason so the next run can retry or remap them.",
+    "cadence": "Weekly maintenance; Amazon/Mastercard and FULL-mapped PARTIAL sources first. Daily collection still attempts every source and reports real coverage."
   },
   "daily_semantic_completion_policy": {
     "objective": "A daily Job Watch run must fully process the current actionable delta without being blocked by the historical semantic backlog.",
@@ -303,7 +319,8 @@
       "primarily technical specialist roles",
       "compensation/career value is clearly below current targets",
       "official source cannot be validated"
-    ]
+    ],
+    "cadence": "Weekly; discovery_candidates.json is a manual staging registry consumed by ChatGPT, not an automatic collector."
   },
   "reporting_efficiency_policy": {
     "one_daily_report": true,
@@ -318,8 +335,10 @@
     "reason": "Avoid triggering one sync workflow per vacancy or per file and reduce GitHub Actions churn/race opportunities.",
     "exception": "If a critical write must be persisted before continuing, write it immediately; otherwise batch.",
     "atomic_commit_preferred": true,
-    "atomic_commit_rule": "Persist semantic_decisions, surfaced history, and job_watch_run_state for all affected JW modules in one Git commit via Git data/tree operations when connector capabilities allow. This prevents multiple push-triggered semantic-sync runs and preserves one coherent GPT run.",
-    "post_write_verification": "After persistence, verify the resulting semantic-sync workflow and re-read job_watch_healthcheck.json. Do not report completion until repository evidence confirms the write and healthcheck."
+    "atomic_commit_rule": "Persist semantic_decisions, surfaced history, and job_watch_run_state for all affected JW modules in one Git commit via Git data/tree operations when connector capabilities allow. This prevents multiple push-triggered semantic-sync runs and preserves one coherent GPT run. Preserve all existing registry keys. New surfaced writes include exact fingerprint.",
+    "post_write_verification": "After persistence, verify the resulting semantic-sync workflow and re-read job_watch_healthcheck.json. Do not report completion until repository evidence confirms the write and healthcheck.",
+    "delta_patch_file": "daily_updates.json",
+    "delta_patch_rule": "ChatGPT can write only changed records and current snapshot token to daily_updates.json. job_watch.py sync validates and merges these into the existing decision/surface/user registries and manifest, preserving all untouched history, then removes the consumed patch. Never set completion flags before doing the actual work."
   },
   "protected_categories_policy": {
     "enabled": true,
@@ -579,7 +598,6 @@
       "APPLIED vacancies are excluded from the apply-now list but remain monitored for closure/update.",
       "NOT_INTERESTED vacancies are suppressed from normal user-facing reports while retaining history.",
       "Never generalize one vacancy decision into a company-wide, role-family or keyword exclusion without explicit user instruction.",
-      "Any vacancy first seen on or after never_disappear_since that is still unreviewed and never surfaced remains daily-actionable even if its lifecycle rolls to STILL_OPEN. Older pending rows are handled by backlog rescue without blocking daily completion.",
       "User explicitly instructed that every vacancy with M&A in the job title must be automatically excluded in all four batches irrespective of employer; M&A mentioned only in the job description does not trigger the rule."
     ],
     "morning_output": [
@@ -589,6 +607,27 @@
       "AUTONOMOUS_DELTA",
       "APPLIED_UPDATES"
     ],
-    "never_disappear_since": "2026-09-21T11:25:00Z"
+    "rejection_reasons": [
+      "DOMAIN_GAP",
+      "FIXED_TERM",
+      "OTHER",
+      "PURE_SALES",
+      "SALARY_TOO_LOW",
+      "TOO_SENIOR",
+      "TOO_TECHNICAL",
+      "WRONG_FUNCTION",
+      "WRONG_LOCATION"
+    ],
+    "rejection_reason_rule": "For a new NOT_INTERESTED decision, capture the explicit reason and simple rejection_reason category. Infer the category from a clear user explanation. If the user only says scarta/no/togli/non mi interessa, ask the reason using clickable options where supported, otherwise a compact list. Do not invent a reason or infer new hard rules. Legacy reasons remain unchanged; missing historical categories may stay null."
+  },
+  "excluded_companies": [
+    "ION Group"
+  ],
+  "daily_worklist_policy": {
+    "file": "daily_worklist.json",
+    "backlog_limit": 20,
+    "delta_rule": "Pending NEW/materially UPDATED items survive lifecycle rollover until decided and reporting reconciled. Unchanged valid decisions are reused.",
+    "backlog_rule": "Pre-existing unassigned pending rows are historical backlog; select at most 20 per stable snapshot after the daily delta. Priority pending and explicit TO_REVIEW/INTERESTED remain daily.",
+    "snapshot_rule": "Before atomic persistence compare source_generated_at, priority_snapshot_at, run_id and rules_sha256 to the worklist snapshot. Abort/rebase if changed; never certify stale results."
   }
 }

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from daily_worklist import action_reason
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,6 +23,9 @@ def read_json(path: Path, default):
 
 
 def write_json(path: Path, obj) -> None:
+    old = read_json(path, {})
+    if {k: v for k, v in old.items() if k != "generated_at"} == {k: v for k, v in obj.items() if k != "generated_at"}:
+        return
     with path.open("w", encoding="utf-8") as f:
         json.dump(obj, f, ensure_ascii=False, indent=2)
         f.write("\n")
@@ -176,27 +180,7 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     base_inventory_reconciliation = summary_target == len(base_keys)
     state_reconciliation = extracted_open == len(open_records)
 
-    actionable_delta = [
-        r for r in open_records
-        if (
-            (
-                r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
-                and (
-                    r.get("current_status") in {"NEW", "UPDATED"}
-                    or r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
-                    or (
-                        r.get("needs_analysis")
-                        and not r.get("surfaced_at")
-                        and iso_at_or_after(r.get("first_seen_at"), never_disappear_since)
-                    )
-                )
-            )
-            or (
-                r.get("user_decision") == "APPLIED"
-                and r.get("applied_material_update") is True
-            )
-        )
-    ]
+    actionable_delta = [r for r in open_records if action_reason(r)]
     actionable_pending = [r for r in actionable_delta if r.get("needs_analysis")]
     actionable_analyzed = [
         r for r in actionable_delta
@@ -206,6 +190,7 @@ def audit_batch(batch: str, run_state: dict) -> dict:
         r for r in actionable_analyzed
         if (
             r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
+            or r.get("applied_material_update") is True
             or (
                 r.get("reportable") is True
                 and r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
@@ -216,7 +201,9 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             )
         )
     ]
-    actionable_surfaced = [r for r in actionable_reportable if r.get("surfaced_at")]
+    actionable_surfaced = [r for r in actionable_reportable if r.get("surfaced_at") and (
+        not (r.get("delta_pending") or r.get("applied_material_update")) or r.get("surfaced_fingerprint") == r.get("fingerprint")
+    )]
 
     analysis_complete = len(analyzed) == extracted_open and not pending
     reporting_reconciliation = len(reportable) == len(surfaced) if analysis_complete else False
@@ -370,39 +357,6 @@ def main() -> int:
         "batches": batches,
     }
     write_json(ROOT / "job_watch_audit.json", payload)
-
-    overall = bool(
-        not (run_state.get("blocking_errors") or [])
-        and all(row.get("daily_complete") is True for row in batches.values())
-    )
-    health = {
-        "version": "1.0",
-        "generated_at": payload["generated_at"],
-        "run_id": run_state.get("run_id"),
-        "DAILY_COMPLETE": overall,
-        "FULL_SEMANTIC_COMPLETE": all(row.get("full_semantic_complete") is True for row in batches.values()),
-        "priority_checks": run_state.get("priority_checks") or {},
-        "batches": {
-            name: {
-                "source_generated_at": row.get("source_generated_at"),
-                "daily_complete": row.get("daily_complete"),
-                "full_semantic_complete": row.get("full_semantic_complete"),
-                "gpt_run_certified": (row.get("run_certification") or {}).get("complete"),
-                "actionable_delta_pending": (row.get("vacancy_analysis_coverage") or {}).get("actionable_delta_pending"),
-                "historical_backlog_remaining": (row.get("vacancy_analysis_coverage") or {}).get("historical_backlog_remaining"),
-                "applied_material_updates_pending": (row.get("vacancy_analysis_coverage") or {}).get("applied_material_updates_pending"),
-                "failed": (row.get("company_ats_coverage") or {}).get("FAILED"),
-                "not_checked": (row.get("company_ats_coverage") or {}).get("NOT_CHECKED"),
-            }
-            for name, row in batches.items()
-        },
-        "blocking_errors": list(run_state.get("blocking_errors") or []) + [
-            f"{name}: end-to-end run incomplete"
-            for name, row in batches.items()
-            if row.get("daily_complete") is not True
-        ],
-    }
-    write_json(ROOT / "job_watch_healthcheck.json", health)
 
     for name, row in batches.items():
         v = row["vacancy_analysis_coverage"]

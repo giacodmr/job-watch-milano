@@ -1116,7 +1116,7 @@ def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tup
         if not k.startswith(f"{name}::"):
             continue
         sid = str(old.get("source_id"))
-        if sid in ids or old.get("status") not in OPEN_STATUSES:
+        if sid in ids or old.get("status") not in OPEN_STATUSES | {"UNKNOWN"}:
             continue
         x = dict(old)
         # Strip heavy v1.2-only payload when carrying a closed/unknown historical row.
@@ -1158,7 +1158,8 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     if not mapping:
         raise CollectorError(f"Missing {mp.name}")
 
-    companies = mapping.get("companies") or []
+    excluded = set((read_json(ROOT / "job_watch_rules.json", {}) or {}).get("excluded_companies", []))
+    companies = [c for c in mapping.get("companies", []) if c.get("company") not in excluded]
     prev = previous_index(out)
     raw_results: list[tuple[dict, bool] | None] = [None] * len(companies)
 
@@ -1235,7 +1236,6 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
         "summary": summary,
         "companies": companies_out,
     }
-    write_json(out, payload)
     return payload
 
 
@@ -1674,7 +1674,6 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
         if value not in scope:
             scope.append(value)
     payload["collector_scope"] = scope
-    write_json(ROOT / f"current_jobs_{batch}.json", payload)
     return payload
 
 
@@ -2138,7 +2137,6 @@ _collect_batch_v14 = collect_batch
 def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload = _collect_batch_v14(batch, workers=workers)
     payload["version"] = "1.5"
-    write_json(ROOT / f"current_jobs_{batch}.json", payload)
     return payload
 
 # === JOB WATCH V1.5 SUCCESSFACTORS STRICT INVENTORY ===
@@ -2977,7 +2975,6 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     if YELLO_SCOPE_NAME not in scope:
         scope.append(YELLO_SCOPE_NAME)
     payload["collector_scope"] = scope
-    write_json(ROOT / f"current_jobs_{batch}.json", payload)
     return payload
 
 # === JOB WATCH V1.7 TARGET-COVERAGE + OFFICIAL PROBES ===

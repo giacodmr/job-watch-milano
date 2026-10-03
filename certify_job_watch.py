@@ -22,6 +22,9 @@ def load(name: str, default=None):
 
 
 def dump(name: str, payload) -> None:
+    old = load(name, {})
+    if {k: v for k, v in old.items() if k != "generated_at"} == {k: v for k, v in payload.items() if k != "generated_at"}:
+        return
     (ROOT / name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 

@@ -80,6 +80,12 @@ for b in BATCHES:
     qrecords=queue.get("records")
     if not isinstance(qrecords,list):
         raise SystemExit(f"INTEGRITY ERROR: {b} queue records missing")
+    expected_pending = {k for k, r in records.items() if r.get("current_open") and r.get("needs_analysis")}
+    actual_pending = {r.get("job_key") for r in qrecords}
+    if expected_pending != actual_pending or len(actual_pending) != len(qrecords):
+        raise SystemExit(f"INTEGRITY ERROR: {b} queue/state keys mismatch or duplicates")
+    if any(not r.get("fingerprint") or records[r["job_key"]].get("fingerprint") != r["fingerprint"] for r in qrecords):
+        raise SystemExit(f"INTEGRITY ERROR: {b} queue fingerprint mismatch")
     pending=int(queue.get("pending_count",len(qrecords)) or 0)
     if pending != len(qrecords):
         raise SystemExit(f"INTEGRITY ERROR: {b} queue count mismatch {pending}!={len(qrecords)}")
@@ -108,4 +114,15 @@ if health.get("DAILY_COMPLETE") is True:
     incomplete=[b for b,row in (health.get("batches") or {}).items() if row.get("daily_complete") is not True]
     if incomplete:
         raise SystemExit(f"INTEGRITY ERROR: healthcheck claims DAILY_COMPLETE with incomplete batches: {incomplete}")
+worklist = load("daily_worklist.json")
+manifest = load("job_watch_run_state.json")
+import hashlib
+expected_snapshot = {"run_id": manifest.get("run_id"), "source_generated_at": manifest.get("source_generated_at"),
+                     "priority_snapshot_at": manifest.get("priority_snapshot_at"),
+                     "rules_sha256": hashlib.sha256((ROOT / "job_watch_rules.json").read_bytes()).hexdigest()}
+if worklist.get("snapshot") != expected_snapshot:
+    raise SystemExit("INTEGRITY ERROR: stale daily worklist snapshot")
+from daily_worklist import build_worklist
+if worklist != build_worklist():
+    raise SystemExit("INTEGRITY ERROR: worklist does not match actionable state/cache")
 print("Job Watch integrity checks passed.")
