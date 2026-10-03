@@ -47,7 +47,7 @@
     "Airwallex::2c18484b-6cfd-4726-8055-2d90016028a6"
   ],
   "summary": {
-    "records": 96,
+    "records": 94,
     "daily_semantic_pending": 0,
     "backlog_assigned": 20,
     "historical_backlog_remaining": 736,
@@ -2236,7 +2236,7 @@
     {
       "batch": "JW4",
       "job_key": "H&M::744000152155999",
-      "action": "REPORT",
+      "action": "TO_REVIEW",
       "needs_semantic_review": false,
       "company": "H&M",
       "source_id": "744000152155999",
@@ -2247,6 +2247,8 @@
       "fingerprint": "f473018b22acfdb5",
       "current_status": "STILL_OPEN",
       "threshold": 80,
+      "user_decision": "TO_REVIEW",
+      "user_decision_reason": "Strong AI/product and business-facing fit; retain for explicit review despite London.",
       "user_decision_stale": false,
       "decision": {
         "fit_score": 87,
@@ -2257,34 +2259,6 @@
         "mandatory_years_experience": null,
         "preferred_years_experience": null,
         "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO"
-      }
-    },
-    {
-      "batch": "JW4",
-      "job_key": "IQVIA::/job/London-United-Kingdom/Supplier-Services-Analyst_R1564298-1",
-      "action": "REPORT",
-      "needs_semantic_review": false,
-      "company": "IQVIA",
-      "source_id": "/job/London-United-Kingdom/Supplier-Services-Analyst_R1564298-1",
-      "title": "Supplier Services Analyst",
-      "location": "London, United Kingdom",
-      "priority_company": false,
-      "canonical_url": "https://iqvia.wd1.myworkdayjobs.com/IQVIA/job/London-United-Kingdom/Supplier-Services-Analyst_R1564298-1",
-      "apply_url": "https://iqvia.wd1.myworkdayjobs.com/IQVIA/job/London-United-Kingdom/Supplier-Services-Analyst_R1564298-1",
-      "fingerprint": "e4ccbbb068771650",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "user_decision_stale": false,
-      "decision": {
-        "fit_score": 84,
-        "reportable": true,
-        "rationale": "Strong transfer from consulting analytics, Excel/PowerPoint, customer-facing work and KPI/reporting. Healthcare and BI depth are useful gaps but are preferred; the role stays within the target experience range.",
-        "salary": null,
-        "salary_source": null,
-        "mandatory_years_experience": null,
-        "preferred_years_experience": 4,
-        "final_experience_status": "TARGET_0_5",
         "l68_status": "NO"
       }
     },
@@ -2320,36 +2294,8 @@
     },
     {
       "batch": "JW4",
-      "job_key": "MSD::/job/ITA---Lazio---Roma/Demand---Supply-Chain-Planner-Specialist_R418782-1",
-      "action": "REPORT",
-      "needs_semantic_review": false,
-      "company": "MSD",
-      "source_id": "/job/ITA---Lazio---Roma/Demand---Supply-Chain-Planner-Specialist_R418782-1",
-      "title": "Demand & Supply Chain Planner Specialist",
-      "location": "ITA - Lazio - Roma",
-      "priority_company": false,
-      "canonical_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Demand---Supply-Chain-Planner-Specialist_R418782-1",
-      "apply_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lazio---Roma/Demand---Supply-Chain-Planner-Specialist_R418782-1",
-      "fingerprint": "703ff1d71e4a86bd",
-      "current_status": "STILL_OPEN",
-      "threshold": 70,
-      "user_decision_stale": false,
-      "decision": {
-        "fit_score": 86,
-        "reportable": true,
-        "rationale": "Strong fit on advanced Excel/Power Query, KPI analysis, cross-functional planning, dashboards and AI-enabled analytics. Main gap is direct demand/supply planning experience, but the role sits squarely within the target seniority.",
-        "salary": "EUR 41,200-70,000",
-        "salary_source": "MSD job posting",
-        "mandatory_years_experience": null,
-        "preferred_years_experience": 2,
-        "final_experience_status": "TARGET_0_5",
-        "l68_status": "NO"
-      }
-    },
-    {
-      "batch": "JW4",
       "job_key": "Prada Group::1434542933",
-      "action": "REPORT",
+      "action": "TO_REVIEW",
       "needs_semantic_review": false,
       "company": "Prada Group",
       "source_id": "1434542933",
@@ -2361,8 +2307,9 @@
       "fingerprint": "9b0821b3d3592ec8",
       "current_status": "STILL_OPEN",
       "threshold": 70,
-      "user_decision_reason": "User declined this vacancy.",
-      "user_decision_stale": true,
+      "user_decision": "TO_REVIEW",
+      "user_decision_reason": "Materially changed fingerprint invalidates the prior NOT_INTERESTED suppression; strong Milan retail business-analysis and FP&A fit merits fresh review.",
+      "user_decision_stale": false,
       "decision": {
         "fit_score": 91,
         "reportable": true,
