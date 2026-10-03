@@ -3,12 +3,9 @@
 import json
 import subprocess
 from pathlib import Path
-from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1","jw2","jw3","jw4")
-CORPORATE_LISTING_METHOD = "official_corporate_listing_contains_workday_link"
-CURRENT_INVENTORY_METHOD = "official_current_inventory_absence_or_presence"
 REQUIRED_CONFIG = (
     "job_watch_rules.json",
     "job_watch_batches.json",
@@ -16,7 +13,6 @@ REQUIRED_CONFIG = (
     "watchlist_additions.json",
     "discovery_candidates.json",
     "user_job_decisions.json",
-    "externally_validated_roles.json",
 )
 
 def load(name):
@@ -68,41 +64,6 @@ for key, value in user_decisions["records"].items():
             f"INPUT WARNING: user decision {key} lacks fingerprint; "
             "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the vacancy is reconciled."
         )
-
-external = load("externally_validated_roles.json")
-if not isinstance(external.get("records"), dict):
-    raise SystemExit("INPUT ERROR: externally_validated_roles.json records must be an object")
-for key, value in external["records"].items():
-    if not isinstance(key, str) or not isinstance(value, dict):
-        raise SystemExit("INPUT ERROR: invalid externally validated role record")
-    company = str(value.get("company") or "")
-    source_id = str(value.get("source_id") or "")
-    if key != f"{company}::{source_id}" or not company or not source_id:
-        raise SystemExit(f"INPUT ERROR: external role key mismatch for {key}")
-    url = str(value.get("canonical_url") or "")
-    parsed = urlparse(url)
-    if parsed.scheme != "https" or "myworkdayjobs.com" not in parsed.netloc.casefold() or "/job/" not in parsed.path:
-        raise SystemExit(f"INPUT ERROR: external role {key} lacks a valid official Workday job URL")
-    if source_id.casefold() not in parsed.path.casefold():
-        raise SystemExit(f"INPUT ERROR: external role {key} URL does not contain its source id")
-    if not value.get("title") or not value.get("location") or not value.get("validated_at"):
-        raise SystemExit(f"INPUT ERROR: external role {key} lacks title/location/validated_at")
-
-    method = value.get("validation_method")
-    if method == CORPORATE_LISTING_METHOD:
-        listing_url = str(value.get("official_listing_url") or "")
-        listing = urlparse(listing_url)
-        if listing.scheme != "https" or not listing.netloc:
-            raise SystemExit(f"INPUT ERROR: external role {key} lacks a valid HTTPS official_listing_url")
-        if "myworkdayjobs.com" in listing.netloc.casefold():
-            raise SystemExit(f"INPUT ERROR: external role {key} corporate listing must be independent of Workday")
-    elif method == CURRENT_INVENTORY_METHOD:
-        inventory_url = str(value.get("current_inventory_url") or "")
-        inventory = urlparse(inventory_url)
-        if inventory.scheme != "https" or (inventory.hostname or "").casefold().lstrip("www.") != "euronext.com":
-            raise SystemExit(f"INPUT ERROR: external role {key} current_inventory_url must be HTTPS euronext.com")
-    else:
-        raise SystemExit(f"INPUT ERROR: external role {key} uses unsupported validation_method {method!r}")
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
