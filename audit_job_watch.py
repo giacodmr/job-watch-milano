@@ -73,7 +73,6 @@ def priority_overlay_keys(batch: str, existing: set[str]) -> set[str]:
     return extra
 
 
-
 def run_certification(batch: str, current: dict, run_state: dict) -> dict:
     name = batch.upper()
     row = ((run_state.get("batches") or {}).get(name) or {})
@@ -117,6 +116,7 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
         and priority_global_ok
         and priority_snapshot_match
         and not batch_errors
+        and not global_errors
     )
     return {
         "run_id": run_state.get("run_id"),
@@ -137,6 +137,7 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
         "global_blocking_errors": global_errors,
         "complete": complete,
     }
+
 
 def audit_batch(batch: str, run_state: dict) -> dict:
     current = read_json(ROOT / f"current_jobs_{batch}.json", {})
@@ -160,10 +161,6 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     ]
     pending = [r for r in open_records if r.get("needs_analysis")]
 
-    # Priority-company jobs have their own exhaustive reporting rule: when the
-    # semantic decision marks them reportable they are included regardless of
-    # the normal Milan/Rome/London score threshold. Standard roles still need
-    # to clear the batch threshold.
     reportable = [
         r for r in analyzed
         if r.get("reportable") is True
@@ -178,27 +175,25 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     summary_target = (current.get("summary") or {}).get("target_jobs_open")
     base_inventory_reconciliation = summary_target == len(base_keys)
     state_reconciliation = extracted_open == len(open_records)
-    # Two different completeness concepts:
-    # - DAILY_COMPLETE: today's actionable delta is decided and any reportable
-    #   delta roles have surfaced history. Historical STILL_OPEN backlog does
-    #   not block a daily run.
-    # - FULL_SEMANTIC_COMPLETE: every currently open record is semantically
-    #   decided and every reportable record is surfaced.
-    # Daily actionable work includes normal NEW/UPDATED plus any explicit user-facing
-    # review item. This prevents an interesting vacancy from disappearing merely
-    # because it rolled from NEW to STILL_OPEN before semantic review/surfacing.
+
     actionable_delta = [
         r for r in open_records
         if (
-            r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
-            and (
-                r.get("current_status") in {"NEW", "UPDATED"}
-                or r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
-                or (
-                    r.get("needs_analysis")
-                    and not r.get("surfaced_at")
-                    and iso_at_or_after(r.get("first_seen_at"), never_disappear_since)
+            (
+                r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
+                and (
+                    r.get("current_status") in {"NEW", "UPDATED"}
+                    or r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
+                    or (
+                        r.get("needs_analysis")
+                        and not r.get("surfaced_at")
+                        and iso_at_or_after(r.get("first_seen_at"), never_disappear_since)
+                    )
                 )
+            )
+            or (
+                r.get("user_decision") == "APPLIED"
+                and r.get("applied_material_update") is True
             )
         )
     ]
@@ -290,6 +285,12 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             "historical_backlog_remaining": max(0, len(pending) - len(actionable_pending)),
             "explicit_user_review_open": sum(1 for r in open_records if r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}),
             "applied_open": sum(1 for r in open_records if r.get("user_decision") == "APPLIED"),
+            "applied_material_updates_pending": sum(
+                1 for r in open_records
+                if r.get("user_decision") == "APPLIED"
+                and r.get("applied_material_update") is True
+                and r.get("needs_analysis")
+            ),
             "not_interested_open": sum(1 for r in open_records if r.get("user_decision") == "NOT_INTERESTED"),
             "guarded_never_reviewed_open": sum(
                 1 for r in open_records
@@ -340,8 +341,6 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             and all_companies_attempted
             and not unresolved_attempts
         ),
-        # Backward-compatible alias: operational run completion now means
-        # DAILY_COMPLETE, not historical backlog exhaustion.
         "run_complete": bool(
             base_inventory_reconciliation
             and state_reconciliation
@@ -358,22 +357,24 @@ def main() -> int:
     run_state = read_json(ROOT / "job_watch_run_state.json", {})
     batches = {batch.upper(): audit_batch(batch, run_state) for batch in BATCHES}
     payload = {
-        "version": "1.4",
+        "version": "1.5",
         "generated_at": utc_now(),
         "definition": (
             "Inventory completeness is separate from semantic-analysis completeness. "
             "JW2 includes the Amazon priority inventory in analysis reconciliation. "
             "DAILY_COMPLETE requires official inventory/state reconciliation, complete semantic handling, "
-            "surfaced history, a current GPT run certification, mandatory autonomous search, and priority-company "
-            "checks for today's actionable delta. Explicit TO_REVIEW/INTERESTED vacancies remain actionable even after becoming STILL_OPEN. Historical STILL_OPEN backlog "
-            "is reported separately and does not block the daily run. FULL_SEMANTIC_COMPLETE additionally "
-            "requires zero pending historical records and full reporting reconciliation."
+            "surfaced history, a current GPT run certification, mandatory autonomous search, priority-company checks, "
+            "and zero global blocking errors. Explicit TO_REVIEW/INTERESTED vacancies and materially UPDATED APPLIED vacancies remain actionable. "
+            "Historical STILL_OPEN backlog is reported separately and does not block the daily run."
         ),
         "batches": batches,
     }
     write_json(ROOT / "job_watch_audit.json", payload)
 
-    overall = all(row.get("daily_complete") is True for row in batches.values())
+    overall = bool(
+        not (run_state.get("blocking_errors") or [])
+        and all(row.get("daily_complete") is True for row in batches.values())
+    )
     health = {
         "version": "1.0",
         "generated_at": payload["generated_at"],
@@ -389,6 +390,7 @@ def main() -> int:
                 "gpt_run_certified": (row.get("run_certification") or {}).get("complete"),
                 "actionable_delta_pending": (row.get("vacancy_analysis_coverage") or {}).get("actionable_delta_pending"),
                 "historical_backlog_remaining": (row.get("vacancy_analysis_coverage") or {}).get("historical_backlog_remaining"),
+                "applied_material_updates_pending": (row.get("vacancy_analysis_coverage") or {}).get("applied_material_updates_pending"),
                 "failed": (row.get("company_ats_coverage") or {}).get("FAILED"),
                 "not_checked": (row.get("company_ats_coverage") or {}).get("NOT_CHECKED"),
             }
