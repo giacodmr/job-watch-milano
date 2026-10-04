@@ -1,0 +1,406 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-10-04",
+  "purpose": "Operational ATS overlay for employer-first expansion without duplicating the large canonical ATS mapping files.",
+  "policy": {
+    "merge": "Append only. An overlay company must not already exist in the canonical ats_mapping_jw*.json for the same batch.",
+    "coverage_alias": "Do not create a second collector when the same official ATS inventory is already covered under the parent/group collector.",
+    "verification": "FULL only when a structured official inventory has a supported enumerator; PARTIAL for dynamic/custom official career sites where exhaustive enumeration is not yet certified."
+  },
+  "coverage_aliases": [
+    {
+      "company": "Telespazio",
+      "covered_by": "Leonardo",
+      "batch": "jw3",
+      "reason": "Telespazio vacancies are published through the Leonardo Workday career inventory; a separate Telespazio collector would duplicate and potentially relabel Leonardo-group jobs."
+    }
+  ],
+  "batches": {
+    "jw1": [
+      {
+        "company": "Fiserv",
+        "batch": "JW1",
+        "priority": "P1++",
+        "ats": {
+          "family": "Workday",
+          "tenant": "fiserv",
+          "career_site": "https://www.careers.fiserv.com/",
+          "inventory_url": "https://fiserv.wd5.myworkdayjobs.com/EXT",
+          "public_api_or_feed": "https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "workday_cxs_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Rome", "London"],
+          "pagination": "Workday CXS limit/offset with total reconciliation",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official Fiserv Workday EXT inventory to exhaustion and retain target-geography roles for semantic review.",
+          "fallback": "Use the official Fiserv careers site only to rediscover the canonical Workday board if the tenant/site changes."
+        },
+        "limitations": ["Some business roles are payments-domain specific; role fit must be decided from the full JD, not from title alone."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Worldpay",
+        "batch": "JW1",
+        "priority": "P1",
+        "ats": {
+          "family": "Workday",
+          "tenant": "worldpay",
+          "career_site": "https://jobs.worldpay.com/",
+          "inventory_url": "https://worldpay.wd5.myworkdayjobs.com/Worldpay_External_Careers_Site",
+          "public_api_or_feed": "https://worldpay.wd5.myworkdayjobs.com/wday/cxs/worldpay/Worldpay_External_Careers_Site/jobs"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "workday_cxs_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Rome", "London"],
+          "pagination": "Workday CXS limit/offset with total reconciliation",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official Worldpay Workday inventory to exhaustion and retain target-geography roles.",
+          "fallback": "Use Worldpay's official careers site to rediscover the Workday site if routing changes."
+        },
+        "limitations": ["Product/implementation roles can be vertical or technical; full-JD semantic screening remains required."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Telepass",
+        "batch": "JW1",
+        "priority": "P1",
+        "ats": {
+          "family": "SAP SuccessFactors",
+          "tenant": null,
+          "career_site": "https://careers.telepass.com/",
+          "inventory_url": "https://careers.telepass.com/",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "STRONG",
+          "method": "successfactors_jobs2web_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Rome"],
+          "pagination": "SuccessFactors Career Site Builder pagination/count reconciliation when exposed",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official Telepass SuccessFactors career site and reconcile displayed totals/pagination.",
+          "fallback": "If the board cannot be exhaustively enumerated, retain the official-source attempt as PARTIAL rather than substituting third-party boards."
+        },
+        "limitations": ["The exact SuccessFactors backend endpoint is intentionally not guessed; verification relies on the public official Career Site Builder inventory."],
+        "last_mapped": "2026-10-04"
+      }
+    ],
+    "jw2": [
+      {
+        "company": "Docebo",
+        "batch": "JW2",
+        "priority": "P1++",
+        "ats": {
+          "family": "Lever",
+          "tenant": "docebo",
+          "career_site": "https://www.docebo.com/company/careers/",
+          "inventory_url": "https://jobs.lever.co/docebo",
+          "public_api_or_feed": "https://api.lever.co/v0/postings/docebo"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "lever_api_inventory",
+          "location_filter_supported": true,
+          "locations": ["Milan", "Milano", "London"],
+          "pagination": "Lever API skip/limit to exhaustion",
+          "total_count_available": false,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official Docebo Lever board/API to exhaustion and retain target-geography roles.",
+          "fallback": "Use the official Docebo careers page to rediscover the Lever tenant."
+        },
+        "limitations": ["Brianza roles without Milan/Milano in the official location string remain outside the current Milan/Rome/London geographic matcher."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Experian",
+        "batch": "JW2",
+        "priority": "P1",
+        "ats": {
+          "family": "SmartRecruiters",
+          "tenant": "Experian",
+          "career_site": "https://careers.smartrecruiters.com/Experian/",
+          "inventory_url": "https://careers.smartrecruiters.com/Experian/",
+          "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/Experian/postings"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "smartrecruiters_api_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Rome", "London"],
+          "pagination": "SmartRecruiters company postings API pagination",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate Experian's official SmartRecruiters company inventory and retain target-geography roles.",
+          "fallback": "Use the public Experian SmartRecruiters career board to rediscover the company identifier."
+        },
+        "limitations": ["Commercial/sales-heavy roles still require semantic filtering; employer inclusion is driven by Product & Proposition and adjacent strategy families."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "DAZN",
+        "batch": "JW2",
+        "priority": "P1",
+        "ats": {
+          "family": "Pinpoint / custom career site",
+          "tenant": null,
+          "career_site": "https://careers.dazn.com/",
+          "inventory_url": "https://careers.dazn.com/en/all-jobs",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "PARTIAL",
+          "method": "official_career_site_dynamic",
+          "location_filter_supported": true,
+          "locations": ["Milan", "London"],
+          "pagination": "Dynamic official Pinpoint-powered board; exhaustive structured endpoint not yet mapped",
+          "total_count_available": false,
+          "full_inventory_possible": false
+        },
+        "job_watch_method": {
+          "primary": "Probe the official DAZN all-jobs inventory and capture stable official role links exposed by the page.",
+          "fallback": "Keep PARTIAL coverage and remediate the Pinpoint endpoint separately; do not replace official coverage with a third-party inventory."
+        },
+        "limitations": ["Collector has no dedicated Pinpoint adapter yet, so this source initially uses the official-source probe."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Spotify",
+        "batch": "JW2",
+        "priority": "P1_FUTURE",
+        "ats": {
+          "family": "Custom official careers",
+          "tenant": null,
+          "career_site": "https://www.lifeatspotify.com/",
+          "inventory_url": "https://www.lifeatspotify.com/jobs",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "PARTIAL",
+          "method": "official_career_site_dynamic",
+          "location_filter_supported": true,
+          "locations": ["Milan", "London"],
+          "pagination": "Dynamic official careers inventory; structured exhaustive endpoint not yet mapped",
+          "total_count_available": false,
+          "full_inventory_possible": false
+        },
+        "job_watch_method": {
+          "primary": "Probe Spotify's official jobs page and collect target-geography official job links exposed by the live inventory.",
+          "fallback": "Use official Life at Spotify location/job pages only; third-party postings are discovery evidence, not inventory truth."
+        },
+        "limitations": ["The current implementation cannot certify exhaustive enumeration of the custom Spotify jobs frontend."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Contentsquare",
+        "batch": "JW2",
+        "priority": "P1_FUTURE",
+        "ats": {
+          "family": "Lever",
+          "tenant": "contentsquare",
+          "career_site": "https://careers.contentsquare.com/",
+          "inventory_url": "https://jobs.lever.co/contentsquare",
+          "public_api_or_feed": "https://api.lever.co/v0/postings/contentsquare"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "lever_api_inventory",
+          "location_filter_supported": true,
+          "locations": ["Milan", "Milano", "London"],
+          "pagination": "Lever API skip/limit to exhaustion",
+          "total_count_available": false,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official Contentsquare Lever inventory to exhaustion and retain target-geography roles.",
+          "fallback": "Use Contentsquare's official careers site to rediscover the Lever tenant."
+        },
+        "limitations": [],
+        "last_mapped": "2026-10-04"
+      }
+    ],
+    "jw3": [
+      {
+        "company": "INWIT",
+        "batch": "JW3",
+        "priority": "P1++",
+        "ats": {
+          "family": "Oracle Recruiting Cloud / Oracle HCM",
+          "tenant": "CX_2001",
+          "career_site": "https://www.inwit.it/it/azienda/lavora-con-noi/",
+          "inventory_url": "https://fa-euqw-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/it/sites/CX_2001",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "STRONG",
+          "method": "oracle_candidate_experience_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Milano", "Rome", "Roma"],
+          "pagination": "Oracle Candidate Experience paged search with location facets",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official INWIT Oracle Candidate Experience site and retain Milan/Rome target roles.",
+          "fallback": "Use INWIT's official careers page to rediscover the Oracle Candidate Experience site if its host changes."
+        },
+        "limitations": ["The Oracle candidate site is on an Oracle Cloud host; keep the first-party INWIT careers page as the canonical rediscovery path."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "NHOA Energy",
+        "batch": "JW3",
+        "priority": "P1_FUTURE",
+        "ats": {
+          "family": "Custom official careers",
+          "tenant": null,
+          "career_site": "https://nhoa.energy/careers/",
+          "inventory_url": "https://nhoa.energy/careers/",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "PARTIAL",
+          "method": "official_career_site_dynamic",
+          "location_filter_supported": false,
+          "locations": ["Milan"],
+          "pagination": "Official careers page; exhaustive structured inventory endpoint not yet mapped",
+          "total_count_available": false,
+          "full_inventory_possible": false
+        },
+        "job_watch_method": {
+          "primary": "Probe NHOA Energy's official careers page and capture stable official vacancy links when exposed.",
+          "fallback": "Retain PARTIAL official-source coverage until the underlying ATS/feed is mapped."
+        },
+        "limitations": ["No exhaustive structured ATS/feed has yet been verified from the public careers frontend."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Cellnex Italia",
+        "batch": "JW3",
+        "priority": "P1_FUTURE",
+        "ats": {
+          "family": "Custom official careers",
+          "tenant": null,
+          "career_site": "https://www.cellnex.com/talent/job-opportunities/",
+          "inventory_url": "https://www.cellnex.com/talent/job-opportunities/",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "PARTIAL",
+          "method": "official_career_site_dynamic",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Rome", "Roma", "Milan", "Milano"],
+          "pagination": "Official job-opportunities frontend; exhaustive structured endpoint not yet mapped",
+          "total_count_available": false,
+          "full_inventory_possible": false
+        },
+        "job_watch_method": {
+          "primary": "Probe Cellnex's official job-opportunities page and retain target-geography official links.",
+          "fallback": "Retain PARTIAL coverage until the underlying structured inventory can be verified."
+        },
+        "limitations": ["The public page does not yet provide a mapped exhaustible backend to the current collector."],
+        "last_mapped": "2026-10-04"
+      }
+    ],
+    "jw4": [
+      {
+        "company": "Smith+Nephew",
+        "batch": "JW4",
+        "priority": "P1++",
+        "ats": {
+          "family": "Workday",
+          "tenant": "smithnephew",
+          "career_site": "https://www.smith-nephew.com/en/careers",
+          "inventory_url": "https://smithnephew.wd5.myworkdayjobs.com/External",
+          "public_api_or_feed": "https://smithnephew.wd5.myworkdayjobs.com/wday/cxs/smithnephew/External/jobs"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "workday_cxs_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Milano", "Rome", "London"],
+          "pagination": "Workday CXS limit/offset with total reconciliation",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate Smith+Nephew's official External Workday inventory to exhaustion and retain target-geography roles.",
+          "fallback": "Use the official corporate careers page to rediscover the Workday site."
+        },
+        "limitations": [],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Douglas Italia",
+        "batch": "JW4",
+        "priority": "P1",
+        "ats": {
+          "family": "SAP SuccessFactors",
+          "tenant": null,
+          "career_site": "https://careers.douglas.group/",
+          "inventory_url": "https://careers.douglas.group/",
+          "public_api_or_feed": null
+        },
+        "verification": {
+          "level": "PARTIAL",
+          "method": "successfactors_jobs2web_candidate",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Milano", "Rome", "Roma"],
+          "pagination": "Career Site Builder-style public pages; exhaustiveness to be certified by live collector",
+          "total_count_available": false,
+          "full_inventory_possible": false
+        },
+        "job_watch_method": {
+          "primary": "Attempt the official Douglas careers inventory with the SuccessFactors collector; fail closed to PARTIAL if exhaustive count reconciliation is not available.",
+          "fallback": "Use only official careers.douglas.group job pages for discovery."
+        },
+        "limitations": ["SuccessFactors is inferred from the public careers URL structure; the exact backend/feed has not been independently certified."],
+        "last_mapped": "2026-10-04"
+      },
+      {
+        "company": "Opella",
+        "batch": "JW4",
+        "priority": "P1",
+        "ats": {
+          "family": "Workday",
+          "tenant": "chloe",
+          "career_site": "https://www.opella.com/en/careers",
+          "inventory_url": "https://chloe.wd3.myworkdayjobs.com/OpellaCareers",
+          "public_api_or_feed": "https://chloe.wd3.myworkdayjobs.com/wday/cxs/chloe/OpellaCareers/jobs"
+        },
+        "verification": {
+          "level": "FULL",
+          "method": "workday_cxs_inventory",
+          "location_filter_supported": true,
+          "locations": ["Italy", "Milan", "Milano", "Rome", "London"],
+          "pagination": "Workday CXS limit/offset with total reconciliation",
+          "total_count_available": true,
+          "full_inventory_possible": true
+        },
+        "job_watch_method": {
+          "primary": "Enumerate the official Opella Workday inventory to exhaustion and retain target-geography roles.",
+          "fallback": "Use Opella's official careers page to rediscover the Workday site if routing changes."
+        },
+        "limitations": [],
+        "last_mapped": "2026-10-04"
+      }
+    ]
+  }
+}
