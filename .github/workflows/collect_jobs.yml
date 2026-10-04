@@ -139,7 +139,7 @@ jobs:
       - name: Prepare and publish current snapshot
         env:
           STAGE: ${{ inputs.stage || 'collect' }}
-        run: python job_watch.py "$STAGE" --publish
+        run: python job_watch_expansion.py "$STAGE" --publish
 
       - name: Publish readable health summary
         if: always()

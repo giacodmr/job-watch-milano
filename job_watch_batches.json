@@ -1,7 +1,14 @@
 {
-  "version": "1.1",
-  "updated": "2026-09-20",
+  "version": "1.2",
+  "updated": "2026-10-04",
   "design": "Four internal collection batches; one daily semantic/report pass.",
+  "coverage_aliases": {
+    "Telespazio": {
+      "batch": "JW3",
+      "covered_by": "Leonardo",
+      "reason": "Telespazio vacancies use the Leonardo Workday career inventory; keep one parent/group collector to prevent duplicate or relabeled jobs."
+    }
+  },
   "batches": {
     "JW1": {
       "name": "Finance, Payments, Banking & Insurance",
@@ -58,7 +65,10 @@
         "Chubb",
         "Swiss Re",
         "Munich Re",
-        "MetLife"
+        "MetLife",
+        "Fiserv",
+        "Worldpay",
+        "Telepass"
       ]
     },
     "JW2": {
@@ -111,7 +121,12 @@
         "Eight Sleep",
         "JD.COM / Joybuy",
         "zeb consulting",
-        "Kyndryl"
+        "Kyndryl",
+        "Docebo",
+        "Experian",
+        "DAZN",
+        "Spotify",
+        "Contentsquare"
       ]
     },
     "JW3": {
@@ -156,7 +171,10 @@
         "GE Vernova",
         "Schneider Electric",
         "Siemens Energy",
-        "Hitachi Energy"
+        "Hitachi Energy",
+        "INWIT",
+        "NHOA Energy",
+        "Cellnex Italia"
       ]
     },
     "JW4": {
@@ -213,7 +231,10 @@
         "NielsenIQ",
         "IQVIA",
         "Carlsberg Group",
-        "Nike"
+        "Nike",
+        "Smith+Nephew",
+        "Douglas Italia",
+        "Opella"
       ]
     }
   }
