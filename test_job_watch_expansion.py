@@ -29,9 +29,12 @@ class ExpansionOverlayTests(unittest.TestCase):
             )
 
     def test_every_expansion_source_has_a_collector_path(self):
-        overlay = expansion.load_overlay(ROOT)
         for batch in expansion.BATCHES:
-            for row in overlay["batches"][batch]:
+            merged = expansion.merged_mapping(batch, ROOT)
+            base = json.loads((ROOT / f"ats_mapping_{batch}.json").read_text(encoding="utf-8"))
+            base_names = {row["company"] for row in base.get("companies", [])}
+            additions = [row for row in merged["companies"] if row["company"] not in base_names]
+            for row in additions:
                 fn = collector.choose(row)
                 self.assertTrue(callable(fn), row["company"])
 
@@ -57,6 +60,66 @@ class ExpansionOverlayTests(unittest.TestCase):
         manifest = json.loads((ROOT / "job_watch_batches.json").read_text(encoding="utf-8"))
         self.assertIn("Leonardo", manifest["batches"]["JW3"]["companies"])
         self.assertNotIn("Telespazio", manifest["batches"]["JW3"]["companies"])
+
+    def test_opella_live_cxs_block_is_downgraded_to_partial_probe(self):
+        merged = expansion.merged_mapping("jw4", ROOT)
+        opella = next(row for row in merged["companies"] if row["company"] == "Opella")
+        self.assertEqual(opella["verification"]["level"], "PARTIAL")
+        self.assertFalse(opella["verification"]["full_inventory_possible"])
+        self.assertEqual(opella["ats"]["inventory_url"], "https://www.opella.com/en/careers")
+        self.assertEqual(collector.choose(opella).__name__, "probe_official_inventory")
+
+    def test_south_african_east_london_is_not_uk_london(self):
+        matcher = expansion._expanded_location_matcher(lambda location, company_name=None: True)
+        self.assertFalse(matcher("ZAF - East London"))
+        self.assertFalse(matcher("East London, South Africa"))
+        self.assertTrue(matcher("London, England"))
+        self.assertTrue(matcher("Milan, Italy"))
+
+    def test_enrichment_reader_sees_overlay_mappings(self):
+        base = json.loads((ROOT / "ats_mapping_jw2.json").read_text(encoding="utf-8"))
+
+        def original(name, default=None):
+            if Path(name).name == "ats_mapping_jw2.json":
+                return base
+            return default
+
+        reader = expansion._patched_enrichment_reader(original, ROOT)
+        merged = reader("ats_mapping_jw2.json", {})
+        by_company = {row["company"]: row for row in merged["companies"]}
+        self.assertEqual(by_company["Experian"]["ats"]["tenant"], "Experian")
+        self.assertEqual(by_company["Contentsquare"]["ats"]["tenant"], "contentsquare")
+
+    def test_mapping_bug_failures_bypass_old_enrichment_cooldown_once(self):
+        payload = {
+            "records": {
+                "Experian::1": {
+                    "status": "FAILED",
+                    "company": "Experian",
+                    "error": "HTTP 400",
+                },
+                "Contentsquare::2": {
+                    "status": "FAILED",
+                    "company": "Contentsquare",
+                    "error": "no Lever tenant",
+                },
+                "Other::3": {
+                    "status": "FAILED",
+                    "company": "Other",
+                    "error": "HTTP 400",
+                },
+            }
+        }
+
+        def original(name, default=None):
+            return payload if Path(name).name == "semantic_jd_cache_jw2.json" else default
+
+        reader = expansion._patched_enrichment_reader(original, ROOT)
+        cleaned = reader("semantic_jd_cache_jw2.json", {})
+        self.assertNotIn("Experian::1", cleaned["records"])
+        self.assertNotIn("Contentsquare::2", cleaned["records"])
+        self.assertIn("Other::3", cleaned["records"])
+        self.assertIn("Experian::1", payload["records"])
 
 
 if __name__ == "__main__":
