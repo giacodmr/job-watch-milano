@@ -1,25 +1,25 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-04T18:31:04Z",
-  "run_id": "e61a9e62b18c8648fb4193a4",
+  "generated_at": "2026-10-04T18:38:47Z",
+  "run_id": "b47b7450f190b973eac03269",
   "snapshot": {
-    "run_id": "e61a9e62b18c8648fb4193a4",
+    "run_id": "b47b7450f190b973eac03269",
     "source_generated_at": {
-      "JW1": "2026-10-03T22:36:18Z",
-      "JW2": "2026-10-03T22:39:16Z",
-      "JW3": "2026-10-03T22:40:12Z",
-      "JW4": "2026-10-03T22:42:40Z"
+      "JW1": "2026-10-04T18:32:28Z",
+      "JW2": "2026-10-04T18:34:54Z",
+      "JW3": "2026-10-04T18:35:51Z",
+      "JW4": "2026-10-04T18:38:08Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-10-03T22:42:47.612830+00:00"
+      "Amazon": "2026-10-04T18:38:15.690167+00:00"
     },
     "rules_sha256": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
     "source_sha256": {
-      "current_jobs_jw1.json": "9cdfe8fa1ef60375f7c96d51d6da2c5f160f7f46eed72df89d61ebe3f9d0cfc6",
-      "current_jobs_jw2.json": "490244af7fd1936ac39b46ed36a96e9902f7e7ae8377365eab954122493dc1b5",
-      "current_jobs_jw3.json": "cb1639eaf1af2cef135cc11b72ad4dd4711a0f6ca044bcb1a677ec2441220cc7",
-      "current_jobs_jw4.json": "a6e4544117851bda8a190de5f6f791cd6025c5f02b3f38346bf996df424dc3e2",
-      "amazon_target_check.json": "3e9b87385d14fffa725d2769c8db2d89d210e807b1442c0e520b01590df00f77",
+      "current_jobs_jw1.json": "fa288c87e069236853fb014e1000b085666224e6e3137869581acc7b072991de",
+      "current_jobs_jw2.json": "c6c355497804e0b5551dd6783ca19aa7df7e8eba97015b957abf047c03544dce",
+      "current_jobs_jw3.json": "9673181077855bec25aca4d0803118eece330f0b14faee21b576d68877dd57ee",
+      "current_jobs_jw4.json": "116ee5d966f5d690ff4ba14a90b218989c091250104c74eb7675c3673cdf66ca",
+      "amazon_target_check.json": "17d998c2ce83136f2aa5704fb4d2fb9c350b76b9167f68d94055833edf19b0fc",
       "job_watch_rules.json": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
       "job_watch_batches.json": "084594995edde215123d9b932266c57ca4f3d5b1272edeac9ad13449c2ed7b7b"
     }
@@ -38,12 +38,18 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
+      "actionable_delta_pending": 9,
       "reporting_pending": 0,
       "historical_backlog_remaining": 325,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW1",
+          "action": "SEMANTIC_REVIEW",
+          "count": 9,
+          "reason": "Review exact current fingerprints in daily worklist"
+        },
         {
           "batch": "JW1",
           "action": "AUTONOMOUS_SEARCH",
@@ -56,12 +62,18 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
+      "actionable_delta_pending": 31,
       "reporting_pending": 0,
-      "historical_backlog_remaining": 228,
+      "historical_backlog_remaining": 225,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW2",
+          "action": "SEMANTIC_REVIEW",
+          "count": 31,
+          "reason": "Review exact current fingerprints in daily worklist"
+        },
         {
           "batch": "JW2",
           "action": "AUTONOMOUS_SEARCH",
@@ -74,12 +86,18 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
+      "actionable_delta_pending": 2,
       "reporting_pending": 0,
-      "historical_backlog_remaining": 83,
+      "historical_backlog_remaining": 80,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW3",
+          "action": "SEMANTIC_REVIEW",
+          "count": 2,
+          "reason": "Review exact current fingerprints in daily worklist"
+        },
         {
           "batch": "JW3",
           "action": "AUTONOMOUS_SEARCH",
@@ -92,12 +110,18 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 0,
+      "actionable_delta_pending": 1,
       "reporting_pending": 0,
       "historical_backlog_remaining": 98,
-      "failed": 0,
+      "failed": 1,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW4",
+          "action": "SEMANTIC_REVIEW",
+          "count": 1,
+          "reason": "Review exact current fingerprints in daily worklist"
+        },
         {
           "batch": "JW4",
           "action": "AUTONOMOUS_SEARCH",
@@ -108,37 +132,37 @@
   },
   "coverage": {
     "JW1": {
-      "VERIFIED": 26,
-      "PARTIAL": 27,
+      "VERIFIED": 28,
+      "PARTIAL": 28,
       "FAILED": 0,
       "NOT_CHECKED": 0
     },
     "JW2": {
-      "VERIFIED": 21,
-      "PARTIAL": 27,
+      "VERIFIED": 24,
+      "PARTIAL": 29,
       "FAILED": 0,
       "NOT_CHECKED": 0
     },
     "JW3": {
-      "VERIFIED": 10,
-      "PARTIAL": 30,
+      "VERIFIED": 11,
+      "PARTIAL": 32,
       "FAILED": 0,
       "NOT_CHECKED": 0
     },
     "JW4": {
-      "VERIFIED": 28,
-      "PARTIAL": 24,
-      "FAILED": 0,
+      "VERIFIED": 29,
+      "PARTIAL": 25,
+      "FAILED": 1,
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 0,
-  "historical_backlog_remaining": 734,
-  "source_failures": 0,
-  "partial_sources": 108,
+  "daily_actionable_remaining": 43,
+  "historical_backlog_remaining": 728,
+  "source_failures": 1,
+  "partial_sources": 114,
   "error_counts": {
-    "record": 4,
-    "source": 108,
+    "record": 29,
+    "source": 115,
     "batch": 0,
     "global": 0
   },
@@ -175,7 +199,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 458651 bytes) but no safe exhaustive collector is implemented yet for Custom global career platform; ATS backend unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 457064 bytes) but no safe exhaustive collector is implemented yet for Custom global career platform; ATS backend unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Revolut"
     },
@@ -184,7 +208,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 260129 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 260136 bytes) but no safe exhaustive collector is implemented yet for Custom enterprise career portal; backend ATS unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "UniCredit"
     },
@@ -247,7 +271,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 137252 bytes) but no safe exhaustive collector is implemented yet for Custom official job-posting portal; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 137253 bytes) but no safe exhaustive collector is implemented yet for Custom official job-posting portal; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Unipol"
     },
@@ -256,7 +280,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 485332 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 483919 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Allianz"
     },
@@ -283,7 +307,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 110041 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 110212 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Marsh"
     },
@@ -346,7 +370,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 648488 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 648123 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Société Générale Italia"
     },
@@ -373,7 +397,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 934455 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 934493 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Munich Re"
     },
@@ -382,7 +406,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 104880 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 104877 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "MetLife"
     },
@@ -391,7 +415,16 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 77884 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "message": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
+      "batch": "JW1",
+      "company": "Telepass"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: Official inventory is reachable (200, 77862 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Deloitte / Monitor Deloitte"
     },
@@ -409,7 +442,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 167122 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 166993 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated); retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "PwC / Strategy&"
     },
@@ -427,7 +460,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 104729 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 104900 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform); retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Oliver Wyman"
     },
@@ -445,7 +478,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 79275 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 79274 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Bain & Company"
     },
@@ -454,7 +487,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 1404631 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 1405238 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Google"
     },
@@ -472,7 +505,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 681858 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 681834 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Microsoft"
     },
@@ -535,7 +568,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 83160 bytes) but no safe exhaustive collector is implemented yet for SmartRecruiters (shared DeliveryHero tenant) + Glovo custom front-end; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory was attempted but returned HTTP 403; no exhaustive parser for SmartRecruiters (shared DeliveryHero tenant) + Glovo custom front-end; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Glovo"
     },
@@ -553,7 +586,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 33393 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 33397 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Be Shaping the Future"
     },
@@ -580,7 +613,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "8 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
+      "message": "12 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
       "batch": "JW2",
       "company": "Bolt"
     },
@@ -634,6 +667,24 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: Official inventory is reachable (200, 138625 bytes) but no safe exhaustive collector is implemented yet for Pinpoint / custom career site; retained 0 validated observed jobs",
+      "batch": "JW2",
+      "company": "DAZN"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: Official inventory is reachable (200, 28552 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
+      "batch": "JW2",
+      "company": "Spotify"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
       "message": "NotCheckable: Oracle inventory could not be safely enumerated: Oracle Candidate Experience TLS validation failed on jobs.eni.com; inventory cannot be safely verified; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Eni"
@@ -643,7 +694,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 147502 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 147497 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Enel"
     },
@@ -670,7 +721,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 1035573 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 1035574 bytes) but no safe exhaustive collector is implemented yet for enterprise career site (unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "A2A"
     },
@@ -697,7 +748,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory was attempted but returned HTTP 502; no exhaustive parser for custom recruiting portals; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for custom recruiting portals; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "TIM"
     },
@@ -805,7 +856,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 9377 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 9378 bytes) but no safe exhaustive collector is implemented yet for global enterprise career portal; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Shell"
     },
@@ -823,7 +874,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 177481 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 177482 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Autostrade per l'Italia"
     },
@@ -859,7 +910,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 487406 bytes) but no safe exhaustive collector is implemented yet for custom first-party recruiting; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 487413 bytes) but no safe exhaustive collector is implemented yet for custom first-party recruiting; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "ERG"
     },
@@ -877,7 +928,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 838558 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 838559 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Schneider Electric"
     },
@@ -886,7 +937,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 142617 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 142586 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Siemens Energy"
     },
@@ -898,6 +949,24 @@
       "message": "NotCheckable: Official inventory was attempted but returned HTTP 404; no exhaustive parser for Hitachi global branded career portal (vendor unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Hitachi Energy"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for Custom official careers; retained 0 validated observed jobs",
+      "batch": "JW3",
+      "company": "NHOA Energy"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: Official inventory is reachable (200, 654958 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
+      "batch": "JW3",
+      "company": "Cellnex Italia"
     },
     {
       "category": "SOURCE_ERROR",
@@ -922,7 +991,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 1903 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 1911 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Coca-Cola HBC Italia"
     },
@@ -940,7 +1009,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 2144519 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 2144492 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "LVMH"
     },
@@ -949,7 +1018,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 218168 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 218164 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Kering"
     },
@@ -958,7 +1027,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 251085 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 251194 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "AstraZeneca"
     },
@@ -985,7 +1054,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 432827 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 425933 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Philip Morris International"
     },
@@ -994,7 +1063,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 162274 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 161962 bytes) but no safe exhaustive collector is implemented yet for Custom jobs.impbrands.com recruitment platform; backend vendor not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Imperial Brands"
     },
@@ -1003,7 +1072,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 1114744 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 1107857 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "IKEA"
     },
@@ -1021,7 +1090,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 178697 bytes) but no safe exhaustive collector is implemented yet for Custom Richemont careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 178568 bytes) but no safe exhaustive collector is implemented yet for Custom Richemont careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Richemont"
     },
@@ -1030,7 +1099,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 280300 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 243209 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Procter & Gamble"
     },
@@ -1039,7 +1108,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 292222 bytes) but no safe exhaustive collector is implemented yet for Custom Danone careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 303000 bytes) but no safe exhaustive collector is implemented yet for Custom Danone careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Danone"
     },
@@ -1048,7 +1117,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 420592 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 418582 bytes) but no safe exhaustive collector is implemented yet for Custom Henkel careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Henkel"
     },
@@ -1057,7 +1126,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 125944 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style Mars careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 125932 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style Mars careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Mars"
     },
@@ -1102,7 +1171,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 209691 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 208603 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "AbbVie"
     },
@@ -1114,6 +1183,24 @@
       "message": "NotCheckable: Official inventory is reachable (200, 126115 bytes) but no safe exhaustive collector is implemented yet for Carlsberg Italia custom job-opportunities page; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Carlsberg Group"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: No evidenced same-host exhaustive /search/ or /viewalljobs/ inventory exposed by portal; retained 0 validated observed jobs",
+      "batch": "JW4",
+      "company": "Douglas Italia"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_FAILED",
+      "message": "HTTPError: 403 Client Error: Forbidden for url: https://chloe.wd3.myworkdayjobs.com/wday/cxs/chloe/OpellaCareers/jobs; retained 0 validated observed jobs",
+      "batch": "JW4",
+      "company": "Opella"
     },
     {
       "category": "LOCAL_RECORD_ERROR",
@@ -1150,6 +1237,256 @@
       "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Nike",
       "job_key": "Nike::R-91871"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "no Lever tenant",
+      "batch": "JW2",
+      "company": "Contentsquare",
+      "job_key": "Contentsquare::13eb7985-1ab2-4ef6-990a-cdeb6396ee8a"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "no Lever tenant",
+      "batch": "JW2",
+      "company": "Contentsquare",
+      "job_key": "Contentsquare::7a36cb77-bcab-4c1d-89d0-14becfcf38af"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "no Lever tenant",
+      "batch": "JW2",
+      "company": "Contentsquare",
+      "job_key": "Contentsquare::be7f0c94-0bda-497f-8968-c8d9e00b112e"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "no Lever tenant",
+      "batch": "JW2",
+      "company": "Contentsquare",
+      "job_key": "Contentsquare::d872f05c-6bd6-49f6-a2da-189d1488c08f"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000134196839"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000138805029"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000140191201"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000140426154"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000140483189"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000143492702"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000145451579"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000147318569"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000148222879"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000148452949"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000148814462"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000149658909"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000149832851"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000150622814"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000151088864"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000151403669"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000151439749"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000151853659"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000152957961"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000153133593"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "enrichment",
+      "code": "JD_UNAVAILABLE",
+      "message": "HTTP 400",
+      "batch": "JW2",
+      "company": "Experian",
+      "job_key": "Experian::744000153134729"
     }
   ],
   "stage_reports": {
@@ -1183,9 +1520,6 @@
     "snapshot": {
       "status": "COMPLETE"
     },
-    "semantic_patch": {
-      "status": "COMPLETE"
-    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1196,6 +1530,18 @@
       "status": "COMPLETE"
     },
     "semantic_sync:JW4": {
+      "status": "COMPLETE"
+    },
+    "enrichment:JW1": {
+      "status": "COMPLETE"
+    },
+    "enrichment:JW2": {
+      "status": "COMPLETE_WITH_WARNINGS"
+    },
+    "enrichment:JW3": {
+      "status": "COMPLETE"
+    },
+    "enrichment:JW4": {
       "status": "COMPLETE"
     },
     "worklist": {
@@ -1223,8 +1569,20 @@
   "remaining_work": [
     {
       "batch": "JW1",
+      "action": "SEMANTIC_REVIEW",
+      "count": 9,
+      "reason": "Review exact current fingerprints in daily worklist"
+    },
+    {
+      "batch": "JW1",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW2",
+      "action": "SEMANTIC_REVIEW",
+      "count": 31,
+      "reason": "Review exact current fingerprints in daily worklist"
     },
     {
       "batch": "JW2",
@@ -1233,8 +1591,20 @@
     },
     {
       "batch": "JW3",
+      "action": "SEMANTIC_REVIEW",
+      "count": 2,
+      "reason": "Review exact current fingerprints in daily worklist"
+    },
+    {
+      "batch": "JW3",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW4",
+      "action": "SEMANTIC_REVIEW",
+      "count": 1,
+      "reason": "Review exact current fingerprints in daily worklist"
     },
     {
       "batch": "JW4",
