@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-05T11:53:12Z",
+  "generated_at": "2026-10-05T22:19:39Z",
   "run_id": "82e1842654380b433eb3e830",
   "snapshot": {
     "run_id": "82e1842654380b433eb3e830",
@@ -38,7 +38,7 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 20,
+      "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 318,
       "failed": 0,
@@ -46,14 +46,8 @@
       "remaining_work": [
         {
           "batch": "JW1",
-          "action": "SEMANTIC_REVIEW",
-          "count": 20,
-          "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
         }
       ]
     },
@@ -68,6 +62,11 @@
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW2",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
         {
           "batch": "JW2",
           "action": "SEMANTIC_REVIEW",
@@ -94,6 +93,11 @@
       "remaining_work": [
         {
           "batch": "JW3",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
+        {
+          "batch": "JW3",
           "action": "SEMANTIC_REVIEW",
           "count": 3,
           "reason": "Review exact current fingerprints in daily worklist"
@@ -116,6 +120,11 @@
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW4",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not from today Europe/Rome"
+        },
         {
           "batch": "JW4",
           "action": "SEMANTIC_REVIEW",
@@ -156,12 +165,12 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 87,
+  "daily_actionable_remaining": 67,
   "historical_backlog_remaining": 716,
   "source_failures": 0,
   "partial_sources": 114,
   "error_counts": {
-    "record": 7,
+    "record": 5,
     "source": 114,
     "batch": 0,
     "global": 0
@@ -1237,26 +1246,6 @@
       "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Nike",
       "job_key": "Nike::R-91871"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "American Express",
-      "job_key": "American Express::26013618"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW4",
-      "company": "Amplifon",
-      "job_key": "Amplifon::13366"
     }
   ],
   "stage_reports": {
@@ -1290,6 +1279,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1301,18 +1293,6 @@
     },
     "semantic_sync:JW4": {
       "status": "COMPLETE"
-    },
-    "enrichment:JW1": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "enrichment:JW2": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW3": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW4": {
-      "status": "COMPLETE_WITH_WARNINGS"
     },
     "worklist": {
       "status": "COMPLETE"
@@ -1339,14 +1319,13 @@
   "remaining_work": [
     {
       "batch": "JW1",
-      "action": "SEMANTIC_REVIEW",
-      "count": 20,
-      "reason": "Review exact current fingerprints in daily worklist"
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
     },
     {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
+      "batch": "JW2",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
     },
     {
       "batch": "JW2",
@@ -1361,6 +1340,11 @@
     },
     {
       "batch": "JW3",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
+    },
+    {
+      "batch": "JW3",
       "action": "SEMANTIC_REVIEW",
       "count": 3,
       "reason": "Review exact current fingerprints in daily worklist"
@@ -1369,6 +1353,11 @@
       "batch": "JW3",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW4",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not from today Europe/Rome"
     },
     {
       "batch": "JW4",
