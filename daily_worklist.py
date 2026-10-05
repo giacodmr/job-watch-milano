@@ -92,6 +92,11 @@ def build_worklist(backlog_limit=None):
     historical.sort(key=lambda x: (x[0], x[1]['job_key']))
     if previous.get('snapshot') == token and backlog_limit is None:
         assigned = previous.get('backlog_assignment', [])
+        # Keep a partially processed tranche stable, but advance automatically once
+        # every assigned historical record has received a valid semantic decision.
+        remaining_assigned = {r['job_key'] for _, r in historical if r['job_key'] in assigned}
+        if not remaining_assigned:
+            assigned = [r['job_key'] for _, r in historical[:limit]]
     else:
         assigned = [r['job_key'] for _, r in historical[:limit]]
     selected = [r for _, r in historical if r['job_key'] in assigned]
