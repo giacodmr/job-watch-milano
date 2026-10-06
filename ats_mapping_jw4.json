@@ -1999,11 +1999,13 @@
         "tenant": "jobs.lactalisvaloreitalia.it",
         "career_site": "https://www.lactalisvaloreitalia.it/lavora-con-noi",
         "inventory_url": "https://jobs.lactalisvaloreitalia.it/",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "altamira_lactalis"
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
@@ -2011,12 +2013,13 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
         "Corporate site links this official board. HTML exposes Altamira CSS/scripts and ASP.NET postbacks; job URLs /jobs/<slug>-<id>.htm. No supported Altamira enumerator or safely reconcilable full paging/feed.",
-        "Location UI/labels are not a certified automated target-city filter; official probe collects no normalized jobs. PARTIAL never proves absence in Milan/Rome/London."
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses.",
+        "Representative vacancy detail returned HTTP 403 although official inventory exposes metadata. PARTIAL collection does not certify full JD access or semantic review."
       ],
       "last_mapped": "2026-10-06"
     },
@@ -2156,27 +2159,28 @@
       "company": "Marriott International",
       "batch": "JW4",
       "ats": {
-        "family": "Custom official careers / Oracle Recruiting Cloud backend",
+        "family": "Paradox official Marriott careers frontend / Oracle application backend",
         "tenant": "ejwl / MI_CS_1",
         "career_site": "https://careers.marriott.com/",
         "inventory_url": "https://careers.marriott.com/jobs",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "marriott"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "marriott_paradox_city_inventory",
         "location_filter_supported": false,
         "locations": [],
-        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "pagination": "Read official server-rendered state; discover target-city facets, page each exact city and reconcile reported count and unique requisition IDs.",
         "total_count_available": true,
-        "full_inventory_possible": false
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Enumerate official Marriott rendered target-city inventories with exact facet/page checks and independent city counts. Keep canonical Marriott employer label.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Official search exposes 14,172 jobs and application links on ejwl.fa.us2.oraclecloud.com/.../sites/MI_CS_1/job/<id>/apply/email. Oracle site redirects to CX; exact site/feed equivalence not certified. Global inventory exceeds generic Oracle safety cap (250 x 25); keep official frontend probe. Westin property alias must not relabel all Marriott jobs."
+        "Public POST /api/get-jobs returns 403; supported collector uses reachable official rendered city pages. VERIFIED certifies exposed target-city inventories, not subsidiary/property completeness. Westin Palace Milan remains a coverage alias, never a label applied to all Marriott roles."
       ],
       "last_mapped": "2026-10-06"
     }

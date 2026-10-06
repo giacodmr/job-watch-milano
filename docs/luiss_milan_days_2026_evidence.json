@@ -9,8 +9,9 @@
   "existing_collectors": 17,
   "active_universe": 252,
   "smoke_summary": {
-    "VERIFIED": 14,
-    "PARTIAL": 48
+    "VERIFIED": 18,
+    "PARTIAL": 44,
+    "FAILED": 0
   },
   "protected_files_sha256": {
     "job_watch_rules.json": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
@@ -740,10 +741,10 @@
       "canonical_company": "Gruppo CDP",
       "official_event_link": "http://www.cdp.it/",
       "mapped_source": {
-        "family": "Custom official careers / embedded SAP SuccessFactors legacy",
-        "tenant": "cassadepos",
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
         "career_site": "https://www.cdp.it/it/lavora_con_noi.page",
-        "inventory_url": "https://www.cdp.it/it/lavora_con_noi.page",
+        "inventory_url": "https://www.opportunitadilavoro.cdp.it/search/",
         "public_api_or_feed": null
       },
       "observed_official_pages": [
@@ -761,16 +762,74 @@
         }
       ],
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "successfactors_jobs2web_metadata_v15",
         "location_filter_supported": false,
         "locations": [],
-        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Follow official jobs2web pages and reconcile unique vacancies against reported total.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_successfactors",
       "smoke_test": {
+        "coverage": "VERIFIED",
+        "collector": "successfactors_jobs2web_metadata_v15",
+        "inventory_count": 13,
+        "source_url": "https://www.opportunitadilavoro.cdp.it/search/",
+        "reason": null,
+        "company": "Gruppo CDP",
+        "checked_at": "2026-10-06T18:21:40.005910+00:00",
+        "target_jobs_count": 13,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "1371442357",
+            "company": "Gruppo CDP",
+            "title": "(CDP)_Corporate Affairs Analyst",
+            "location": "Roma 6 ott 2026",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/",
+            "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/",
+            "apply_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/"
+          },
+          {
+            "source_id": "1371442057",
+            "company": "Gruppo CDP",
+            "title": "(CDP)_Advisory Development Strategist",
+            "location": "Roma 6 ott 2026",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Advisory-Development-Strategist/1371442057/",
+            "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Advisory-Development-Strategist/1371442057/",
+            "apply_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Advisory-Development-Strategist/1371442057/"
+          },
+          {
+            "source_id": "1367909757",
+            "company": "Gruppo CDP",
+            "title": "(CDPE)_Funds Investment Associate_Real Estate",
+            "location": "Roma 3 ott 2026",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDPE%29_Funds-Investment-Associate_Real-Estate/1367909757/",
+            "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDPE%29_Funds-Investment-Associate_Real-Estate/1367909757/",
+            "apply_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDPE%29_Funds-Investment-Associate_Real-Estate/1367909757/"
+          }
+        ]
+      },
+      "limitations": [
+        "Corporate careers links Junior/Specialisti categories on www.opportunitadilavoro.cdp.it. Legacy cassadepos spontaneous-application portal is separate; no guessed API or tenant. Smoke reconciled 13/13 public vacancies."
+      ],
+      "initial_smoke_test": {
         "company": "Gruppo CDP",
         "batch": "JW1",
         "elapsed_seconds": 0.98,
@@ -781,10 +840,7 @@
         "source_url": "https://www.cdp.it/it/lavora_con_noi.page",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Official careers links career2.successfactors.eu/career with company=cassadepos and loginFlowRequired=true. Current corporate list is not a jobs2web RM inventory; generic SuccessFactors enumerator cannot certify it. No public feed or count contract verified."
-      ]
+      }
     },
     {
       "employer": "Heritage Holdings",
@@ -925,7 +981,9 @@
         "tenant": null,
         "career_site": "https://www.marktlink.com/nl/over-ons/careers",
         "inventory_url": "https://careers.marktlink.com/vacancies",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "marktlink"
       },
       "observed_official_pages": [
         {
@@ -961,7 +1019,7 @@
       ],
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -973,8 +1031,24 @@
         "total_count_available": true,
         "full_inventory_possible": false
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_rendered",
       "smoke_test": {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 25,
+        "source_url": "https://careers.marktlink.com/vacancies",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Marktlink",
+        "checked_at": "2026-10-06T18:21:39.992184+00:00",
+        "target_jobs_count": 0,
+        "record_errors_count": 0,
+        "sample_jobs": []
+      },
+      "limitations": [
+        "Official group careers links counted branded vacancy list and /apply?vacancy_id=... details. No backend/feed contract verified; separate Marktlink Capital Recruitee board and indexed Personio jobs are not assumed equivalent. Existing M&A exclusions still apply.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
+      ],
+      "initial_smoke_test": {
         "company": "Marktlink",
         "batch": "JW1",
         "elapsed_seconds": 0.81,
@@ -985,10 +1059,7 @@
         "source_url": "https://careers.marktlink.com/vacancies",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Official group careers links counted branded vacancy list and /apply?vacancy_id=... details. No backend/feed contract verified; separate Marktlink Capital Recruitee board and indexed Personio jobs are not assumed equivalent. Existing M&A exclusions still apply."
-      ]
+      }
     },
     {
       "employer": "Mindful Capital Partners",
@@ -1113,7 +1184,9 @@
         "tenant": "prelios",
         "career_site": "https://prelios.com/it/carriere/lavora-con-noi",
         "inventory_url": "https://prelios.com/it/carriere/lavora-con-noi",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "prelios"
       },
       "observed_official_pages": [
         {
@@ -1149,15 +1222,75 @@
       ],
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_rendered",
       "smoke_test": {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 12,
+        "source_url": "https://prelios.com/it/carriere/lavora-con-noi",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Prelios",
+        "checked_at": "2026-10-06T18:21:39.713082+00:00",
+        "target_jobs_count": 12,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+            "company": "Prelios",
+            "title": "Stage Accounting and Administration",
+            "location": "Milano",
+            "department": "Amministrazione",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+            "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+            "apply_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69"
+          },
+          {
+            "source_id": "c78d2d23-f207-417e-88f3-cfcfe33d9921",
+            "company": "Prelios",
+            "title": "Stage Legal Support NPE",
+            "location": "Milano",
+            "department": "Ufficio legale",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=c78d2d23-f207-417e-88f3-cfcfe33d9921",
+            "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=c78d2d23-f207-417e-88f3-cfcfe33d9921",
+            "apply_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=c78d2d23-f207-417e-88f3-cfcfe33d9921"
+          },
+          {
+            "source_id": "12c251b0-92fc-475f-82eb-3ca8b767bcc7",
+            "company": "Prelios",
+            "title": "Stage Analyst UTP",
+            "location": "Milano",
+            "department": "UTP Management",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=12c251b0-92fc-475f-82eb-3ca8b767bcc7",
+            "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=12c251b0-92fc-475f-82eb-3ca8b767bcc7",
+            "apply_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=12c251b0-92fc-475f-82eb-3ca8b767bcc7"
+          }
+        ]
+      },
+      "limitations": [
+        "Rendered vacancies link prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=<UUID>. No supported counted PeopleHR enumerator or public API contract verified; retain official listing as PARTIAL.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses.",
+        "Representative PeopleHR detail is HTTP 200 but JS-rendered; title is available on official corporate vacancy card, not in the fetched detail HTML. JD retrieval/semantic review may need separate recovery."
+      ],
+      "initial_smoke_test": {
         "company": "Prelios",
         "batch": "JW1",
         "elapsed_seconds": 0.2,
@@ -1168,10 +1301,7 @@
         "source_url": "https://prelios.com/it/carriere/lavora-con-noi",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Rendered vacancies link prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=<UUID>. No supported counted PeopleHR enumerator or public API contract verified; retain official listing as PARTIAL."
-      ]
+      }
     },
     {
       "employer": "PTS",
@@ -2532,11 +2662,12 @@
       "canonical_company": "AXA",
       "official_event_link": "https://corporate.axa.it/",
       "mapped_source": {
-        "family": "iCIMS / custom AXA careers frontend",
+        "family": "iCIMS / Jibe public AXA careers search",
         "tenant": "careers-en-axa",
         "career_site": "https://jobs.axa.com/careers-home/",
         "inventory_url": "https://jobs.axa.com/jobs",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://jobs.axa.com/api/jobs",
+        "official_adapter": "axa"
       },
       "observed_official_pages": [
         {
@@ -2565,8 +2696,8 @@
         }
       ],
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "axa_jibe_public_search",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -2574,12 +2705,71 @@
           "Rome",
           "London"
         ],
-        "pagination": "dynamic search/filtering; exact paging contract not mapped",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Enumerate unfiltered global page/limit response and reconcile unique IDs against totalCount and the sum of languageCounts; count is the English facet only.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_axa",
       "smoke_test": {
+        "coverage": "VERIFIED",
+        "collector": "axa_jibe_public_search",
+        "inventory_count": 1550,
+        "api_locale_count": 889,
+        "source_url": "https://jobs.axa.com/api/jobs",
+        "reason": null,
+        "company": "AXA",
+        "checked_at": "2026-10-06T18:24:42.153920+00:00",
+        "target_jobs_count": 41,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "24499",
+            "company": "AXA",
+            "title": "Operatore/Operatrice telefonico/a di Call Center (Part Time) M/F",
+            "location": "ROMA",
+            "department": "CLAIMS AND ASSISTANCE",
+            "team": null,
+            "employment_type": "CONTRACTOR",
+            "published_at": "2026-08-05T11:03:00+0000",
+            "updated_at": "2026-09-24T20:08:30+0000",
+            "canonical_url": "https://jobs.axa.com/jobs/24499?lang=it-it",
+            "url": "https://jobs.axa.com/jobs/24499?lang=it-it",
+            "apply_url": "https://careers-it-axa.icims.com/jobs/24499/login"
+          },
+          {
+            "source_id": "27012",
+            "company": "AXA",
+            "title": "Climate Change Analyst - Catastrophe Management",
+            "location": "LONDON",
+            "department": "UNDERWRITING",
+            "team": null,
+            "employment_type": "FULL_TIME",
+            "published_at": "2026-09-23T07:57:00+0000",
+            "updated_at": "2026-09-23T20:07:54+0000",
+            "canonical_url": "https://jobs.axa.com/jobs/27012?lang=en-us",
+            "url": "https://jobs.axa.com/jobs/27012?lang=en-us",
+            "apply_url": "https://careers-dei-en-axa.icims.com/jobs/27012/login"
+          },
+          {
+            "source_id": "27701",
+            "company": "AXA",
+            "title": "Claims Adjuster - Marine Cargo",
+            "location": "LONDON",
+            "department": "CLAIMS AND ASSISTANCE",
+            "team": null,
+            "employment_type": "FULL_TIME",
+            "published_at": "2026-10-02T08:57:00+0000",
+            "updated_at": "2026-10-02T20:14:16+0000",
+            "canonical_url": "https://jobs.axa.com/jobs/27701?lang=en-us",
+            "url": "https://jobs.axa.com/jobs/27701?lang=en-us",
+            "apply_url": "https://careers-dei-en-axa.icims.com/jobs/27701/login"
+          }
+        ]
+      },
+      "limitations": [
+        "Public /api/jobs evidenced in official AXA frontend. Unfiltered pages include all languages: totalCount=1550 reconciles languageCounts and unique IDs; count=889 is the English facet only. VERIFIED certifies this official board, not all subsidiary recruiting channels."
+      ],
+      "initial_smoke_test": {
         "company": "AXA",
         "batch": "JW1",
         "elapsed_seconds": 1.49,
@@ -2590,12 +2780,7 @@
         "source_url": "https://jobs.axa.com/jobs",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Country/city organization is accessible, but no reliable total/pagination or public backend endpoint was independently mapped.",
-        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters.",
-        "2026-10-06: official My Applications links careers-en-axa.icims.com. Generic collector has no iCIMS enumeration; AXA Italy subsidiary scope/filter is not independently certified."
-      ]
+      }
     },
     {
       "employer": "Gruppo Lactalis Italia",
@@ -2606,7 +2791,9 @@
         "tenant": "jobs.lactalisvaloreitalia.it",
         "career_site": "https://www.lactalisvaloreitalia.it/lavora-con-noi",
         "inventory_url": "https://jobs.lactalisvaloreitalia.it/",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "altamira_lactalis"
       },
       "observed_official_pages": [
         {
@@ -2630,15 +2817,61 @@
       ],
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_rendered",
       "smoke_test": {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 10,
+        "source_url": "https://jobs.lactalisvaloreitalia.it/",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Gruppo Lactalis Italia",
+        "checked_at": "2026-10-06T18:21:41.111065+00:00",
+        "target_jobs_count": 2,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "281741481",
+            "company": "Gruppo Lactalis Italia",
+            "title": "TRADE MARKETING & REVENUE INTERN",
+            "location": "Milano (MI)",
+            "department": "Trade Marketing",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm",
+            "url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm",
+            "apply_url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm"
+          },
+          {
+            "source_id": "281407683",
+            "company": "Gruppo Lactalis Italia",
+            "title": "MARKETING INTERN",
+            "location": "Milano (MI)",
+            "department": "Marketing",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://jobs.lactalisvaloreitalia.it/jobs/MARKETING_INTERN-Marketing_-Milano_MI_-281407683.htm",
+            "url": "https://jobs.lactalisvaloreitalia.it/jobs/MARKETING_INTERN-Marketing_-Milano_MI_-281407683.htm",
+            "apply_url": "https://jobs.lactalisvaloreitalia.it/jobs/MARKETING_INTERN-Marketing_-Milano_MI_-281407683.htm"
+          }
+        ]
+      },
+      "limitations": [
+        "Corporate site links this official board. HTML exposes Altamira CSS/scripts and ASP.NET postbacks; job URLs /jobs/<slug>-<id>.htm. No supported Altamira enumerator or safely reconcilable full paging/feed.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses.",
+        "Representative vacancy detail returned HTTP 403 although official inventory exposes metadata. PARTIAL collection does not certify full JD access or semantic review."
+      ],
+      "initial_smoke_test": {
         "company": "Gruppo Lactalis Italia",
         "batch": "JW4",
         "elapsed_seconds": 0.65,
@@ -2649,11 +2882,7 @@
         "source_url": "https://jobs.lactalisvaloreitalia.it/",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Corporate site links this official board. HTML exposes Altamira CSS/scripts and ASP.NET postbacks; job URLs /jobs/<slug>-<id>.htm. No supported Altamira enumerator or safely reconcilable full paging/feed.",
-        "Location UI/labels are not a certified automated target-city filter; official probe collects no normalized jobs. PARTIAL never proves absence in Milan/Rome/London."
-      ]
+      }
     },
     {
       "employer": "Hitachi Rail",
@@ -3179,7 +3408,9 @@
         "tenant": "lechler",
         "career_site": "https://www.lechler.eu/en",
         "inventory_url": "https://zinrec.intervieweb.it/lechler/en/career",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "intervieweb_lechler"
       },
       "observed_official_pages": [
         {
@@ -3197,15 +3428,31 @@
       ],
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_rendered",
       "smoke_test": {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 2,
+        "source_url": "https://zinrec.intervieweb.it/lechler/en/career",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Lechler",
+        "checked_at": "2026-10-06T18:21:40.926163+00:00",
+        "target_jobs_count": 0,
+        "record_errors_count": 0,
+        "sample_jobs": []
+      },
+      "limitations": [
+        "Official Work in Lechler link reaches zinrec.intervieweb.it/lechler; powered by In-recruiting and /lechler/jobs/<slug>-<id>/en/. No supported counted enumerator/API. Industrial coatings business, JW3.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
+      ],
+      "initial_smoke_test": {
         "company": "Lechler",
         "batch": "JW3",
         "elapsed_seconds": 0.55,
@@ -3216,10 +3463,7 @@
         "source_url": "https://zinrec.intervieweb.it/lechler/en/career",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Official Work in Lechler link reaches zinrec.intervieweb.it/lechler; powered by In-recruiting and /lechler/jobs/<slug>-<id>/en/. No supported counted enumerator/API. Industrial coatings business, JW3."
-      ]
+      }
     },
     {
       "employer": "Lutech Group",
@@ -3230,7 +3474,9 @@
         "tenant": null,
         "career_site": "https://lutech.group/it/careers",
         "inventory_url": "https://lutech.group/it/careers/search",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "lutech"
       },
       "observed_official_pages": [
         {
@@ -3260,15 +3506,74 @@
       ],
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_rendered",
       "smoke_test": {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 62,
+        "source_url": "https://lutech.group/it/careers/search",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Lutech Group",
+        "checked_at": "2026-10-06T18:21:40.303735+00:00",
+        "target_jobs_count": 30,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "732261",
+            "company": "Lutech Group",
+            "title": "Consolidation & Reporting Specialist",
+            "location": "Milano",
+            "department": "Finance",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261",
+            "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261",
+            "apply_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261"
+          },
+          {
+            "source_id": "732242",
+            "company": "Lutech Group",
+            "title": "Data Integration Specialist",
+            "location": "Milano",
+            "department": "AI, Data & Hyperautomation",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=data-integration-specialist-732242",
+            "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=data-integration-specialist-732242",
+            "apply_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=data-integration-specialist-732242"
+          },
+          {
+            "source_id": "731578",
+            "company": "Lutech Group",
+            "title": "AI Solution Architect",
+            "location": "Milano",
+            "department": "AI, Data & Hyperautomation",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=ai-solution-architect-731578",
+            "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=ai-solution-architect-731578",
+            "apply_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=ai-solution-architect-731578"
+          }
+        ]
+      },
+      "limitations": [
+        "Rendered search links /content/lutech-site/it/careers/search/details?slug=<slug>-<id>. Backend ATS/feed and full pagination contract unresolved; do not infer Salesforce ATS from consulting-service navigation.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
+      ],
+      "initial_smoke_test": {
         "company": "Lutech Group",
         "batch": "JW2",
         "elapsed_seconds": 0.21,
@@ -3279,10 +3584,7 @@
         "source_url": "https://lutech.group/it/careers/search",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Rendered search links /content/lutech-site/it/careers/search/details?slug=<slug>-<id>. Backend ATS/feed and full pagination contract unresolved; do not infer Salesforce ATS from consulting-service navigation."
-      ]
+      }
     },
     {
       "employer": "MAIRE",
@@ -3772,7 +4074,8 @@
         "tenant": null,
         "career_site": "https://lifeattiktok.com/",
         "inventory_url": "https://lifeattiktok.com/search?recruitment_id_list=&job_category_id_list=&subject_id_list=&location_code_list=&keyword=&limit=12&offset=0",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://api.lifeattiktok.com/api/v1/public/supplier/search/job/posts",
+        "official_adapter": "tiktok"
       },
       "observed_official_pages": [
         {
@@ -3843,20 +4146,78 @@
         }
       ],
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "tiktok_public_search",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Official search accepts limit/offset and filter query parameters, but the result list is client-rendered and no stable public exhaustive JSON contract has been verified.",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "POST public supplier search with limit/offset; reconcile stable count and unique job IDs.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_tiktok",
       "smoke_test": {
+        "coverage": "VERIFIED",
+        "collector": "tiktok_public_search",
+        "inventory_count": 4287,
+        "source_url": "https://api.lifeattiktok.com/api/v1/public/supplier/search/job/posts",
+        "reason": null,
+        "company": "TikTok",
+        "checked_at": "2026-10-06T18:22:17.630462+00:00",
+        "target_jobs_count": 322,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "7649701545844590853",
+            "company": "TikTok",
+            "title": "Brand Partnerships Manager, Travel - Global Business Solutions - London",
+            "location": "London",
+            "department": "Sales",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lifeattiktok.com/search/7649701545844590853",
+            "url": "https://lifeattiktok.com/search/7649701545844590853",
+            "apply_url": null
+          },
+          {
+            "source_id": "7693131472085616949",
+            "company": "TikTok",
+            "title": "TikTok Shop - Creator Strategy & Operation Manager",
+            "location": "London",
+            "department": "Commerce ops",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lifeattiktok.com/search/7693131472085616949",
+            "url": "https://lifeattiktok.com/search/7693131472085616949",
+            "apply_url": null
+          },
+          {
+            "source_id": "7688293354297854213",
+            "company": "TikTok",
+            "title": "Agency Solutions Manager - Global Business Solutions - UK - London",
+            "location": "London",
+            "department": "Sales",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lifeattiktok.com/search/7688293354297854213",
+            "url": "https://lifeattiktok.com/search/7688293354297854213",
+            "apply_url": null
+          }
+        ]
+      },
+      "limitations": [
+        "Public search payload/headers evidenced in official lifeattiktok.com frontend assets. A count change, repeated ID or truncated page prevents VERIFIED."
+      ],
+      "initial_smoke_test": {
         "company": "TikTok",
         "batch": "JW2",
         "elapsed_seconds": 0.77,
@@ -3867,12 +4228,7 @@
         "source_url": "https://lifeattiktok.com/search?recruitment_id_list=&job_category_id_list=&subject_id_list=&location_code_list=&keyword=&limit=12&offset=0",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Do not mark VERIFIED from limit/offset parameters alone: the server-rendered search shell does not expose a reconcilable job total or complete result set to the collector.",
-        "Individual job-detail pages are first-party and server-readable, so autonomous discovery can still be validated reliably.",
-        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
-      ]
+      }
     },
     {
       "employer": "The Estée Lauder Companies",
@@ -4012,7 +4368,9 @@
         "tenant": null,
         "career_site": "https://www.thelevelgroup.com/careers",
         "inventory_url": "https://www.thelevelgroup.com/careers",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "level"
       },
       "observed_official_pages": [
         {
@@ -4036,15 +4394,74 @@
       ],
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_rendered",
       "smoke_test": {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 19,
+        "source_url": "https://www.thelevelgroup.com/careers",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "The Level Group",
+        "checked_at": "2026-10-06T18:21:40.672568+00:00",
+        "target_jobs_count": 15,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "201588",
+            "company": "The Level Group",
+            "title": "Production Specialist",
+            "location": "Milano",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.thelevelgroup.com/job-description/201588/production-specialist",
+            "url": "https://www.thelevelgroup.com/job-description/201588/production-specialist",
+            "apply_url": "https://www.thelevelgroup.com/job-description/201588/production-specialist"
+          },
+          {
+            "source_id": "209444",
+            "company": "The Level Group",
+            "title": "Business Analyst",
+            "location": "Milan",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.thelevelgroup.com/job-description/209444/business-analyst",
+            "url": "https://www.thelevelgroup.com/job-description/209444/business-analyst",
+            "apply_url": "https://www.thelevelgroup.com/job-description/209444/business-analyst"
+          },
+          {
+            "source_id": "207974",
+            "company": "The Level Group",
+            "title": "Treasury Accounting Specialist",
+            "location": "Milan",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.thelevelgroup.com/job-description/207974/treasury-accounting-specialist",
+            "url": "https://www.thelevelgroup.com/job-description/207974/treasury-accounting-specialist",
+            "apply_url": "https://www.thelevelgroup.com/job-description/207974/treasury-accounting-specialist"
+          }
+        ]
+      },
+      "limitations": [
+        "Official rendered jobs include Business Analyst, digital analytics and /job-description/<id>/<slug>. E-commerce operations/platform partner, so JW2 business-tech. Application backend/count/pagination contract unverified; no speculative Workable/Greenhouse tenant.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
+      ],
+      "initial_smoke_test": {
         "company": "The Level Group",
         "batch": "JW2",
         "elapsed_seconds": 0.43,
@@ -4055,21 +4472,19 @@
         "source_url": "https://www.thelevelgroup.com/careers",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Official rendered jobs include Business Analyst, digital analytics and /job-description/<id>/<slug>. E-commerce operations/platform partner, so JW2 business-tech. Application backend/count/pagination contract unverified; no speculative Workable/Greenhouse tenant."
-      ]
+      }
     },
     {
       "employer": "The Westin Palace, Milan",
       "canonical_company": "Marriott International",
       "official_event_link": "https://www.marriott.com/it/hotels/milwi-the-westin-palace-milan/overview/",
       "mapped_source": {
-        "family": "Custom official careers / Oracle Recruiting Cloud backend",
+        "family": "Paradox official Marriott careers frontend / Oracle application backend",
         "tenant": "ejwl / MI_CS_1",
         "career_site": "https://careers.marriott.com/",
         "inventory_url": "https://careers.marriott.com/jobs",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "marriott"
       },
       "observed_official_pages": [
         {
@@ -4104,16 +4519,79 @@
         }
       ],
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "marriott_paradox_city_inventory",
         "location_filter_supported": false,
         "locations": [],
-        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "pagination": "Read official server-rendered state; discover target-city facets, page each exact city and reconcile reported count and unique requisition IDs.",
         "total_count_available": true,
-        "full_inventory_possible": false
+        "full_inventory_possible": true
       },
-      "collector_dispatch": "probe_official_inventory",
+      "collector_dispatch": "collect_marriott",
       "smoke_test": {
+        "coverage": "VERIFIED",
+        "collector": "marriott_paradox_city_inventory",
+        "inventory_count": 358,
+        "city_counts": {
+          "London": 262,
+          "Milan": 63,
+          "Rome": 33
+        },
+        "source_url": "https://careers.marriott.com/jobs",
+        "reason": null,
+        "company": "Marriott International",
+        "checked_at": "2026-10-06T18:22:15.904439+00:00",
+        "target_jobs_count": 358,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "26120504",
+            "company": "Marriott International",
+            "title": "Account Director - London Marriott Hotel Park Lane",
+            "location": "London, United Kingdom",
+            "department": null,
+            "team": null,
+            "employment_type": "Full Time",
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://careers.marriott.com/account-director-london-marriott-hotel-park-lane/job/P1-6875644-0",
+            "url": "https://careers.marriott.com/account-director-london-marriott-hotel-park-lane/job/P1-6875644-0",
+            "apply_url": "https://ejwl.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/MI_CS_1/job/26120504/apply/email?posting_type=1"
+          },
+          {
+            "source_id": "26129484",
+            "company": "Marriott International",
+            "title": "Aloft London - Heart of House Specialist - Kitchen Porter",
+            "location": "London, United Kingdom",
+            "department": null,
+            "team": null,
+            "employment_type": "Part Time",
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://careers.marriott.com/aloft-london-heart-of-house-specialist-kitchen-porter/job/P1-7134681-0",
+            "url": "https://careers.marriott.com/aloft-london-heart-of-house-specialist-kitchen-porter/job/P1-7134681-0",
+            "apply_url": "https://ejwl.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/MI_CS_1/job/26129484/apply/email?posting_type=1"
+          },
+          {
+            "source_id": "26123708",
+            "company": "Marriott International",
+            "title": "Assistant Back of House Manager, Pre-Opening - The St. Regis London",
+            "location": "London, United Kingdom",
+            "department": null,
+            "team": null,
+            "employment_type": "Full Time",
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://careers.marriott.com/assistant-back-of-house-manager-pre-opening-the-st-regis-london/job/P1-6924744-0",
+            "url": "https://careers.marriott.com/assistant-back-of-house-manager-pre-opening-the-st-regis-london/job/P1-6924744-0",
+            "apply_url": "https://ejwl.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/MI_CS_1/job/26123708/apply/email?posting_type=1"
+          }
+        ]
+      },
+      "limitations": [
+        "Public POST /api/get-jobs returns 403; supported collector uses reachable official rendered city pages. VERIFIED certifies exposed target-city inventories, not subsidiary/property completeness. Westin Palace Milan remains a coverage alias, never a label applied to all Marriott roles."
+      ],
+      "initial_smoke_test": {
         "company": "Marriott International",
         "batch": "JW4",
         "elapsed_seconds": 1.55,
@@ -4124,11 +4602,7 @@
         "source_url": "https://careers.marriott.com/jobs",
         "target_jobs_count": 0,
         "record_errors_count": 0
-      },
-      "limitations": [
-        "Official search exposes 14,172 jobs and application links on ejwl.fa.us2.oraclecloud.com/.../sites/MI_CS_1/job/<id>/apply/email. Oracle site redirects to CX; exact site/feed equivalence not certified. Global inventory exceeds generic Oracle safety cap (250 x 25); keep official frontend probe. Westin property alias must not relabel all Marriott jobs.",
-        "Marriott official careers is the group recruiting source for Westin. Keep one parent collector; property scope is not exhaustive and all group jobs remain labelled Marriott International."
-      ]
+      }
     },
     {
       "employer": "UniCredit",
@@ -4421,5 +4895,559 @@
       "url": "https://www.renaissancealternatives.com/sites/default/files/2025-05/Genetic%20Press%20Release%20ITA%20vF.pdf",
       "observation": "Official Renaissance release identifies Aurora investment firm and its official website. No public careers inventory was found."
     }
-  ]
+  ],
+  "initial_smoke_summary": {
+    "VERIFIED": 14,
+    "PARTIAL": 48
+  },
+  "collector_followup": {
+    "checked_on": "2026-10-06",
+    "upgraded_sources": 10,
+    "complete_inventory_upgrades": 4,
+    "observed_rendered_upgrades": 6,
+    "smoke_tests": [
+      {
+        "coverage": "VERIFIED",
+        "collector": "successfactors_jobs2web_metadata_v15",
+        "inventory_count": 13,
+        "source_url": "https://www.opportunitadilavoro.cdp.it/search/",
+        "reason": null,
+        "company": "Gruppo CDP",
+        "checked_at": "2026-10-06T18:21:40.005910+00:00",
+        "target_jobs_count": 13,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "1371442357",
+            "company": "Gruppo CDP",
+            "title": "(CDP)_Corporate Affairs Analyst",
+            "location": "Roma 6 ott 2026",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/",
+            "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/",
+            "apply_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/"
+          },
+          {
+            "source_id": "1371442057",
+            "company": "Gruppo CDP",
+            "title": "(CDP)_Advisory Development Strategist",
+            "location": "Roma 6 ott 2026",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Advisory-Development-Strategist/1371442057/",
+            "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Advisory-Development-Strategist/1371442057/",
+            "apply_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Advisory-Development-Strategist/1371442057/"
+          },
+          {
+            "source_id": "1367909757",
+            "company": "Gruppo CDP",
+            "title": "(CDPE)_Funds Investment Associate_Real Estate",
+            "location": "Roma 3 ott 2026",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDPE%29_Funds-Investment-Associate_Real-Estate/1367909757/",
+            "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDPE%29_Funds-Investment-Associate_Real-Estate/1367909757/",
+            "apply_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDPE%29_Funds-Investment-Associate_Real-Estate/1367909757/"
+          }
+        ]
+      },
+      {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 25,
+        "source_url": "https://careers.marktlink.com/vacancies",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Marktlink",
+        "checked_at": "2026-10-06T18:21:39.992184+00:00",
+        "target_jobs_count": 0,
+        "record_errors_count": 0,
+        "sample_jobs": []
+      },
+      {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 12,
+        "source_url": "https://prelios.com/it/carriere/lavora-con-noi",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Prelios",
+        "checked_at": "2026-10-06T18:21:39.713082+00:00",
+        "target_jobs_count": 12,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+            "company": "Prelios",
+            "title": "Stage Accounting and Administration",
+            "location": "Milano",
+            "department": "Amministrazione",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+            "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+            "apply_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69"
+          },
+          {
+            "source_id": "c78d2d23-f207-417e-88f3-cfcfe33d9921",
+            "company": "Prelios",
+            "title": "Stage Legal Support NPE",
+            "location": "Milano",
+            "department": "Ufficio legale",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=c78d2d23-f207-417e-88f3-cfcfe33d9921",
+            "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=c78d2d23-f207-417e-88f3-cfcfe33d9921",
+            "apply_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=c78d2d23-f207-417e-88f3-cfcfe33d9921"
+          },
+          {
+            "source_id": "12c251b0-92fc-475f-82eb-3ca8b767bcc7",
+            "company": "Prelios",
+            "title": "Stage Analyst UTP",
+            "location": "Milano",
+            "department": "UTP Management",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=12c251b0-92fc-475f-82eb-3ca8b767bcc7",
+            "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=12c251b0-92fc-475f-82eb-3ca8b767bcc7",
+            "apply_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=12c251b0-92fc-475f-82eb-3ca8b767bcc7"
+          }
+        ]
+      },
+      {
+        "coverage": "VERIFIED",
+        "collector": "tiktok_public_search",
+        "inventory_count": 4287,
+        "source_url": "https://api.lifeattiktok.com/api/v1/public/supplier/search/job/posts",
+        "reason": null,
+        "company": "TikTok",
+        "checked_at": "2026-10-06T18:22:17.630462+00:00",
+        "target_jobs_count": 322,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "7649701545844590853",
+            "company": "TikTok",
+            "title": "Brand Partnerships Manager, Travel - Global Business Solutions - London",
+            "location": "London",
+            "department": "Sales",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lifeattiktok.com/search/7649701545844590853",
+            "url": "https://lifeattiktok.com/search/7649701545844590853",
+            "apply_url": null
+          },
+          {
+            "source_id": "7693131472085616949",
+            "company": "TikTok",
+            "title": "TikTok Shop - Creator Strategy & Operation Manager",
+            "location": "London",
+            "department": "Commerce ops",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lifeattiktok.com/search/7693131472085616949",
+            "url": "https://lifeattiktok.com/search/7693131472085616949",
+            "apply_url": null
+          },
+          {
+            "source_id": "7688293354297854213",
+            "company": "TikTok",
+            "title": "Agency Solutions Manager - Global Business Solutions - UK - London",
+            "location": "London",
+            "department": "Sales",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lifeattiktok.com/search/7688293354297854213",
+            "url": "https://lifeattiktok.com/search/7688293354297854213",
+            "apply_url": null
+          }
+        ]
+      },
+      {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 62,
+        "source_url": "https://lutech.group/it/careers/search",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Lutech Group",
+        "checked_at": "2026-10-06T18:21:40.303735+00:00",
+        "target_jobs_count": 30,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "732261",
+            "company": "Lutech Group",
+            "title": "Consolidation & Reporting Specialist",
+            "location": "Milano",
+            "department": "Finance",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261",
+            "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261",
+            "apply_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261"
+          },
+          {
+            "source_id": "732242",
+            "company": "Lutech Group",
+            "title": "Data Integration Specialist",
+            "location": "Milano",
+            "department": "AI, Data & Hyperautomation",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=data-integration-specialist-732242",
+            "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=data-integration-specialist-732242",
+            "apply_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=data-integration-specialist-732242"
+          },
+          {
+            "source_id": "731578",
+            "company": "Lutech Group",
+            "title": "AI Solution Architect",
+            "location": "Milano",
+            "department": "AI, Data & Hyperautomation",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=ai-solution-architect-731578",
+            "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=ai-solution-architect-731578",
+            "apply_url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=ai-solution-architect-731578"
+          }
+        ]
+      },
+      {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 19,
+        "source_url": "https://www.thelevelgroup.com/careers",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "The Level Group",
+        "checked_at": "2026-10-06T18:21:40.672568+00:00",
+        "target_jobs_count": 15,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "201588",
+            "company": "The Level Group",
+            "title": "Production Specialist",
+            "location": "Milano",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.thelevelgroup.com/job-description/201588/production-specialist",
+            "url": "https://www.thelevelgroup.com/job-description/201588/production-specialist",
+            "apply_url": "https://www.thelevelgroup.com/job-description/201588/production-specialist"
+          },
+          {
+            "source_id": "209444",
+            "company": "The Level Group",
+            "title": "Business Analyst",
+            "location": "Milan",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.thelevelgroup.com/job-description/209444/business-analyst",
+            "url": "https://www.thelevelgroup.com/job-description/209444/business-analyst",
+            "apply_url": "https://www.thelevelgroup.com/job-description/209444/business-analyst"
+          },
+          {
+            "source_id": "207974",
+            "company": "The Level Group",
+            "title": "Treasury Accounting Specialist",
+            "location": "Milan",
+            "department": null,
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://www.thelevelgroup.com/job-description/207974/treasury-accounting-specialist",
+            "url": "https://www.thelevelgroup.com/job-description/207974/treasury-accounting-specialist",
+            "apply_url": "https://www.thelevelgroup.com/job-description/207974/treasury-accounting-specialist"
+          }
+        ]
+      },
+      {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 2,
+        "source_url": "https://zinrec.intervieweb.it/lechler/en/career",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Lechler",
+        "checked_at": "2026-10-06T18:21:40.926163+00:00",
+        "target_jobs_count": 0,
+        "record_errors_count": 0,
+        "sample_jobs": []
+      },
+      {
+        "coverage": "PARTIAL",
+        "collector": "official_rendered_vacancies",
+        "inventory_count": 10,
+        "source_url": "https://jobs.lactalisvaloreitalia.it/",
+        "reason": "Observed official vacancies collected; exhaustive count/pagination not certified",
+        "company": "Gruppo Lactalis Italia",
+        "checked_at": "2026-10-06T18:21:41.111065+00:00",
+        "target_jobs_count": 2,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "281741481",
+            "company": "Gruppo Lactalis Italia",
+            "title": "TRADE MARKETING & REVENUE INTERN",
+            "location": "Milano (MI)",
+            "department": "Trade Marketing",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm",
+            "url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm",
+            "apply_url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm"
+          },
+          {
+            "source_id": "281407683",
+            "company": "Gruppo Lactalis Italia",
+            "title": "MARKETING INTERN",
+            "location": "Milano (MI)",
+            "department": "Marketing",
+            "team": null,
+            "employment_type": null,
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://jobs.lactalisvaloreitalia.it/jobs/MARKETING_INTERN-Marketing_-Milano_MI_-281407683.htm",
+            "url": "https://jobs.lactalisvaloreitalia.it/jobs/MARKETING_INTERN-Marketing_-Milano_MI_-281407683.htm",
+            "apply_url": "https://jobs.lactalisvaloreitalia.it/jobs/MARKETING_INTERN-Marketing_-Milano_MI_-281407683.htm"
+          }
+        ]
+      },
+      {
+        "coverage": "VERIFIED",
+        "collector": "marriott_paradox_city_inventory",
+        "inventory_count": 358,
+        "city_counts": {
+          "London": 262,
+          "Milan": 63,
+          "Rome": 33
+        },
+        "source_url": "https://careers.marriott.com/jobs",
+        "reason": null,
+        "company": "Marriott International",
+        "checked_at": "2026-10-06T18:22:15.904439+00:00",
+        "target_jobs_count": 358,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "26120504",
+            "company": "Marriott International",
+            "title": "Account Director - London Marriott Hotel Park Lane",
+            "location": "London, United Kingdom",
+            "department": null,
+            "team": null,
+            "employment_type": "Full Time",
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://careers.marriott.com/account-director-london-marriott-hotel-park-lane/job/P1-6875644-0",
+            "url": "https://careers.marriott.com/account-director-london-marriott-hotel-park-lane/job/P1-6875644-0",
+            "apply_url": "https://ejwl.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/MI_CS_1/job/26120504/apply/email?posting_type=1"
+          },
+          {
+            "source_id": "26129484",
+            "company": "Marriott International",
+            "title": "Aloft London - Heart of House Specialist - Kitchen Porter",
+            "location": "London, United Kingdom",
+            "department": null,
+            "team": null,
+            "employment_type": "Part Time",
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://careers.marriott.com/aloft-london-heart-of-house-specialist-kitchen-porter/job/P1-7134681-0",
+            "url": "https://careers.marriott.com/aloft-london-heart-of-house-specialist-kitchen-porter/job/P1-7134681-0",
+            "apply_url": "https://ejwl.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/MI_CS_1/job/26129484/apply/email?posting_type=1"
+          },
+          {
+            "source_id": "26123708",
+            "company": "Marriott International",
+            "title": "Assistant Back of House Manager, Pre-Opening - The St. Regis London",
+            "location": "London, United Kingdom",
+            "department": null,
+            "team": null,
+            "employment_type": "Full Time",
+            "published_at": null,
+            "updated_at": null,
+            "canonical_url": "https://careers.marriott.com/assistant-back-of-house-manager-pre-opening-the-st-regis-london/job/P1-6924744-0",
+            "url": "https://careers.marriott.com/assistant-back-of-house-manager-pre-opening-the-st-regis-london/job/P1-6924744-0",
+            "apply_url": "https://ejwl.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/MI_CS_1/job/26123708/apply/email?posting_type=1"
+          }
+        ]
+      },
+      {
+        "coverage": "VERIFIED",
+        "collector": "axa_jibe_public_search",
+        "inventory_count": 1550,
+        "api_locale_count": 889,
+        "source_url": "https://jobs.axa.com/api/jobs",
+        "reason": null,
+        "company": "AXA",
+        "checked_at": "2026-10-06T18:24:42.153920+00:00",
+        "target_jobs_count": 41,
+        "record_errors_count": 0,
+        "sample_jobs": [
+          {
+            "source_id": "24499",
+            "company": "AXA",
+            "title": "Operatore/Operatrice telefonico/a di Call Center (Part Time) M/F",
+            "location": "ROMA",
+            "department": "CLAIMS AND ASSISTANCE",
+            "team": null,
+            "employment_type": "CONTRACTOR",
+            "published_at": "2026-08-05T11:03:00+0000",
+            "updated_at": "2026-09-24T20:08:30+0000",
+            "canonical_url": "https://jobs.axa.com/jobs/24499?lang=it-it",
+            "url": "https://jobs.axa.com/jobs/24499?lang=it-it",
+            "apply_url": "https://careers-it-axa.icims.com/jobs/24499/login"
+          },
+          {
+            "source_id": "27012",
+            "company": "AXA",
+            "title": "Climate Change Analyst - Catastrophe Management",
+            "location": "LONDON",
+            "department": "UNDERWRITING",
+            "team": null,
+            "employment_type": "FULL_TIME",
+            "published_at": "2026-09-23T07:57:00+0000",
+            "updated_at": "2026-09-23T20:07:54+0000",
+            "canonical_url": "https://jobs.axa.com/jobs/27012?lang=en-us",
+            "url": "https://jobs.axa.com/jobs/27012?lang=en-us",
+            "apply_url": "https://careers-dei-en-axa.icims.com/jobs/27012/login"
+          },
+          {
+            "source_id": "27701",
+            "company": "AXA",
+            "title": "Claims Adjuster - Marine Cargo",
+            "location": "LONDON",
+            "department": "CLAIMS AND ASSISTANCE",
+            "team": null,
+            "employment_type": "FULL_TIME",
+            "published_at": "2026-10-02T08:57:00+0000",
+            "updated_at": "2026-10-02T20:14:16+0000",
+            "canonical_url": "https://jobs.axa.com/jobs/27701?lang=en-us",
+            "url": "https://jobs.axa.com/jobs/27701?lang=en-us",
+            "apply_url": "https://careers-dei-en-axa.icims.com/jobs/27701/login"
+          }
+        ]
+      }
+    ],
+    "evidence_basis": {
+      "Gruppo CDP": [
+        "https://www.cdp.it/it/lavora_con_noi.page",
+        "https://www.opportunitadilavoro.cdp.it/search/"
+      ],
+      "TikTok": [
+        "https://lifeattiktok.com/search",
+        "https://lf16-tiktok-common.ttwstatic.com/obj/tiktok-web-common-sg/tt-career-site/public/_next/static/chunks/3551-93192e64f1c09ed0.js"
+      ],
+      "AXA": [
+        "https://jobs.axa.com/jobs",
+        "https://app.jibecdn.com/prod/search/4.11.222/main.js"
+      ],
+      "Marriott International": [
+        "https://careers.marriott.com/jobs",
+        "https://cdn.sites.paradox.ai/paradox-prod-careersites/cbb6e43d54/jobs-list-only.bundle.js"
+      ]
+    },
+    "remaining_sources_without_extraction": 38,
+    "remaining_probe_sources": 37,
+    "representative_detail_checks": [
+      {
+        "company": "Gruppo CDP",
+        "url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/",
+        "status": 200,
+        "final_url": "https://www.opportunitadilavoro.cdp.it/job/Roma-%28CDP%29_Corporate-Affairs-Analyst/1371442357/",
+        "bytes": 56602,
+        "title_present": true
+      },
+      {
+        "company": "Prelios",
+        "url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+        "status": 200,
+        "final_url": "https://prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=05b2f0bd-39a4-4556-9c18-33bae3fd2b69",
+        "bytes": 6540,
+        "title_present": false
+      },
+      {
+        "company": "TikTok",
+        "url": "https://lifeattiktok.com/search/7649701545844590853",
+        "status": 200,
+        "final_url": "https://lifeattiktok.com/search/7649701545844590853",
+        "bytes": 121804,
+        "title_present": true
+      },
+      {
+        "company": "Lutech Group",
+        "url": "https://lutech.group/content/lutech-site/it/careers/search/details?slug=consolidation-reporting-specialist-732261",
+        "status": 200,
+        "final_url": "https://lutech.group/it/careers/search/details?slug=consolidation-reporting-specialist-732261",
+        "bytes": 103826,
+        "title_present": false
+      },
+      {
+        "company": "The Level Group",
+        "url": "https://www.thelevelgroup.com/job-description/201588/production-specialist",
+        "status": 200,
+        "final_url": "https://www.thelevelgroup.com/job-description/201588/production-specialist",
+        "bytes": 1090106,
+        "title_present": true
+      },
+      {
+        "company": "Gruppo Lactalis Italia",
+        "url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm",
+        "status": 403,
+        "final_url": "https://jobs.lactalisvaloreitalia.it/jobs/TRADE_MARKETING_REVENUE_INTERN-Trade_Marketing-Milano_MI_-281741481.htm",
+        "bytes": 0,
+        "title_present": false
+      },
+      {
+        "company": "Marriott International",
+        "url": "https://careers.marriott.com/account-director-london-marriott-hotel-park-lane/job/P1-6875644-0",
+        "status": 200,
+        "final_url": "https://careers.marriott.com/account-director-london-marriott-hotel-park-lane/job/P1-6875644-0",
+        "bytes": 566419,
+        "title_present": true
+      },
+      {
+        "company": "AXA",
+        "url": "https://jobs.axa.com/jobs/24499?lang=it-it",
+        "status": 200,
+        "final_url": "https://jobs.axa.com/careers-home/jobs/24499?lang=it-it",
+        "bytes": 447031,
+        "title_present": true
+      }
+    ]
+  }
 }

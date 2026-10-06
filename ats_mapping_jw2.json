@@ -1371,29 +1371,28 @@
         "tenant": null,
         "career_site": "https://lifeattiktok.com/",
         "inventory_url": "https://lifeattiktok.com/search?recruitment_id_list=&job_category_id_list=&subject_id_list=&location_code_list=&keyword=&limit=12&offset=0",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://api.lifeattiktok.com/api/v1/public/supplier/search/job/posts",
+        "official_adapter": "tiktok"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "tiktok_public_search",
         "location_filter_supported": true,
         "locations": [
           "Milan",
           "Rome",
           "London"
         ],
-        "pagination": "Official search accepts limit/offset and filter query parameters, but the result list is client-rendered and no stable public exhaustive JSON contract has been verified.",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "POST public supplier search with limit/offset; reconcile stable count and unique job IDs.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Enumerate counted public search endpoint evidenced in official career frontend assets, retaining standard city/role filters.",
         "fallback": "Use indexed official LifeAtTikTok detail pages plus independent web/LinkedIn discovery, then validate current status on LifeAtTikTok before reporting."
       },
       "limitations": [
-        "Do not mark VERIFIED from limit/offset parameters alone: the server-rendered search shell does not expose a reconcilable job total or complete result set to the collector.",
-        "Individual job-detail pages are first-party and server-readable, so autonomous discovery can still be validated reliably.",
-        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
+        "Public search payload/headers evidenced in official lifeattiktok.com frontend assets. A count change, repeated ID or truncated page prevents VERIFIED."
       ],
       "last_mapped": "2026-10-06"
     },
@@ -1652,11 +1651,13 @@
         "tenant": null,
         "career_site": "https://lutech.group/it/careers",
         "inventory_url": "https://lutech.group/it/careers/search",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "lutech"
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
@@ -1664,11 +1665,12 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Rendered search links /content/lutech-site/it/careers/search/details?slug=<slug>-<id>. Backend ATS/feed and full pagination contract unresolved; do not infer Salesforce ATS from consulting-service navigation."
+        "Rendered search links /content/lutech-site/it/careers/search/details?slug=<slug>-<id>. Backend ATS/feed and full pagination contract unresolved; do not infer Salesforce ATS from consulting-service navigation.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
       ],
       "last_mapped": "2026-10-06"
     },
@@ -1709,11 +1711,13 @@
         "tenant": null,
         "career_site": "https://www.thelevelgroup.com/careers",
         "inventory_url": "https://www.thelevelgroup.com/careers",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "level"
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
@@ -1721,11 +1725,12 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Official rendered jobs include Business Analyst, digital analytics and /job-description/<id>/<slug>. E-commerce operations/platform partner, so JW2 business-tech. Application backend/count/pagination contract unverified; no speculative Workable/Greenhouse tenant."
+        "Official rendered jobs include Business Analyst, digital analytics and /job-description/<id>/<slug>. E-commerce operations/platform partner, so JW2 business-tech. Application backend/count/pagination contract unverified; no speculative Workable/Greenhouse tenant.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
       ],
       "last_mapped": "2026-10-06"
     },

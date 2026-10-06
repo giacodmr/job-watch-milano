@@ -807,15 +807,16 @@
       "company": "AXA",
       "batch": "JW1",
       "ats": {
-        "family": "iCIMS / custom AXA careers frontend",
+        "family": "iCIMS / Jibe public AXA careers search",
         "tenant": "careers-en-axa",
         "career_site": "https://jobs.axa.com/careers-home/",
         "inventory_url": "https://jobs.axa.com/jobs",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://jobs.axa.com/api/jobs",
+        "official_adapter": "axa"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "axa_jibe_public_search",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -823,18 +824,16 @@
           "Rome",
           "London"
         ],
-        "pagination": "dynamic search/filtering; exact paging contract not mapped",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Enumerate unfiltered global page/limit response and reconcile unique IDs against totalCount and the sum of languageCounts; count is the English facet only.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Enumerate every page of the official public global AXA feed. Reconcile stable totalCount, sum of languageCounts and unique vacancy IDs; apply existing city and role filters.",
         "fallback": "Use AXA Italy careers/entity pages to cross-check local openings."
       },
       "limitations": [
-        "Country/city organization is accessible, but no reliable total/pagination or public backend endpoint was independently mapped.",
-        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters.",
-        "2026-10-06: official My Applications links careers-en-axa.icims.com. Generic collector has no iCIMS enumeration; AXA Italy subsidiary scope/filter is not independently certified."
+        "Public /api/jobs evidenced in official AXA frontend. Unfiltered pages include all languages: totalCount=1550 reconciles languageCounts and unique IDs; count=889 is the English facet only. VERIFIED certifies this official board, not all subsidiary recruiting channels."
       ],
       "last_mapped": "2026-10-06"
     },
@@ -2038,27 +2037,27 @@
       "company": "Gruppo CDP",
       "batch": "JW1",
       "ats": {
-        "family": "Custom official careers / embedded SAP SuccessFactors legacy",
-        "tenant": "cassadepos",
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
         "career_site": "https://www.cdp.it/it/lavora_con_noi.page",
-        "inventory_url": "https://www.cdp.it/it/lavora_con_noi.page",
+        "inventory_url": "https://www.opportunitadilavoro.cdp.it/search/",
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "level": "FULL",
+        "method": "successfactors_jobs2web_metadata_v15",
         "location_filter_supported": false,
         "locations": [],
-        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Follow official jobs2web pages and reconcile unique vacancies against reported total.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Enumerate official SAP jobs2web public inventory with existing SuccessFactors collector; reconcile independent count and retain standard city filters.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Official careers links career2.successfactors.eu/career with company=cassadepos and loginFlowRequired=true. Current corporate list is not a jobs2web RM inventory; generic SuccessFactors enumerator cannot certify it. No public feed or count contract verified."
+        "Corporate careers links Junior/Specialisti categories on www.opportunitadilavoro.cdp.it. Legacy cassadepos spontaneous-application portal is separate; no guessed API or tenant. Smoke reconciled 13/13 public vacancies."
       ],
       "last_mapped": "2026-10-06"
     },
@@ -2132,11 +2131,13 @@
         "tenant": null,
         "career_site": "https://www.marktlink.com/nl/over-ons/careers",
         "inventory_url": "https://careers.marktlink.com/vacancies",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "marktlink"
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -2149,11 +2150,12 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Official group careers links counted branded vacancy list and /apply?vacancy_id=... details. No backend/feed contract verified; separate Marktlink Capital Recruitee board and indexed Personio jobs are not assumed equivalent. Existing M&A exclusions still apply."
+        "Official group careers links counted branded vacancy list and /apply?vacancy_id=... details. No backend/feed contract verified; separate Marktlink Capital Recruitee board and indexed Personio jobs are not assumed equivalent. Existing M&A exclusions still apply.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
       ],
       "last_mapped": "2026-10-06"
     },
@@ -2221,11 +2223,13 @@
         "tenant": "prelios",
         "career_site": "https://prelios.com/it/carriere/lavora-con-noi",
         "inventory_url": "https://prelios.com/it/carriere/lavora-con-noi",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "prelios"
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
@@ -2233,11 +2237,13 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Rendered vacancies link prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=<UUID>. No supported counted PeopleHR enumerator or public API contract verified; retain official listing as PARTIAL."
+        "Rendered vacancies link prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=<UUID>. No supported counted PeopleHR enumerator or public API contract verified; retain official listing as PARTIAL.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses.",
+        "Representative PeopleHR detail is HTTP 200 but JS-rendered; title is available on official corporate vacancy card, not in the fetched detail HTML. JD retrieval/semantic review may need separate recovery."
       ],
       "last_mapped": "2026-10-06"
     },

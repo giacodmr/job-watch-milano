@@ -1441,11 +1441,13 @@
         "tenant": "lechler",
         "career_site": "https://www.lechler.eu/en",
         "inventory_url": "https://zinrec.intervieweb.it/lechler/en/career",
-        "public_api_or_feed": null
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "intervieweb_lechler"
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site_probe",
+        "method": "official_rendered_vacancies",
         "location_filter_supported": false,
         "locations": [],
         "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
@@ -1453,11 +1455,12 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
         "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
       },
       "limitations": [
-        "Official Work in Lechler link reaches zinrec.intervieweb.it/lechler; powered by In-recruiting and /lechler/jobs/<slug>-<id>/en/. No supported counted enumerator/API. Industrial coatings business, JW3."
+        "Official Work in Lechler link reaches zinrec.intervieweb.it/lechler; powered by In-recruiting and /lechler/jobs/<slug>-<id>/en/. No supported counted enumerator/API. Industrial coatings business, JW3.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
       ],
       "last_mapped": "2026-10-06"
     }
