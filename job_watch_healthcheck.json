@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-06T08:55:58Z",
+  "generated_at": "2026-10-06T08:57:51Z",
   "run_id": "82e1842654380b433eb3e830",
   "snapshot": {
     "run_id": "82e1842654380b433eb3e830",
@@ -57,8 +57,8 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 192,
+      "reporting_pending": 3,
+      "historical_backlog_remaining": 172,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
@@ -66,6 +66,12 @@
           "batch": "JW2",
           "action": "COLLECT_CURRENT_DAY",
           "reason": "Official source snapshot is not from today Europe/Rome"
+        },
+        {
+          "batch": "JW2",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 3,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
         }
       ]
     },
@@ -144,8 +150,8 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 31,
-  "historical_backlog_remaining": 550,
+  "daily_actionable_remaining": 34,
+  "historical_backlog_remaining": 530,
   "source_failures": 0,
   "partial_sources": 114,
   "error_counts": {
@@ -1305,6 +1311,12 @@
       "batch": "JW2",
       "action": "COLLECT_CURRENT_DAY",
       "reason": "Official source snapshot is not from today Europe/Rome"
+    },
+    {
+      "batch": "JW2",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 3,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
       "batch": "JW3",
