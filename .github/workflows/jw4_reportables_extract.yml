@@ -1,0 +1,90 @@
+name: JW4 Reportables Extract
+on:
+  push:
+    branches: [jw4-reportables-20261006]
+permissions:
+  contents: write
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build reportables list
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          root = pathlib.Path('.')
+          sem = json.load(open('semantic_decisions_jw4.json', encoding='utf-8'))
+          reportable = {k:v for k,v in sem.get('records',{}).items() if isinstance(v,dict) and v.get('reportable') is True}
+
+          metadata = {}
+          def merge(key, obj):
+              if key not in reportable or not isinstance(obj, dict): return
+              d = metadata.setdefault(key,{})
+              for src,dst in [
+                  ('company','company'),('title','title'),('location','location'),
+                  ('canonical_url','canonical_url'),('apply_url','apply_url'),('source_url','source_url'),
+                  ('current_status','current_status'),('current_open','current_open'),
+                  ('first_seen_at','first_seen_at'),('fingerprint','fingerprint')]:
+                  val=obj.get(src)
+                  if val is not None and (dst not in d or d.get(dst) in (None,'')):
+                      d[dst]=val
+
+          def walk(obj):
+              if isinstance(obj, dict):
+                  jk=obj.get('job_key')
+                  if isinstance(jk,str): merge(jk,obj)
+                  for k,v in obj.items():
+                      if isinstance(k,str) and k in reportable and isinstance(v,dict): merge(k,v)
+                      walk(v)
+              elif isinstance(obj,list):
+                  for x in obj: walk(x)
+
+          preferred = [
+              'analysis_results_jw4.json','semantic_jd_cache_jw4.json','daily_worklist.json',
+              'semantic_queue_jw4.json','surfaced_jobs_jw4.json','analysis_results.json'
+          ]
+          seen=set()
+          for fn in preferred + [str(p) for p in root.glob('*.json')]:
+              if fn in seen: continue
+              seen.add(fn)
+              p=root/fn
+              if not p.exists(): continue
+              try:
+                  walk(json.load(open(p,encoding='utf-8')))
+              except Exception:
+                  pass
+
+          rows=[]
+          for key,dec in reportable.items():
+              m=metadata.get(key,{})
+              rows.append({
+                  'job_key':key,
+                  'company':m.get('company') or key.split('::',1)[0],
+                  'title':m.get('title'),
+                  'location':m.get('location'),
+                  'canonical_url':m.get('canonical_url') or m.get('apply_url') or m.get('source_url'),
+                  'salary':dec.get('salary'),
+                  'salary_source':dec.get('salary_source'),
+                  'fit_score':dec.get('fit_score'),
+                  'final_experience_status':dec.get('final_experience_status'),
+                  'role_level_assessment':dec.get('role_level_assessment'),
+                  'rationale':dec.get('rationale'),
+                  'current_status':m.get('current_status'),
+                  'current_open':m.get('current_open'),
+                  'fingerprint':dec.get('fingerprint'),
+              })
+          rows.sort(key=lambda r: (r['company'] or '', r['title'] or '', r['job_key']))
+          out={'count':len(rows),'rows':rows}
+          pathlib.Path('.tmp_jw4_reportables.json').write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print('reportable_count',len(rows))
+          print('missing_urls',sum(1 for r in rows if not r['canonical_url']))
+          print('missing_titles',sum(1 for r in rows if not r['title']))
+          PY
+      - name: Commit report
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .tmp_jw4_reportables.json
+          git commit -m "Extract JW4 reportable roles" || exit 0
+          git push
