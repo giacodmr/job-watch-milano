@@ -2,12 +2,12 @@
   "version": "1.0",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "last_mapped": "2026-09-20",
+  "last_mapped": "2026-10-06",
   "verification_summary": {
-    "companies_analyzed": 52,
-    "FULL": 31,
+    "companies_analyzed": 64,
+    "FULL": 34,
     "STRONG": 17,
-    "PARTIAL": 4,
+    "PARTIAL": 13,
     "OPAQUE": 0
   },
   "companies": [
@@ -90,7 +90,7 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "FULL",
+        "level": "PARTIAL",
         "method": "official_inventory",
         "location_filter_supported": true,
         "location_filter_mode": "country/location facets",
@@ -101,17 +101,18 @@
           "London"
         ],
         "pagination": "page-number / offset pagination on SuccessFactors Recruiting Marketing",
-        "total_count_available": true,
-        "full_inventory_possible": true
+        "total_count_available": false,
+        "full_inventory_possible": false
       },
       "job_watch_method": {
         "primary": "Use the official inventory search page, apply country/location filters for the target geography, record the displayed total, enumerate every results page, and deduplicate by official job URL/requisition ID. Declare VERIFIED only when the enumerated count reconciles with the official total.",
         "fallback": "Use targeted web discovery restricted to jobs.pirelli.com only to recover individual official job URLs; do not use the fallback itself as proof of completeness."
       },
       "limitations": [
-        "No separate public unauthenticated API/feed was verified during this mapping."
+        "No separate public unauthenticated API/feed was verified during this mapping.",
+        "2026-10-06: supported SuccessFactors adapter attempted /search/ but found no reconcilable total; result PARTIAL, zero validated observed jobs. Do not certify absence or full inventory."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Heineken Italia",
@@ -944,7 +945,7 @@
       "limitations": [
         "No separate public unauthenticated API/feed was verified during this mapping."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Richemont",
@@ -1337,32 +1338,33 @@
       "company": "Giorgio Armani",
       "batch": "JW4",
       "ats": {
-        "family": "Custom Giorgio Armani careers portal; backend not conclusively identified",
-        "tenant": null,
-        "career_site": "https://careers.giorgioarmani.com/",
-        "inventory_url": "https://careers.giorgioarmani.com/",
+        "family": "SAP SuccessFactors legacy portal embedded in official careers",
+        "tenant": "3397177P",
+        "career_site": "https://career5.successfactors.eu/career?company=3397177P",
+        "inventory_url": "https://career5.successfactors.eu/career?company=3397177P",
         "public_api_or_feed": null
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_search_partial",
+        "method": "official_career_site_probe",
         "location_filter_supported": false,
         "location_filter_mode": "not reliably verified",
         "locations": [],
-        "pagination": "not reliably observable; portal timed out/inaccessible to current web tooling",
+        "pagination": "Legacy SuccessFactors career portal; no supported counted RM pagination contract verified.",
         "total_count_available": false,
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the official career/search page for direct location and keyword checks and validate any discovered vacancy on its official job page. Do not declare the company VERIFIED from this source alone because the complete inventory cannot currently be enumerated.",
-        "fallback": "Use targeted official-domain web search restricted to careers.giorgioarmani.com to discover individual official vacancies, then re-open them on the official site. Keep overall coverage PARTIAL."
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Rediscover official recruiting links through the armani.com footer and career5.successfactors.eu/career?company=3397177P; keep PARTIAL until an exhaustive legacy-portal parser is verified."
       },
       "limitations": [
         "The official careers portal was not reliably accessible/enumerable with current web tooling (timeouts/dynamic access).",
-        "ATS family, pagination and total inventory could not be verified to a sufficient standard.",
-        "No public unauthenticated API/feed was verified."
+        "No public unauthenticated API/feed was verified.",
+        "2026-10-06: careers.giorgioarmani.com fails DNS resolution. Official armani.com footer directly links career5.successfactors.eu/career?company=3397177P. Legacy career portal is not a supported jobs2web RM search; PARTIAL official probe.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Dolce & Gabbana",
@@ -1409,8 +1411,8 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "FULL",
-        "method": "official_inventory",
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "location_filter_mode": "location search/filter",
         "locations": [
@@ -1421,17 +1423,18 @@
         ],
         "pagination": "numbered pages; current inventory exposes multiple pages",
         "total_count_available": true,
-        "full_inventory_possible": true
+        "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the official inventory URL, apply the target location filters, capture the official total count, enumerate all result pages until the count is reconciled, and deduplicate by official job URL/requisition ID.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use targeted web discovery restricted to careers.zegnagroup.com only to recover individual official job URLs; do not use the fallback itself as proof of completeness."
       },
       "limitations": [
         "The application backend/vendor is not fully exposed; completeness is established from the official inventory itself, not from an ATS API.",
-        "No separate public unauthenticated API/feed was verified during this mapping."
+        "No separate public unauthenticated API/feed was verified during this mapping.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Valentino",
@@ -1801,6 +1804,381 @@
         "Retail frontline roles are still filtered later by Job Watch rules; the inventory itself must remain exhaustive."
       ],
       "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "AB InBev Italia",
+      "batch": "JW4",
+      "ats": {
+        "family": "Workday",
+        "tenant": "abinbev",
+        "career_site": "https://europecareers.ab-inbev.com/?country=gb&pg=job-search",
+        "inventory_url": "https://abinbev.wd1.myworkdayjobs.com/EUR",
+        "public_api_or_feed": "https://abinbev.wd1.myworkdayjobs.com/wday/cxs/abinbev/EUR/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "EUR is the official European board, including Italian and London roles. Global/regional boards outside EUR are not included; observed European inventory was fully count-reconciled."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Alfasigma",
+      "batch": "JW4",
+      "ats": {
+        "family": "SAP SuccessFactors",
+        "tenant": null,
+        "career_site": "https://www.alfasigma.com/careers/",
+        "inventory_url": "https://jobs.alfasigma.com/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_jobs2web_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Corporate careers page may return HTTP 403 to requests; official jobs board is reachable and count-reconciled. No fabricated API; standard jobs2web HTML pagination."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Benetton Group",
+      "batch": "JW4",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://www.benettongroup.com/en/work-with-us/",
+        "inventory_url": "https://www.benettongroup.com/en/work-with-us/career-opportunities/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official career-opportunities page is reachable, but no independent count/feed or ATS vendor contract verified."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Dr.Feel",
+      "batch": "JW4",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://drfeel.com/",
+        "inventory_url": "https://drfeel.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official virtual healthcare-service site/navigation and sitemap expose no public corporate-careers inventory. Clinical specialist hiring on external channels is not used as source of truth. JW4 healthcare; site probe only."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Esselunga",
+      "batch": "JW4",
+      "ats": {
+        "family": "SAP SuccessFactors",
+        "tenant": null,
+        "career_site": "https://www.esselunga.it/it-it/homepage.html",
+        "inventory_url": "https://esselungajob.it/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_jobs2web_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official corporate site links Esselunga Job. Count reconciled; many roles are labelled Pioltello, Cernusco or regional territories and do not match current exact Milan/Rome/London filters. Filters are preserved; zero target results is not global absence."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Etro",
+      "batch": "JW4",
+      "ats": {
+        "family": "ADP Recruiting",
+        "tenant": "etro",
+        "career_site": "https://etro.careers.adp.com/",
+        "inventory_url": "https://etro.careers.adp.com/vacancies",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "LUISS directly links employer-branded ADP portal; View all jobs leads to /vacancies. Existing collector has no ADP enumerator; no complete pagination/count/API certification."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Gruppo Lactalis Italia",
+      "batch": "JW4",
+      "ats": {
+        "family": "Altamira Recruiting",
+        "tenant": "jobs.lactalisvaloreitalia.it",
+        "career_site": "https://www.lactalisvaloreitalia.it/lavora-con-noi",
+        "inventory_url": "https://jobs.lactalisvaloreitalia.it/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Corporate site links this official board. HTML exposes Altamira CSS/scripts and ASP.NET postbacks; job URLs /jobs/<slug>-<id>.htm. No supported Altamira enumerator or safely reconcilable full paging/feed.",
+        "Location UI/labels are not a certified automated target-city filter; official probe collects no normalized jobs. PARTIAL never proves absence in Milan/Rome/London."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Hugo Boss",
+      "batch": "JW4",
+      "ats": {
+        "family": "Phenom CareerConnect",
+        "tenant": "HUBOGLOBAL",
+        "career_site": "https://careers.hugoboss.com/global/en",
+        "inventory_url": "https://careers.hugoboss.com/global/en",
+        "public_api_or_feed": "https://careers.hugoboss.com/widgets",
+        "phenom": {
+          "origin": "https://careers.hugoboss.com",
+          "ref_num": "HUBOGLOBAL",
+          "lang": "en_global",
+          "country": "global",
+          "url_prefix": "global/en"
+        }
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "phenom_careerconnect_widgets",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Phenom phApp exposes HUBOGLOBAL, en_global and global. Existing widgets adapter exhausted the counted inventory. Application backend has not been separately confirmed."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "KIKO Milano",
+      "batch": "JW4",
+      "ats": {
+        "family": "Softgarden",
+        "tenant": "kiko",
+        "career_site": "https://www.kikocosmetics.com/fr-fr/a-propos-de-kiko/rejoindre-kiko/",
+        "inventory_url": "https://kiko.softgarden.io/it/vacancies",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Employer-branded Softgarden board is reachable and identifies KIKO. Corporate Join KIKO currently links LinkedIn; no proof Softgarden covers all Italian corporate roles. Multiple recruiting surfaces; keep PARTIAL and do not use LinkedIn as inventory.",
+        "Location UI/labels are not a certified automated target-city filter; official probe collects no normalized jobs. PARTIAL never proves absence in Milan/Rome/London."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Max Mara Fashion Group",
+      "batch": "JW4",
+      "ats": {
+        "family": "SmartRecruiters",
+        "tenant": "MaxMaraFashionGroup",
+        "career_site": "https://www.maxmarafashiongroup.com/join-us",
+        "inventory_url": "https://jobs.smartrecruiters.com/MaxMaraFashionGroup",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/MaxMaraFashionGroup/postings"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "smartrecruiters_posting_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official spontaneous-application link exposes exact MaxMaraFashionGroup tenant. Public API counted 194 vacancies, fully enumerated. Group collection avoids duplicate brand collectors."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "The Estée Lauder Companies",
+      "batch": "JW4",
+      "ats": {
+        "family": "Custom official careers / Eightfold search frontend",
+        "tenant": null,
+        "career_site": "https://www.elcompanies.com/en/careers",
+        "inventory_url": "https://www.elcompanies.com/en/careers/corporate-jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official careers search HTML contains search-with-eightfold; no public feed/tenant or supported enumerator verified. Keep one parent collector across brands; corporate listing does not certify all retail/supply-chain/global jobs."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Marriott International",
+      "batch": "JW4",
+      "ats": {
+        "family": "Custom official careers / Oracle Recruiting Cloud backend",
+        "tenant": "ejwl / MI_CS_1",
+        "career_site": "https://careers.marriott.com/",
+        "inventory_url": "https://careers.marriott.com/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official search exposes 14,172 jobs and application links on ejwl.fa.us2.oraclecloud.com/.../sites/MI_CS_1/job/<id>/apply/email. Oracle site redirects to CX; exact site/feed equivalence not certified. Global inventory exceeds generic Oracle safety cap (250 x 25); keep official frontend probe. Westin property alias must not relabel all Marriott jobs."
+      ],
+      "last_mapped": "2026-10-06"
     }
   ]
 }

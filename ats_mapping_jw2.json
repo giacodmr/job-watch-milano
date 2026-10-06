@@ -4,12 +4,12 @@
   "batch_name": "Strategy, Consulting & Tech",
   "source_repository": "giacodmr/job-watch-milano",
   "source_batch_file": "job_watch_batches.json",
-  "last_mapped": "2026-09-20",
+  "last_mapped": "2026-10-06",
   "summary": {
-    "companies_analyzed": 48,
-    "FULL": 21,
-    "STRONG": 19,
-    "PARTIAL": 8,
+    "companies_analyzed": 55,
+    "FULL": 23,
+    "STRONG": 18,
+    "PARTIAL": 14,
     "OPAQUE": 0
   },
   "notes": [
@@ -64,7 +64,7 @@
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_ats_search_partial",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "locations": [
           "Milan",
@@ -75,14 +75,15 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Attempt the Deloitte Avature SearchJobs inventory and apply the Italy/location facets for Milan and Rome; only mark the company VERIFIED if the complete result set can actually be enumerated in that run.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use Deloitte Italy official careers/job pages and exact-title web discovery for individual roles; London must be checked on the UK member-firm career inventory separately."
       },
       "limitations": [
         "The Avature inventory returned HTTP 406 to the available crawler, preventing a complete enumeration.",
-        "Deloitte career inventories are segmented by member firm/country; the Italy inventory does not prove London coverage."
+        "Deloitte career inventories are segmented by member firm/country; the Italy inventory does not prove London coverage.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "EY / EY-Parthenon",
@@ -120,33 +121,43 @@
       "company": "PwC / Strategy&",
       "batch": "JW2",
       "ats": {
-        "family": "Phenom career front-end (application backend not independently revalidated)",
-        "tenant": null,
+        "family": "Phenom CareerConnect",
+        "tenant": "PWAPIUIT",
         "career_site": "https://jobs-it.pwc.com/it/en",
         "inventory_url": "https://jobs-it.pwc.com/it/en/search-results",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://jobs-it.pwc.com/widgets",
+        "phenom": {
+          "origin": "https://jobs-it.pwc.com",
+          "ref_num": "PWAPIUIT",
+          "lang": "en_it",
+          "country": "it",
+          "url_prefix": "it/en"
+        }
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_ats_inventory_with_technical_limit",
+        "level": "FULL",
+        "method": "phenom_careerconnect_widgets",
         "location_filter_supported": true,
         "locations": [
           "Milan",
-          "Rome"
+          "Milano",
+          "Rome",
+          "Roma"
         ],
-        "pagination": "Dynamic Phenom result pages; offset-style navigation is observable but the complete list is client-rendered",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Exhaust public refineSearch pages and reconcile unique requisitions with totalHits.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use PwC Italy's official search-results inventory, filter Milan/Rome and exhaust the result pagination/offsets visible in the portal; search Strategy& as a keyword/business line where supported.",
+        "primary": "Enumerate the official PwC Italy Phenom widgets refineSearch inventory, reconcile totalHits and apply the unchanged city matcher locally.",
         "fallback": "Use PwC/Strategy& official job-detail pages for confirmation; London requires the PwC UK inventory separately."
       },
       "limitations": [
-        "The search shell is JavaScript-heavy and does not consistently expose a complete total to the crawler.",
-        "Do not infer a Workday tenant solely from job identifiers; the current front-end is Phenom."
+        "Do not infer a Workday tenant solely from job identifiers; the current front-end is Phenom.",
+        "2026-10-06: official Phenom phApp identifies PWAPIUIT / en_it / it, baseUrl /it/en/. Widgets inventory and the unchanged local city matcher were verified; application backend is separate from the recruiting frontend.",
+        "This is the Italy member-firm inventory; full enumeration of this board does not establish London/UK coverage."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "KPMG",
@@ -177,7 +188,7 @@
       "limitations": [
         "The Italian inventory is separate from the UK member-firm portal."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Capgemini Invent",
@@ -383,7 +394,7 @@
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_search_partial",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "locations": [
           "Milan",
@@ -395,14 +406,15 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use Bain's Find a Role interface with office/location filters and follow only official Bain/Avature job links; treat the run as PARTIAL unless all result pages can be enumerated.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use careers.bain.com official job-detail/folder pages to confirm individual openings."
       },
       "limitations": [
         "The public role finder is heavily dynamic and the underlying Avature inventory is not exposed as a stable enumerable endpoint to these tools.",
-        "Do not infer absence of a Milan/Rome/London role from a generic Bain careers page."
+        "Do not infer absence of a Milan/Rome/London role from a generic Bain careers page.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Amazon",
@@ -603,7 +615,7 @@
       "batch": "JW2",
       "ats": {
         "family": "Workday",
-        "tenant": null,
+        "tenant": "cisco",
         "career_site": "https://careers.cisco.com/global/en",
         "inventory_url": "https://cisco.wd5.myworkdayjobs.com/Cisco_Careers",
         "public_api_or_feed": "https://cisco.wd5.myworkdayjobs.com/wday/cxs/cisco/Cisco_Careers/jobs"
@@ -622,14 +634,15 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use Cisco's Phenom search-results page, apply target-location filters and advance through every offset until no new requisitions appear.",
+        "primary": "Enumerate the official Cisco_Careers Workday CXS inventory, reconcile its total and apply the unchanged city matcher locally.",
         "fallback": "Use official Cisco job-detail pages for confirmation; the old jobs.cisco.com inventory should be treated only as a redirect."
       },
       "limitations": [
         "The new Phenom search is client-rendered and does not consistently expose a complete total to the crawler.",
-        "The database career URL points to the legacy jobs.cisco.com host, which now redirects to careers.cisco.com."
+        "The database career URL points to the legacy jobs.cisco.com host, which now redirects to careers.cisco.com.",
+        "2026-10-06: Workday CXS verified 1,366 jobs and 25 target-city jobs. The Phenom frontend is a discovery entry, not the active collector inventory."
       ],
-      "last_mapped": "2026-09-15"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "ServiceNow",
@@ -1362,7 +1375,7 @@
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_dynamic_search_partial",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "locations": [
           "Milan",
@@ -1374,14 +1387,15 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the current LifeAtTikTok search surface (not the legacy careers.tiktok.com/position redirect), target Milan/Rome/London and verify every candidate on its official lifeattiktok.com/search/<job_id> detail page.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use indexed official LifeAtTikTok detail pages plus independent web/LinkedIn discovery, then validate current status on LifeAtTikTok before reporting."
       },
       "limitations": [
         "Do not mark VERIFIED from limit/offset parameters alone: the server-rendered search shell does not expose a reconcilable job total or complete result set to the collector.",
-        "Individual job-detail pages are first-party and server-readable, so autonomous discovery can still be validated reliably."
+        "Individual job-detail pages are first-party and server-readable, so autonomous discovery can still be validated reliably.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-20"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Altman Solon",
@@ -1573,6 +1587,216 @@
         "Map the underlying ATS/structured inventory in a later remediation run before assigning VERIFIED."
       ],
       "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "PTS",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://pts-spa.com/carriere/",
+        "inventory_url": "https://pts-spa.com/carriere/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Multisector economic/management consulting (not a fund manager), so JW2. Rendered career content has application forms but no reconcilable public inventory feed/count."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Grant Thornton",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom official member-firm careers",
+        "tenant": null,
+        "career_site": "https://www.grantthornton.it/",
+        "inventory_url": "https://www.bgt-grantthornton.it/careers-bgt/posizioni-aperte/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official Italian network identifies Bernoni and Ria member firms; Bernoni paginated positions chosen for business advisory. Ria separate inventory https://www.ria-grantthornton.it/careers/posizioni-aperte/ remains an official fallback, not assumed shared ATS. PARTIAL network coverage."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Lutech Group",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://lutech.group/it/careers",
+        "inventory_url": "https://lutech.group/it/careers/search",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Rendered search links /content/lutech-site/it/careers/search/details?slug=<slug>-<id>. Backend ATS/feed and full pagination contract unresolved; do not infer Salesforce ATS from consulting-service navigation."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "NTT DATA",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom official careers / Salesforce Experience frontend",
+        "tenant": "careers.emeal.nttdata.com",
+        "career_site": "https://it.nttdata.com/career",
+        "inventory_url": "https://it.nttdata.com/career/posizioni-aperte",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official Italian list includes /jobs/a1j... details and links careers.emeal.nttdata.com/s/offer/a1J... for applications. Salesforce-style public frontend observed, recruiting product/unauthenticated inventory API unverified. No complete count/pagination contract.",
+        "Location UI/labels are not a certified automated target-city filter; official probe collects no normalized jobs. PARTIAL never proves absence in Milan/Rome/London."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "The Level Group",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://www.thelevelgroup.com/careers",
+        "inventory_url": "https://www.thelevelgroup.com/careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official rendered jobs include Business Analyst, digital analytics and /job-description/<id>/<slug>. E-commerce operations/platform partner, so JW2 business-tech. Application backend/count/pagination contract unverified; no speculative Workable/Greenhouse tenant."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Boston Consulting Group (BCG)",
+      "batch": "JW2",
+      "ats": {
+        "family": "Phenom CareerConnect",
+        "tenant": "BCG1US",
+        "career_site": "https://careers.bcg.com/",
+        "inventory_url": "https://careers.bcg.com/global/en/worldwide-jobs/000",
+        "public_api_or_feed": "https://careers.bcg.com/widgets",
+        "phenom": {
+          "origin": "https://careers.bcg.com",
+          "ref_num": "BCG1US",
+          "lang": "en_global",
+          "country": "global",
+          "url_prefix": "global/en"
+        }
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "phenom_careerconnect_widgets",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official LUISS company-visit participant in addition to desk roster. Phenom phApp BCG1US verified; widgets count fully reconciled including BCG entities."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "McKinsey & Company",
+      "batch": "JW2",
+      "ats": {
+        "family": "Custom official careers; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.mckinsey.com/careers/search-jobs",
+        "inventory_url": "https://www.mckinsey.com/careers/search-jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official LUISS company-visit participant in addition to desk roster. Official search page verified via web browsing; Python request timeout/session sensitivity. No public tenant/feed or supported enumerator verified."
+      ],
+      "last_mapped": "2026-10-06"
     }
   ]
 }

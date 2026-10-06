@@ -7,6 +7,21 @@
       "batch": "JW3",
       "covered_by": "Leonardo",
       "reason": "Telespazio vacancies use the Leonardo Workday career inventory; keep one parent/group collector to prevent duplicate or relabeled jobs."
+    },
+    "Generali Asset Management SGR": {
+      "batch": "JW1",
+      "covered_by": "Generali",
+      "reason": "Generali Investments official careers directly links https://gogenerali.com/home/jobs, already mapped under Generali. Shared group probe is PARTIAL; no standalone GAM collector or subsidiary-absence claim."
+    },
+    "BancoPosta Fondi SGR": {
+      "batch": "JW1",
+      "covered_by": "Poste Italiane",
+      "reason": "LUISS directs BancoPosta to Poste Italiane; official group careers uses CX_3001. Keep one Poste group source; no independently verified BancoPosta-only feed/filter."
+    },
+    "The Westin Palace, Milan": {
+      "batch": "JW4",
+      "covered_by": "Marriott International",
+      "reason": "Marriott official careers is the group recruiting source for Westin. Keep one parent collector; property scope is not exhaustive and all group jobs remain labelled Marriott International."
     }
   },
   "batches": {
@@ -71,14 +86,12 @@
         "Telepass",
         "Aurora Growth Capital",
         "B4 Investimenti SGR",
-        "BancoPosta Fondi SGR",
         "Blue Ocean Finance",
         "BU Bregal Unternehmerkapital",
         "Clessidra Group",
         "COIMA",
         "Columbus Capital",
         "Fitex Capital",
-        "Generali Asset Management SGR",
         "Groupe HLD",
         "Gruppo CDP",
         "Heritage Holdings",
@@ -90,7 +103,8 @@
         "Red Fish Capital Partners",
         "Tages Capital",
         "Tikehau Capital",
-        "Visconti Capital"
+        "Visconti Capital",
+        "Poste Italiane"
       ]
     },
     "JW2": {
@@ -152,7 +166,10 @@
         "PTS",
         "Grant Thornton",
         "Lutech Group",
-        "NTT DATA"
+        "NTT DATA",
+        "The Level Group",
+        "Boston Consulting Group (BCG)",
+        "McKinsey & Company"
       ]
     },
     "JW3": {
@@ -277,70 +294,196 @@
         "KIKO Milano",
         "Max Mara Fashion Group",
         "The Estée Lauder Companies",
-        "The Level Group",
-        "The Westin Palace, Milan"
+        "Marriott International"
       ]
     }
   },
   "company_metadata": {
-    "Aurora Growth Capital": {"network_advantage": "HIGH"},
-    "B4 Investimenti SGR": {"network_advantage": "HIGH"},
-    "BancoPosta Fondi SGR": {"network_advantage": "HIGH"},
-    "Blue Ocean Finance": {"network_advantage": "HIGH"},
-    "BU Bregal Unternehmerkapital": {"network_advantage": "HIGH"},
-    "Clessidra Group": {"network_advantage": "HIGH"},
-    "COIMA": {"network_advantage": "HIGH"},
-    "Columbus Capital": {"network_advantage": "HIGH"},
-    "Fitex Capital": {"network_advantage": "HIGH"},
-    "Generali Asset Management SGR": {"network_advantage": "HIGH"},
-    "Groupe HLD": {"network_advantage": "HIGH"},
-    "Gruppo CDP": {"network_advantage": "HIGH"},
-    "Heritage Holdings": {"network_advantage": "HIGH"},
-    "KYIP Capital SGR": {"network_advantage": "HIGH"},
-    "Marktlink": {"network_advantage": "HIGH"},
-    "Mindful Capital Partners": {"network_advantage": "HIGH"},
-    "Obloo Ventures": {"network_advantage": "HIGH"},
-    "Prelios": {"network_advantage": "HIGH"},
-    "PTS": {"network_advantage": "HIGH"},
-    "Red Fish Capital Partners": {"network_advantage": "HIGH"},
-    "Tages Capital": {"network_advantage": "HIGH"},
-    "Tikehau Capital": {"network_advantage": "HIGH"},
-    "Visconti Capital": {"network_advantage": "HIGH"},
-    "AB InBev Italia": {"network_advantage": "HIGH"},
-    "Alfasigma": {"network_advantage": "HIGH"},
-    "Ariston Group": {"network_advantage": "HIGH"},
-    "Benetton Group": {"network_advantage": "HIGH"},
-    "BMW Group Italia": {"network_advantage": "HIGH"},
-    "BNP Paribas": {"network_advantage": "HIGH"},
-    "Bolton Group": {"network_advantage": "HIGH"},
-    "Cisco": {"network_advantage": "HIGH"},
-    "Deloitte / Monitor Deloitte": {"network_advantage": "HIGH"},
-    "Dr.Feel": {"network_advantage": "HIGH"},
-    "Ermenegildo Zegna": {"network_advantage": "HIGH"},
-    "Esselunga": {"network_advantage": "HIGH"},
-    "Etro": {"network_advantage": "HIGH"},
-    "Fibercop": {"network_advantage": "HIGH"},
-    "Giorgio Armani": {"network_advantage": "HIGH"},
-    "Grant Thornton": {"network_advantage": "HIGH"},
-    "AXA": {"network_advantage": "HIGH"},
-    "Gruppo Lactalis Italia": {"network_advantage": "HIGH"},
-    "Hitachi Rail": {"network_advantage": "HIGH"},
-    "Hugo Boss": {"network_advantage": "HIGH"},
-    "Intesa Sanpaolo": {"network_advantage": "HIGH"},
-    "KIKO Milano": {"network_advantage": "HIGH"},
-    "KPMG": {"network_advantage": "HIGH"},
-    "Lechler": {"network_advantage": "HIGH"},
-    "Lutech Group": {"network_advantage": "HIGH"},
-    "Maire": {"network_advantage": "HIGH"},
-    "Max Mara Fashion Group": {"network_advantage": "HIGH"},
-    "NTT DATA": {"network_advantage": "HIGH"},
-    "Pirelli": {"network_advantage": "HIGH"},
-    "PwC / Strategy&": {"network_advantage": "HIGH"},
-    "Snam": {"network_advantage": "HIGH"},
-    "TikTok": {"network_advantage": "HIGH"},
-    "The Estée Lauder Companies": {"network_advantage": "HIGH"},
-    "The Level Group": {"network_advantage": "HIGH"},
-    "The Westin Palace, Milan": {"network_advantage": "HIGH"},
-    "UniCredit": {"network_advantage": "HIGH"}
+    "Aurora Growth Capital": {
+      "network_advantage": "HIGH"
+    },
+    "B4 Investimenti SGR": {
+      "network_advantage": "HIGH"
+    },
+    "Blue Ocean Finance": {
+      "network_advantage": "HIGH"
+    },
+    "BU Bregal Unternehmerkapital": {
+      "network_advantage": "HIGH"
+    },
+    "Clessidra Group": {
+      "network_advantage": "HIGH"
+    },
+    "COIMA": {
+      "network_advantage": "HIGH"
+    },
+    "Columbus Capital": {
+      "network_advantage": "HIGH"
+    },
+    "Fitex Capital": {
+      "network_advantage": "HIGH"
+    },
+    "Groupe HLD": {
+      "network_advantage": "HIGH"
+    },
+    "Gruppo CDP": {
+      "network_advantage": "HIGH"
+    },
+    "Heritage Holdings": {
+      "network_advantage": "HIGH"
+    },
+    "KYIP Capital SGR": {
+      "network_advantage": "HIGH"
+    },
+    "Marktlink": {
+      "network_advantage": "HIGH"
+    },
+    "Mindful Capital Partners": {
+      "network_advantage": "HIGH"
+    },
+    "Obloo Ventures": {
+      "network_advantage": "HIGH"
+    },
+    "Prelios": {
+      "network_advantage": "HIGH"
+    },
+    "PTS": {
+      "network_advantage": "HIGH"
+    },
+    "Red Fish Capital Partners": {
+      "network_advantage": "HIGH"
+    },
+    "Tages Capital": {
+      "network_advantage": "HIGH"
+    },
+    "Tikehau Capital": {
+      "network_advantage": "HIGH"
+    },
+    "Visconti Capital": {
+      "network_advantage": "HIGH"
+    },
+    "AB InBev Italia": {
+      "network_advantage": "HIGH"
+    },
+    "Alfasigma": {
+      "network_advantage": "HIGH"
+    },
+    "Ariston Group": {
+      "network_advantage": "HIGH"
+    },
+    "Benetton Group": {
+      "network_advantage": "HIGH"
+    },
+    "BMW Group Italia": {
+      "network_advantage": "HIGH"
+    },
+    "BNP Paribas": {
+      "network_advantage": "HIGH"
+    },
+    "Bolton Group": {
+      "network_advantage": "HIGH"
+    },
+    "Cisco": {
+      "network_advantage": "HIGH"
+    },
+    "Deloitte / Monitor Deloitte": {
+      "network_advantage": "HIGH"
+    },
+    "Dr.Feel": {
+      "network_advantage": "HIGH"
+    },
+    "Ermenegildo Zegna": {
+      "network_advantage": "HIGH"
+    },
+    "Esselunga": {
+      "network_advantage": "HIGH"
+    },
+    "Etro": {
+      "network_advantage": "HIGH"
+    },
+    "Fibercop": {
+      "network_advantage": "HIGH"
+    },
+    "Giorgio Armani": {
+      "network_advantage": "HIGH"
+    },
+    "Grant Thornton": {
+      "network_advantage": "HIGH"
+    },
+    "AXA": {
+      "network_advantage": "HIGH"
+    },
+    "Gruppo Lactalis Italia": {
+      "network_advantage": "HIGH"
+    },
+    "Hitachi Rail": {
+      "network_advantage": "HIGH"
+    },
+    "Hugo Boss": {
+      "network_advantage": "HIGH"
+    },
+    "Intesa Sanpaolo": {
+      "network_advantage": "HIGH"
+    },
+    "KIKO Milano": {
+      "network_advantage": "HIGH"
+    },
+    "KPMG": {
+      "network_advantage": "HIGH"
+    },
+    "Lechler": {
+      "network_advantage": "HIGH"
+    },
+    "Lutech Group": {
+      "network_advantage": "HIGH"
+    },
+    "Maire": {
+      "network_advantage": "HIGH"
+    },
+    "Max Mara Fashion Group": {
+      "network_advantage": "HIGH"
+    },
+    "NTT DATA": {
+      "network_advantage": "HIGH"
+    },
+    "Pirelli": {
+      "network_advantage": "HIGH"
+    },
+    "PwC / Strategy&": {
+      "network_advantage": "HIGH"
+    },
+    "Snam": {
+      "network_advantage": "HIGH"
+    },
+    "TikTok": {
+      "network_advantage": "HIGH"
+    },
+    "The Estée Lauder Companies": {
+      "network_advantage": "HIGH"
+    },
+    "The Level Group": {
+      "network_advantage": "HIGH"
+    },
+    "UniCredit": {
+      "network_advantage": "HIGH"
+    },
+    "Generali": {
+      "network_advantage": "HIGH"
+    },
+    "Poste Italiane": {
+      "network_advantage": "HIGH"
+    },
+    "Marriott International": {
+      "network_advantage": "HIGH"
+    },
+    "Boston Consulting Group (BCG)": {
+      "network_advantage": "HIGH"
+    },
+    "McKinsey & Company": {
+      "network_advantage": "HIGH"
+    },
+    "Bain & Company": {
+      "network_advantage": "HIGH"
+    }
   }
 }
