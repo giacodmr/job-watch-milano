@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-06T11:34:14Z",
+  "generated_at": "2026-10-06T11:47:04Z",
   "run_id": "d774cb8c8174d53413a258ef",
   "snapshot": {
     "run_id": "d774cb8c8174d53413a258ef",
@@ -62,8 +62,8 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 24,
-      "reporting_pending": 12,
+      "actionable_delta_pending": 9,
+      "reporting_pending": 15,
       "historical_backlog_remaining": 119,
       "failed": 0,
       "not_checked": 0,
@@ -71,13 +71,13 @@
         {
           "batch": "JW2",
           "action": "SEMANTIC_REVIEW",
-          "count": 24,
+          "count": 9,
           "reason": "Review exact current fingerprints in daily worklist"
         },
         {
           "batch": "JW2",
           "action": "REPORT_OPPORTUNITIES",
-          "count": 12,
+          "count": 15,
           "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
         },
         {
@@ -174,12 +174,12 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 100,
+  "daily_actionable_remaining": 88,
   "historical_backlog_remaining": 460,
   "source_failures": 0,
   "partial_sources": 115,
   "error_counts": {
-    "record": 11,
+    "record": 5,
     "source": 115,
     "batch": 0,
     "global": 0
@@ -1264,66 +1264,6 @@
       "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Nike",
       "job_key": "Nike::R-91871"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "American Express",
-      "job_key": "American Express::26011847"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "American Express",
-      "job_key": "American Express::26013624"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "Trade Republic",
-      "job_key": "Trade Republic::5614731003"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW4",
-      "company": "Amplifon",
-      "job_key": "Amplifon::13366"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "HTTP 400",
-      "batch": "JW4",
-      "company": "H&M",
-      "job_key": "H&M::744000153497944"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "HTTP 400",
-      "batch": "JW4",
-      "company": "H&M",
-      "job_key": "H&M::744000153683204"
     }
   ],
   "stage_reports": {
@@ -1357,6 +1297,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1368,18 +1311,6 @@
     },
     "semantic_sync:JW4": {
       "status": "COMPLETE"
-    },
-    "enrichment:JW1": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "enrichment:JW2": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW3": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW4": {
-      "status": "COMPLETE_WITH_WARNINGS"
     },
     "worklist": {
       "status": "COMPLETE"
@@ -1418,13 +1349,13 @@
     {
       "batch": "JW2",
       "action": "SEMANTIC_REVIEW",
-      "count": 24,
+      "count": 9,
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
       "batch": "JW2",
       "action": "REPORT_OPPORTUNITIES",
-      "count": 12,
+      "count": 15,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
