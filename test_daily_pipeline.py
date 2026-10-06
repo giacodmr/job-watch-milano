@@ -164,7 +164,21 @@ class PersistedDelta(unittest.TestCase):
         self.put('analysis_results_jw3.json',{'records':rows})
         self.put('semantic_jd_cache_jw3.json',{'records':{'Test::0':{'fingerprint':'wrong','status':'OK','text':'stale'}}})
         work=daily_worklist.build_worklist();self.assertEqual(len(work['records']),1);self.assertNotIn('jd',work['records'][0]);self.assertEqual(work['summary']['daily_semantic_pending'],0)
+        # An unresolved tranche stays stable; resolving it advances the bounded
+        # tranche (the production behavior already present on main).
+        self.put('daily_worklist.json',work)
+        self.assertEqual(daily_worklist.build_worklist()['records'],work['records'])
         self.put('daily_worklist.json',work);rows['Test::0'].update(needs_analysis=False,reportable=False);self.put('analysis_results_jw3.json',{'records':rows})
+        next_work=daily_worklist.build_worklist()
+        self.assertEqual([r['job_key'] for r in next_work['records']],['Test::1'])
+        self.put('daily_worklist.json',next_work)
+        rows['Test::1'].update(needs_analysis=False,reportable=False)
+        self.put('analysis_results_jw3.json',{'records':rows})
+        last_work=daily_worklist.build_worklist()
+        self.assertEqual([r['job_key'] for r in last_work['records']],['Test::2'])
+        self.put('daily_worklist.json',last_work)
+        rows['Test::2'].update(needs_analysis=False,reportable=False)
+        self.put('analysis_results_jw3.json',{'records':rows})
         self.assertEqual(daily_worklist.build_worklist()['records'],[])
 
     def test_lifecycle_notice_is_not_repeated_after_reporting(self):
