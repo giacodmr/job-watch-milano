@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-06T15:08:58Z",
+  "generated_at": "2026-10-06T15:36:43Z",
   "run_id": "d774cb8c8174d53413a258ef",
   "snapshot": {
     "run_id": "d774cb8c8174d53413a258ef",
@@ -38,17 +38,23 @@
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 18,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 283,
+      "actionable_delta_pending": 17,
+      "reporting_pending": 13,
+      "historical_backlog_remaining": 188,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
         {
           "batch": "JW1",
           "action": "SEMANTIC_REVIEW",
-          "count": 18,
+          "count": 17,
           "reason": "Review exact current fingerprints in daily worklist"
+        },
+        {
+          "batch": "JW1",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 13,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
         },
         {
           "batch": "JW1",
@@ -168,8 +174,8 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 91,
-  "historical_backlog_remaining": 371,
+  "daily_actionable_remaining": 103,
+  "historical_backlog_remaining": 276,
   "source_failures": 0,
   "partial_sources": 115,
   "error_counts": {
@@ -1332,8 +1338,14 @@
     {
       "batch": "JW1",
       "action": "SEMANTIC_REVIEW",
-      "count": 18,
+      "count": 17,
       "reason": "Review exact current fingerprints in daily worklist"
+    },
+    {
+      "batch": "JW1",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 13,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
       "batch": "JW1",
