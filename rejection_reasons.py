@@ -1,5 +1,4 @@
 """Small user-feedback taxonomy. Never used as a hard-filter input."""
-import os
 import re
 
 REJECTION_REASONS = {'TOO_SENIOR', 'SALARY_TOO_LOW', 'WRONG_FUNCTION', 'WRONG_LOCATION',
@@ -26,9 +25,3 @@ def infer_rejection_reason(reason):
 
 def reason_is_vague(reason):
     return bool(re.fullmatch(r'\s*(?:scarta|no|togli|non mi interessa|not interested|reject|discard)[.!\s]*', str(reason or ''), re.I)) or not str(reason or '').strip()
-
-
-# One-time migration hook; inert outside GitHub Actions on main and removed after publication.
-if os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('GITHUB_REF') == 'refs/heads/main':
-    from jw1_rescue_once import apply_once as _apply_jw1_rescue_once
-    _apply_jw1_rescue_once()
