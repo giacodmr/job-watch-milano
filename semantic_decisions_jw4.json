@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "batch": "JW4",
-  "updated_at": "2026-10-06T14:54:05.517945Z",
+  "updated_at": "2026-10-06T17:30:00Z",
   "records": {
     "H&M::744000150633819": {
       "fingerprint": "6b2a140413f21e05",
@@ -43,13 +43,13 @@
       "analyzed_at": "2026-09-21T09:48:00Z"
     },
     "Amplifon::13366": {
-      "fingerprint": "0315b8714bcfdb37",
+      "fingerprint": "769278ad324500ff",
       "analysis_status": "ANALYZED",
       "analysis_method": "chatgpt_semantic_triage",
       "decision": "REJECT",
       "reason": "WRONG_FUNCTION",
-      "rationale": "University/education initiative rather than a target corporate vacancy.",
-      "analyzed_at": "2026-10-05T22:07:24Z"
+      "rationale": "Education/university initiative rather than a target corporate vacancy.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     },
     "Nike::R-92411": {
       "fingerprint": "dc49895729e9cf24",
@@ -2091,47 +2091,42 @@
     "Valentino::1441057433": {
       "fingerprint": "b13b4cd73b4ca990",
       "analysis_status": "ANALYZED",
-      "analysis_method": "chatgpt_semantic_full_jd",
-      "fit_score": 34,
-      "mandatory_vs_preferred_requirements": {
-        "mandatory": [
-          "1-3 years facility management",
-          "Technical building knowledge"
-        ],
-        "preferred": []
-      },
-      "role_level_assessment": "EARLY_MID",
-      "seniority_evidence": "Official JD requires 1-3 years in Facility Management plus technical building/systems knowledge and operational site presence.",
-      "final_experience_status": "TARGET_0_5",
-      "l68_status": "NO",
-      "reportable": false,
-      "rationale": "Seniority is accessible, but the role is facilities/building operations rather than business strategy/analytics.",
-      "analyzed_at": "2026-09-30T12:20:00Z",
-      "salary": null,
-      "salary_source": null
+      "analysis_method": "chatgpt_semantic_triage",
+      "decision": "REJECT",
+      "reason": "WRONG_FUNCTION",
+      "rationale": "Facilities-management specialist role outside the target business/strategy/commercial families.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     },
     "Ferrero::1432662633": {
       "fingerprint": "ba22c45d664b31f1",
       "analysis_status": "ANALYZED",
       "analysis_method": "chatgpt_semantic_full_jd",
-      "fit_score": 25,
+      "fit_score": 15,
+      "experience_required": "Established corporate security/risk experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
       "mandatory_vs_preferred_requirements": {
         "mandatory": [
-          "Corporate security",
-          "Investigations/crisis",
-          "Security budgets"
+          "Established corporate security/risk experience"
         ],
         "preferred": []
       },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Owns UK&I physical/corporate security, intelligence, investigations, crisis and risk management.",
       "role_level_assessment": "SENIOR",
-      "seniority_evidence": "Official JD describes an established corporate-security professional leading UK&I physical/logistics security, investigations, crisis management and security budgets.",
+      "seniority_evidence": "Security Manager role influencing senior leaders across a complex multi-site business.",
       "final_experience_status": "REVIEW_UNCLEAR",
       "l68_status": "NO",
-      "reportable": false,
-      "rationale": "Senior corporate-security specialization is outside target despite project and financial-management components.",
-      "analyzed_at": "2026-09-30T12:20:00Z",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
       "salary": null,
-      "salary_source": null
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Wrong function: corporate security rather than business/strategy/commercial analysis.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     },
     "Amplifon::21302": {
       "fingerprint": "faa9c1c5fdf86d88",
@@ -2382,23 +2377,31 @@
       "analysis_status": "ANALYZED",
       "analysis_method": "chatgpt_semantic_full_jd",
       "fit_score": 45,
+      "experience_required": "Previous fashion-retail/concession operations and team-leadership experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
       "mandatory_vs_preferred_requirements": {
         "mandatory": [
-          "Retail operations",
-          "Visual merchandising",
-          "Team leadership"
+          "Previous fashion-retail/concession operations and team-leadership experience"
         ],
         "preferred": []
       },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads Selfridges concession team, VM, store operations, sales initiatives and KPI performance.",
       "role_level_assessment": "MID",
-      "seniority_evidence": "Official JD is an in-store commercial leadership role: customer service, visual merchandising, store operations, Sales Advisor team leadership and retail KPIs.",
+      "seniority_evidence": "In-store Commercial Manager with team leadership and retail operations responsibility.",
       "final_experience_status": "REVIEW_UNCLEAR",
       "l68_status": "NO",
-      "reportable": false,
-      "rationale": "Retail-store leadership is outside corporate strategy/analytics target.",
-      "analyzed_at": "2026-09-30T12:20:00Z",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
       "salary": null,
-      "salary_source": null
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Retail-store leadership role rather than corporate commercial analysis/strategy.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     },
     "H&M::744000151636980": {
       "fingerprint": "f83df4f56d18cefa",
@@ -2427,24 +2430,32 @@
       "fingerprint": "1068daa0ec7273b0",
       "analysis_status": "ANALYZED",
       "analysis_method": "chatgpt_semantic_full_jd",
-      "fit_score": 82,
+      "fit_score": 62,
+      "experience_required": "Sustainability/nature-programme project experience; numeric floor not confirmed",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
       "mandatory_vs_preferred_requirements": {
         "mandatory": [
-          "2-5 years",
-          "Programme delivery",
-          "Sustainability/nature"
+          "Sustainability/nature-programme project experience; numeric floor not confirmed"
         ],
         "preferred": []
       },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports global sustainability programmes, frameworks, implementation and impact measurement.",
       "role_level_assessment": "EARLY_MID",
-      "seniority_evidence": "Current posting is positioned around 2-5 years and combines sustainability programme design/delivery, frameworks, impact measurement and cross-functional/external partnerships.",
-      "final_experience_status": "TARGET_0_5",
+      "seniority_evidence": "Specialist role reporting to Senior Manager; no numeric floor identified.",
+      "final_experience_status": "REVIEW_UNCLEAR",
       "l68_status": "NO",
-      "reportable": true,
-      "rationale": "Good London strategy/programme fit, particularly for sustainability/ESG; not core target but analytically and operationally relevant.",
-      "analyzed_at": "2026-09-30T12:20:00Z",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
       "salary": null,
-      "salary_source": null
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Interesting corporate project exposure but sustainability/nature domain is not a priority target and fit is moderate.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     },
     "EssilorLuxottica::1441342833": {
       "fingerprint": "c820e5fc857e4e7e",
@@ -2502,26 +2513,32 @@
       "fingerprint": "babc60b6cce0b53b",
       "analysis_status": "ANALYZED",
       "analysis_method": "chatgpt_semantic_full_jd",
-      "analyzed_at": "2026-09-30T12:30:00Z",
-      "fit_score": 20,
+      "fit_score": 15,
+      "experience_required": "Facilities-management experience; role reserved for protected categories under L.68/99",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
       "mandatory_vs_preferred_requirements": {
         "mandatory": [
-          "Facility management background",
-          "Technical building/systems knowledge",
-          "L.68/99 eligibility"
+          "Facilities-management experience; role reserved for protected categories under L.68/99"
         ],
         "preferred": []
       },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Facilities operations/support in the Rome corporate office.",
       "role_level_assessment": "EARLY_MID",
-      "seniority_evidence": "Protected-category facility role mirrors the ordinary Rome Facility Specialist vacancy.",
-      "final_experience_status": "TARGET_0_5",
+      "seniority_evidence": "Protected-category facilities role; no numeric experience floor confirmed.",
+      "final_experience_status": "REVIEW_UNCLEAR",
       "l68_status": "RESERVED",
+      "l68_evidence": "Title explicitly states Categorie Protette (L.68/99).",
       "ordinary_twin_found": true,
-      "ordinary_twin_job_id": "1441057433",
+      "ordinary_twin_job_id": "Valentino::1441057433",
       "ordinary_twin_url": "https://jobs.valentino.com/job/Roma-Facilitiy-Specialist-Fixed-Term/1441057433/",
-      "ordinary_twin_similarity": "Same role family and location; this vacancy is the L.68/99 reserved twin.",
+      "salary": null,
+      "salary_source": "not_disclosed",
       "reportable": false,
-      "rationale": "Reserved L.68/99 vacancy and function is facilities/building operations, outside target."
+      "rationale": "Facilities is outside target scope and the posting is explicitly for Categorie Protette L.68/99.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     },
     "Campari Group::1293646401": {
       "fingerprint": "0f71cd77e4e2181d",
@@ -6127,6 +6144,1353 @@
       "rationale": "Good business/finance-process adjacency and accessible seniority, but solid SAP FI/CO customizing is a central mandatory technical requirement and a material profile gap; not a target business-role application.",
       "analyzed_at": "2026-10-06T09:30:00Z",
       "l68_status": "NO"
+    },
+    "Boehringer Ingelheim::1435626233": {
+      "fingerprint": "3f0648067df6b967",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 52,
+      "experience_required": "8+ years trade/category/customer marketing",
+      "mandatory_years_experience": 8,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "8+ years trade/category/customer marketing"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Senior trade marketing leadership; strategy, activation, ROI and team capability.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Minimum 8 years and senior leadership/team-building scope.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "EUR 55,000-73,000",
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Function is commercially relevant, but the explicit 8-year minimum and leadership scope are well beyond target seniority.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Campari Group::1416828533": {
+      "fingerprint": "12b36d12e1e0a120",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 58,
+      "experience_required": "7-10 years controlling/FP&A and managerial consolidation",
+      "mandatory_years_experience": 7,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "7-10 years controlling/FP&A and managerial consolidation"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Owns managerial consolidation, planning cycles, data quality, SAP finance processes and a specialist team.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Requires 7-10 years and people management.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Relevant controlling/FP&A content, but 7-10 years plus team management makes it too senior.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "IQVIA::R1572464": {
+      "fingerprint": "f621f7f32037016e",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 45,
+      "experience_required": "Prior pharmacy-channel commercial/category experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Prior pharmacy-channel commercial/category experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Field commercial advisory to pharmacies, sell-out development, category support and market insights.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Requires prior pharmacy-channel experience; no reliable numeric minimum found.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "EUR 30,000-35,216",
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Specialist pharmacy-channel field sales role with a domain requirement and only borderline compensation.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "NielsenIQ::744000153544947": {
+      "fingerprint": "ddaa016a40827276",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 94,
+      "experience_required": "2-3 years in market research, consumer insights or analytics",
+      "mandatory_years_experience": 2,
+      "preferred_years_experience": 3,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "2-3 years in market research, consumer insights or analytics"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Own consumer-insight studies, analyse data, build recommendations and present to clients.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Explicit 2-3 years; no people-management requirement.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "EUR 30,500-36,670",
+      "salary_source": "official_jd",
+      "reportable": true,
+      "rationale": "Excellent match for analytical consulting, consumer insights, storytelling and client-facing work; experience is directly in range.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Campari Group::1442783533": {
+      "fingerprint": "a5d75200a2c2c8a9",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 74,
+      "experience_required": "Minimum 5 years sales experience in UK drinks/FMCG preferred",
+      "mandatory_years_experience": 5,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Minimum 5 years sales experience in UK drinks/FMCG preferred"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Own national-account plans, P&L, forecasts, negotiations and customer growth.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Explicit minimum 5 years plus established account-management track record.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Strong commercial scope but the five-year floor and UK drinks/FMCG account-management background create a material experience/domain gap.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000153497944": {
+      "fingerprint": "1f4e016c254e85b0",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_triage",
+      "decision": "REJECT",
+      "reason": "WRONG_FUNCTION",
+      "rationale": "Frontline temporary café team role, not a corporate business/strategy position.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000153683204": {
+      "fingerprint": "f645a2d6e6ab6d1b",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_triage",
+      "decision": "REJECT",
+      "reason": "WRONG_FUNCTION",
+      "rationale": "Payroll administration is outside the target business/strategy/commercial role families.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Prada Group::1443432233": {
+      "fingerprint": "25618e3dd7719853",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 48,
+      "experience_required": "10+ years Retail Training/L&D/Customer Experience",
+      "mandatory_years_experience": 10,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "10+ years Retail Training/L&D/Customer Experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Defines global training and customer-experience strategy and supports international retail teams.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Explicit 10+ years in retail training/L&D/customer experience.",
+      "final_experience_status": "OUT_GT5_MANDATORY",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Strategic content is interesting but the explicit 10+ years makes the role far too senior.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Amplifon::21448": {
+      "fingerprint": "8e213169edcfc6ad",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 84,
+      "experience_required": "At least 5 years in management control, IT cost control or IT governance",
+      "mandatory_years_experience": 5,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "At least 5 years in management control, IT cost control or IT governance"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Own IT cost planning/control, governance, P2P and contract lifecycle with cross-functional Finance/Procurement/Legal stakeholders.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "At least 5 years; Senior Specialist with high autonomy and guidance of junior/external resources.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "EUR 40,000-55,000",
+      "salary_source": "public_job_posting",
+      "reportable": true,
+      "rationale": "Strong strategy/governance, budgeting, forecasting and process-ownership fit; five years is a stretch but still within the configured 0-5 boundary.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "IQVIA::R1572206": {
+      "fingerprint": "f933982681c64b09",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 45,
+      "experience_required": "Prior pharmacy-channel commercial/category experience and relevant scientific background",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Prior pharmacy-channel commercial/category experience and relevant scientific background"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Field pharmacy-channel advisory, sell-out development, category support and CRM activity.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Prior sector experience required; no reliable numeric minimum found.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "EUR 30,000-35,216",
+      "salary_source": "public_job_posting",
+      "reportable": false,
+      "rationale": "Specialist pharmacy-channel field-sales role with domain constraints and borderline compensation.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Dolce & Gabbana::1390052933": {
+      "fingerprint": "1568d5f45e2700f6",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 42,
+      "experience_required": "At least 5 years luxury/premium retail with supervisory responsibilities",
+      "mandatory_years_experience": 5,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "At least 5 years luxury/premium retail with supervisory responsibilities"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Runs store-floor sales, clienteling, CRM, KPIs and team performance.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Explicit 5 years plus supervisory/managerial retail experience.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "From EUR 38,000 + MBO",
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Retail store-management role rather than corporate commercial/strategy work; requires five years of luxury retail leadership.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Johnson & Johnson::/job/Pomezia-Roma-Italy/Field-Service-Engineer_R-102231-1": {
+      "fingerprint": "dc41898d95e585ae",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_triage",
+      "decision": "REJECT",
+      "reason": "TOO_TECHNICAL",
+      "rationale": "Field-service engineering is a technical engineering function outside the target business role families.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "MSD::R418786": {
+      "fingerprint": "772d4c8d89ebdb7e",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 72,
+      "experience_required": "About 5 years tender/public-procurement experience, preferably pharma",
+      "mandatory_years_experience": 5,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "About 5 years tender/public-procurement experience, preferably pharma"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns public tender lifecycle and supports hospital commercial/market-access operations.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Around 5 years tender-management experience plus public-procurement expertise.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "EUR 37,400-63,600",
+      "salary_source": "public_job_posting",
+      "reportable": false,
+      "rationale": "Commercially adjacent and well paid, but the five-year tender/procurement specialization is a material profile gap.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Boehringer Ingelheim::1396992233": {
+      "fingerprint": "9b033556cf35d979",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 62,
+      "experience_required": "Established senior category-management experience in consumer/health retail",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Established senior category-management experience in consumer/health retail"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Senior category strategy, customer/channel growth, insights and cross-functional commercial leadership.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Senior Category Manager title and leadership-level category ownership; numeric minimum not reliably confirmed.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Category content is relevant, but role level is clearly senior and requires established category leadership beyond current profile.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Campari Group::1437525033": {
+      "fingerprint": "f0f382178fd44d4f",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 84,
+      "experience_required": "4+ years FMCG with grocery/e-commerce account-management experience",
+      "mandatory_years_experience": 4,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "4+ years FMCG with grocery/e-commerce account-management experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns e-commerce customer strategy, P&L, forecasts, JBP, media/SEO and growth initiatives.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Explicit 4+ years and prior FMCG/e-commerce account-management experience.",
+      "final_experience_status": "TARGET_0_5",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "official_jd",
+      "reportable": true,
+      "rationale": "Highly relevant commercial/e-commerce role with P&L, strategy and analytics; four years is a stretch but within target ceiling.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Chanel::/job/London/Account-Manager---John-Lewis-Oxford-Street_JOBREQ00116868": {
+      "fingerprint": "bcb36c5c8357de39",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 38,
+      "experience_required": "Retail beauty counter leadership and people-management experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Retail beauty counter leadership and people-management experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads a CHANEL counter team, sales, clienteling, stock, rotas and brand execution.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Account Manager title with direct retail team leadership; numeric minimum not confirmed.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "This is frontline beauty retail management rather than a corporate account/strategy role.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Chanel::/job/London/Account-Manager---John-Lewis-Stratford_JOBREQ00116034": {
+      "fingerprint": "8962e7d0e8d141e5",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 38,
+      "experience_required": "Retail beauty counter leadership and people-management experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Retail beauty counter leadership and people-management experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads counter operations, team performance, client experience and sales execution.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Account Manager title with direct retail team leadership; numeric minimum not confirmed.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "This is frontline beauty retail management rather than a corporate account/strategy role.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Chanel::/job/London/Client-Data-Manager_JOBREQ00116769": {
+      "fingerprint": "665916b77c1a11b9",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 88,
+      "experience_required": "Significant experience in client data management/governance, data quality or MDM",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Significant experience in client data management/governance, data quality or MDM"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Leads global client-data governance, privacy, quality, analytics and transformation initiatives across Business/IT/Legal.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Manager role requiring significant client-data/governance experience and day-to-day guidance of coordinator/intern.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Very strong overlap with CRM, data governance, client analytics, privacy and global PMO work; seniority is not numerically defined, so it merits review.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Chanel::/job/London/D365-Test-Manager_JOBREQ00113355": {
+      "fingerprint": "b6e9ac94de622ba6",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 22,
+      "experience_required": "Deep Dynamics 365 testing, automation and technical delivery experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Deep Dynamics 365 testing, automation and technical delivery experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Owns D365 F&O testing, test automation, Azure DevOps and technical quality processes.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Manager title with specialist D365/test-engineering ownership.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Too technical and platform-specific for the target business/strategy profile.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Chanel::/job/London/Project-Manager--Omnichannel-Client-Data_JOBREQ00115732-1": {
+      "fingerprint": "e1ab555ba78cd432",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 95,
+      "experience_required": "Several years digital/omnichannel/data management plus project-management experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Several years digital/omnichannel/data management plus project-management experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Leads omnichannel client-data workstreams, consent/data quality, journeys, PMO governance and Business/IT/Legal alignment.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Several years of relevant experience; mid-level global PMO ownership with no explicit people-management requirement.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Outstanding fit with CRM, consent, client journeys, data quality, stakeholder management and transformation; fixed-term nature is the main caveat.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Dolce & Gabbana::1390920433": {
+      "fingerprint": "5f75bac37f260a95",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 42,
+      "experience_required": "Luxury retail sales and team-leadership experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Luxury retail sales and team-leadership experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads Selfridges retail sales floor, CRM/clienteling, KPIs and team coaching.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Sales Manager title with direct retail leadership; numeric minimum not confirmed.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Frontline luxury retail management rather than corporate commercial/strategy work.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "EssilorLuxottica::1422230233": {
+      "fingerprint": "f876235b190a3df9",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 68,
+      "experience_required": "Proven field sales/account-management experience in fast-paced commercial/retail environment",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Proven field sales/account-management experience in fast-paced commercial/retail environment"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns territory sales, margin, new business, assortment, forecasting and customer negotiations.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Category Sales Manager title; prior field sales/account-management track record required, no numeric floor.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Category scope is relevant, but this is primarily field sales/new-business acquisition rather than analytical corporate category management.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "EssilorLuxottica::1424006733": {
+      "fingerprint": "c366c3156782325c",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 58,
+      "experience_required": "Proven field sales/commercial experience, ideally MedTech",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Proven field sales/commercial experience, ideally MedTech"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Drives MedTech market expansion, B2B/B2C sales, training, pipeline and market insights.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Sales & Training Manager title with proven field-sales requirement; numeric minimum not stated.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Predominantly field sales/business development with MedTech domain preference; weaker fit for target corporate roles.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "EssilorLuxottica::1423476033": {
+      "fingerprint": "c20bc1b3ebfbe237",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 86,
+      "experience_required": "Finance controlling/planning/business-partnering experience; numeric floor not confirmed",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Finance controlling/planning/business-partnering experience; numeric floor not confirmed"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "North Europe OPEX control, planning, reporting, cost visibility and finance business partnering.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Controller role with broad regional finance exposure; no reliable numeric minimum found.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Strong FP&A/controlling/business-partnering fit with regional exposure and decision-support responsibilities.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "EssilorLuxottica::1425772533": {
+      "fingerprint": "129171679d09d79a",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 56,
+      "experience_required": "Optical-industry experience plus field sales/account management",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Optical-industry experience plus field sales/account management"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Drives lens-category sales, new business, account progression and territory growth.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Category Sales Manager title plus optical-industry and field-sales requirements.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Strong domain and field-sales requirements make this a poor fit despite category-management elements.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "EssilorLuxottica::1426683933": {
+      "fingerprint": "932fda1bf676e9b2",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 86,
+      "experience_required": "Experience in sales/category/business development in technology, consumer electronics, optics or healthcare",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Experience in sales/category/business development in technology, consumer electronics, optics or healthcare"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns wearable-category adoption, sell-in/out, training, performance analysis and regional growth.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Category Manager title; relevant commercial experience required but no numeric floor.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Attractive category/technology role combining commercial growth, analytics, training and consumer insight; no hard numeric seniority barrier found.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "EssilorLuxottica::1437623233": {
+      "fingerprint": "d7b9bdd28540a0a5",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 86,
+      "experience_required": "Experience in sales/category/business development in technology, consumer electronics, optics or healthcare",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Experience in sales/category/business development in technology, consumer electronics, optics or healthcare"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns wearable-category adoption, sell-in/out, training, performance analysis and regional growth.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Category Manager title; relevant commercial experience required but no numeric floor.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "GBP 50,000-77,000 estimate",
+      "salary_source": "third_party_estimate",
+      "reportable": true,
+      "rationale": "Attractive category/technology role combining commercial growth, analytics and consumer insight; no hard numeric seniority barrier found.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Ferrero::1429213033": {
+      "fingerprint": "b92c22dc9f276205",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 70,
+      "experience_required": "Significant FMCG commercial/customer leadership experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Significant FMCG commercial/customer leadership experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads Grocery Ireland customer strategy, P&L, negotiations, forecasting and a commercial team.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Business Unit Controller with people leadership and 'significant commercial experience'.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Strategically relevant commercial leadership, but clearly a senior people-leader role beyond target level.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Ferrero::1429293433": {
+      "fingerprint": "5fbb841c0a960ccd",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 92,
+      "experience_required": "Strong relevant D2C/e-commerce/retail/FMCG commercial experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Strong relevant D2C/e-commerce/retail/FMCG commercial experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns D2C trading strategy, pricing, promotions, forecasting, portfolio, stock/fulfilment and team development.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Manager role with people leadership; numeric experience floor not stated.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Excellent commercial-operations scope across pricing, planning, forecasting and e-commerce; seniority is unclear but function is highly aligned.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Ferrero::1433578333": {
+      "fingerprint": "ae4b49928190d209",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 83,
+      "experience_required": "Established FMCG national-account/customer management experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Established FMCG national-account/customer management experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns Tesco customer plans, commercial performance, insights, negotiations and cross-functional execution.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "National Account Manager with significant customer ownership; no explicit numeric minimum found.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Strong commercial strategy/account role with insight-to-action responsibility; experience level is a stretch but not explicitly above five years.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Ferrero::1433583133": {
+      "fingerprint": "5902e547c67e94d3",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 96,
+      "experience_required": "Experience in RGM, BI, Commercial Finance or related commercial discipline",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Experience in RGM, BI, Commercial Finance or related commercial discipline"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Turns pricing, trade investment, mix, P&L and performance data into commercial recommendations using Power BI.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Manager title but no numeric floor; specialist analytical/commercial ownership rather than people leadership.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "One of the strongest fits: revenue growth, BI, commercial finance, analytics, Power BI and strategic decision support.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Novartis::REQ-10079898": {
+      "fingerprint": "85c2a59433ee0fc8",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 20,
+      "experience_required": "Senior regulatory diagnostics expertise across companion diagnostics and drug development",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Senior regulatory diagnostics expertise across companion diagnostics and drug development"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads global regulatory diagnostics strategy and submissions.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Associate Director title and global regulatory leadership.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "GBP 67,900-126,100",
+      "salary_source": "official_jd",
+      "reportable": false,
+      "rationale": "Highly specialized senior regulatory-science leadership role outside target profile.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "IQVIA::/job/London-United-Kingdom/Associate-Principal---Patient-Centered-Solutions_R1566785-1": {
+      "fingerprint": "9632e693bd8a701e",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 35,
+      "experience_required": "Senior scientific/consulting leadership in patient-centered outcomes research",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Senior scientific/consulting leadership in patient-centered outcomes research"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads scientific consulting, clients, methodology, business development and researcher development.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Associate Principal level with senior client and people leadership.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Consulting elements are attractive, but the role is senior and requires deep patient-centered scientific research expertise.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "IQVIA::R1552564": {
+      "fingerprint": "d946284c8a2d86c9",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 35,
+      "experience_required": "Director-level product/offering development with healthcare data/technology expertise",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Director-level product/offering development with healthcare data/technology expertise"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Directs next-generation commercial data product/offering development bridging business and technology.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Director title and product-offering leadership scope.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Potentially interesting business-tech content, but Director seniority and specialist healthcare-data product depth are far beyond target.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "IQVIA::R1566204": {
+      "fingerprint": "725291bc7d129cd0",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 58,
+      "experience_required": "Proven pharmaceutical Key Account Management and NHS/tender experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Proven pharmaceutical Key Account Management and NHS/tender experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns biosimilar NHS account plans, adoption, market access, tenders and commercial growth.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Experienced pharmaceutical KAM required; no numeric floor stated.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Commercially relevant but highly specific to pharmaceutical KAM/NHS market access and requires established domain experience.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Chanel::/job/London/Legal-Assistant_JOBREQ00117558": {
+      "fingerprint": "fd46e7f146f46b2a",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_triage",
+      "decision": "REJECT",
+      "reason": "WRONG_FUNCTION",
+      "rationale": "Legal-assistant function is outside target business/strategy/commercial role families.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Diageo::/job/London-England/Global-Travel-IBP-Leader_JR1129573-1": {
+      "fingerprint": "f633b2fbd900a308",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 70,
+      "experience_required": "Established IBP/S&OP, demand-planning and senior-leadership experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Established IBP/S&OP, demand-planning and senior-leadership experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads market IBP, cross-functional planning, gap-closing decisions and senior leadership forums.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Leader role requiring prior IBP/S&OP strategy implementation and direct senior-business-leadership experience.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Planning content is highly relevant, but leadership breadth and established IBP/S&OP expertise make the role too senior.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152908604": {
+      "fingerprint": "34a2e94cb9d85ccb",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 90,
+      "experience_required": "Previous Assistant Buyer experience in menswear; product-development knowledge",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Previous Assistant Buyer experience in menswear; product-development knowledge"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports assortment/product development, sales and margin analysis, ordering and cross-functional buying execution.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Assistant Buyer role with prior-role experience but no numeric years requirement.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "GBP 36,000-44,000 estimate",
+      "salary_source": "third_party_estimate",
+      "reportable": true,
+      "rationale": "Strong early-career commercial/category role combining assortment, sales analysis, margin and product development.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152908570": {
+      "fingerprint": "82c685373b3e6e99",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 90,
+      "experience_required": "Previous Assistant Buyer experience in menswear; product-development knowledge",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Previous Assistant Buyer experience in menswear; product-development knowledge"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Supports assortment/product development, sales and margin analysis, ordering and cross-functional buying execution.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Assistant Buyer role with prior-role experience but no numeric years requirement.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "GBP 36,000-44,000 estimate",
+      "salary_source": "third_party_estimate",
+      "reportable": true,
+      "rationale": "Strong early-career commercial/category role combining assortment, sales analysis, margin and product development.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152872179": {
+      "fingerprint": "d6098fb1fc9320fd",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 94,
+      "experience_required": "Previous planning/buying/merchandising experience in fashion retail",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Previous planning/buying/merchandising experience in fashion retail"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Optimises assortments, quantities, stock, sell-through and profitability using customer and sales insights.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Planner role with previous similar experience; no numeric years floor stated.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Excellent fit for commercial planning, analytics, assortment and cross-functional decision-making.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152872159": {
+      "fingerprint": "e6e770790130221e",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 94,
+      "experience_required": "Previous planning/buying/merchandising experience in fashion retail",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Previous planning/buying/merchandising experience in fashion retail"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Optimises assortments, quantities, stock, sell-through and profitability using customer and sales insights.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "Planner role with previous similar experience; no numeric years floor stated.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Excellent fit for commercial planning, analytics, assortment and cross-functional decision-making.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152873419": {
+      "fingerprint": "76c066b6522b7bda",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 40,
+      "experience_required": "Management experience in customer-facing retail and prior team leadership",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Management experience in customer-facing retail and prior team leadership"
+        ],
+        "preferred": []
+      },
+      "people_management_required": true,
+      "individual_contributor_possible": false,
+      "decision_scope_and_ownership": "Leads a store department, people, sales/profit KPIs, visual standards and stock.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "Department Manager with direct team leadership in store retail.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Frontline store-management role rather than corporate business/strategy work.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152884561": {
+      "fingerprint": "ed4d85535f9a4a4e",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 68,
+      "experience_required": "Extensive paid-media measurement experience in premium brand/agency environment",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Extensive paid-media measurement experience in premium brand/agency environment"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns global media effectiveness measurement, MMM, experimentation, reporting and investment insights.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Manager role requiring 'extensive years' of specialist media-measurement experience.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Analytical content is strong, but it requires deep specialist paid-media measurement expertise and substantial experience.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "H&M::744000152884879": {
+      "fingerprint": "9c968644b9dd3cc7",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 68,
+      "experience_required": "Extensive paid-media measurement experience in premium brand/agency environment",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Extensive paid-media measurement experience in premium brand/agency environment"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns global media effectiveness measurement, MMM, experimentation, reporting and investment insights.",
+      "role_level_assessment": "SENIOR",
+      "seniority_evidence": "Manager role requiring 'extensive years' of specialist media-measurement experience.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": false,
+      "rationale": "Analytical content is strong, but it requires deep specialist paid-media measurement expertise and substantial experience.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Diageo::/job/London-England/National-Account-Manager----On-Trade_JR1130294-1": {
+      "fingerprint": "b9e1841dcb93719e",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 84,
+      "experience_required": "Customer/account-management experience with proven sales, revenue and profit delivery",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Customer/account-management experience with proven sales, revenue and profit delivery"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns customer growth plans, negotiations, P&L drivers, insights and cross-functional execution.",
+      "role_level_assessment": "MID",
+      "seniority_evidence": "National Account Manager described as mid-level; no hard numeric minimum in current posting.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": null,
+      "salary_source": "not_disclosed",
+      "reportable": true,
+      "rationale": "Strong commercial/account strategy fit with analytics and P&L responsibility; no explicit >5-year barrier found.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "MSD::R416995": {
+      "fingerprint": "a57fe43d468bdda8",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_full_jd",
+      "fit_score": 86,
+      "experience_required": "Proven digital/omnichannel marketing and customer-journey execution experience",
+      "mandatory_years_experience": null,
+      "preferred_years_experience": null,
+      "mandatory_vs_preferred_requirements": {
+        "mandatory": [
+          "Proven digital/omnichannel marketing and customer-journey execution experience"
+        ],
+        "preferred": []
+      },
+      "people_management_required": false,
+      "individual_contributor_possible": true,
+      "decision_scope_and_ownership": "Owns digital channels, customer journeys, campaign analytics, optimisation and cross-functional execution.",
+      "role_level_assessment": "EARLY_MID",
+      "seniority_evidence": "No numeric floor stated; hands-on marketer role rather than senior leadership.",
+      "final_experience_status": "REVIEW_UNCLEAR",
+      "l68_status": "NO",
+      "l68_evidence": null,
+      "ordinary_twin_found": false,
+      "ordinary_twin_job_id": null,
+      "ordinary_twin_url": null,
+      "salary": "GBP 30,000-32,000 estimate",
+      "salary_source": "third_party_estimate",
+      "reportable": true,
+      "rationale": "Good match for CRM/customer journeys, digital analytics and stakeholder coordination; 12-month maternity cover is a caveat.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
+    },
+    "Nike::R-94703": {
+      "fingerprint": "41c27e5fb49af758",
+      "analysis_status": "ANALYZED",
+      "analysis_method": "chatgpt_semantic_triage",
+      "decision": "REJECT",
+      "reason": "WRONG_FUNCTION",
+      "rationale": "Frontline retail-associate role, not a corporate business/strategy/commercial position.",
+      "analyzed_at": "2026-10-06T17:30:00Z"
     }
   }
 }
