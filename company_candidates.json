@@ -1,13 +1,13 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "updated_at": "2026-10-07",
-  "purpose": "Single operational staging registry for employers not yet in the active Job Watch company universe.",
+  "purpose": "Single non-active employer registry for research evidence, candidate staging, promotion readiness and technical-access gaps before active JW1-JW4 monitoring.",
   "authority": {
-    "scope": "candidate staging and promotion evidence",
+    "scope": "non-active employer research, candidate staging and promotion evidence",
     "active_company_registry": "companies_job_watch_v2.json",
     "routing": "job_watch_batches.json",
     "technical_access": "ats_mapping_jw1.json ... ats_mapping_jw4.json",
-    "research_watchlist": "extra_company_watchlist.json remains a separate curated research/radar file, not a staging authority."
+    "research_watchlist": "Merged into company_candidates.json; status and source evidence distinguish radar-only, promotion-ready and ATS-mapping candidates."
   },
   "source_policies": {
     "employer_expansion_20261004": {
@@ -26,6 +26,14 @@
     },
     "autonomous_discovery": {
       "description": "Staging registry for off-watchlist employers discovered by autonomous Job Watch research. Promotion is governed by job_watch_rules.json company_self_improvement_policy."
+    },
+    "extra_company_watchlist_20261004": {
+      "purpose": "Evidence-based EXTRA company layer. Companies are identified from current/past role families and compensation signals before promotion into active JW1-JW4 collection.",
+      "policy": {
+        "promotion_candidate": "Strong current or recurring role-family fit plus credible compensation/seniority evidence. Map official source/ATS before active promotion.",
+        "watch_extra": "Employer-level potential is attractive, but current vacancy may be too senior, wrong function or compensation evidence is incomplete.",
+        "salary_rule": "Non-aligned roles may be retained as employer compensation evidence; estimated salary must not be treated as official salary."
+      }
     }
   },
   "records": {
@@ -46,6 +54,33 @@
           "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
         }
       }
+    },
+    "ABB": {
+      "company": "ABB",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW3",
+      "priority": 3,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://careers.abb/global/en/",
+      "expected_fit": null,
+      "compensation_signal": "Third-party Milan signals: Project Manager around EUR 51.9k and Business Development Manager around EUR 61.6k; use only as employer potential, not official role salary.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "ABB",
+          "city": "Milan area",
+          "recommended_batch": "JW3",
+          "status": "WATCH_EXTRA",
+          "role_evidence": "Industrial employer with recurring business development, project-management and strategy/consulting-adjacent roles around Milan.",
+          "seniority_signal": "No current high-confidence 0-5y strategy vacancy validated in this pass.",
+          "compensation_signal": "Third-party Milan signals: Project Manager around EUR 51.9k and Business Development Manager around EUR 61.6k; use only as employer potential, not official role salary.",
+          "career_url": "https://careers.abb/global/en/",
+          "priority": 3
+        }
+      },
+      "city": "Milan area",
+      "role_evidence": "Industrial employer with recurring business development, project-management and strategy/consulting-adjacent roles around Milan.",
+      "seniority_signal": "No current high-confidence 0-5y strategy vacancy validated in this pass."
     },
     "adidas": {
       "company": "adidas",
@@ -75,19 +110,33 @@
       "company": "Alfasigma",
       "status": "NEEDS_ATS_MAPPING",
       "recommended_batch": "JW4",
-      "priority": null,
+      "priority": 3,
       "first_seen": null,
       "last_seen": "2026-10-07",
-      "career_url": null,
+      "career_url": "https://www.alfasigma.com/careers/",
       "expected_fit": null,
-      "compensation_signal": null,
+      "compensation_signal": "Senior FP&A postings show high compensation potential, but junior-role evidence is materially lower; company-level pay is seniority-sensitive.",
       "sources": {
         "batch_integrity_20261007": {
           "company": "Alfasigma",
           "former_batch": "JW4",
           "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        },
+        "extra_company_watchlist_20261004": {
+          "company": "Alfasigma",
+          "city": "Milan / Rome area",
+          "recommended_batch": "JW4",
+          "status": "WATCH_EXTRA",
+          "role_evidence": "Recurring FP&A/business-planning/category roles with P&L, forecasting, GTM and strategic resource-allocation scope.",
+          "seniority_signal": "Current strongest FP&A evidence is senior (6-10 years); monitor Analyst/Specialist openings.",
+          "compensation_signal": "Senior FP&A postings show high compensation potential, but junior-role evidence is materially lower; company-level pay is seniority-sensitive.",
+          "career_url": "https://www.alfasigma.com/careers/",
+          "priority": 3
         }
-      }
+      },
+      "city": "Milan / Rome area",
+      "role_evidence": "Recurring FP&A/business-planning/category roles with P&L, forecasting, GTM and strategic resource-allocation scope.",
+      "seniority_signal": "Current strongest FP&A evidence is senior (6-10 years); monitor Analyst/Specialist openings."
     },
     "Ariston Group": {
       "company": "Ariston Group",
@@ -423,6 +472,33 @@
         }
       }
     },
+    "Contents": {
+      "company": "Contents",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW2",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://www.contents.com/careers/",
+      "expected_fit": null,
+      "compensation_signal": "Official posting says competitive package aligned with seniority; no reliable official numeric range.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "Contents",
+          "city": "Milan",
+          "recommended_batch": "JW2",
+          "status": "PROMOTION_CANDIDATE",
+          "role_evidence": "Current Finance Analyst: FP&A, budgeting, forecasting, modelling, SaaS metrics, board/investor reporting and cross-functional decision support; consulting background explicitly accepted.",
+          "seniority_signal": "2-4 years on current official posting.",
+          "compensation_signal": "Official posting says competitive package aligned with seniority; no reliable official numeric range.",
+          "career_url": "https://www.contents.com/careers/",
+          "priority": 1
+        }
+      },
+      "city": "Milan",
+      "role_evidence": "Current Finance Analyst: FP&A, budgeting, forecasting, modelling, SaaS metrics, board/investor reporting and cross-functional decision support; consulting background explicitly accepted.",
+      "seniority_signal": "2-4 years on current official posting."
+    },
     "Dell Technologies": {
       "company": "Dell Technologies",
       "status": "WATCH_EXTRA",
@@ -616,6 +692,33 @@
         }
       }
     },
+    "Findus Italia / Nomad Foods": {
+      "company": "Findus Italia / Nomad Foods",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW4",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://www.nomadfoods.com/careers/",
+      "expected_fit": null,
+      "compensation_signal": "Current posting: EUR 45k-52k.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "Findus Italia / Nomad Foods",
+          "city": "Rome",
+          "recommended_batch": "JW4",
+          "status": "PROMOTION_CANDIDATE",
+          "role_evidence": "Current FP&A Analyst: planning, forecasting, KPI/variance analysis, performance management and decision support.",
+          "seniority_signal": "1-3 years.",
+          "compensation_signal": "Current posting: EUR 45k-52k.",
+          "career_url": "https://www.nomadfoods.com/careers/",
+          "priority": 1
+        }
+      },
+      "city": "Rome",
+      "role_evidence": "Current FP&A Analyst: planning, forecasting, KPI/variance analysis, performance management and decision support.",
+      "seniority_signal": "1-3 years."
+    },
     "Fitex Capital": {
       "company": "Fitex Capital",
       "status": "NEEDS_ATS_MAPPING",
@@ -724,6 +827,33 @@
         }
       }
     },
+    "Haleon": {
+      "company": "Haleon",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW4",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://careers.haleon.com/",
+      "expected_fit": null,
+      "compensation_signal": "Current Milan KAM posting shows approximately EUR 55.1k-75.8k base, useful as employer-level pay evidence.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "Haleon",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "WATCH_EXTRA",
+          "role_evidence": "Milan organization currently hires business-planning/market-intelligence/commercial roles; Haleon also has Commercial Analytics/NRM role families, although the Commercial Analyst opening reviewed is outside Italy.",
+          "seniority_signal": "Current Milan Key Account Manager asks 3+ years but is too sales-oriented for direct targeting.",
+          "compensation_signal": "Current Milan KAM posting shows approximately EUR 55.1k-75.8k base, useful as employer-level pay evidence.",
+          "career_url": "https://careers.haleon.com/",
+          "priority": 2
+        }
+      },
+      "city": "Milan",
+      "role_evidence": "Milan organization currently hires business-planning/market-intelligence/commercial roles; Haleon also has Commercial Analytics/NRM role families, although the Commercial Analyst opening reviewed is outside Italy.",
+      "seniority_signal": "Current Milan Key Account Manager asks 3+ years but is too sales-oriented for direct targeting."
+    },
     "Heritage Holdings": {
       "company": "Heritage Holdings",
       "status": "NEEDS_ATS_MAPPING",
@@ -795,6 +925,33 @@
           "evidence": "Current role is relevant but one validated sub-85 fit signal is not enough for automatic promotion under the current company policy."
         }
       }
+    },
+    "HP Inc.": {
+      "company": "HP Inc.",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW2",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://jobs.hp.com/",
+      "expected_fit": null,
+      "compensation_signal": "Current Milan Chief of Staff posting: EUR 63,350-99,850 base plus annual cash incentive.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "HP Inc.",
+          "city": "Milan",
+          "recommended_batch": "JW2",
+          "status": "WATCH_EXTRA",
+          "role_evidence": "Current Chief of Staff is in Business Planning and covers strategy, analysis, cross-functional execution and decision support; current level is materially too senior.",
+          "seniority_signal": "Current reference role typically 10+ years; monitor lower-level Business Planning/Strategy/Commercial Analytics openings.",
+          "compensation_signal": "Current Milan Chief of Staff posting: EUR 63,350-99,850 base plus annual cash incentive.",
+          "career_url": "https://jobs.hp.com/",
+          "priority": 2
+        }
+      },
+      "city": "Milan",
+      "role_evidence": "Current Chief of Staff is in Business Planning and covers strategy, analysis, cross-functional execution and decision support; current level is materially too senior.",
+      "seniority_signal": "Current reference role typically 10+ years; monitor lower-level Business Planning/Strategy/Commercial Analytics openings."
     },
     "Hugo Boss": {
       "company": "Hugo Boss",
@@ -1061,6 +1218,33 @@
         }
       }
     },
+    "Novo Nordisk": {
+      "company": "Novo Nordisk",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW4",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://www.novonordisk.com/careers.html",
+      "expected_fit": null,
+      "compensation_signal": "Current posting: EUR 43,940-68,110 annual base plus possible incentives/benefits.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "Novo Nordisk",
+          "city": "Rome",
+          "recommended_batch": "JW4",
+          "status": "PROMOTION_CANDIDATE",
+          "role_evidence": "Current Business Analyst in Commercial Excellence: business insights, performance analysis, forecasting/scenario analysis and Power BI.",
+          "seniority_signal": "Accessible business-analytics profile; exact mandatory tenure not used as a hard assumption.",
+          "compensation_signal": "Current posting: EUR 43,940-68,110 annual base plus possible incentives/benefits.",
+          "career_url": "https://www.novonordisk.com/careers.html",
+          "priority": 1
+        }
+      },
+      "city": "Rome",
+      "role_evidence": "Current Business Analyst in Commercial Excellence: business insights, performance analysis, forecasting/scenario analysis and Power BI.",
+      "seniority_signal": "Accessible business-analytics profile; exact mandatory tenure not used as a hard assumption."
+    },
     "NTT DATA": {
       "company": "NTT DATA",
       "status": "NEEDS_ATS_MAPPING",
@@ -1216,6 +1400,33 @@
         }
       }
     },
+    "RENEW Advisory": {
+      "company": "RENEW Advisory",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW2",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://www.renewadvisory.it/",
+      "expected_fit": null,
+      "compensation_signal": "Posting claims compensation aligned to MBB, but no numeric range is disclosed; treat as unverified until recruiter/offer evidence.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "RENEW Advisory",
+          "city": "Milan",
+          "recommended_batch": "JW2",
+          "status": "PROMOTION_CANDIDATE",
+          "role_evidence": "Current Strategy Analyst: strategic, market and financial analysis, business plans/modelling and executive materials.",
+          "seniority_signal": "1-2 years.",
+          "compensation_signal": "Posting claims compensation aligned to MBB, but no numeric range is disclosed; treat as unverified until recruiter/offer evidence.",
+          "career_url": "https://www.renewadvisory.it/",
+          "priority": 2
+        }
+      },
+      "city": "Milan",
+      "role_evidence": "Current Strategy Analyst: strategic, market and financial analysis, business plans/modelling and executive materials.",
+      "seniority_signal": "1-2 years."
+    },
     "S&P Global": {
       "company": "S&P Global",
       "status": "PROMOTION_CANDIDATE",
@@ -1312,6 +1523,33 @@
         }
       }
     },
+    "Sonnedix": {
+      "company": "Sonnedix",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW3",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://www.sonnedix.com/careers/",
+      "expected_fit": null,
+      "compensation_signal": "Current role salary not officially disclosed; company retained for role-family fit pending compensation validation.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "Sonnedix",
+          "city": "Milan",
+          "recommended_batch": "JW3",
+          "status": "PROMOTION_CANDIDATE",
+          "role_evidence": "Current FP&A Analyst Italy: forecasting, budgeting, strategic planning, management reporting and business risk/opportunity analysis.",
+          "seniority_signal": "Analyst-level current opening.",
+          "compensation_signal": "Current role salary not officially disclosed; company retained for role-family fit pending compensation validation.",
+          "career_url": "https://www.sonnedix.com/careers/",
+          "priority": 1
+        }
+      },
+      "city": "Milan",
+      "role_evidence": "Current FP&A Analyst Italy: forecasting, budgeting, strategic planning, management reporting and business risk/opportunity analysis.",
+      "seniority_signal": "Analyst-level current opening."
+    },
     "Tages Capital": {
       "company": "Tages Capital",
       "status": "NEEDS_ATS_MAPPING",
@@ -1402,6 +1640,33 @@
         }
       }
     },
+    "Tinexta": {
+      "company": "Tinexta",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW2",
+      "priority": 3,
+      "first_seen": null,
+      "last_seen": "2026-10-04",
+      "career_url": "https://www.tinexta.com/careers/",
+      "expected_fit": null,
+      "compensation_signal": "Current pricing-role listing reports EUR 41k-52k plus variable; other Milan Tinexta salary signals span roughly EUR 40k-50k for specialist roles.",
+      "sources": {
+        "extra_company_watchlist_20261004": {
+          "company": "Tinexta",
+          "city": "Milan",
+          "recommended_batch": "JW2",
+          "status": "WATCH_EXTRA",
+          "role_evidence": "Current Pricing/Sales Incentive role covers pricing, margins, Commercial Excellence, modelling and internal consulting to Finance/HR/business lines.",
+          "seniority_signal": "Current pricing role asks 4-6 years, slightly above target.",
+          "compensation_signal": "Current pricing-role listing reports EUR 41k-52k plus variable; other Milan Tinexta salary signals span roughly EUR 40k-50k for specialist roles.",
+          "career_url": "https://www.tinexta.com/careers/",
+          "priority": 3
+        }
+      },
+      "city": "Milan",
+      "role_evidence": "Current Pricing/Sales Incentive role covers pricing, margins, Commercial Excellence, modelling and internal consulting to Finance/HR/business lines.",
+      "seniority_signal": "Current pricing role asks 4-6 years, slightly above target."
+    },
     "VF Corporation": {
       "company": "VF Corporation",
       "status": "WATCH_EXTRA",
@@ -1488,6 +1753,16 @@
       "batch": "JW4",
       "recommendation": "RAISE_PRIORITY",
       "evidence": "Milan support office has Business Controlling as a formal work area. Historical/current Milan evidence includes Business Controller around EUR45k and Expansion Controller around EUR50k, with responsibilities in P&L, forecasting, business cases and profitability."
+    }
+  ],
+  "researched_not_added": [
+    {
+      "company": "Sector Alarm",
+      "reason": "Current Milan Strategy Analyst is functionally strong but advertised starting salary around EUR 30k, below the Job Watch compensation floor."
+    },
+    {
+      "company": "TeamSystem",
+      "reason": "Relevant Strategy/Finance/Planning/PMO job families exist, but available Italian salary evidence for analyst/project roles is generally below the target level."
     }
   ]
 }
