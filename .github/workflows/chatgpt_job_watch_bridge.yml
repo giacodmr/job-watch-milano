@@ -40,10 +40,15 @@ jobs:
         run: |
           set -euo pipefail
           mapfile -t paths < <(
-            git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" -- ".job_watch_bridge/requests/*.json"
+            git diff-tree --no-commit-id --name-only --diff-filter=AM -r "$GITHUB_SHA" -- ".job_watch_bridge/requests/*.json"
           )
+          if [ "${#paths[@]}" -eq 0 ]; then
+            echo "Request cleanup-only push; no bridge execution required."
+            echo "action=cleanup" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           if [ "${#paths[@]}" -ne 1 ]; then
-            echo "Expected exactly one bridge request in triggering commit, found ${#paths[@]}" >&2
+            echo "Expected exactly one added/modified bridge request in triggering commit, found ${#paths[@]}" >&2
             printf '%s\n' "${paths[@]}" >&2
             exit 1
           fi
