@@ -15,10 +15,13 @@ on:
       - ".job_watch_run"
       - ".job_watch_manual_run"
   schedule:
-    - cron: "0 23 * * *"
-      timezone: "Europe/Rome"
-    - cron: "45 23 * * *"
-      timezone: "Europe/Rome"
+    # GitHub scheduled runs can be delayed or dropped, especially at the top
+    # of the hour. Use redundant UTC checks away from minute 00 and let the
+    # Rome-aware freshness guard below decide which run actually collects.
+    # Europe/Rome mapping:
+    # - CEST: 21:12/21:42 UTC => 23:12/23:42 local; 22:* are recovery checks.
+    # - CET: 21:* are pre-boundary checks; 22:12/22:42 UTC => 23:12/23:42 local.
+    - cron: "12,42 21,22 * * *"
 
 permissions:
   contents: write
