@@ -45,6 +45,7 @@ class CompanyConfiguration(unittest.TestCase):
         for name in (
             "watchlist_additions.json",
             "discovery_candidates.json",
+            "extra_company_watchlist.json",
             "extra_company_watchlist_expansion_20261004.json",
             "ats_mapping_expansion_20261004.json",
             "job_watch_expansion.py",
