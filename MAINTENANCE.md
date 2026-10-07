@@ -2,7 +2,7 @@
 
 Leggi il riepilogo health e le sezioni `partial_remediation` dell'audit; non ripercorrere ogni ATS nella Daily. Priorità: Amazon/Mastercard, aziende ad alto valore, mapping FULL con coverage PARTIAL e adapter che falliscono ripetutamente. Cambia un mapping/adapter solo dopo prova su fonte ufficiale e test di paginazione/ID. Non cambiare label per ottenere VERIFIED.
 
-Usa `discovery_candidates.json` come staging manuale: verifica ruoli ufficiali, aggiorna last_seen/evidenze e applica le condizioni esistenti di promozione/pruning. Non esiste un collector automatico per quei record; non fingere che la lista sia stata verificata ogni giorno. Deep discovery e nuovi mapping si fanno qui, preservando la ricerca leggera daily.
+Usa `company_candidates.json` come staging manuale: verifica ruoli ufficiali, aggiorna last_seen/evidenze e applica le condizioni esistenti di promozione/pruning. Non esiste un collector automatico per quei record; non fingere che la lista sia stata verificata ogni giorno. Deep discovery e nuovi mapping si fanno qui, preservando la ricerca leggera daily.
 
 Backlog: completa le 20 righe assegnate dopo il delta. A regime si riduce quando il ritmo di completamento supera gli arrivi. Per recupero storico dedicato, rigenera localmente il worklist con un limite più alto usando `build_worklist(backlog_limit=...)`, poi usa gli stessi registri e validatori; non riclassificare il backlog come lavoro daily obbligatorio. Non scartare ruoli plausibili per arrivare a zero.
 

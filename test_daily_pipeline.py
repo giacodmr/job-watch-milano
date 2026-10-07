@@ -165,7 +165,7 @@ class PersistedDelta(unittest.TestCase):
         self.put('semantic_jd_cache_jw3.json',{'records':{'Test::0':{'fingerprint':'wrong','status':'OK','text':'stale'}}})
         work=daily_worklist.build_worklist();self.assertEqual(len(work['records']),1);self.assertNotIn('jd',work['records'][0]);self.assertEqual(work['summary']['daily_semantic_pending'],0)
         self.put('daily_worklist.json',work);rows['Test::0'].update(needs_analysis=False,reportable=False);self.put('analysis_results_jw3.json',{'records':rows})
-        self.assertEqual(daily_worklist.build_worklist()['records'],[])
+        next_work=daily_worklist.build_worklist();self.assertEqual(len(next_work['records']),1);self.assertEqual(next_work['records'][0]['job_key'],'Test::1');self.assertEqual(next_work['backlog_assignment'],['Test::1'])
 
     def test_lifecycle_notice_is_not_repeated_after_reporting(self):
         self.put('user_job_decisions.json',{'records':{'Test::1':{'decision':'APPLIED','fingerprint':'abc','decided_at':'today'}}})
@@ -210,8 +210,7 @@ class RealPipeline(unittest.TestCase):
             def put(name,data):(root/name).write_text(json.dumps({"version":"1.0", **data}))
             companies=[{'company':b.upper()} for b in daily_worklist.BATCHES]
             put('companies_job_watch_v2.json',{'companies':companies})
-            put('watchlist_additions.json',{'companies':[]})
-            put('discovery_candidates.json',{'records':{}})
+            put('company_candidates.json',{'records':{},'promoted_history':{},'monitored_reviews':[]})
             put('job_watch_rules.json',{'run_certification_policy':{'enabled':True},'daily_worklist_policy':{'backlog_limit':0}})
             put('job_watch_batches.json',{'batches':{b.upper():{'companies':[b.upper()]} for b in daily_worklist.BATCHES}})
             put('user_job_decisions.json',{'records':{}})

@@ -176,6 +176,8 @@ def location_matches(location, company_name: str | None = None) -> bool:
         return False
     if re.search(r"\bLondon\b.*\bCanada\b", s, re.I):
         return False
+    if re.search(r"\bEast\s+London\b", s, re.I) and re.search(r"\b(?:ZAF|South\s+Africa)\b", s, re.I):
+        return False
     if re.search(r"\b(?:Milan|Rome)\s*,\s*[A-Z]{2}\s*,\s*(?:US|USA|United States)\b", s, re.I):
         return False
     return True

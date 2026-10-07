@@ -11,8 +11,7 @@ REQUIRED_CONFIG = (
     "job_watch_rules.json",
     "job_watch_batches.json",
     "companies_job_watch_v2.json",
-    "watchlist_additions.json",
-    "discovery_candidates.json",
+    "company_candidates.json",
     "user_job_decisions.json",
 )
 
@@ -46,6 +45,19 @@ def prior_records_count(name):
 
 for name in REQUIRED_CONFIG:
     load(name)
+
+companies = load("companies_job_watch_v2.json")
+if not isinstance(companies.get("companies"), list):
+    raise SystemExit("INPUT ERROR: companies_job_watch_v2.json companies must be a list")
+company_names = [r.get("company") for r in companies["companies"] if isinstance(r, dict)]
+if len(company_names) != len(set(company_names)) or any(not x for x in company_names):
+    raise SystemExit("INPUT ERROR: active company registry contains blank/duplicate names")
+candidates = load("company_candidates.json")
+if not isinstance(candidates.get("records"), dict):
+    raise SystemExit("INPUT ERROR: company_candidates.json records must be an object")
+for key, row in candidates["records"].items():
+    if not isinstance(key, str) or not isinstance(row, dict) or row.get("company") != key:
+        raise SystemExit(f"INPUT ERROR: invalid company candidate {key}")
 
 user_decisions = load("user_job_decisions.json")
 allowed_user_statuses = {"TO_REVIEW", "INTERESTED", "APPLIED", "NOT_INTERESTED"}

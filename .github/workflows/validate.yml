@@ -3,7 +3,15 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ["*.py", ".github/workflows/**", "job_watch_rules.json", "job_watch_batches.json", "ats_mapping_*.json", "pipeline_contract.json"]
+    paths:
+      - "*.py"
+      - ".github/workflows/**"
+      - "job_watch_rules.json"
+      - "job_watch_batches.json"
+      - "companies_job_watch_v2.json"
+      - "company_candidates.json"
+      - "ats_mapping_*.json"
+      - "pipeline_contract.json"
 permissions:
   contents: read
 jobs:
@@ -11,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -18,10 +28,10 @@ jobs:
       - run: python preflight_job_watch.py
       - run: python validate_job_watch_inputs.py
       - run: python -m unittest -q
-      - run: python job_watch_expansion.py sync
+      - run: python job_watch.py sync
       - run: python validate_job_watch_state.py --strict
       - name: Worklist has a stable projection
         run: |
           cp daily_worklist.json /tmp/first-worklist.json
-          python job_watch_expansion.py sync
+          python job_watch.py sync
           cmp daily_worklist.json /tmp/first-worklist.json

@@ -7,7 +7,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 BATCHES = ('jw1', 'jw2', 'jw3', 'jw4')
-EXPANSION_MAPPING = 'ats_mapping_expansion_20261004.json'
 
 
 def validate(root=ROOT):
@@ -62,46 +61,16 @@ def validate(root=ROOT):
                 except SyntaxError as e:
                     errors.append(f'{name}: syntax error {e}')
     for name in ('job_watch_rules.json', 'job_watch_batches.json', 'companies_job_watch_v2.json',
-                 'user_job_decisions.json', 'watchlist_additions.json', 'discovery_candidates.json','pipeline_contract.json'):
+                 'user_job_decisions.json', 'company_candidates.json','pipeline_contract.json'):
         if not isinstance(data.get(name), dict):
             errors.append(f'{name}: required object missing')
     batches = data.get('job_watch_batches.json', {}).get('batches', {})
     if set(batches) != {b.upper() for b in BATCHES}:
         errors.append('job_watch_batches.json: JW1-JW4 required')
 
-    # The 2026-10-04 expansion is an append-only mapping overlay. Treat its
-    # companies as part of the active universe and mapping contract while
-    # preserving duplicate/exclusion checks against the canonical files.
-    expansion = data.get(EXPANSION_MAPPING, {})
-    expansion_by_batch = {b: [] for b in BATCHES}
-    if expansion:
-        if expansion.get('version') != '1.0':
-            errors.append(f'{EXPANSION_MAPPING}: unsupported version')
-        raw_batches = expansion.get('batches')
-        if not isinstance(raw_batches, dict) or set(raw_batches) != set(BATCHES):
-            errors.append(f'{EXPANSION_MAPPING}: jw1-jw4 required')
-        else:
-            for b in BATCHES:
-                rows = raw_batches.get(b)
-                if not isinstance(rows, list):
-                    errors.append(f'{EXPANSION_MAPPING}: {b} must be a list')
-                    continue
-                names = []
-                for row in rows:
-                    if not isinstance(row, dict) or not row.get('company'):
-                        errors.append(f'{EXPANSION_MAPPING}: invalid {b} company row')
-                        continue
-                    if str(row.get('batch', '')).lower() != b:
-                        errors.append(f'{EXPANSION_MAPPING}: {row.get("company")} batch mismatch')
-                    names.append(row.get('company'))
-                if len(names) != len(set(names)):
-                    errors.append(f'{EXPANSION_MAPPING}: duplicate {b} companies')
-                expansion_by_batch[b] = names
-
     seen = set()
     excluded = set(data.get('job_watch_rules.json', {}).get('excluded_companies', []))
-    universe = {r.get('company') for name in ('companies_job_watch_v2.json', 'watchlist_additions.json') for r in data.get(name, {}).get('companies', [])}
-    universe.update(name for names in expansion_by_batch.values() for name in names if name)
+    universe = {r.get('company') for r in data.get('companies_job_watch_v2.json', {}).get('companies', []) if isinstance(r,dict) and r.get('company')}
     for b in BATCHES:
         members = batches.get(b.upper(), {}).get('companies', [])
         if not members or len(members) != len(set(members)) or seen.intersection(members):
@@ -126,11 +95,7 @@ def validate(root=ROOT):
                     for job in company.get('jobs',[]):
                         if job.get('status') not in {'NEW','STILL_OPEN','UPDATED','CLOSED','UNKNOWN'}: errors.append(f'{name}: invalid vacancy status {job.get("status")}')
             if stem == 'ats_mapping' and isinstance(item.get('companies'), list):
-                canonical = [r.get('company') for r in item['companies']]
-                additions = expansion_by_batch.get(b, [])
-                if set(canonical) & set(additions):
-                    errors.append(f'{b}: expansion duplicates canonical mapping')
-                mapped = canonical + additions
+                mapped = [r.get('company') for r in item['companies']]
                 if set(mapped) != set(members) or len(mapped) != len(set(mapped)):
                     errors.append(f'{b}: mapping does not match batch')
     if seen != universe:
