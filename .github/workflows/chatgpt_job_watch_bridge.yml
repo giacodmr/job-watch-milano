@@ -1,7 +1,7 @@
 name: ChatGPT Job Watch Bridge
 on:
   push:
-    branches: [refactor/job-state-simplification]
+    branches: [main]
     paths: [".job_watch_bridge/requests/*.json"]
 permissions:
   contents: write
