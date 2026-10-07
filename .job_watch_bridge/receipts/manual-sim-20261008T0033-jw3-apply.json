@@ -1,0 +1,40 @@
+{
+  "version": "2.0",
+  "request_id": "manual-sim-20261008T0033-jw3-apply",
+  "request_sha256": "6aae18f2f917c8f6e148eff381370894270b1d119292751e4103373e02632bb7",
+  "parent_request_id": "manual-sim-20261008T0031-jw3-select",
+  "packet_sha256": "d8fa2f56a65e6ca4be88047c160c00c44513ad6bf5485869f1ace7379ac2591d",
+  "select_run_id": 37696629976,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "a7a285d03b3ac0c882a0bbdaed9ffcb2af7cd263ae4042828e707eac279d31a9",
+    "job_memory_jw3.json": "03e19caca3e9b91f2225249bd3d10ee8c988da8c8b5a224112b125c38584108a",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw3",
+  "status": "PARTIAL",
+  "applied_count": 4,
+  "applied_keys": [
+    "Octopus Energy Italy::18fba5cf-fc22-408e-9c6c-ae5099cbfff8",
+    "Webuild::1384035133",
+    "Webuild::1434531533",
+    "Webuild::1444722533"
+  ],
+  "retry": {
+    "MET Group::744000154036660": "jd_fetch_failed",
+    "MET Group::744000154160719": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "33fd4a591a257f766ef26439690667967867efd50a05faada91bed9a48a801ce",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 0,
+      "JW3": 4,
+      "JW4": 22
+    },
+    "total": 26
+  },
+  "replayed": false
+}
