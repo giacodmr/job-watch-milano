@@ -3,25 +3,64 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ["*.py", ".github/workflows/**", "job_watch_rules.json", "job_watch_batches.json", "ats_mapping_*.json", "pipeline_contract.json"]
+    paths:
+      - "*.py"
+      - ".github/workflows/**"
+      - "job_watch_rules.json"
+      - "job_watch_batches.json"
+      - "companies_job_watch_v2.json"
+      - "company_candidates.json"
+      - "ats_mapping_*.json"
+      - "pipeline_contract.json"
 permissions:
-  contents: read
+  contents: write
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check requests==2.32.5
+      - name: Apply one-time config consolidation
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -f watchlist_additions.json ]; then
+            python migrate_company_config.py
+          else
+            echo "Migration already applied on this branch."
+          fi
       - run: python preflight_job_watch.py
       - run: python validate_job_watch_inputs.py
       - run: python -m unittest -q
-      - run: python job_watch_expansion.py sync
+      - run: python job_watch.py sync
       - run: python validate_job_watch_state.py --strict
       - name: Worklist has a stable projection
         run: |
           cp daily_worklist.json /tmp/first-worklist.json
-          python job_watch_expansion.py sync
+          python job_watch.py sync
           cmp daily_worklist.json /tmp/first-worklist.json
+      - name: Drop derived validation outputs
+        if: github.event_name == 'pull_request'
+        run: |
+          git restore --worktree --staged -- \
+            analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json \
+            semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json \
+            daily_worklist.json job_watch_audit.json job_watch_healthcheck.json job_watch_summary.txt \
+            job_watch_run_state.json pipeline_execution.json daily_activity.json rejected_daily_updates.json || true
+      - name: Commit validated migration back to PR branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No migration changes to commit."
+          else
+            git commit -m "Consolidate Job Watch company configuration"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
