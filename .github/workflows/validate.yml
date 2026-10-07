@@ -31,17 +31,13 @@ jobs:
         run: |
           if [ -f watchlist_additions.json ]; then
             if ! python migrate_company_config.py; then
-              python - <<'PY'
-          import json
-          from pathlib import Path
-          batches=json.loads(Path('job_watch_batches.json').read_text())['batches']
-          for b in ('jw1','jw2','jw3','jw4'):
-              members=set(batches[b.upper()]['companies'])
-              mapping=json.loads(Path(f'ats_mapping_{b}.json').read_text())['companies']
-              mapped=[r['company'] for r in mapping]
-              print(b.upper(), 'routing', len(members), 'mapping', len(mapped), 'missing', sorted(members-set(mapped)), 'extra', sorted(set(mapped)-members), 'dupes', len(mapped)-len(set(mapped)))
-          PY
-              exit 1
+              if [ -f company_candidates.json ] && [ ! -f watchlist_additions.json ]; then
+                echo "Migration reached the active-routing integrity guard; moving unmapped batch-only companies back to staging."
+                python fix_unmapped_active_companies.py
+              else
+                echo "Migration failed before producing a safe intermediate state."
+                exit 1
+              fi
             fi
           else
             echo "Migration already applied on this branch."
