@@ -1,0 +1,46 @@
+{
+  "version": "2.0",
+  "request_id": "apply-20261007T1450Z-manual20",
+  "request_sha256": "2abd802356542feddbb01eb6c40adb70bf9b15ce574fc751dc84b19114592767",
+  "parent_request_id": "select-20261007T1446Z-manual20",
+  "packet_sha256": "38f124d8552a5b6db60951e3719e2ec25dd39f042d723514443a81a2766888ae",
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 18,
+  "applied_keys": [
+    "Banca Ifis::263879555",
+    "Banca Ifis::271154193",
+    "Banca Ifis::271777094",
+    "Banca Ifis::271912427",
+    "Fiserv::R-10399378",
+    "Intesa Sanpaolo::1442908533",
+    "Qonto::6bcd0b5b-768b-49ff-8a89-3e630dbcc4a3",
+    "Qonto::ccebc25a-cc07-458e-bf9b-d36c33de441c",
+    "Satispay::01a49e81-494b-4b54-84c9-2b2c1c8690d0",
+    "Satispay::0a709ad7-fa1b-4f91-950a-df4fe2a34b01",
+    "Satispay::34ff2d45-9c99-4d6d-84b6-f9d067aea6f1",
+    "Satispay::4839cb24-caf3-4253-9520-9aae59ee79f6",
+    "Satispay::6f5a9f8f-4037-4862-86cc-bb5c0556a35a",
+    "Satispay::8f8cc48c-a4cd-42d3-83a7-e664e2af7186",
+    "Satispay::f01e7171-d82f-47d4-b695-c9bc965a6e46",
+    "Satispay::f1a82537-a517-445e-a649-665f43a19afa",
+    "Scalapay::4997816101",
+    "Visa::/job/IT---Milan-Italy/Senior-Business-Development-Manager--Italy_REF085159W"
+  ],
+  "retry": {
+    "Moneyfarm::17AB7ADFEC": "jd_fetch_failed",
+    "Qonto::0b9c49fe-e8d6-4d28-b854-fbdd6b7252af": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "48751a7b8a2665bb4c53c34bf65562ee9b734ae809148da7585214bdf0ac5842",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 30,
+      "JW2": 20,
+      "JW3": 3,
+      "JW4": 7
+    },
+    "total": 60
+  },
+  "replayed": false
+}
