@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "manual-sim-20261008T0036-jw4-apply",
+  "request_sha256": "ce40316fba55444bf6aa815f7b1b945cf280b1487b0ba6c840fa663323b8ba93",
+  "parent_request_id": "manual-sim-20261008T0035-jw4-select",
+  "packet_sha256": "1b9f6deebf15360df1808ca59c82030a561e7333fb09f9c88c569c542a663f53",
+  "select_run_id": 37696986958,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "20f705a9c8ac593e782e01455e5c4f49de1d167e8ef6630687379ffdb9efcd5f",
+    "job_memory_jw4.json": "4b90f4c747d67eab4868e32bbf76799cd712498d7c1c90d2c0771af853f8a438",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 6,
+  "applied_keys": [
+    "Bolton Group::1370049733",
+    "Bolton Group::1445315233",
+    "Campari Group::1445339233",
+    "Ferrero::1417395733",
+    "Ferrero::1417405433",
+    "Ferrero::1437083733"
+  ],
+  "retry": {
+    "Sky Italia::R0059012": "ordinary_twin_check_missing"
+  },
+  "accepted_patch_sha256": "b2537c105418e85969b00dfa2e3ae8e4212d2817b369669abf39734ad1376c19",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 0,
+      "JW3": 0,
+      "JW4": 22
+    },
+    "total": 22
+  },
+  "replayed": false
+}
