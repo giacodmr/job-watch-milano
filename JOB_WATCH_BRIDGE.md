@@ -112,16 +112,17 @@ retrigger a workflow. Once a receipt exists, the ID/content are immutable: use a
 Only dependencies use a pip cache; full JDs never do. Select still fetches sequentially;
 bounded HTTP concurrency is deferred until real per-host timings justify it.
 
-## Night schedule proposal — not activated
+## Agreed night schedule — not activated
 
-- One **Job Watch Worker** task: **02:00, 04:00, 06:00, 07:00 Europe/Rome**.
-- Maximum **20 attempts/run**, normally two packets of 10: up to **80 attempts/night**,
-  across all JW combined. Actual saved reviews depend on successful fetch/validation.
+- One **Job Watch Worker** task: **02:00, 03:00, 04:00, 05:00, 06:00 Europe/Rome**.
+- Maximum **20 attempts/run**, normally two packets of 10: up to **100 attempts/night**,
+  across all JW combined, without automatic budget extensions. Stop early when there
+  is no selectable work. Actual saved reviews depend on successful fetch/validation.
 - One existing **Job Watch Daily** task: **09:00 Europe/Rome**.
 - Proposed collector ordering: **00:30**, recovery **01:15**, before the first Worker.
   Current collector schedules remain **06:30/07:15** until an explicit operational
-  switch. Keeping them means most overnight work uses the previous collection, and
-  the 07:00 Worker can overlap collection. A new morning collection can also obsolete
+  switch. Keeping them means overnight work uses the previous collection; a long-running
+  06:00 Worker can still overlap collection. A new morning collection can also obsolete
   Daily activity certification until the reporting runner uses the fresh snapshot.
 
 The durable Worker prompt is `CHATGPT_WORKER_PROMPT.txt`. The single handoff document

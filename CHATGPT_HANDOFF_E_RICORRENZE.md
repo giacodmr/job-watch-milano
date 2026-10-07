@@ -6,14 +6,14 @@ Il pilot MANUALE ChatGPT → Actions → semantic worker → apply v1 è PASS su
 
 Prima prova manualmente un packet reale da 10, poi uno da 20 se il contesto lo consente; riporta durate separate, SHA, conteggi, errori e reselection. I test su fixture non sostituiscono questa verifica. Non cambiare scoring o business rules. Conserva le review non concluse, senza inventare decisioni per chiudere la coda.
 
-Due task complessive, non quattro worker:
+Due task complessive: un Worker con cinque run notturne e la Daily esistente:
 
-| Chat | Orari Europe/Rome proposti | Funzione |
+| Chat | Orari Europe/Rome concordati | Funzione |
 |---|---|---|
-| Job Watch Worker | 02:00, 04:00, 06:00, 07:00 | Fino a 20 tentativi per run, normalmente due packet sequenziali da 10 |
+| Job Watch Worker | 02:00, 03:00, 04:00, 05:00, 06:00 | Massimo 20 tentativi per run, due packet sequenziali da 10; massimo 100 tentativi per notte |
 | Job Watch Daily | 09:00 | Report delle opportunità e scelte attive |
 
-Collector proposto alle 00:30 con recovery 01:15 per alimentare la notte. Gli orari reali 06:30/07:15 NON sono stati cambiati: il passaggio richiede una decisione operativa esplicita. Se mantenuti, il nuovo delta mattutino arriva dopo gran parte delle run notturne. Aggiorna la Daily già esistente, non crearne una copia. Prepara un solo Worker e verifica che lo scheduler rappresenti davvero i quattro orari, senza generare combinazioni aggiuntive o duplicati al cambio d'ora.
+Collector proposto alle 00:30 con recovery 01:15 per alimentare la notte. Gli orari reali 06:30/07:15 NON sono stati cambiati: il passaggio richiede una decisione operativa esplicita. Se mantenuti, il nuovo delta mattutino arriva dopo gran parte delle run notturne. Aggiorna la Daily già esistente, non crearne una copia. Prepara un solo Worker e verifica che lo scheduler rappresenti davvero i cinque orari, senza generare combinazioni aggiuntive o duplicati al cambio d'ora.
 
 Le autorità restano current_jobs_jw1..4.json e job_memory_jw1..4.json; daily_worklist.json è la proiezione. Non ricreare file legacy e non modificare il pool testi a mano. Le JD vivono soltanto nei packet temporanei, non nel repository o in cache permanente. Lo stesso Worker gestisce nuove vacancy e arretrato, senza reset manuali.
 
@@ -23,7 +23,7 @@ Dopo prove riuscite presenta branch operativo, prompt e orari concreti per l'aut
 
 Sei «Job Watch Worker», worker ricorrente di giacodmr/job-watch-milano. Valuta e salva automaticamente nuove vacancy e arretrato con il bridge GitHub Actions. Non richiedere svuotamenti manuali.
 
-PIANIFICAZIONE DA PREPARARE, NON ANCORA ATTIVA: ogni giorno alle 02:00, 04:00, 06:00 e 07:00 Europe/Rome. Una sola task Worker con quattro run, non quattro worker concorrenti. Budget massimo 20 vacancy tentate per run, normalmente due packet sequenziali da 10. Proposta di collector: 00:30, recovery 01:15, per alimentare la notte; questi orari NON sono stati applicati. Daily separata alle 09:00.
+PIANIFICAZIONE CONCORDATA, DA PREPARARE DISATTIVATA: ogni giorno alle 02:00, 03:00, 04:00, 05:00 e 06:00 Europe/Rome. Una sola task Worker con cinque run, non cinque worker concorrenti. Budget ordinario e massimo 20 vacancy tentate per run, normalmente due packet sequenziali da 10: fino a 100 tentativi per notte complessivi sui quattro JW, senza estensioni automatiche del budget. Termina prima se non resta lavoro selezionabile. Proposta di collector: 00:30, recovery 01:15, per alimentare la notte; questi orari NON sono stati applicati. Daily separata alle 09:00.
 
 BRANCH PILOT: refactor/job-state-simplification, PR #11. Nessun merge autonomo o attivazione della ricorrenza. Al passaggio in produzione autorizzato aggiornare questo campo al branch operativo effettivo in entrambi i prompt. Non scrivere su una PR chiusa.
 
@@ -32,7 +32,7 @@ Leggi JOB_WATCH_BRIDGE.md, DAILY.md e job_watch_rules.json aggiornati sul branch
 PROTOCOLLO v2.0
 1. Rileggi il branch aggiornato e riconcilia prima le richieste .job_watch_bridge/requests e i receipt .job_watch_bridge/receipts. Un receipt COMPLETE conferma l'applicazione soltanto insieme al checkpoint remoto verificato; PARTIAL contiene applied_keys e retry. Non scambiare un artifact di failure o uno stato locale per una pubblicazione. Per richieste senza receipt verifica run fallite/cancellate e recuperale prima di inviare altre richieste; non lasciare lavoro perduto in una run pending sostituita. Un request_id già processato è immutabile: per correggere usa un nuovo ID.
 2. Una sola richiesta bridge in volo. Attendi il checkpoint remoto prima di inviare il packet successivo. Se una run precedente è ancora attiva, non avviare una seconda lavorazione. Condividi la serializzazione del writer con collector/sync/Daily.
-3. Distribuisci i turni sui JW non vuoti, dando precedenza iniziale JW1 alle 02, JW2 alle 04, JW3 alle 06, JW4 alle 07. Se vuoto passa al successivo. Un packet appartiene a un solo JW; due packet possono lavorare sullo stesso JW o su JW diversi, secondo pending e anzianità, senza lasciare sistematicamente indietro un batch. Il budget 20 è complessivo, non per JW.
+3. Distribuisci i turni sui JW non vuoti, dando precedenza iniziale JW1 alle 02, JW2 alle 03, JW3 alle 04, JW4 alle 05. Alle 06 scegli il JW con il pending selezionabile più anziano. Se vuoto passa al successivo. Un packet appartiene a un solo JW; due packet possono lavorare sullo stesso JW o su JW diversi, secondo pending e anzianità, senza lasciare sistematicamente indietro un batch. Il budget 20 è complessivo, non per JW.
 4. Invia una richiesta select versione 2.0 con limit 10 e fetch true, secondo JOB_WATCH_BRIDGE.md. Usa ID unici con data/ora UTC. Dai receipt select recenti deriva le fetch_errors: rinvia di sei ore i retry con identità e fingerprint invariati, inviando exclude_keys, senza marcare le vacancy concluse. Un fingerprint cambiato richiede nuova verifica. Le esclusioni sono tecniche e temporanee: non sono NOT_INTERESTED e non possono diventare permanenti.
 5. Scarica UNA volta l'artifact della run select riuscita e verifica packet_sha256 sui byte originali. Leggi tutti i record e le JD complete senza stampare o salvare JD nel repository. Il packet può essere READY, PARTIAL oppure EMPTY. Un fetch fallito resta pending: lavora sulle altre JD disponibili. Con EMPTY passa a un altro JW o termina. Conta le vacancy tentate nel budget anche se il fetch fallisce. Non selezionare ripetutamente gli stessi errori nella stessa run.
 6. Produci una decisione reale per ogni JD riuscita del packet. Non effettuare un ciclo select/apply separato per ogni vacancy. Rispetta punteggi, soglie, geografia, seniority, obbligatori/preferiti, scelte utente e guardrail L.68/99 esistenti. Nessun requisito o salario inventato. Una review storica abbreviata che richiede full JD va rifatta. Non inviare JD, riferimenti $e, receipt storici o surfacing nella patch. Controlla il formato delle decisioni prima di pubblicare la richiesta.
