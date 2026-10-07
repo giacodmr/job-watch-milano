@@ -1,7 +1,7 @@
 # ChatGPT Job Watch bridge — batch v2.0, immutable checkpoints
 
-The bridge is enabled for request pushes only on `refactor/job-state-simplification`.
-No recurring Worker is activated and no main merge or collector schedule change is made.
+The production bridge accepts request pushes on `main`.
+PR #11 is merged; the recurring Worker and Daily are active, and the collector schedule is live on the default branch.
 ChatGPT supplies the actual semantic judgment; Actions only fetches, validates and persists.
 
 ## Batch protocol
@@ -84,6 +84,13 @@ cleaned up; PARTIAL requests remain intact so unresolved review drafts are not l
 Replaying the same request returns zero applications, even after the artifact expires
 or a later user choice changes memory. Reusing an ID with different content is rejected.
 
+Old pilot/manual request files with a matching remote receipt are checkpointed history,
+not proof that another Worker is currently in flight. In particular, PARTIAL request
+files may remain intentionally while their residual JD retries or review drafts are still
+useful. The Worker blocks only for a genuinely uncheckpointed request or an Actions
+execution that is actually still pending/running; it must not stop merely because the
+request directory is non-empty.
+
 Correct a residual review with a NEW select/snapshot and NEW apply request ID. An apply
 changes its memory snapshot, so the original snapshot cannot simply be reused for the
 residual. Preserve and explicitly revalidate earlier judgments; never replace hashes
@@ -159,35 +166,34 @@ range rather than silently ignoring requests in earlier commits.
 Only dependencies use a pip cache; full JDs never do. Select still fetches sequentially;
 bounded HTTP concurrency is deferred until real per-host timings justify it.
 
-## Canonical schedule — ChatGPT tasks remain disabled
+## Canonical production schedule
 
-- Collector GitHub: **23:00**, recovery **23:45 Europe/Rome**, configured in this PR.
-- One **Job Watch Worker**: **00:00, 02:00, 04:00, 05:30 Europe/Rome**.
+- Collector GitHub: **23:00**, recovery **23:45 Europe/Rome**, active on `main`.
+- One **Job Watch Worker**: **00:00, 02:00, 04:00, 05:30 Europe/Rome**, active.
 - Maximum **20 attempts per run**, normally two sequential packets of 10 across all
   JW; stop early when all queues are EMPTY. No global nightly counter. 80 is merely
   4 × 20; an authorized extra manual run has its own limit.
-- Existing **Job Watch Daily**: **09:00 Europe/Rome**, no duplicate task.
+- Existing **Job Watch Daily**: **09:00 Europe/Rome**, active; no duplicate task.
 
 The 23:00 collection on D supplies the workday D+1. Freshness uses this Rome boundary
 for both recovery and Daily certification, including DST and delayed recovery after
 midnight. Earlier same-day morning snapshots do not skip the new evening collection.
 Incomplete/failed/unattempted sources, including PARTIAL, require recovery. Timestamps
 remain actual UTC collection times; no synthetic next-day inventory date is written.
-Schedules execute from GitHub's default branch: this pilot-only change does not alter
-main or activate production. No ChatGPT task is created or enabled.
+Schedules execute from GitHub's default branch `main`; production is active.
 
 Use the exact Worker prompt in `CHATGPT_WORKER_PROMPT.txt` or the single combined
-`CHATGPT_HANDOFF_E_RICORRENZE.md`. Configure the four explicit times, avoiding a
-cartesian combination of every hour with minutes 00/30. One request at a time;
-SELECT the next packet only after APPLY and the remote checkpoint. EMPTY/all-failed
-packets finish at their technical SELECT checkpoint. A failed entire run terminates;
-the next scheduled run reconciles remote state without a complex recovery system.
+`CHATGPT_HANDOFF_E_RICORRENZE.md`. Keep the four intended times explicit in the task
+semantics. One request at a time; SELECT the next packet only after APPLY and the remote
+checkpoint. EMPTY/all-failed packets finish at their technical SELECT checkpoint. A
+failed entire run terminates; the next scheduled run reconciles remote state without a
+complex recovery system.
 
-Live bridge pilots and replay fixes already PASS: 10/10, 18/20 and then 8/10 saved
-reviews; pending 70→60→42→34. Failures remain technical, not fabricated reviews.
-The canonical original SELECT receipt was restored from commit c0cf97a9e67ffdf0fdfc802869f57de6d7896cb3;
-Git history retains the earlier erroneous replay. This work adds finite retries and
-evening collection; final task activation and merging remain separate authorized work.
+Live bridge pilots and replay fixes PASS: 10/10, 18/20 and then 8/10 saved reviews;
+pending 70→60→42→34. Failures remain technical, not fabricated reviews. The canonical
+original SELECT receipt was restored from commit c0cf97a9e67ffdf0fdfc802869f57de6d7896cb3;
+Git history retains the earlier erroneous replay. PR #11 was subsequently merged to
+`main`, and production Worker/Daily activation was completed separately.
 
 ## Timing model to measure
 
