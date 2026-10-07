@@ -135,11 +135,10 @@ jobs:
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check requests==2.32.5
 
-
       - name: Prepare and publish current snapshot
         env:
           STAGE: ${{ inputs.stage || 'collect' }}
-        run: python job_watch_expansion.py "$STAGE" --publish
+        run: python job_watch.py "$STAGE" --publish
 
       - name: Publish readable health summary
         if: always()
