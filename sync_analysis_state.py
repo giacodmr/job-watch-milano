@@ -405,12 +405,12 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
         item["location"] = raw.get("location") or item.get("location")
 
 
-def project_batch(batch: str, root=None) -> dict:
+def project_batch(batch: str, root=None, *, memory_override=None) -> dict:
     """Pure operational projection from official current state and durable memory."""
     from job_memory import load_memory
     current = read_json((root or ROOT) / f'current_jobs_{batch}.json', {})
     if not isinstance(current.get('companies'), list): raise ValueError('Invalid current inventory')
-    memory = load_memory(batch, root or ROOT)['records']
+    memory = (load_memory(batch, root or ROOT) if memory_override is None else memory_override)['records']
     current_all, current_open, url_to_key = add_standard_jobs(current, root)
     from job_memory import resolve_identities
     effective, alias_keys = resolve_identities(current_all,memory)
@@ -485,6 +485,9 @@ def project_batch(batch: str, root=None) -> dict:
             "user_decided_at": user_decision.get("decided_at"),
             "suppress_from_apply_now": effective_user_decision in {"APPLIED", "NOT_INTERESTED"},
         }
+        if 'historical_evidence' in decision:
+            rec['requires_full_jd_review'] = True
+            rec['guardrail_reason'] = 'historical_evidence_shortened'
 
         if surfaced.get("fingerprint") or old.get("surfaced_fingerprint"):
             rec["surfaced_fingerprint"] = surfaced.get("fingerprint") or old["surfaced_fingerprint"]

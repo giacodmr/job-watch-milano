@@ -25,7 +25,7 @@ def apply_updates(locked=False):
     from daily_worklist import build_worklist
     from harden_job_watch_state import semantic_decision_valid
     from sync_analysis_state import project_batch
-    from job_memory import load_memory, record_surface, IDENTITY_FIELDS, validate_memory, assert_no_jd, older_timestamp
+    from job_memory import load_memory, record_surface, IDENTITY_FIELDS, validate_memory, assert_no_jd, older_timestamp, pack_memory
     from rejection_reasons import REJECTION_REASONS, infer_rejection_reason, reason_is_vague
     path = ROOT / 'daily_updates.json'
     if not path.exists(): return False
@@ -107,7 +107,7 @@ def apply_updates(locked=False):
     owners={c:b.lower() for b,g in load('job_watch_batches.json')['batches'].items() for c in g['companies']}
     for batch in dirty:
         validate_memory(stores[batch], batch, owners)
-        changes[f'job_memory_{batch}.json'] = stores[batch]
+        changes[f'job_memory_{batch}.json'] = pack_memory(stores[batch])
     if 'manifest' in patch:
         raise SystemExit('PATCH_SCHEMA: completion flags retired; submit actual search evidence in activity')
     if 'activity' in patch:

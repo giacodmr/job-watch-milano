@@ -1,7 +1,7 @@
 """Official lifecycle transitions. Caller holds the pipeline writer lock."""
 from copy import deepcopy
 from pipeline_state import load, transaction
-from job_memory import load_memory, archive_rows, IDENTITY_FIELDS
+from job_memory import load_memory, archive_rows, IDENTITY_FIELDS, pack_memory
 from location_policy import allowed
 
 def recount(current):
@@ -56,5 +56,5 @@ def maintain_batch(batch, root):
     recount(current)
     writes = {}
     if current != before_current: writes[name] = current
-    if memory != before_memory: writes[f'job_memory_{batch}.json'] = memory
+    if memory != before_memory: writes[f'job_memory_{batch}.json'] = pack_memory(memory)
     if writes or closed: transaction(writes, root=root, appends=archive_rows(closed, root))

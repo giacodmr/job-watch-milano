@@ -45,7 +45,7 @@ for key, row in candidates["records"].items():
     if not isinstance(key, str) or not isinstance(row, dict) or row.get("company") != key:
         raise SystemExit(f"INPUT ERROR: invalid company candidate {key}")
 
-from job_memory import load_memory, validate_memory, older_timestamp
+from job_memory import load_memory, validate_memory, older_timestamp, unpack_memory
 owners = {c:b.lower() for b,g in load('job_watch_batches.json')['batches'].items() for c in g['companies']}
 try:
     migration_baseline=json.loads(subprocess.run(['git','show','HEAD:user_job_decisions.json'],cwd=ROOT,capture_output=True,text=True,check=True).stdout)['records']
@@ -55,7 +55,7 @@ for b in BATCHES:
     validate_memory(memory,b,owners)
     # A schema upgrade is audited separately; normal edits cannot erase memory.
     try:
-        previous = json.loads(subprocess.run(['git','show',f'HEAD:job_memory_{b}.json'],cwd=ROOT,capture_output=True,text=True,check=True).stdout)['records']
+        previous = unpack_memory(json.loads(subprocess.run(['git','show',f'HEAD:job_memory_{b}.json'],cwd=ROOT,capture_output=True,text=True,check=True).stdout))['records']
     except (ValueError,KeyError,subprocess.CalledProcessError): previous={}
     assert set(previous) <= set(memory['records']), f'Memory keys lost in {b}'
     for key, row in memory['records'].items():

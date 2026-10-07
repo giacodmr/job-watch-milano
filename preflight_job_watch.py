@@ -23,6 +23,8 @@ def validate(root=ROOT):
     required_scripts = ('job_watch.py','pipeline_state.py','collector.py','reconcile_workday_target_paths.py','amazon_target_check.py','sync_analysis_state.py','harden_job_watch_state.py','daily_worklist.py','enrich_semantic_jds.py','audit_job_watch.py','certify_job_watch.py','validate_job_watch_state.py','validate_job_watch_inputs.py','preflight_job_watch.py','test_daily_pipeline.py','test_job_watch_guardrails.py','test_workday_path_reconciliation.py','test_pipeline_resilience.py','job_memory.py','state_maintenance.py','location_policy.py','semantic_worker.py','test_job_memory.py')
     for name in required_scripts:
         if not (root/name).is_file(): errors.append(f'Pipeline contract: missing entrypoint {name}')
+    for name in ('compact_job_memory.py', 'test_semantic_compaction.py'):
+        if not (root/name).is_file(): errors.append(f'Pipeline contract: missing entrypoint {name}')
     for path in root.glob('*.py'):
         try: ast.parse(path.read_text())
         except SyntaxError as exc: errors.append(f'{path.name}: syntax error {exc}')

@@ -41,6 +41,18 @@ PROTECTED_RE = re.compile(
 def semantic_decision_valid(decision: dict, rec: dict) -> tuple[bool, str | None]:
     if not isinstance(decision, dict):
         return False, "semantic_decision_missing"
+    from job_memory import assert_no_evidence_refs
+    try:
+        assert_no_evidence_refs(decision)
+    except ValueError:
+        return False, "semantic_evidence_unresolved"
+    # A shortened historical review cannot authorize a reopened vacancy, even
+    # when the ATS reuses its old fingerprint. User APPLIED/NOT_INTERESTED still
+    # suppress ordinary review at the projection boundary.
+    if 'historical_evidence' in decision:
+        return False, "historical_evidence_requires_full_review"
+    if rec.get('requires_full_jd_review') and decision.get('analysis_method') != 'chatgpt_semantic_full_jd':
+        return False, "full_jd_required"
     if decision.get("analysis_method") == "chatgpt_semantic_triage":
         required = ("fingerprint", "analysis_status", "analysis_method", "decision", "reason", "rationale", "analyzed_at")
         if any(not decision.get(f) for f in required):
@@ -120,6 +132,7 @@ def queue_row(key: str, rec: dict) -> dict:
         "experience_status_hint": rec.get("experience_status_hint"),
         "experience_reason_hint": rec.get("experience_reason_hint"),
         "guardrail_reason": rec.get("guardrail_reason"),
+        "requires_full_jd_review": rec.get("requires_full_jd_review"),
     }.items() if v is not None}
 
 

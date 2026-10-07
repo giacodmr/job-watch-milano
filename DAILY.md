@@ -37,6 +37,8 @@ Le sezioni della patch sono comandi, non nomi di file persistenti. Il sync aggio
 
 Ometti le sezioni non usate. L'esempio snapshot è abbreviato; copialo integralmente. Per review completa usa i campi di `harden_job_watch_state.REQUIRED_SEMANTIC_FIELDS`, inclusi seniority, esperienza, salary e guardrail L.68/99. Triage non ammesso per priority, seniority o ambiguità L.68/99. Nuove rejection richiedono un motivo esplicito; se vago chiedi il motivo, senza inventarlo.
 
+Quando il packet contiene `requires_full_jd_review: true` / `guardrail_reason: historical_evidence_shortened`, la vacancy è riapparsa dopo l'abbreviazione delle evidenze storiche: leggi la JD ufficiale e restituisci una nuova review completa. La vecchia conclusione non chiude il lavoro, anche con lo stesso fingerprint. Non inviare `historical_evidence` o riferimenti `$e` nelle patch: sono soltanto dettagli dello storage, risolti e verificati dal codice.
+
 # Worker indipendenti durante la giornata
 
 Ogni worker riceve soltanto un batch di 1–30 vacancy. La selezione è derivata da current + memory del suo batch, con priorità Amazon/Mastercard, NEW/UPDATED, ruoli plausibili, geography e oldest-first. Non dipende dalla Daily né dai file degli altri batch.

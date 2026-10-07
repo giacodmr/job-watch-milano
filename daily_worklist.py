@@ -44,7 +44,8 @@ def build_worklist(backlog_limit=None, at=None):
     limit = backlog_limit if backlog_limit is not None else policy.get('worker_batch_size',20)
     records, candidates, selection_pool, pending = [], [], [], 0
     fields = ('company','source_id','title','location','target_city','priority_company','canonical_url','apply_url',
-              'fingerprint','current_status','threshold','user_decision','user_decision_reason','role_family','first_seen_at')
+              'fingerprint','current_status','threshold','user_decision','user_decision_reason','role_family','first_seen_at',
+              'requires_full_jd_review','guardrail_reason')
     for batch in BATCHES:
         try:
             state = project_batch(batch, ROOT)

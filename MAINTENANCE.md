@@ -26,3 +26,13 @@ python validate_job_watch_state.py --strict
 ```
 
 Per restaurare un checkout dello schema precedente, esegui esplicitamente `python job_watch.py migrate` prima del sync. L'upgrade verifica equivalenza e ownership prima di rimuovere il legacy; rifiuta stati misti e non sostituisce memorie già esistenti. Il modulo resta come upgrade testabile per restore/rebase e per i fixture permanenti; nessun reader legacy è attivo nel runtime. `state_migration_report.json` è un receipt freddo, con hash sorgenti, conteggi e decisioni irriconciliabili: non caricarlo nella Daily. ION Group esclusa conserva lì la sua scelta storica.
+
+## Riduzione delle evidenze storiche
+
+`python compact_job_memory.py` simula; `python compact_job_memory.py --apply` applica la riduzione sotto lock e in una sola transazione. È una manutenzione esplicita, non una fase aggiuntiva della Daily. Conserva complete tutte le identità presenti nel current (anche UNKNOWN), i loro alias URL e le scelte INTERESTED/TO_REVIEW. Per le altre review accorcia soltanto le evidenze verbose quando risparmia almeno 128 byte: esperienza/scope fino a 200 caratteri; requisiti fino a tre elementi per lista, ciascuno fino a 140 caratteri, con omissioni indicate. Non riscrive punteggio, rationale, anni obbligatori/preferiti, booleani di responsabilità, livello, esperienza finale, salary/fonti, L.68/99 o twin checks; identity/user/surfacing restano identici.
+
+Una review abbreviata contiene `historical_evidence` con hash della decisione originale e riassunti estratti, senza inferenze nuove. Se torna aperta non vale come analisi corrente, anche con fingerprint identico. Il packet segnala `requires_full_jd_review`; triage e title-metadata vengono rifiutati finché non arriva una nuova decisione completa su JD. APPLIED/NOT_INTERESTED continuano a sopprimere l'identità.
+
+Lo storage salva una sola copia dei testi semantic ripetuti nel `semantic_evidence` dello stesso batch; `{"$e":"hash"}` è un riferimento interno. `load_memory` verifica hash/referenze e ricostruisce gli esatti valori per i guardrail. Riferimenti mancanti/alterati bloccano il batch; nessun fallback interpreta evidenza assente come review valida. Le patch ChatGPT devono sempre contenere i normali campi completi e non riferimenti o receipt storici. Tutti i writer ricostruiscono il pool, eliminando testi non più usati. I file hanno un record per riga per ridurre indentazione e mantenere diff localizzati.
+
+Il receipt `semantic_compaction_report.json` e [SEMANTIC_COMPACTION.md](SEMANTIC_COMPACTION.md) documentano misure e invarianti. Il testo originale abbreviato resta recuperabile nella storia Git; non viene letto nel runtime e non è duplicato in un nuovo archivio.

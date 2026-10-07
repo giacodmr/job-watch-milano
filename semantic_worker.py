@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 from pipeline_state import BATCHES, load, writer_lock, transaction
-from job_memory import load_memory, validate_memory, IDENTITY_FIELDS
+from job_memory import load_memory, validate_memory, pack_memory, IDENTITY_FIELDS
 from harden_job_watch_state import semantic_decision_valid
 
 ROOT = Path(__file__).resolve().parent
@@ -38,7 +38,7 @@ def apply_packet(batch, patch, root=ROOT):
         groups=load('job_watch_batches.json',root=root)['batches']
         owners={c:b.lower() for b,g in groups.items() for c in g['companies']}
         validate_memory(memory,batch,owners)
-        transaction({f'job_memory_{batch}.json':memory},root=root)
+        transaction({f'job_memory_{batch}.json':pack_memory(memory)},root=root)
         return len(updates)
 
 def main():

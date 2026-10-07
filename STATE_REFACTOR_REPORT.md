@@ -64,7 +64,7 @@ Simulazione: **967 London** e **0 Luxembourg** fuori allowlist possono essere fe
 
 ## 7. Compromessi e rischi residui
 
-- I campi di evidenza semantic già necessari ai guardrail sono preservati, comprese review chiuse. La memoria resta circa 6 MB complessivi; GPT legge packet e Daily, non quelle memorie integrali.
+- Nella prima fase i campi di evidenza semantic erano preservati integralmente, comprese review chiuse (6.06 MB). La successiva riduzione autorizzata è descritta in `SEMANTIC_COMPACTION.md`: 4.04 MB, riassunti solo storici e nuova verifica JD obbligatoria alla riapertura. GPT legge packet e Daily, non le memorie integrali.
 - I timestamp/count legacy surfaced sono soltanto quelli effettivamente disponibili: quando manca storia precedente, primo/ultimo noto coincidono e count parte da 1. Nessun messaggio chat ricostruito artificialmente. Le categorie di rifiuto storiche mancanti restano mancanti; nuove decisioni richiedono feedback/categoria.
 - Alcuni career site espongono la location soltanto nel dettaglio: quella richiesta resta necessaria, ma non parte un successivo JD enrichment né review fuori policy.
 - Il journal e il lock proteggono processi nello stesso checkout. Tra checkout diversi serve integrazione Git, con pubblicazione Actions serializzata. I worker scrivono file disgiunti; publication rigenera sul main aggiornato in caso di gara e non duplica un nuovo archive mensile non ancora tracciato.
@@ -74,4 +74,4 @@ Simulazione: **967 London** e **0 Luxembourg** fuori allowlist possono essere fe
 
 ## 8. Refactor successivi consigliati
 
-Integrare i packet worker nel runner ricorrente esistente, con conclusioni ChatGPT reali e commit per batch; migliorare i pochi adapter che non espongono location nell'inventory; rivalutare separatamente una futura riduzione delle evidenze semantic storiche, solo dopo aver ridisegnato i guardrail. La soglia London/Luxembourg può essere modificata esplicitamente quando decisa dall'utente.
+Integrare i packet worker nel runner ricorrente esistente, con conclusioni ChatGPT reali e commit per batch; migliorare i pochi adapter che non espongono location nell'inventory. La riduzione delle evidenze storiche è ora implementata separatamente, dopo aver aggiunto guardrail su riapertura, alias e riferimenti di evidenza (`SEMANTIC_COMPACTION.md`). La soglia London/Luxembourg può essere modificata esplicitamente quando decisa dall'utente.

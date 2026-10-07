@@ -32,7 +32,11 @@ def load(name, default=None, root=None):
 
 def atomic_json(path, value):
     path = Path(path)
-    text = json.dumps(value, ensure_ascii=False, indent=2) + '\n'
+    if path.name in {f'job_memory_{b}.json' for b in BATCHES}:
+        from job_memory import memory_json
+        text = memory_json(value)
+    else:
+        text = json.dumps(value, ensure_ascii=False, indent=2) + '\n'
     if path.exists() and path.read_text() == text:
         return
     fd, tmp = tempfile.mkstemp(prefix='.' + path.name, dir=path.parent)

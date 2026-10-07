@@ -7,7 +7,7 @@ from copy import deepcopy
 import hashlib
 import json
 from pipeline_state import BATCHES, load, transaction, writer_lock
-from job_memory import IDENTITY_FIELDS, validate_memory, archive_rows, material_signature
+from job_memory import IDENTITY_FIELDS, validate_memory, archive_rows, material_signature, pack_memory
 from location_policy import allowed, geographies
 from state_maintenance import recount
 
@@ -105,7 +105,7 @@ def migrate(root):
             recount(current)
             current['geography_excluded_count']=metrics['geography_excluded']
             writes[f'current_jobs_{b}.json']=current
-            writes[f'job_memory_{b}.json']=memory
+            writes[f'job_memory_{b}.json']=pack_memory(memory)
             report['batches'][b]=metrics
         report['unresolved_user_decisions']={k:v for k,v in users.items() if k.split('::')[0] not in owners}
         assert sum(r['user'] for r in report['batches'].values())+len(report['unresolved_user_decisions'])==len(users)
