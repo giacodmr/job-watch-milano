@@ -133,24 +133,31 @@ def _select(data, output, persist):
     for rec in records:
         if rec.get('jd_error') or not (rec.get('jd') or {}).get('text'):
             errors[rec['job_key']] = rec.get('jd_error') or 'jd_missing'
+    from pipeline_state import now, transaction
+    from semantic_worker import batch_snapshot
+    stamp = now()
+    source_snapshot = packet.get('snapshot') or batch_snapshot(data['batch'], ROOT)
+    if source_snapshot != batch_snapshot(data['batch'], ROOT):
+        raise ValueError('stale_worker_snapshot')
+    memory_writes, packet['snapshot'] = select_memory_writes(data, records, stamp, source_snapshot)
     packet.update(version=VERSION, request_id=data['request_id'], select_run_id=int(os.environ.get('GITHUB_RUN_ID', '0')),
                   select_run_attempt=int(os.environ.get('GITHUB_RUN_ATTEMPT', '1')))
     output.write_text(json.dumps(packet, ensure_ascii=False, sort_keys=True))
-    from pipeline_state import now, transaction
     result = {'version':VERSION, 'request_id':data['request_id'], 'request_sha256':digest(data),
-            'created_at':now(), 'action':'select', 'batch':data['batch'],
+            'created_at':stamp, 'action':'select', 'batch':data['batch'],
             'status':'EMPTY' if not records else 'PARTIAL' if errors else 'READY',
             'record_count':len(records), 'ready_count':len(records)-len(errors),
             'job_keys':[r['job_key'] for r in records], 'fetch_errors':errors,
+            'technical_retry':{key:memory_writes[f"job_memory_{data['batch']}.json"]['records'][key]['jd_fetch'] for key in errors},
             'fingerprints':{r['job_key']:r['fingerprint'] for r in records},
             'select_run_id':packet['select_run_id'], 'select_run_attempt':packet['select_run_attempt'],
-            'snapshot':packet.get('snapshot'),
+            'snapshot':packet['snapshot'], 'source_snapshot':source_snapshot,
             'artifact_name':f"job-watch-packet-{packet['select_run_id']}-{packet['select_run_attempt']}",
             'packet_sha256':hashlib.sha256(output.read_bytes()).hexdigest()}
     name = receipt_name(data)
     (ROOT / Path(name).parent).mkdir(parents=True, exist_ok=True)
     if persist:
-        transaction({name:result}, root=ROOT)
+        transaction({**memory_writes, name:result}, root=ROOT)
     return result
 
 
@@ -174,6 +181,16 @@ def existing_receipt(data, locked=False):
     return receipt
 
 
+def select_memory_writes(data, records, at, source_snapshot):
+    from jd_retry import prepare_memory
+    from job_memory import memory_json
+    writes = prepare_memory(data['batch'], records, at, ROOT)
+    token = dict(source_snapshot)
+    for name, payload in writes.items():
+        token[name] = hashlib.sha256(memory_json(payload).encode()).hexdigest()
+    return writes, token
+
+
 def finalize_select(data, result, packet_path, artifact_id):
     """Publish metadata only after upload succeeded, pinning that exact artifact."""
     from pipeline_state import writer_lock, transaction
@@ -182,19 +199,24 @@ def finalize_select(data, result, packet_path, artifact_id):
         old = existing_receipt(data, locked=True)
         if old:
             return {**old, 'replayed':True}
+        if result.get('source_snapshot') != batch_snapshot(data['batch'], ROOT):
+            raise ValueError('select_finalization_mismatch')
+        packet = json.loads(packet_path.read_bytes())
+        memory_writes, predicted = select_memory_writes(data, packet['records'], result['created_at'], result['source_snapshot'])
         if (data.get('action') != 'select' or result.get('version') != VERSION or result.get('batch') != data['batch']
                 or type(artifact_id) is not int or artifact_id <= 0 or result.get('request_sha256') != digest(data)
                 or result.get('request_id') != data['request_id'] or result.get('action') != 'select'
                 or result.get('select_run_id') != int(os.environ['GITHUB_RUN_ID'])
                 or result.get('select_run_attempt') != int(os.environ['GITHUB_RUN_ATTEMPT'])
-                or result.get('snapshot') != batch_snapshot(data['batch'], ROOT)
+                or result.get('source_snapshot') != batch_snapshot(data['batch'], ROOT)
+                or result.get('snapshot') != predicted or packet.get('snapshot') != predicted
                 or result.get('artifact_name') != f"job-watch-packet-{result['select_run_id']}-{result['select_run_attempt']}"
                 or hashlib.sha256(packet_path.read_bytes()).hexdigest() != result.get('packet_sha256')):
             raise ValueError('select_finalization_mismatch')
         result = {**result, 'artifact_id':artifact_id}
         name = receipt_name(data)
         (ROOT / Path(name).parent).mkdir(parents=True, exist_ok=True)
-        transaction({name:result}, root=ROOT)
+        transaction({**memory_writes, name:result}, root=ROOT)
         return result
 
 

@@ -43,18 +43,24 @@ def build_worklist(backlog_limit=None, at=None):
     policy = rules.get('daily_worklist_policy', {})
     limit = backlog_limit if backlog_limit is not None else policy.get('worker_batch_size',20)
     records, candidates, selection_pool, pending = [], [], [], 0
+    processable, deferred, unavailable = 0, 0, 0
     fields = ('company','source_id','title','location','target_city','priority_company','canonical_url','apply_url',
               'fingerprint','current_status','threshold','user_decision','user_decision_reason','role_family','first_seen_at',
               'requires_full_jd_review','guardrail_reason')
     for batch in BATCHES:
         try:
-            state = project_batch(batch, ROOT)
+            state = project_batch(batch, ROOT, at=at)
         except (ValueError,OSError,KeyError,TypeError) as exc:
             record_error('BATCH_ERROR','worklist','MEMORY_UNAVAILABLE',exc,root=ROOT,batch=batch.upper())
             continue
-        pending += len(state['queue'])
+        pending += state['summary']['pending_analysis']
+        processable += len(state['queue'])
+        deferred += state['summary']['jd_retry_deferred']
+        unavailable += state['summary']['jd_unavailable']
         for key, rec in state['records'].items():
             reason = action_reason(rec, at, rules)
+            if rec.get('needs_analysis') and not rec.get('worker_eligible') and not reason:
+                continue
             # Rank the official snapshot, including completed decisions. Finishing
             # one selection cannot silently pull the rest of the debt into Daily.
             from sync_analysis_state import hard_exclusion_reason
@@ -66,7 +72,11 @@ def build_worklist(backlog_limit=None, at=None):
                    **{f:rec[f] for f in fields if rec.get(f) is not None}}
             if row.get('apply_url') == row.get('canonical_url'): row.pop('apply_url',None)
             if rec.get('needs_analysis'):
-                candidates.append(row)
+                if rec.get('worker_eligible'):
+                    candidates.append(row)
+                elif reason:
+                    row['technical_status'] = rec['jd_fetch']['status']
+                    records.append(row)  # Preserve explicit active choices, even without a JD.
             else:
                 row.pop('first_seen_at',None)
                 row['decision'] = {f:rec[f] for f in ('fit_score','reportable','salary','salary_source','final_experience_status','l68_status') if rec.get(f) is not None}
@@ -84,7 +94,8 @@ def build_worklist(backlog_limit=None, at=None):
     tasks += [{'action':'RETRY_PRIORITY_COLLECTION','company':c} for c,v in priority_status(ROOT).items() if v in {'FAILED','NOT_RUN'}]
     return {'version':'2.0','snapshot':token,'rules_file':'job_watch_rules.json','instructions_file':'DAILY.md',
         'summary':{'records':len(records),'daily_semantic_pending':len(selected),'backlog_assigned':0,
-                   'historical_backlog_remaining':max(0,pending-len(selected)),'full_semantic_pending':pending},
+                   'historical_backlog_remaining':max(0,pending-len(selected)),'full_semantic_pending':pending,
+                   'processable_semantic_pending':processable,'jd_retry_deferred':deferred,'jd_unavailable':unavailable},
         'records':records,'lifecycle_updates':[],'tasks':tasks}
 
 def main():

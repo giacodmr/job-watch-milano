@@ -126,6 +126,9 @@ def validate_memory(memory, batch, owners=None):
         if owners: assert owners.get(key.split('::')[0], batch) == batch, 'Wrong company owner'
         if row.get('user'):
             assert row['user']['decision'] in USER_STATES and row['user'].get('decided_at'), 'Invalid user decision'
+        if 'jd_fetch' in row:
+            from jd_retry import validate
+            validate(row['jd_fetch'])
         semantic = row.get('semantic', {})
         if isinstance(semantic, dict) and 'historical_evidence' in semantic:
             evidence = semantic['historical_evidence']
@@ -221,4 +224,10 @@ def resolve_identities(current, memory):
                         section == 'semantic' and 'historical_evidence' not in r,
                         r == own.get(section)))
         effective[key]=merged
+        from jd_retry import matching
+        candidates = [r['jd_fetch'] for _,r in matches if matching(r.get('jd_fetch'),job)]
+        if matching(own.get('jd_fetch'),job): candidates.append(own['jd_fetch'])
+        merged.pop('jd_fetch', None)
+        if candidates:
+            merged['jd_fetch'] = max(candidates, key=lambda r:(r['last_failure_at'],r['attempts']))
     return effective, aliases

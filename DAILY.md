@@ -2,7 +2,7 @@
 
 Le business rule canoniche restano in `job_watch_rules.json`. La Daily legge soltanto quel file, `daily_worklist.json` e il riepilogo health. Non caricare inventory, memoria integrale, archivio o JD complete nel contesto della chat.
 
-1. Verifica lo snapshot e la data Europe/Rome. Se cambia durante il lavoro, ricarica la worklist prima di inviare aggiornamenti.
+1. Verifica lo snapshot e la giornata operativa Europe/Rome: la raccolta delle 23:00 del giorno precedente serve la Daily delle 09:00 del giorno successivo. Se cambia durante il lavoro, ricarica la worklist prima di inviare aggiornamenti.
 2. Mostra le `NEW_INTERESTING`, tutte le scelte `INTERESTED` e `TO_REVIEW` in perimetro, e i `REMINDER`. Per scelte attive chiuse/non verificabili, mostra un breve avviso di lifecycle. Aggiungi una riga coverage/health; il debito semantico resta interno.
 3. Le `NEW_CANDIDATE` sono una selezione di massimo 20 vacancy dal nuovo snapshot, non un inventario da mostrare. Recupera la JD ufficiale solo per una vacancy realmente da analizzare. Non salvare il testo. I risultati interessanti diventeranno `NEW_INTERESTING` al sync successivo. Nessun limite alle nuove opportunità valide già valutate.
 4. “Già vista” significa effettivamente comunicata in chat. Non marcare come surfaced le vacancy raccolte, analizzate o soltanto presenti nella worklist. I reminder high-fit sono ammessi una volta al giorno, solo nei tre giorni dal primo surfacing noto; non estendere la finestra a ogni reminder. Le variazioni tecniche del fingerprint non bastano a riaprire il reporting. Un cambiamento materiale nei contenuti semanticamente valutati può essere indicato con `material_change: true` nella decisione.
@@ -56,4 +56,6 @@ Il worker restituisce un oggetto `{"batch":"jw3","snapshot":{...},"semantic_deci
 python semantic_worker.py apply jw3 --patch /tmp/jw3-decisions.json
 ```
 
-Il commit è atomico, controlla snapshot e guardrail, è replay-safe e modifica soltanto `job_memory_jw3.json`. JW1/JW2/JW4 seguono lo stesso contratto. Rimuovi il packet temporaneo dopo l'uso. Ripeti selezione → analisi → apply fino a coda vuota, poi rigenera la Daily con `python job_watch.py sync`. La PR fornisce i worker eseguibili; la ricorrenza e l'esecuzione ChatGPT sono responsabilità del runner/chat già configurato, non di un finto analizzatore deterministico.
+Il commit è atomico, controlla snapshot e guardrail, è replay-safe e modifica soltanto `job_memory_jw3.json`. JW1/JW2/JW4 seguono lo stesso contratto. Rimuovi il packet temporaneo dopo l'uso. Ripeti selezione → analisi → apply fino a coda vuota, poi rigenera la Daily con `python job_watch.py project`. La PR fornisce i worker eseguibili; la ricorrenza e l'esecuzione ChatGPT sono responsabilità del runner/chat già configurato, non di un finto analizzatore deterministico.
+
+I fallimenti JD tecnici non sono review o scelte utente. I riepiloghi distinguono pending processabili, retry rinviati al giorno successivo e JD_UNAVAILABLE. Questi ultimi escono dalla selezione automatica, conservano il debito semantico e le eventuali scelte attive. Zero lavoro processabile non significa FULL_SEMANTIC_COMPLETE. Il lifecycle tecnico è gestito dal bridge SELECT, non modificato dalla chat Daily.

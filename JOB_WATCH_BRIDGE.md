@@ -90,10 +90,37 @@ residual. Preserve and explicitly revalidate earlier judgments; never replace ha
 blindly. The Worker reconciles and deletes older partial requests only after all their
 residuals have been validly resolved. Receipts do not authorize overwriting newer choices.
 
-For failed fetches, the Worker uses the select receipt to defer identical key/fingerprint
-retries for six hours and passes `exclude_keys`; a changed fingerprint is checked anew.
-The exclusion is a scheduling hint only and does not modify eligibility or semantic
-priority rules. Retry outstanding work automatically, never suppress it permanently.
+## Finite technical JD retry
+
+The authoritative batch memory stores `records[job_key].jd_fetch` separately from
+semantic/user/surfacing. Exact schema:
+
+```json
+{"evidence":{"fingerprint":"current fingerprint","source_url":"canonical URL or apply URL"},"attempts":1,"last_failure_at":"2026-10-08T00:00:00Z","retry_from":"2026-10-09","status":"RETRY_PENDING"}
+```
+
+`attempts` counts the initial failed fetch plus subsequent failed retries; retries
+used = attempts - 1. Maximum 4: initial + 3. Each next attempt becomes eligible on
+the next calendar day Europe/Rome. At 4 the status is `JD_UNAVAILABLE` and retry_from
+is null. Time alone never reopens it; a changed fingerprint or source URL does.
+A successful fetch clears failure metadata without creating a semantic decision.
+Identity aliases sharing the same evidence cannot bypass this bound.
+
+SELECT receipt technical_retry exposes the selected failure outcomes without loading
+full memory. SELECT predicts the exact post-update memory hash in the temporary packet snapshot.
+After upload succeeds, finalization verifies the original source snapshot and writes
+technical memory plus its immutable SELECT receipt in ONE journal transaction.
+Git publishes them together. APPLY uses that packet snapshot, which already includes
+the technical checkpoint; it does not increment counters again. Replay skips fetching
+and preserves counters. All-failed packets still publish technical metadata; they
+require no empty APPLY. Successful JD rows in PARTIAL remain reviewable normally.
+
+The queue filters deferred and terminal technical states. `needs_analysis` remains
+true and full semantic debt includes them: they are not analyzed or user-rejected.
+Daily, audit and health separately expose processable pending, deferred retries and
+JD_UNAVAILABLE. Explicit active user choices remain visible. No quota, global/night
+ledger, slot state machine, custom lock or distributed lease is introduced.
+
 
 ## Validation, publication and concurrency
 
@@ -102,7 +129,9 @@ Each apply runs preflight, input validation, the complete unittest suite ONCE,
 comparison, and diff checking. This projection does not consume `daily_updates.json`,
 maintain inventories, archive roles, modify user/surfacing/activity, or change other JW
 memories. Publication stages only the reviewed JW memory, four read models, its receipt
-and completed-request deletions. Daily retains its existing separate sync path.
+and completed-request deletions. SELECT can publish its own technical memory and the
+same read models after input/strict validation; it runs no semantic suite per record.
+Daily retains its existing separate sync path.
 There is no per-vacancy suite or extra sync inside bridge.apply.
 
 PR CI can reuse a successful ancestral validation only when code/static inputs have
@@ -130,31 +159,35 @@ range rather than silently ignoring requests in earlier commits.
 Only dependencies use a pip cache; full JDs never do. Select still fetches sequentially;
 bounded HTTP concurrency is deferred until real per-host timings justify it.
 
-## Agreed night schedule — not activated
+## Canonical schedule — ChatGPT tasks remain disabled
 
-- One **Job Watch Worker** task: **02:00, 03:00, 04:00, 05:00, 06:00 Europe/Rome**.
-- Maximum **20 attempts/run**, normally two packets of 10: up to **100 attempts/night**,
-  across all JW combined, without automatic budget extensions. Stop early when there
-  is no selectable work. Actual saved reviews depend on successful fetch/validation.
-- One existing **Job Watch Daily** task: **09:00 Europe/Rome**.
-- Proposed collector ordering: **00:30**, recovery **01:15**, before the first Worker.
-  Current collector schedules remain **06:30/07:15** until an explicit operational
-  switch. Keeping them means overnight work uses the previous collection; a long-running
-  06:00 Worker can still overlap collection. A new morning collection can also obsolete
-  Daily activity certification until the reporting runner uses the fresh snapshot.
+- Collector GitHub: **23:00**, recovery **23:45 Europe/Rome**, configured in this PR.
+- One **Job Watch Worker**: **00:00, 02:00, 04:00, 05:30 Europe/Rome**.
+- Maximum **20 attempts per run**, normally two sequential packets of 10 across all
+  JW; stop early when all queues are EMPTY. No global nightly counter. 80 is merely
+  4 × 20; an authorized extra manual run has its own limit.
+- Existing **Job Watch Daily**: **09:00 Europe/Rome**, no duplicate task.
 
-The durable Worker prompt is `CHATGPT_WORKER_PROMPT.txt`. The single handoff document
-`CHATGPT_HANDOFF_E_RICORRENZE.md` includes the context and both recurring-chat prompts.
-No schedule was activated or merged by this change. The manual v2 pilots saved
-10/10 and 18/20 reviews, reducing pending 70→60→42; two failed fetches remained pending.
-A SELECT replay exposed receipt replacement. The canonical 10-record receipt is
-restored byte-for-byte from commit `c0cf97a9e67ffdf0fdfc802869f57de6d7896cb3`, checked
-against its APPLY receipt; the erroneous replay remains visible in Git history. No
-semantic/user/surfacing decision is changed by this repair. These corrections still
-require a live ChatGPT batch/replay pilot before authorizing unattended operation.
-Durable slot budgets/claims, automatic inbox reconciliation and uniform JD identity
-hardening remain separate work; the current task prompt supplies those scheduling
-constraints. These changes do not certify an unattended night run.
+The 23:00 collection on D supplies the workday D+1. Freshness uses this Rome boundary
+for both recovery and Daily certification, including DST and delayed recovery after
+midnight. Earlier same-day morning snapshots do not skip the new evening collection.
+Incomplete/failed/unattempted sources, including PARTIAL, require recovery. Timestamps
+remain actual UTC collection times; no synthetic next-day inventory date is written.
+Schedules execute from GitHub's default branch: this pilot-only change does not alter
+main or activate production. No ChatGPT task is created or enabled.
+
+Use the exact Worker prompt in `CHATGPT_WORKER_PROMPT.txt` or the single combined
+`CHATGPT_HANDOFF_E_RICORRENZE.md`. Configure the four explicit times, avoiding a
+cartesian combination of every hour with minutes 00/30. One request at a time;
+SELECT the next packet only after APPLY and the remote checkpoint. EMPTY/all-failed
+packets finish at their technical SELECT checkpoint. A failed entire run terminates;
+the next scheduled run reconciles remote state without a complex recovery system.
+
+Live bridge pilots and replay fixes already PASS: 10/10, 18/20 and then 8/10 saved
+reviews; pending 70→60→42→34. Failures remain technical, not fabricated reviews.
+The canonical original SELECT receipt was restored from commit c0cf97a9e67ffdf0fdfc802869f57de6d7896cb3;
+Git history retains the earlier erroneous replay. This work adds finite retries and
+evening collection; final task activation and merging remain separate authorized work.
 
 ## Timing model to measure
 

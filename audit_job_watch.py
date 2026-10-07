@@ -198,6 +198,8 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             "semantic_analyzed": sum(1 for r in analyzed if r.get("analysis_method") != "hard_rule_title"),
             "pending_analysis": len(pending),
             "queue_pending": int(queue.get("pending_count", len(queue.get("records") or [])) or 0),
+            "jd_retry_deferred": state['summary']['jd_retry_deferred'],
+            "jd_unavailable": state['summary']['jd_unavailable'],
             "analysis_pct": round((len(analyzed) / extracted_open) * 100, 2) if extracted_open else 100.0,
             "actionable_delta_open": len(actionable_delta),
             "actionable_delta_analyzed": len(actionable_analyzed),

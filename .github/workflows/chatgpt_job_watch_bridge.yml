@@ -97,6 +97,12 @@ jobs:
           REQUEST_PATH: ${{ steps.request.outputs.path }}
           ARTIFACT_ID: ${{ steps.packet.outputs.artifact-id }}
         run: python job_watch_bridge.py --request "$REQUEST_PATH" --finalize-select "$ARTIFACT_ID" --receipt-output /tmp/job-watch-bridge-select-receipt.json
+      - name: Validate technical retry checkpoint
+        if: steps.request.outputs.action == 'select' && steps.select.outputs.replayed != 'true'
+        run: |
+          python validate_job_watch_inputs.py
+          python job_watch.py project
+          python validate_job_watch_state.py --strict
       - name: Download and verify original select artifact
         if: steps.request.outputs.action == 'apply'
         env:
@@ -149,7 +155,7 @@ jobs:
           if request['action'] == 'apply':
               candidates = list(WORKER_DERIVED) + [f"job_memory_{request['batch']}.json", receipt_name(request), os.environ['REQUEST_PATH'], f".job_watch_bridge/requests/{request['parent_request_id']}.json"]
           else:
-              candidates = [receipt_name(request)]
+              candidates = [receipt_name(request), f"job_memory_{request['batch']}.json"] + list(WORKER_DERIVED)
           def git(*args):
               return subprocess.check_output(['git',*args],text=True).strip()
           paths = [p for p in candidates if Path(p).exists() or git('ls-files','--',p)]

@@ -12,7 +12,7 @@ Audit avviato sul vero `main`, SHA **432c2e175705c9475cc63a79bb80f5335e4040d4**.
 
 Repository **pubblico**, `main.protected=false`, permesso amministrativo disponibile. Visibility e protezioni non sono state cambiate. Stato iniziale: 582 commit, di cui 168 di `github-actions[bot]`; 104 commit con oggetto “Sync Job Watch semantic state”, 46 “Update Job Watch vacancy snapshots”. 12 branch remoti compreso main: solo `ats-successfactors-v15b` risulta antenato di main, gli altri 10 richiedono verifica dei diff/squash prima di considerarli obsoleti. Nessun branch cancellato.
 
-Quattro workflow, 504 righe YAML, tutti writer con la **stessa concurrency group già presente**. Il locking e il reset/rigenerazione su main avanzato erano già implementati: non erano problemi da reinventare. Schedule già espresso in Europe/Rome: 06:30, recovery 07:15, recovery 08:00. Il guard normalmente saltava un giorno già fresco, ma alle 08:00 poteva ancora avviare una raccolta concorrente alla Daily.
+Quattro workflow, 504 righe YAML, tutti writer con la **stessa concurrency group già presente**. Il locking e il reset/rigenerazione su main avanzato erano già implementati: non erano problemi da reinventare. Configurazione corrente nella PR: collector 23:00, recovery 23:45 Europe/Rome. Questo audit descriveva la precedente raccolta mattutina. Il guard normalmente saltava un giorno già fresco, ma alle 08:00 poteva ancora avviare una raccolta concorrente alla Daily.
 
 194 aziende iniziali; 2.674 vacancy aperte nello stato analitico; 794 pending; audit: 160 pending daily e 634 storico. 24.231.133 byte JSON complessivi, inclusi 9.774.157 byte analysis results, 977.694 byte queue e 1.312.078 byte cache. Gli inventari correnti occupavano 2.317.983 byte. Quattro registri semantici e quattro surfaced registries; 86 decisioni utente (40 NOT_INTERESTED, 31 TO_REVIEW, 10 INTERESTED, 5 APPLIED).
 
@@ -79,7 +79,7 @@ La root cause di workload è la selezione: cutoff permanente `never_disappear_si
 | P1 | JD mancanti e navigazione manuale | Enrichment integrato dopo sync, cache esatta, testo Amazon raccolto riusato |
 | P1 | ION ancora attiva | Rimossa da tutte le configurazioni e dallo snapshot operativo; storico preservato escluso dai report |
 | P1 | Storia utente/semantica enorme da ricostruire per scrivere | Patch piccolo snapshot-bound, merge dei soli record cambiati nel sync |
-| P1 | Recovery collector alle 08:00 | Eliminata; 06:30 + 07:15 se necessaria, controlli di freschezza su fallimenti |
+| P1 | Recovery collector alle 08:00 | Eliminata; configurazione corrente 23:00 + 23:45 se necessaria, freschezza della giornata successiva |
 | P2 | Repeated sync produceva commit per timestamp | Output byte-identici se input invariato |
 | P2 | Cinque scritture snapshot per batch, due health writers | Una scrittura collector, un solo writer del health finale |
 | P2 | ATS mapping/maint e discovery troppo pesanti nella Daily | Policy weekly separata, daily discovery leggera con evidenze reali |
@@ -97,7 +97,7 @@ La migrazione non finge che il backlog sia stato analizzato: i pending preesiste
 
 Triage breve: sette campi, soltanto REJECT chiaramente fuori funzione/geografia/pure sales/technical. Non accetta seniority, priority o protected ambiguity come scorciatoia. Il full review mantiene il contratto precedente. Manager/Senior/Lead restano eligibili dopo verifica JD; 0–5 mandatory vs preferred, floor €33k e L.68/99 restano inalterati. La salary hard rule richiede cap documentato `fixed_base_max_eur`, fonte e flag di evidenza; un minimo, una stima o salario assente non scartano.
 
-Enrichment esegue soltanto worklist pending (inclusa tranche), riusa cache OK sul fingerprint e impone cooldown di sei ore agli errori sullo stesso fingerprint. Amazon usa description/basic/preferred già raccolte. Fallback HTML preferisce JobPosting JSON-LD; se deve leggere HTML, controlla matching title e pagine bloccate/chiuse. Non interpreta retrieval failure come rifiuto del ruolo.
+Configurazione corrente: JD just-in-time nei packet temporanei, senza cache persistente. I fallimenti usano metadata tecnici nella memoria JW: retry dal giorno successivo Europe/Rome, massimo tre retry dopo il primo tentativo, poi JD_UNAVAILABLE fino a nuova evidenza. Nessuna review o scelta utente viene inventata. I dettagli operativi aggiornati sono in JOB_WATCH_BRIDGE.md; le sezioni precedenti di questo audit restano evidenza storica.
 
 `rejection_reason` ha nove categorie. Inferenza da motivo chiaro, richiesta del motivo per rifiuto vago; non alimenta i filtri. Backfill conservativo: 12 dei 40 rifiuti storici hanno categoria verificabile (6 WRONG_FUNCTION, 4 TOO_SENIOR, 2 SALARY_TOO_LOW); gli altri restano null. Motivi, fingerprint, status e date originali sono identici. Nuovi rifiuti senza motivo sono respinti dai validatori.
 

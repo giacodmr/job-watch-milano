@@ -405,7 +405,7 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
         item["location"] = raw.get("location") or item.get("location")
 
 
-def project_batch(batch: str, root=None, *, memory_override=None) -> dict:
+def project_batch(batch: str, root=None, *, memory_override=None, at=None) -> dict:
     """Pure operational projection from official current state and durable memory."""
     from job_memory import load_memory
     current = read_json((root or ROOT) / f'current_jobs_{batch}.json', {})
@@ -593,6 +593,12 @@ def project_batch(batch: str, root=None, *, memory_override=None) -> dict:
         from job_memory import material_signature
         history = effective.get(key, {}).get('surfacing', {})
         rec.update(surfacing=history, material_signature=material_signature(rec))
+        from jd_retry import matching, eligible
+        from pipeline_state import now
+        technical = effective.get(key, {}).get('jd_fetch')
+        if matching(technical, rec):
+            rec['jd_fetch'] = technical
+        rec['worker_eligible'] = bool(rec['needs_analysis'] and eligible(technical, rec, at or now()))
         records[key] = rec
 
     for key, job in current_all.items():
@@ -626,7 +632,7 @@ def project_batch(batch: str, root=None, *, memory_override=None) -> dict:
     ]
     surfaced = [r for r in reportable if r.get("surfaced_at")]
 
-    queue_records = [queue_row(key, rec) for key, rec in pending_records]
+    queue_records = [queue_row(key, rec) for key, rec in pending_records if rec['worker_eligible']]
     queue_records.sort(key=queue_sort_key)
 
     payload = {
@@ -638,6 +644,9 @@ def project_batch(batch: str, root=None, *, memory_override=None) -> dict:
             "open_state_records": len(open_records),
             "valid_current_analysis": preserved,
             "pending_analysis": len(pending_records),
+            "processable_pending": len(queue_records),
+            "jd_retry_deferred": sum(not r['worker_eligible'] and r.get('jd_fetch',{}).get('status') == 'RETRY_PENDING' for _,r in pending_records),
+            "jd_unavailable": sum(r.get('jd_fetch',{}).get('status') == 'JD_UNAVAILABLE' for _,r in pending_records),
             "analyzed_current": len(analyzed),
             "hard_rule_analyzed": len(hard_rule_analyzed),
             "semantic_analyzed": len(semantic_analyzed),

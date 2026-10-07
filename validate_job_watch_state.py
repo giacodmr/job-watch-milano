@@ -21,7 +21,7 @@ def validate_batch(batch,root=None):
     base = extracted_open_keys(cur)
     assert cur.get('summary',{}).get('target_jobs_open') == len(base), 'Inventory summary/count mismatch'
     assert sum(bool(r.get('current_open')) for r in records.values()) == len(base), 'Current inventory/memory projection mismatch'
-    expected = {k for k,r in records.items() if r.get('current_open') and r.get('needs_analysis')}
+    expected = {k for k,r in records.items() if r.get('current_open') and r.get('needs_analysis') and r.get('worker_eligible')}
     rows = state['queue']; actual = {r['job_key'] for r in rows}
     assert actual == expected and len(actual) == len(rows), 'Derived semantic queue mismatch/duplicates'
     assert all(r.get('fingerprint') and r['fingerprint'] == records[r['job_key']].get('fingerprint') for r in rows), 'Queue fingerprint mismatch'

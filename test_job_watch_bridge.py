@@ -163,6 +163,7 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(result['ready_count'],19)
         self.assertEqual(len(json.loads(path.read_text())['records']),20)
         req['packet_sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        req['patch']['snapshot'] = json.loads(path.read_text())['snapshot']
         req['patch']['semantic_decisions'].pop(packet['records'][0]['job_key'])
         result = self.run_apply(req,path)
         self.assertEqual(result['applied_count'],19)
