@@ -3842,6 +3842,10 @@ def collect_phenom(company):
 
 
 def choose(company):
+    from official_career_collectors import choose_official
+    official = choose_official(company)
+    if official is not None:
+        return official
     if phenom_family(company):
         return collect_phenom
     if amazon_family(company):

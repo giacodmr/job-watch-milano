@@ -212,7 +212,7 @@
         "tenant": "snam / wd103",
         "career_site": "https://snam.wd103.myworkdayjobs.com/Carriere",
         "inventory_url": "https://snam.wd103.myworkdayjobs.com/Carriere",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://snam.wd103.myworkdayjobs.com/wday/cxs/snam/Carriere/jobs"
       },
       "verification": {
         "level": "FULL",
@@ -233,7 +233,7 @@
       "limitations": [
         "Public Workday candidate experience is JavaScript-heavy but structurally complete."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Edison",
@@ -272,34 +272,31 @@
       "company": "Maire",
       "batch": "JW3",
       "ats": {
-        "family": "enterprise career portal (unconfirmed)",
-        "tenant": "unknown",
-        "career_site": "https://www.mairetecnimont.com/en/people/careers/",
-        "inventory_url": "https://careers.mairetecnimont.com/",
+        "family": "Custom official careers; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.groupmaire.com/en/people/careers/",
+        "inventory_url": "https://www.groupmaire.com/en/people/careers/",
         "public_api_or_feed": null
       },
       "verification": {
         "level": "PARTIAL",
-        "method": "official_career_site",
-        "location_filter_supported": true,
-        "locations": [
-          "Italy",
-          "Milan",
-          "Rome",
-          "London"
-        ],
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
         "pagination": "dynamic",
-        "total_count_available": null,
+        "total_count_available": false,
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the official Maire career portal and location filters, recording every requisition returned.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Fallback to official Maire domain search for exact vacancy pages."
       },
       "limitations": [
-        "ATS family and exhaustive pagination could not be verified."
+        "ATS family and exhaustive pagination could not be verified.",
+        "2026-10-06: careers.mairetecnimont.com fails DNS resolution. The reachable official MAIRE careers entry is used as PARTIAL probe; no ATS/API invented.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Webuild",
@@ -1312,6 +1309,168 @@
         "Global Hitachi portal mixes sectors, so always retain Hitachi Energy company/sector filter."
       ],
       "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Ariston Group",
+      "batch": "JW3",
+      "ats": {
+        "family": "SAP SuccessFactors",
+        "tenant": null,
+        "career_site": "https://www.aristongroup.com/it/persone",
+        "inventory_url": "https://careers.aristongroup.com/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "official_counted_jobs2web_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official careers link and rendered RM search validated. Industrial thermal-comfort manufacturer, so JW3."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "BMW Group Italia",
+      "batch": "JW3",
+      "ats": {
+        "family": "Custom BMW Job Finder; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.bmwgroup.jobs/content/grpw/websites/bmwgroup_jobs/it/en.html",
+        "inventory_url": "https://www.bmwgroup.jobs/content/grpw/websites/bmwgroup_jobs/it/en.html",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official Job Finder verified with web browsing: Italy, Rome and San Donato Milanese facets and global count. Python requests times out; no public backend/feed verified. Industrial automotive group, JW3; city matching stays unchanged."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Fibercop",
+      "batch": "JW3",
+      "ats": {
+        "family": "Custom official recruiting portal",
+        "tenant": null,
+        "career_site": "https://www.fibercop.com/lavora-con-noi/opportunita-di-lavoro/",
+        "inventory_url": "https://recruiting.fibercop.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official opportunities page links recruiting.fibercop.com for open jobs and profiles. Backend vendor/API not verified; dynamic/session portal has no supported enumeration. Independent fiber infrastructure, not assumed to share TIM ATS."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Hitachi Rail",
+      "batch": "JW3",
+      "ats": {
+        "family": "Custom official Hitachi Rail careers; backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.hitachirail.com/careers/",
+        "inventory_url": "https://www.hitachirail.com/careers/vacancies/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official Vacancies page links careers.hitachi.com/search/hitachi-rail/jobs, but the linked board returns HTTP 404. Retain reachable Rail entry as PARTIAL. Hitachi Energy already has its own entity-scoped listing; do not add a duplicate unfiltered Hitachi group collector."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Lechler",
+      "batch": "JW3",
+      "ats": {
+        "family": "In-recruiting / Intervieweb",
+        "tenant": "lechler",
+        "career_site": "https://www.lechler.eu/en",
+        "inventory_url": "https://zinrec.intervieweb.it/lechler/en/career",
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "intervieweb_lechler"
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_rendered_vacancies",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official Work in Lechler link reaches zinrec.intervieweb.it/lechler; powered by In-recruiting and /lechler/jobs/<slug>-<id>/en/. No supported counted enumerator/API. Industrial coatings business, JW3.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
+      ],
+      "last_mapped": "2026-10-06"
     }
-  ]
+  ],
+  "last_mapped": "2026-10-06",
+  "summary": {
+    "companies_analyzed": 45,
+    "FULL": 19,
+    "STRONG": 12,
+    "PARTIAL": 13,
+    "OPAQUE": 1
+  }
 }

@@ -10,6 +10,51 @@ BATCHES = ('jw1', 'jw2', 'jw3', 'jw4')
 EXPANSION_MAPPING = 'ats_mapping_expansion_20261004.json'
 
 
+def validate_company_metadata(manifest, universe, excluded, expansion_aliases=()):
+    """Validate descriptive metadata/group coverage without changing collection scope."""
+    errors = []
+    batches = manifest.get('batches', {})
+    metadata = manifest.get('company_metadata', {})
+    aliases = manifest.get('coverage_aliases', {})
+    if not isinstance(metadata, dict):
+        errors.append('company_metadata: expected canonical-name object')
+        metadata = {}
+    if not isinstance(aliases, dict):
+        errors.append('coverage_aliases: expected alias-name object')
+        aliases = {}
+    for company, values in metadata.items():
+        if company not in universe or company in excluded or company in aliases:
+            errors.append(f'company_metadata: noncanonical/excluded company {company}')
+        if not isinstance(values, dict):
+            errors.append(f'company_metadata: invalid metadata for {company}')
+        elif 'network_advantage' in values and values['network_advantage'] != 'HIGH':
+            errors.append(f'company_metadata: invalid network_advantage for {company}')
+    for alias, row in aliases.items():
+        if not isinstance(row, dict):
+            errors.append(f'coverage_aliases: invalid row for {alias}')
+            continue
+        batch = str(row.get('batch', '')).upper()
+        parent = row.get('covered_by')
+        if alias in universe or alias in excluded:
+            errors.append(f'coverage_aliases: duplicate active/excluded alias {alias}')
+        if batch not in batches or parent not in universe or parent in excluded or parent in aliases:
+            errors.append(f'coverage_aliases: invalid parent/batch for {alias}')
+        elif parent not in batches[batch].get('companies', []):
+            errors.append(f'coverage_aliases: parent not assigned to {batch} for {alias}')
+        if not row.get('reason'):
+            errors.append(f'coverage_aliases: missing evidence/limitation for {alias}')
+    for row in expansion_aliases:
+        if not isinstance(row, dict):
+            errors.append('coverage_aliases: invalid expansion alias row')
+            continue
+        alias = row.get('company')
+        canonical = aliases.get(alias, {})
+        if (canonical.get('covered_by') != row.get('covered_by') or
+                str(canonical.get('batch', '')).lower() != str(row.get('batch', '')).lower()):
+            errors.append(f'coverage_aliases: manifest/expansion drift for {alias}')
+    return errors
+
+
 def validate(root=ROOT):
     errors = []
     data = {}
@@ -102,6 +147,11 @@ def validate(root=ROOT):
     excluded = set(data.get('job_watch_rules.json', {}).get('excluded_companies', []))
     universe = {r.get('company') for name in ('companies_job_watch_v2.json', 'watchlist_additions.json') for r in data.get(name, {}).get('companies', [])}
     universe.update(name for names in expansion_by_batch.values() for name in names if name)
+    catalog_names = [r.get('company') for name in ('companies_job_watch_v2.json', 'watchlist_additions.json') for r in data.get(name, {}).get('companies', [])]
+    if len(catalog_names) != len(set(catalog_names)):
+        errors.append('company universe: duplicate canonical catalog entries')
+    errors.extend(validate_company_metadata(data.get('job_watch_batches.json', {}), universe, excluded,
+                                           expansion.get('coverage_aliases', [])))
     for b in BATCHES:
         members = batches.get(b.upper(), {}).get('companies', [])
         if not members or len(members) != len(set(members)) or seen.intersection(members):
@@ -126,6 +176,9 @@ def validate(root=ROOT):
                     for job in company.get('jobs',[]):
                         if job.get('status') not in {'NEW','STILL_OPEN','UPDATED','CLOSED','UNKNOWN'}: errors.append(f'{name}: invalid vacancy status {job.get("status")}')
             if stem == 'ats_mapping' and isinstance(item.get('companies'), list):
+                for row in item['companies']:
+                    if str(row.get('batch', '')).lower() != b:
+                        errors.append(f'{name}: {row.get("company")} batch mismatch')
                 canonical = [r.get('company') for r in item['companies']]
                 additions = expansion_by_batch.get(b, [])
                 if set(canonical) & set(additions):

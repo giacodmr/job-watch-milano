@@ -3,7 +3,7 @@
   "batch": "JW1",
   "batch_name": "Finance, Payments, Banking & Insurance",
   "source_repository": "giacodmr/job-watch-milano",
-  "last_mapped": "2026-09-14",
+  "last_mapped": "2026-10-06",
   "scope_note": "Technical ATS/career-inventory mapping only; this file does not contain vacancy screening results.",
   "verification_levels": {
     "FULL": "Complete official public inventory can be enumerated and completeness can be demonstrated.",
@@ -12,10 +12,10 @@
     "OPAQUE": "Official system is too closed, authenticated, anti-bot, or technically opaque for reliable verification."
   },
   "summary": {
-    "companies_analyzed": 53,
+    "companies_analyzed": 74,
     "FULL": 26,
-    "STRONG": 19,
-    "PARTIAL": 8,
+    "STRONG": 16,
+    "PARTIAL": 32,
     "OPAQUE": 0
   },
   "companies": [
@@ -441,7 +441,7 @@
         "fallback": "Use jobs.intesasanpaolo.com group/category landing pages only as discovery paths back to the all-jobs list."
       },
       "limitations": [],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "UniCredit",
@@ -454,8 +454,8 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_search_portal",
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -468,14 +468,15 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use UniCredit's official SearchJobs portal, set location filters, maximize records per page where supported, and iterate all result pages.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use UniCredit Group careers to rediscover the SearchJobs portal if direct access is blocked."
       },
       "limitations": [
         "Direct crawler access can return HTTP 406/session-sensitive behavior.",
-        "Backend vendor and a stable machine-readable inventory endpoint were not resolved."
+        "Backend vendor and a stable machine-readable inventory endpoint were not resolved.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "FinecoBank",
@@ -583,8 +584,8 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "FULL",
-        "method": "official_paginated_inventory_with_count",
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -594,16 +595,17 @@
         ],
         "pagination": "numbered pages; country/entity/function/location filters",
         "total_count_available": true,
-        "full_inventory_possible": true
+        "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use the BNP Paribas Group all-job-offers inventory as primary, constrain country to Italy (then Milan/Rome) or London, and exhaust numbered pages against the displayed count.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use the BNP Paribas Italy local offers page as a secondary cross-check; deduplicate roles visible in both surfaces."
       },
       "limitations": [
-        "Local Italy and global group portals can show different counts/scopes; the group inventory is preferred for completeness."
+        "Local Italy and global group portals can show different counts/scopes; the group inventory is preferred for completeness.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Mediobanca",
@@ -713,8 +715,8 @@
         "public_api_or_feed": null
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_inventory_with_total",
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -727,13 +729,14 @@
         "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use Go Generali Jobs, apply country/city/company filters, record the displayed total and exhaust all result batches for target locations.",
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
         "fallback": "Use Generali Italy's careers page only as an official redirect/cross-check to Go Generali."
       },
       "limitations": [
-        "Global inventory count is visible, but the backend/pagination contract was not independently resolved enough to guarantee complete automated enumeration."
+        "Global inventory count is visible, but the backend/pagination contract was not independently resolved enough to guarantee complete automated enumeration.",
+        "2026-10-06: current choose(row) uses the official-site probe; automated full enumeration is not certified even when the manual portal shows a count or search filters."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Unipol",
@@ -804,15 +807,16 @@
       "company": "AXA",
       "batch": "JW1",
       "ats": {
-        "family": "Custom global careers platform; ATS backend unresolved",
-        "tenant": null,
-        "career_site": "https://careers.axa.com/",
-        "inventory_url": "https://jobs.axa.com/",
-        "public_api_or_feed": null
+        "family": "iCIMS / Jibe public AXA careers search",
+        "tenant": "careers-en-axa",
+        "career_site": "https://jobs.axa.com/careers-home/",
+        "inventory_url": "https://jobs.axa.com/jobs",
+        "public_api_or_feed": "https://jobs.axa.com/api/jobs",
+        "official_adapter": "axa"
       },
       "verification": {
-        "level": "STRONG",
-        "method": "official_global_inventory",
+        "level": "FULL",
+        "method": "axa_jibe_public_search",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -820,18 +824,18 @@
           "Rome",
           "London"
         ],
-        "pagination": "dynamic search/filtering; exact paging contract not mapped",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Enumerate unfiltered global page/limit response and reconcile unique IDs against totalCount and the sum of languageCounts; count is the English facet only.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official AXA global jobs inventory and location index, filter to Italy/city or London, and exhaust all rendered result batches.",
+        "primary": "Enumerate every page of the official public global AXA feed. Reconcile stable totalCount, sum of languageCounts and unique vacancy IDs; apply existing city and role filters.",
         "fallback": "Use AXA Italy careers/entity pages to cross-check local openings."
       },
       "limitations": [
-        "Country/city organization is accessible, but no reliable total/pagination or public backend endpoint was independently mapped."
+        "Public /api/jobs evidenced in official AXA frontend. Unfiltered pages include all languages: totalCount=1550 reconciles languageCounts and unique IDs; count=889 is the English facet only. VERIFIED certifies this official board, not all subsidiary recruiting channels."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-06"
     },
     {
       "company": "Zurich",
@@ -1748,6 +1752,613 @@
         "Avature parameters/paging are visible, but an authoritative total-count contract or public feed was not independently verified."
       ],
       "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Aurora Growth Capital",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.auroragrowthcapital.it/",
+        "inventory_url": "https://www.auroragrowthcapital.it/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "No public careers page or vacancy inventory found in official navigation. LUISS links Renaissance Alternatives; do not confuse Aurora with Aurora Energy Research. Corporate-site probe only; no jobs or absence certification."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "B4 Investimenti SGR",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://b4investimenti.it/contatti/",
+        "inventory_url": "https://b4investimenti.it/contatti/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official navigation and page sitemap expose contacts but no public careers/positions inventory. Contact-page probe only; no vacancies or absence can be certified."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Poste Italiane",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official careers / Oracle Recruiting Cloud backend",
+        "tenant": "CX_3001",
+        "career_site": "https://www.posteitaliane.it/it/carriere/lavora-con-noi",
+        "inventory_url": "https://www.posteitaliane.it/it/carriere/lavora-con-noi",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Corporate careers links carriere.posteitaliane.it/it/sites/CX_3001/jobs; requests TLS certificate validation fails on that board. Use reachable official entry point; no verified public API or BancoPosta-only filter. Group scope includes BancoPosta; do not label every group vacancy BancoPosta."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Blue Ocean Finance",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official careers / application form",
+        "tenant": null,
+        "career_site": "https://www.blueoceanfinance.it/careers/",
+        "inventory_url": "https://www.blueoceanfinance.it/careers/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Current careers page exposes a direct CV form, with no reconcilable inventory/count. A historic Talent Program mentions blueoceanfinancespa1.recruitee.com; that historical mailbox does not prove a current public board and is not used as inventory."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "BU Bregal Unternehmerkapital",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://www.bu-partners.com/careers/",
+        "inventory_url": "https://www.bu-partners.com/careers/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Rendered official career pages include Private Equity Intern and speculative application. No independently reconciled total/public feed; portfolio-company careers must not be treated as BU vacancies."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Clessidra Group",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official careers / speculative CV form",
+        "tenant": null,
+        "career_site": "https://www.clessidragroup.it/lavora-con-noi/",
+        "inventory_url": "https://www.clessidragroup.it/lavora-con-noi/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official speculative-application form only; no public counted job inventory. Clessidra portfolio companies are not separate group vacancies."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "COIMA",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official careers / embedded Allibo",
+        "tenant": null,
+        "career_site": "https://coima.com/it/persone/lavora-con-noi/",
+        "inventory_url": "https://coima.com/it/persone/lavora-con-noi/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Group entry links separate COIMA SGR and REM careers, both with observed Allibo widget connectors. Their DM/SG/FT parameters differ; no supported enumerator for both widgets. Keep one group entry, never assume a single verified tenant or duplicate collectors."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Columbus Capital",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.columbuscapital.eu/",
+        "inventory_url": "https://www.columbuscapital.eu/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official one-page investment/search-fund site provides contacts, not a public careers inventory. No structured ATS/feed verified. Do not confuse with overseas namesakes."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Fitex Capital",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.fitex-capital.com/",
+        "inventory_url": "https://www.fitex-capital.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official search-fund website has contact information but no careers/vacancy inventory. Site probe only; no count, pagination or reliable location metadata."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Groupe HLD",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://groupehld.com/",
+        "inventory_url": "https://groupehld.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official navigation and sitemap do not expose a recruitment inventory; contact@groupehld.com is a contact channel, not a vacancy feed. Portfolio businesses must not be collected as HLD employees."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Gruppo CDP",
+      "batch": "JW1",
+      "ats": {
+        "family": "SAP SuccessFactors Recruiting Marketing",
+        "tenant": null,
+        "career_site": "https://www.cdp.it/it/lavora_con_noi.page",
+        "inventory_url": "https://www.opportunitadilavoro.cdp.it/search/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "successfactors_jobs2web_metadata_v15",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "Follow official jobs2web pages and reconcile unique vacancies against reported total.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate official SAP jobs2web public inventory with existing SuccessFactors collector; reconcile independent count and retain standard city filters.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Corporate careers links Junior/Specialisti categories on www.opportunitadilavoro.cdp.it. Legacy cassadepos spontaneous-application portal is separate; no guessed API or tenant. Smoke reconciled 13/13 public vacancies."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Heritage Holdings",
+      "batch": "JW1",
+      "ats": {
+        "family": "Greenhouse",
+        "tenant": "heritageholdings",
+        "career_site": "https://job-boards.eu.greenhouse.io/heritageholdings",
+        "inventory_url": "https://job-boards.greenhouse.io/heritageholdings",
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/heritageholdings/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "greenhouse_job_board_api",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Enumerate all pages against reported total; reconcile unique requisitions before declaring VERIFIED.",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official counted inventory with the existing structured adapter, reconcile the reported total and apply the unchanged city matcher locally.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Employer-branded official EU Greenhouse board and job details identify Milan employer. Verified public board API returns 16 jobs. Do not use heritageholdings.bamboohr.com: it belongs to a Cayman namesake."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "KYIP Capital SGR",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://kyipcapital.com/contact",
+        "inventory_url": "https://kyipcapital.com/contact",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official navigation and sitemap expose a contact page but no careers/vacancy inventory. No ATS/API tenant verified; portfolio education companies are not KYIP vacancies."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Marktlink",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://www.marktlink.com/nl/over-ons/careers",
+        "inventory_url": "https://careers.marktlink.com/vacancies",
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "marktlink"
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_rendered_vacancies",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": true,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official group careers links counted branded vacancy list and /apply?vacancy_id=... details. No backend/feed contract verified; separate Marktlink Capital Recruitee board and indexed Personio jobs are not assumed equivalent. Existing M&A exclusions still apply.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Mindful Capital Partners",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://mcpinvest.com/it/contatti/",
+        "inventory_url": "https://mcpinvest.com/it/contatti/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official navigation and page sitemap expose contacts but no career inventory. Contact page probe only; no count/location/absence guarantee."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Obloo Ventures",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://obloo.com/contact-us/",
+        "inventory_url": "https://obloo.com/contact-us/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "obloo.vc redirects to obloo.com. Official contact page exists but no public careers inventory. ClickUp Send your pitch is for startup fundraising, not a recruitment ATS; do not collect it."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Prelios",
+      "batch": "JW1",
+      "ats": {
+        "family": "Access PeopleHR / custom official careers",
+        "tenant": "prelios",
+        "career_site": "https://prelios.com/it/carriere/lavora-con-noi",
+        "inventory_url": "https://prelios.com/it/carriere/lavora-con-noi",
+        "public_api_or_feed": null,
+        "official_adapter": "rendered",
+        "rendered_layout": "prelios"
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_rendered_vacancies",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Collect title, explicit vacancy location and stable detail/application URL from official rendered vacancy cards. Retain PARTIAL: independent exhaustive pagination/count is not certified.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Rendered vacancies link prelios.peoplehr.net/Pages/JobBoard/Job.aspx?v=<UUID>. No supported counted PeopleHR enumerator or public API contract verified; retain official listing as PARTIAL.",
+        "2026-10-06: supported rendered collector extracts observed vacancies; PARTIAL cannot certify absence. No job location inferred from descriptions or corporate footer addresses.",
+        "Representative PeopleHR detail is HTTP 200 but JS-rendered; title is available on official corporate vacancy card, not in the fetched detail HTML. JD retrieval/semantic review may need separate recovery."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Red Fish Capital Partners",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://redfish.capital/contatti/",
+        "inventory_url": "https://redfish.capital/contatti/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official investment platform navigation exposes contacts but no public job inventory. Portfolio-company careers are not Red Fish vacancies; no structured ATS verified."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Tages Capital",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://21tages.eu/en/contact/",
+        "inventory_url": "https://21tages.eu/en/contact/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "LUISS tagescapitalsgr.com link redirects to 21tages.eu. Navigation provides contact but no recruitment inventory; no tenant/feed verified. Preserve canonical Tages Capital label for event continuity."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Tikehau Capital",
+      "batch": "JW1",
+      "ats": {
+        "family": "TalentView",
+        "tenant": "tikehau-capital-career",
+        "career_site": "https://www.tikehaucapital.com/en/careers",
+        "inventory_url": "https://tikehau-capital-career.talentview.io/en?source=site_entreprise&coopt=on",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official Join us link reaches TalentView branded board. No supported TalentView enumerator, independently reconciled pagination/count, or unauthenticated feed verified.",
+        "Location UI/labels are not a certified automated target-city filter; official probe collects no normalized jobs. PARTIAL never proves absence in Milan/Rome/London."
+      ],
+      "last_mapped": "2026-10-06"
+    },
+    {
+      "company": "Visconti Capital",
+      "batch": "JW1",
+      "ats": {
+        "family": "Custom official site; recruiting backend unresolved",
+        "tenant": null,
+        "career_site": "https://www.visconticapital.com/",
+        "inventory_url": "https://www.visconticapital.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_probe",
+        "location_filter_supported": false,
+        "locations": [],
+        "pagination": "No supported, independently reconciled full-inventory pagination contract verified.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Use the existing official-site probe on the mapped inventory URL. It attempts reachability and returns PARTIAL; no complete enumeration or vacancy-absence claim is supported.",
+        "fallback": "Use the official career entry to rediscover current job/detail links during normal coverage maintenance; do not certify absence from partial results."
+      },
+      "limitations": [
+        "Official investment/search-fund site and sitemap expose no careers inventory. Corporate-site probe only; no ATS/feed/complete vacancy count verified."
+      ],
+      "last_mapped": "2026-10-06"
     }
   ]
 }
