@@ -33,12 +33,15 @@ jobs:
           import json, os, subprocess
           from pathlib import Path
           import job_watch_bridge as bridge
-          paths = subprocess.check_output(['git','diff-tree','--no-commit-id','--name-only','--diff-filter=AM','-r',os.environ['GITHUB_SHA'],'--','.job_watch_bridge/requests/*.json'], text=True).splitlines()
+          event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          before = event.get('before')
+          revision = [before, os.environ['GITHUB_SHA']] if before and set(before) != {'0'} else [os.environ['GITHUB_SHA']+'^', os.environ['GITHUB_SHA']]
+          paths = subprocess.check_output(['git','diff','--name-only','--diff-filter=AM',*revision,'--','.job_watch_bridge/requests/*.json'], text=True).splitlines()
           if not paths:
               fields = {'action':'cleanup'}
           else:
               if len(paths) != 1:
-                  raise SystemExit('Expected one bridge request per triggering commit')
+                  raise SystemExit('Expected one bridge request per push; split multiple commands')
               data = bridge.load_request(Path(paths[0]))
               Path('/tmp/job-watch-bridge-request.json').write_text(json.dumps(data))
               fields = {'path':paths[0], 'action':data['action'], 'request_id':data['request_id']}
@@ -46,8 +49,8 @@ jobs:
               for key,value in fields.items():
                   print(f'{key}={value}', file=out)
           PY
-      - name: Reload latest state before processing queued apply
-        if: steps.request.outputs.action == 'apply'
+      - name: Reload latest state before processing any queued request
+        if: steps.request.outputs.action == 'apply' || steps.request.outputs.action == 'select'
         env:
           REQUEST_PATH: ${{ steps.request.outputs.path }}
         run: |
@@ -70,6 +73,7 @@ jobs:
               raise SystemExit('Queued request disappeared without a receipt')
           PY
       - name: Build temporary batch packet
+        id: select
         if: steps.request.outputs.action == 'select'
         env:
           REQUEST_PATH: ${{ steps.request.outputs.path }}
@@ -77,15 +81,22 @@ jobs:
           set -euo pipefail
           python job_watch_bridge.py --request "$REQUEST_PATH" --packet-output /tmp/job-watch-packet.json | tee /tmp/job-watch-bridge-select-receipt.json
       - name: Upload temporary batch packet
-        if: steps.request.outputs.action == 'select'
+        id: packet
+        if: steps.request.outputs.action == 'select' && steps.select.outputs.replayed != 'true'
         uses: actions/upload-artifact@v7
         with:
-          name: job-watch-packet-${{ github.sha }}
+          name: job-watch-packet-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             /tmp/job-watch-packet.json
             /tmp/job-watch-bridge-select-receipt.json
           retention-days: 1
           if-no-files-found: error
+      - name: Pin uploaded artifact in immutable select receipt
+        if: steps.request.outputs.action == 'select' && steps.select.outputs.replayed != 'true'
+        env:
+          REQUEST_PATH: ${{ steps.request.outputs.path }}
+          ARTIFACT_ID: ${{ steps.packet.outputs.artifact-id }}
+        run: python job_watch_bridge.py --request "$REQUEST_PATH" --finalize-select "$ARTIFACT_ID" --receipt-output /tmp/job-watch-bridge-select-receipt.json
       - name: Download and verify original select artifact
         if: steps.request.outputs.action == 'apply'
         env:
@@ -103,10 +114,10 @@ jobs:
           python preflight_job_watch.py
           python validate_job_watch_inputs.py
           python -m unittest -q
-          python job_watch.py sync
+          python job_watch.py project
           python validate_job_watch_state.py --strict
           cp daily_worklist.json /tmp/bridge-worklist.json
-          python job_watch.py sync
+          python job_watch.py project
           cmp daily_worklist.json /tmp/bridge-worklist.json
           git diff --check
       - name: Clean up only completely processed requests
@@ -131,33 +142,28 @@ jobs:
           python - <<'PY'
           import json, os, subprocess
           from pathlib import Path
-          from job_watch import DERIVED, REGISTRIES
+          from job_watch import WORKER_DERIVED
           from job_watch_bridge import receipt_name
+          from job_watch_bridge_runner import publish, acknowledge
           request = json.loads(Path('/tmp/job-watch-bridge-request.json').read_text())
           if request['action'] == 'apply':
-              candidates = list(DERIVED) + list(REGISTRIES) + ['job_watch_run_state.json', receipt_name(request), os.environ['REQUEST_PATH'], f".job_watch_bridge/requests/{request['parent_request_id']}.json"]
+              candidates = list(WORKER_DERIVED) + [f"job_memory_{request['batch']}.json", receipt_name(request), os.environ['REQUEST_PATH'], f".job_watch_bridge/requests/{request['parent_request_id']}.json"]
           else:
               candidates = [receipt_name(request)]
           def git(*args):
               return subprocess.check_output(['git',*args],text=True).strip()
           paths = [p for p in candidates if Path(p).exists() or git('ls-files','--',p)]
-          # Sync may archive official CLOSED records; preserve its complete transaction.
-          if request['action'] == 'apply':
-              paths += [str(p) for p in Path('archive').glob('*.jsonl')]
-              paths += [str(p) for p in Path('.').glob('current_jobs_jw*.json')]
           git('add','--',*paths)
           git('config','user.name','github-actions[bot]')
           git('config','user.email','41898282+github-actions[bot]@users.noreply.github.com')
           if git('diff','--cached','--name-only'):
               git('commit','-m', 'Apply Job Watch bridge batch ' + request['request_id'])
-              subprocess.run(['git','push','origin','HEAD:' + os.environ['GITHUB_REF_NAME']],check=True)
-          sha = git('rev-parse','HEAD')
-          remote = git('ls-remote','origin','refs/heads/' + os.environ['GITHUB_REF_NAME']).split()[0]
-          if sha != remote:
-              raise SystemExit('Remote advanced; request remains recoverable, no force push')
+              ack = publish(os.environ['GITHUB_REF_NAME'], receipt_name(request))
+          else:
+              ack = acknowledge(os.environ['GITHUB_REF_NAME'], git('rev-parse','HEAD'), receipt_name(request))
           receipt_path = Path('/tmp/job-watch-bridge-apply-receipt.json' if request['action'] == 'apply' else '/tmp/job-watch-bridge-select-receipt.json')
           receipt = json.loads(receipt_path.read_text())
-          receipt['remote_commit_sha'] = sha
+          receipt.update(ack)
           receipt_path.write_text(json.dumps(receipt, indent=2))
           print(json.dumps(receipt))
           PY
@@ -165,7 +171,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: job-watch-bridge-failure-${{ github.run_id }}
+          name: job-watch-bridge-failure-${{ github.run_id }}-${{ github.run_attempt }}
           retention-days: 1
           if-no-files-found: ignore
           path: |

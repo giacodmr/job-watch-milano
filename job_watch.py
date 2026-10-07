@@ -10,6 +10,16 @@ ROOT = Path(__file__).resolve().parent
 BATCHES = ('jw1', 'jw2', 'jw3', 'jw4')
 REGISTRIES = [f'job_memory_{b}.json' for b in BATCHES]
 DERIVED = ['daily_worklist.json','job_watch_audit.json','job_watch_healthcheck.json','job_watch_summary.txt','pipeline_execution.json','daily_activity.json','rejected_daily_updates.json']
+WORKER_DERIVED = ['daily_worklist.json','job_watch_audit.json','job_watch_healthcheck.json','job_watch_summary.txt']
+
+
+def project_state():
+    """Refresh read models without consuming Daily commands or maintaining sources."""
+    invoke('daily_worklist', 'main')
+    for batch in BATCHES:
+        invoke('audit_job_watch', 'write_batch_metrics', batch)
+    invoke('certify_job_watch', 'main')
+    return True
 
 
 def run(script):
@@ -256,9 +266,11 @@ def publish(name):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('stage', choices=('sync','collect','amazon','migrate'))
+    parser.add_argument('stage', choices=('sync','collect','amazon','migrate','project'))
     parser.add_argument('--publish', action='store_true', help='Actions-only generated state publication')
     args = parser.parse_args()
+    if args.stage == 'project' and args.publish:
+        parser.error('project is read-model only; publication belongs to the bridge')
     if args.stage == 'migrate':
         from state_migration import migrate
         migrate(ROOT)
@@ -276,7 +288,7 @@ def main():
             git('fetch','origin','main')
             git('reset','--hard','origin/main')
             if patch_bytes is not None: (ROOT/'daily_updates.json').write_bytes(patch_bytes)
-        ok = stage(args.stage)
+        ok = project_state() if args.stage == 'project' else stage(args.stage)
         if args.publish:
             # Recovery must preserve the consumed command too, not only derived outputs.
             if patch_bytes is not None:

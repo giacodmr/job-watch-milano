@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+from contextlib import nullcontext
 from pathlib import Path
 from pipeline_state import BATCHES, load, writer_lock, transaction
 from job_memory import load_memory, validate_memory, pack_memory, IDENTITY_FIELDS
@@ -14,9 +15,9 @@ def batch_snapshot(batch, root=ROOT):
     names = [f'current_jobs_{batch}.json',f'job_memory_{batch}.json','job_watch_rules.json','companies_job_watch_v2.json','job_watch_batches.json']
     return {name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}
 
-def apply_packet(batch, patch, root=ROOT, bridge_receipt=None):
+def apply_packet(batch, patch, root=ROOT, bridge_receipt=None, locked=False):
     from sync_analysis_state import project_batch
-    with writer_lock(root):
+    with (nullcontext() if locked else writer_lock(root)):
         memory = load_memory(batch,root)
         patch_id = hashlib.sha256(json.dumps(patch,sort_keys=True).encode()).hexdigest()
         if patch_id in memory.get('applied_update_ids',[]): return 0

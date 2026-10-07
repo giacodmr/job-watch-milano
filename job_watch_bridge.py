@@ -104,7 +104,18 @@ def _run_json_command(args):
         raise RuntimeError('worker_returned_non_json') from None
 
 
-def select(data, output):
+def select(data, output, persist=True):
+    from pipeline_state import writer_lock
+    with writer_lock(ROOT):
+        old = existing_receipt(data, locked=True)
+        if old:
+            # A logical SELECT never changes meaning, even if its artifact expired.
+            output.unlink(missing_ok=True)
+            return {**old, 'replayed':True}
+        return _select(data, output, persist)
+
+
+def _select(data, output, persist):
     validate_select_request(data)
     args = [sys.executable, 'semantic_worker.py', 'select', data['batch'], '--limit', str(data['limit']), '--fetch']
     for key in data.get('exclude_keys', []):
@@ -122,19 +133,23 @@ def select(data, output):
     for rec in records:
         if rec.get('jd_error') or not (rec.get('jd') or {}).get('text'):
             errors[rec['job_key']] = rec.get('jd_error') or 'jd_missing'
-    packet.update(version=VERSION, request_id=data['request_id'], select_run_id=int(os.environ.get('GITHUB_RUN_ID', '0')))
+    packet.update(version=VERSION, request_id=data['request_id'], select_run_id=int(os.environ.get('GITHUB_RUN_ID', '0')),
+                  select_run_attempt=int(os.environ.get('GITHUB_RUN_ATTEMPT', '1')))
     output.write_text(json.dumps(packet, ensure_ascii=False, sort_keys=True))
-    from pipeline_state import now, writer_lock, transaction
+    from pipeline_state import now, transaction
     result = {'version':VERSION, 'request_id':data['request_id'], 'request_sha256':digest(data),
             'created_at':now(), 'action':'select', 'batch':data['batch'],
             'status':'EMPTY' if not records else 'PARTIAL' if errors else 'READY',
             'record_count':len(records), 'ready_count':len(records)-len(errors),
             'job_keys':[r['job_key'] for r in records], 'fetch_errors':errors,
             'fingerprints':{r['job_key']:r['fingerprint'] for r in records},
-            'select_run_id':packet['select_run_id'], 'packet_sha256':hashlib.sha256(output.read_bytes()).hexdigest()}
+            'select_run_id':packet['select_run_id'], 'select_run_attempt':packet['select_run_attempt'],
+            'snapshot':packet.get('snapshot'),
+            'artifact_name':f"job-watch-packet-{packet['select_run_id']}-{packet['select_run_attempt']}",
+            'packet_sha256':hashlib.sha256(output.read_bytes()).hexdigest()}
     name = receipt_name(data)
     (ROOT / Path(name).parent).mkdir(parents=True, exist_ok=True)
-    with writer_lock(ROOT):
+    if persist:
         transaction({name:result}, root=ROOT)
     return result
 
@@ -143,20 +158,70 @@ def receipt_name(data):
     return '.job_watch_bridge/receipts/' + safe_id(data['request_id']) + '.json'
 
 
-def existing_receipt(data):
+def existing_receipt(data, locked=False):
+    if not locked:
+        from pipeline_state import writer_lock
+        # Recover memory+receipt BEFORE replay and snapshot checks.
+        with writer_lock(ROOT):
+            return existing_receipt(data, locked=True)
     path = ROOT / receipt_name(data)
     if not path.exists():
         return None
     receipt = json.loads(path.read_text())
-    if receipt.get('request_sha256') != digest(data):
+    if (receipt.get('request_sha256') != digest(data) or receipt.get('request_id') != data['request_id']
+            or receipt.get('action') != data['action'] or receipt.get('batch') != data['batch']):
         raise ValueError('request_id_reused_with_different_content')
     return receipt
+
+
+def finalize_select(data, result, packet_path, artifact_id):
+    """Publish metadata only after upload succeeded, pinning that exact artifact."""
+    from pipeline_state import writer_lock, transaction
+    from semantic_worker import batch_snapshot
+    with writer_lock(ROOT):
+        old = existing_receipt(data, locked=True)
+        if old:
+            return {**old, 'replayed':True}
+        if (data.get('action') != 'select' or result.get('version') != VERSION or result.get('batch') != data['batch']
+                or type(artifact_id) is not int or artifact_id <= 0 or result.get('request_sha256') != digest(data)
+                or result.get('request_id') != data['request_id'] or result.get('action') != 'select'
+                or result.get('select_run_id') != int(os.environ['GITHUB_RUN_ID'])
+                or result.get('select_run_attempt') != int(os.environ['GITHUB_RUN_ATTEMPT'])
+                or result.get('snapshot') != batch_snapshot(data['batch'], ROOT)
+                or result.get('artifact_name') != f"job-watch-packet-{result['select_run_id']}-{result['select_run_attempt']}"
+                or hashlib.sha256(packet_path.read_bytes()).hexdigest() != result.get('packet_sha256')):
+            raise ValueError('select_finalization_mismatch')
+        result = {**result, 'artifact_id':artifact_id}
+        name = receipt_name(data)
+        (ROOT / Path(name).parent).mkdir(parents=True, exist_ok=True)
+        transaction({name:result}, root=ROOT)
+        return result
+
+
+def canonical_select(data, packet=None):
+    path = ROOT / '.job_watch_bridge/receipts' / (safe_id(data['parent_request_id']) + '.json')
+    if not path.exists():
+        raise ValueError('canonical_select_receipt_missing')
+    parent = json.loads(path.read_text())
+    if (parent.get('action') != 'select' or parent.get('request_id') != data['parent_request_id']
+            or parent.get('batch') != data['batch'] or parent.get('select_run_id') != data['select_run_id']
+            or parent.get('packet_sha256') != data['packet_sha256']):
+        raise ValueError('canonical_select_binding_mismatch')
+    if packet is not None:
+        records = packet['records']
+        if (parent.get('job_keys') != [r['job_key'] for r in records]
+                or parent.get('fingerprints') != {r['job_key']:r['fingerprint'] for r in records}
+                or ('snapshot' in parent and parent['snapshot'] != packet.get('snapshot'))
+                or ('select_run_attempt' in parent and parent['select_run_attempt'] != packet.get('select_run_attempt'))):
+            raise ValueError('canonical_select_membership_mismatch')
+    return parent
 
 
 def download_packet(data, output):
     """Download only the artifact of the verified select run; no JD in Git or logs."""
     if existing_receipt(data):
         return {'status':'REPLAY', 'request_id':data['request_id']}
+    canonical = canonical_select(data)
     import requests
     repo = os.environ['GITHUB_REPOSITORY']
     headers = {'Authorization':'Bearer ' + os.environ['GH_TOKEN'], 'Accept':'application/vnd.github+json'}
@@ -175,12 +240,13 @@ def download_packet(data, output):
     if parent_proc.returncode:
         raise ValueError('select_parent_missing')
     parent = json.loads(parent_proc.stdout)
-    if parent.get('action') != 'select' or parent.get('batch') != data['batch'] or parent.get('request_id') != data['parent_request_id']:
+    if (parent.get('action') != 'select' or parent.get('batch') != data['batch']
+            or parent.get('request_id') != data['parent_request_id'] or digest(parent) != canonical.get('request_sha256')):
         raise ValueError('select_parent_mismatch')
     items = get(base + '/actions/runs/' + str(data['select_run_id']) + '/artifacts').json()['artifacts']
-    name = 'job-watch-packet-' + run['head_sha']
+    name = canonical.get('artifact_name') or 'job-watch-packet-' + run['head_sha']
     matches = [a for a in items if a['name'] == name and not a['expired']]
-    if len(matches) != 1:
+    if len(matches) != 1 or ('artifact_id' in canonical and matches[0]['id'] != canonical['artifact_id']):
         raise ValueError('select_artifact_missing_or_expired')
     raw = get(base + '/actions/artifacts/' + str(matches[0]['id']) + '/zip').content
     with zipfile.ZipFile(io.BytesIO(raw)) as archive:
@@ -201,12 +267,18 @@ def pending_counts():
 
 
 def apply(data, patch_path, receipt_path, packet_path):
+    from pipeline_state import writer_lock
+    with writer_lock(ROOT):
+        return _apply(data, patch_path, receipt_path, packet_path)
+
+
+def _apply(data, patch_path, receipt_path, packet_path):
     from semantic_worker import apply_packet, batch_snapshot
     from sync_analysis_state import project_batch
     from harden_job_watch_state import semantic_decision_valid
-    from pipeline_state import writer_lock, transaction
+    from pipeline_state import transaction
     patch = validate_apply_request(data)
-    old = existing_receipt(data)
+    old = existing_receipt(data, locked=True)
     if old:
         result = {**old, 'replayed':True, 'applied_count':0}
         receipt_path.write_text(json.dumps(result, indent=2))
@@ -225,6 +297,7 @@ def apply(data, patch_path, receipt_path, packet_path):
     bykey = {r['job_key']:r for r in records}
     if len(bykey) != len(records) or not set(patch['semantic_decisions']) <= set(bykey):
         raise ValueError('decision_outside_selected_packet')
+    canonical_select(data, packet)
     if patch['snapshot'] != batch_snapshot(data['batch'], ROOT):
         raise ValueError('stale_worker_snapshot')
     projection = project_batch(data['batch'], ROOT)['records']
@@ -250,6 +323,7 @@ def apply(data, patch_path, receipt_path, packet_path):
     accepted = {**patch, 'semantic_decisions':valid}
     receipt = {'version':VERSION, 'request_id':data['request_id'], 'request_sha256':digest(data),
                'parent_request_id':data['parent_request_id'], 'packet_sha256':data['packet_sha256'],
+               'select_run_id':data['select_run_id'], 'snapshot':patch['snapshot'],
                'action':'apply', 'batch':data['batch'], 'status':'PARTIAL' if retry else 'COMPLETE',
                'applied_count':len(valid), 'applied_keys':sorted(valid), 'retry':retry,
                'accepted_patch_sha256':digest(accepted), 'pending_before':before, 'replayed':False}
@@ -257,14 +331,11 @@ def apply(data, patch_path, receipt_path, packet_path):
     (ROOT / Path(name).parent).mkdir(parents=True, exist_ok=True)
     patch_path.write_text(json.dumps(accepted, ensure_ascii=False, sort_keys=True))
     if valid:
-        applied = apply_packet(data['batch'], accepted, ROOT, bridge_receipt=(name, receipt))
+        applied = apply_packet(data['batch'], accepted, ROOT, bridge_receipt=(name, receipt), locked=True)
         if applied != len(valid):
             raise ValueError('accepted_patch_replay_without_request_receipt')
     else:
-        with writer_lock(ROOT):
-            if patch['snapshot'] != batch_snapshot(data['batch'], ROOT):
-                raise ValueError('stale_worker_snapshot')
-            transaction({name:receipt}, root=ROOT)
+        transaction({name:receipt}, root=ROOT)
     result = {**receipt, 'pending_after':pending_counts()}
     receipt_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     return result
@@ -276,16 +347,22 @@ def main():
     parser.add_argument('--packet-output', type=Path)
     parser.add_argument('--packet-input', type=Path, default=Path('/tmp/job-watch-packet.json'))
     parser.add_argument('--download-packet', action='store_true')
+    parser.add_argument('--finalize-select', type=int, metavar='ARTIFACT_ID')
     parser.add_argument('--patch-output', type=Path, default=Path('/tmp/job-watch-bridge-patch.json'))
     parser.add_argument('--receipt-output', type=Path, default=Path('/tmp/job-watch-bridge-apply-receipt.json'))
     args = parser.parse_args()
     data = load_request(args.request)
-    if args.download_packet:
+    if args.finalize_select is not None:
+        result = finalize_select(data, json.loads(args.receipt_output.read_text()), args.packet_input, args.finalize_select)
+        args.receipt_output.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    elif args.download_packet:
         result = download_packet(data, args.packet_input)
     elif data['action'] == 'select':
         if not args.packet_output:
             parser.error('--packet-output required for select')
-        result = select(data, args.packet_output)
+        result = select(data, args.packet_output, persist=False)
+        with open(os.environ['GITHUB_OUTPUT'], 'a') if os.environ.get('GITHUB_OUTPUT') else open(os.devnull, 'w') as out:
+            print('replayed=' + str(result.get('replayed', False)).lower(), file=out)
     else:
         result = apply(data, args.patch_output, args.receipt_output, args.packet_input)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))

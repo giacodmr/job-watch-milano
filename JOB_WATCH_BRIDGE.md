@@ -1,4 +1,4 @@
-# ChatGPT Job Watch bridge — batch v2.0
+# ChatGPT Job Watch bridge — batch v2.0, immutable checkpoints
 
 The bridge is enabled for request pushes only on `refactor/job-state-simplification`.
 No recurring Worker is activated and no main merge or collector schedule change is made.
@@ -26,10 +26,14 @@ jd_error. One failed fetch no longer aborts the successful records. EMPTY is a n
 no-work result. Full JD text is not silently truncated. Do not force 20 very long JDs
 into model context by shortening them; reduce packet size instead.
 
-The select receipt includes the run ID, exact packet SHA-256, keys, fingerprints,
-ready count, fetch errors and UTC creation time. This metadata-only receipt is committed
+The select receipt includes the run ID and attempt, pinned artifact ID/name, snapshot,
+exact packet SHA-256, keys, fingerprints, ready count, fetch errors and UTC creation time.
+Actions uploads the packet before finalizing this metadata. Artifact names include the
+run ID and attempt; an already-published SELECT skips fetching and uploading entirely. This metadata-only receipt is committed
 under `.job_watch_bridge/receipts/`; no JD is stored there. It supports recovery and
-finite retry cooldowns even after the artifact expires.
+finite retry cooldowns even after the artifact expires. Replaying a SELECT returns its
+original receipt unchanged, regardless of later memory/source changes or expiry. It
+never silently creates another packet. Expiry requires a NEW SELECT ID and fresh JD.
 
 The packet exists only in Actions temporary storage and an artifact with one-day
 retention. ChatGPT downloads it once through the connector and verifies its byte hash.
@@ -50,9 +54,12 @@ Apply example:
 }
 ```
 
-The runner loads the latest branch state before a queued apply, downloads the artifact
-from the successful select run and checks repository/branch/workflow, parent request,
-SHA, packet snapshot and selected membership. The packet hash is now verified, rather
+The runner loads the latest branch state before BOTH queued SELECT and APPLY, and
+rejects changed request content. APPLY downloads the canonical artifact from the
+successful select run and checks repository/branch/workflow, original request digest,
+pinned artifact ID/name, SHA, packet snapshot, keys, fingerprints and selected membership.
+Legacy v2 receipts without the new artifact fields remain bound to their original
+run, original artifact name, exact packet hash and selected keys/fingerprints. The packet hash is now verified, rather
 than merely carried as a traceability field. Expired/missing artifacts require a new select.
 Protocol v1 pending requests must be regenerated with v2 and a fresh select; do not
 relabel old packets as v2 or fabricate the run ID.
@@ -65,8 +72,9 @@ guardrails and passes all valid reviews to ONE worker apply with the same all-or
 Invalid/omitted reviews and failed JD fetches are listed individually in `retry`.
 
 The worker transaction writes its own batch memory and the metadata request receipt
-together in one journal. Recovery cannot leave a successful batch without its replay
-receipt. No user decision or surfacing event is created by this path. A receipt is a
+together in one journal. Every bridge entry recovers the journal under the writer lock BEFORE looking for
+a receipt or checking snapshots. Even an interruption after memory was written and
+before its receipt was written resumes as a replay, without downloading another JD. No user decision or surfacing event is created by this path. A receipt is a
 published checkpoint only after its commit is confirmed on the remote branch.
 
 The persistent apply receipt records request-content hash, accepted-patch hash,
@@ -89,8 +97,12 @@ priority rules. Retry outstanding work automatically, never suppress it permanen
 
 ## Validation, publication and concurrency
 
-Each apply runs preflight, input validation, the complete unittest suite ONCE, sync,
-strict state validation, a second sync/worklist stability comparison, and diff checking.
+Each apply runs preflight, input validation, the complete unittest suite ONCE,
+`job_watch.py project`, strict state validation, a second projection/worklist stability
+comparison, and diff checking. This projection does not consume `daily_updates.json`,
+maintain inventories, archive roles, modify user/surfacing/activity, or change other JW
+memories. Publication stages only the reviewed JW memory, four read models, its receipt
+and completed-request deletions. Daily retains its existing separate sync path.
 There is no per-vacancy suite or extra sync inside bridge.apply.
 
 PR CI can reuse a successful ancestral validation only when code/static inputs have
@@ -104,11 +116,17 @@ All state writers retain `job-watch-state-writer`, `cancel-in-progress: false` a
 `queue: max`. The queue can still saturate, and request creation advances the branch;
 the Worker therefore keeps only one request in flight and reconciles missing receipts.
 Publication uses an explicit state-file set and ordinary fast-forward push, verifies
-the remote SHA, and never force pushes. On a race the remote request remains available;
-reload and retry with unchanged guardrails. There is no blind generated-state rebase.
-For a still-unprocessed request, increment optional `retry_attempt` to create a real
-request-file diff and a new push event; writing identical bytes does not reliably
-retrigger a workflow. Once a receipt exists, the ID/content are immutable: use a new ID.
+the checkpoint as an ancestor of the fetched remote branch and compares the receipt
+there, and never force pushes. A later remote commit is a valid acknowledgement if
+the receipt is unchanged. A lost push response is reconciled the same way. A genuine
+non-fast-forward rejection fails without publishing; the request and review draft
+remain in Git for a guarded retry. There is no blind generated-state rebase.
+Retry a failed delivery by rerunning its Actions run with the UNCHANGED command.
+If the connector cannot rerun it, a formatting-only request-file change can create a
+new push without changing its canonical JSON digest. Do not increment `retry_attempt`
+on an existing ID: it is command content, not a transport counter. A changed command
+requires a new ID. Send one command per push; the workflow reads the complete push
+range rather than silently ignoring requests in earlier commits.
 Only dependencies use a pip cache; full JDs never do. Select still fetches sequentially;
 bounded HTTP concurrency is deferred until real per-host timings justify it.
 
@@ -127,10 +145,16 @@ bounded HTTP concurrency is deferred until real per-host timings justify it.
 
 The durable Worker prompt is `CHATGPT_WORKER_PROMPT.txt`. The single handoff document
 `CHATGPT_HANDOFF_E_RICORRENZE.md` includes the context and both recurring-chat prompts.
-No schedule was activated or merged by this change. The existing manual v1 Amex pilot
-passed, reducing total semantic pending 71→70. This does not certify the new v2 live
-10/20 batch or an unattended night run. Those require separate manual/live verification
-and final authorization of the operational branch and task settings.
+No schedule was activated or merged by this change. The manual v2 pilots saved
+10/10 and 18/20 reviews, reducing pending 70→60→42; two failed fetches remained pending.
+A SELECT replay exposed receipt replacement. The canonical 10-record receipt is
+restored byte-for-byte from commit `c0cf97a9e67ffdf0fdfc802869f57de6d7896cb3`, checked
+against its APPLY receipt; the erroneous replay remains visible in Git history. No
+semantic/user/surfacing decision is changed by this repair. These corrections still
+require a live ChatGPT batch/replay pilot before authorizing unattended operation.
+Durable slot budgets/claims, automatic inbox reconciliation and uniform JD identity
+hardening remain separate work; the current task prompt supplies those scheduling
+constraints. These changes do not certify an unattended night run.
 
 ## Timing model to measure
 

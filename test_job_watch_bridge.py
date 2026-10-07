@@ -50,7 +50,19 @@ class BridgeTests(unittest.TestCase):
         path.write_text(json.dumps(packet))
         decisions = {r['job_key']:full_decision(r['fingerprint']) for r in records}
         request = dict(version=bridge.VERSION,action='apply',request_id='apply',parent_request_id='select',select_run_id=123,batch='jw3',packet_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),patch=dict(batch='jw3',snapshot=packet['snapshot'],semantic_decisions=decisions))
+        self.save_select_receipt(packet, request)
         return packet,path,request
+
+    def save_select_receipt(self, packet, request):
+        parent = dict(version=bridge.VERSION, action='select', request_id='select', batch='jw3', limit=20, fetch=True)
+        receipt = dict(version=bridge.VERSION, action='select', request_id='select', batch='jw3',
+                       request_sha256=bridge.digest(parent), select_run_id=123,
+                       packet_sha256=request['packet_sha256'], snapshot=packet['snapshot'],
+                       job_keys=[r['job_key'] for r in packet['records']],
+                       fingerprints={r['job_key']:r['fingerprint'] for r in packet['records']})
+        target = self.root / '.job_watch_bridge/receipts/select.json'
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(receipt))
 
     def run_apply(self, request, packet):
         return bridge.apply(request,self.root/'patch.json',self.root/'receipt.json',packet)
@@ -141,6 +153,7 @@ class BridgeTests(unittest.TestCase):
 
     def test_failed_jd_does_not_block_other_selected_records(self):
         packet,_,req = self.packet_request()
+        (self.root/'.job_watch_bridge/receipts/select.json').unlink()
         packet['records'][0].pop('jd')
         packet['records'][0]['jd_error'] = 'HTTP 503'
         data = dict(version=bridge.VERSION,request_id='select',action='select',batch='jw3',limit=20,fetch=True)
@@ -201,6 +214,108 @@ class BridgeTests(unittest.TestCase):
         self.assertTrue((self.root/bridge.receipt_name(req)).exists())
         self.assertEqual(self.run_apply(req,path)['applied_count'],0)
 
+    def test_select_replay_keeps_original_receipt_after_apply_and_source_change(self):
+        packet,path,req = self.packet_request(10)
+        (self.root/'.job_watch_bridge/receipts/select.json').unlink()
+        data = dict(version=bridge.VERSION, action='select', request_id='select', batch='jw3', limit=10, fetch=True)
+        with patch.object(bridge,'_run_json_command',return_value=packet) as fetch, patch.dict(os.environ,{'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'1'}):
+            original = bridge.select(data,path)
+            raw_receipt = (self.root/bridge.receipt_name(data)).read_bytes()
+            req['packet_sha256'] = original['packet_sha256']
+            self.run_apply(req,path)
+            self.jobs(3)
+            path.unlink()
+            with patch.dict(os.environ,{'GITHUB_RUN_ID':'999','GITHUB_RUN_ATTEMPT':'2'}):
+                replay = bridge.select(data,path)
+            self.assertTrue(replay['replayed'])
+            self.assertEqual(replay['packet_sha256'],original['packet_sha256'])
+            self.assertEqual(replay['select_run_id'],123)
+            self.assertEqual(fetch.call_count,1)
+            self.assertFalse(path.exists())
+            self.assertEqual(raw_receipt,(self.root/bridge.receipt_name(data)).read_bytes())
+            with self.assertRaisesRegex(ValueError,'request_id_reused'):
+                bridge.select({**data,'limit':20},path)
+
+    def test_select_finalizes_only_after_upload_and_never_rebinds(self):
+        packet,path,_ = self.packet_request(10)
+        (self.root/'.job_watch_bridge/receipts/select.json').unlink()
+        data = dict(version=bridge.VERSION,action='select',request_id='select',batch='jw3',limit=10,fetch=True)
+        with patch.object(bridge,'_run_json_command',return_value=packet),patch.dict(os.environ,{'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'2'}):
+            result = bridge.select(data,path,persist=False)
+            self.assertFalse((self.root/bridge.receipt_name(data)).exists())
+            saved = bridge.finalize_select(data,result,path,999)
+            self.assertEqual(saved['artifact_id'],999)
+            self.assertEqual(saved['artifact_name'],'job-watch-packet-123-2')
+            self.assertEqual(saved['snapshot'],packet['snapshot'])
+            replay = bridge.finalize_select(data,result,path,1000)
+            self.assertEqual(replay['artifact_id'],999)
+            self.assertTrue(replay['replayed'])
+
+    def test_select_upload_window_snapshot_change_fails_without_receipt(self):
+        packet,path,_ = self.packet_request(10)
+        (self.root/'.job_watch_bridge/receipts/select.json').unlink()
+        data = dict(version=bridge.VERSION,action='select',request_id='select',batch='jw3',limit=10,fetch=True)
+        with patch.object(bridge,'_run_json_command',return_value=packet),patch.dict(os.environ,{'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'1'}):
+            result = bridge.select(data,path,persist=False)
+            self.jobs(2)
+            with self.assertRaisesRegex(ValueError,'select_finalization_mismatch'):
+                bridge.finalize_select(data,result,path,999)
+            self.assertFalse((self.root/bridge.receipt_name(data)).exists())
+
+    def test_apply_front_door_recovers_crash_after_memory_before_receipt(self):
+        import pipeline_state as ps
+        _,path,req = self.packet_request(10)
+        original = ps.atomic_json
+        def crash(target, value):
+            if Path(target) == self.root/bridge.receipt_name(req):
+                raise OSError('crash after writing memory')
+            return original(target,value)
+        with patch.object(ps,'atomic_json',side_effect=crash):
+            with self.assertRaises(OSError):
+                self.run_apply(req,path)
+        self.assertEqual(len(load_memory('jw3',self.root)['records']),10)
+        self.assertFalse((self.root/bridge.receipt_name(req)).exists())
+        path.unlink()  # Recovery/replay must not require the artifact again.
+        self.assertEqual(bridge.download_packet(req,path)['status'],'REPLAY')
+        replay = self.run_apply(req,path)
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(replay['applied_count'],0)
+        self.assertEqual(len(load_memory('jw3',self.root)['records']),10)
+        self.assertFalse((self.root/'.job_watch.transaction.json').exists())
+        self.assertEqual(bridge.download_packet(req,path)['status'],'REPLAY')
+
+    def test_apply_requires_canonical_select_keys_snapshot_and_run(self):
+        _,path,req = self.packet_request(10)
+        receipt_path = self.root/'.job_watch_bridge/receipts/select.json'
+        original = json.loads(receipt_path.read_text())
+        for field, value in [('select_run_id',999),('packet_sha256','a'*64),('job_keys',[]),('fingerprints',{}),('snapshot',{})]:
+            with self.subTest(field=field):
+                receipt_path.write_text(json.dumps({**original,field:value}))
+                with self.assertRaisesRegex(ValueError,'canonical_select'):
+                    self.run_apply(req,path)
+                self.assertFalse((self.root/bridge.receipt_name(req)).exists())
+        receipt_path.unlink()
+        with self.assertRaisesRegex(ValueError,'canonical_select_receipt_missing'):
+            self.run_apply(req,path)
+
+    def test_worker_projection_never_consumes_daily_updates_or_maintains_sources(self):
+        import job_watch
+        import state_maintenance
+        _,path,req = self.packet_request(10)
+        self.f.put('daily_updates.json',{'snapshot':{},'user_decisions':{'JW3::0':{'decision':'APPLIED'}}})
+        protected = ['daily_updates.json','daily_activity.json','amazon_target_check.json']
+        protected += [f'{prefix}_{batch}.json' for batch in worker.BATCHES for prefix in ('current_jobs','job_memory')]
+        before = {name:(self.root/name).read_bytes() for name in protected}
+        self.run_apply(req,path)
+        # Only the requested memory can change during apply+project.
+        before['job_memory_jw3.json'] = (self.root/'job_memory_jw3.json').read_bytes()
+        with patch.object(job_watch,'apply_updates',side_effect=AssertionError('Daily consumed')),patch.object(state_maintenance,'maintain_batch',side_effect=AssertionError('Inventory changed')):
+            self.assertTrue(job_watch.project_state())
+        first = (self.root/'daily_worklist.json').read_bytes()
+        self.assertTrue(job_watch.project_state())
+        self.assertEqual(first,(self.root/'daily_worklist.json').read_bytes())
+        self.assertEqual(before,{name:(self.root/name).read_bytes() for name in protected})
+
     def test_full_jd_in_request_and_id_injection_are_rejected(self):
         _,_,req = self.packet_request()
         req['patch']['semantic_decisions']['JW3::0']['jd'] = 'Never persist me'
@@ -229,8 +344,11 @@ class BridgeTests(unittest.TestCase):
             def __init__(self, data=None, content=None): self.data=data; self.content=content
             def json(self): return self.data
         run = dict(head_branch='pilot',event='push',conclusion='success',path='.github/workflows/chatgpt_job_watch_bridge.yml',head_sha='c'*40)
-        artifact = dict(name='job-watch-packet-'+('c'*40),expired=False,id=9)
-        parent = dict(action='select',batch='jw3',request_id='select')
+        artifact = dict(name='job-watch-packet-123-1',expired=False,id=9)
+        receipt_path = self.root/'.job_watch_bridge/receipts/select.json'
+        receipt_path.write_text(json.dumps({**json.loads(receipt_path.read_text()),
+                                          'artifact_name':artifact['name'],'artifact_id':9,'select_run_attempt':1}))
+        parent = dict(version=bridge.VERSION,action='select',batch='jw3',request_id='select',limit=20,fetch=True)
         import subprocess
         proc = subprocess.CompletedProcess([],0,json.dumps(parent),'')
         env = dict(GITHUB_REPOSITORY='owner/repo',GITHUB_REF_NAME='pilot',GH_TOKEN='token')
@@ -246,8 +364,18 @@ class BridgeTests(unittest.TestCase):
             with patch('requests.get',side_effect=responses(a={**artifact,'expired':True})):
                 with self.assertRaisesRegex(ValueError,'missing_or_expired'):
                     bridge.download_packet(req,self.root/'bad.json')
-            with patch('requests.get',side_effect=responses()):
+            with patch('requests.get',side_effect=responses(a={**artifact,'id':10})):
+                with self.assertRaisesRegex(ValueError,'missing_or_expired'):
+                    bridge.download_packet(req,self.root/'bad.json')
+            # A valid ZIP with altered packet bytes must fail the independent hash guard.
+            altered = io.BytesIO()
+            with zipfile.ZipFile(altered,'w') as z:
+                z.writestr('job-watch-packet.json',path.read_bytes()+b' ')
+            with patch('requests.get',side_effect=[Response(run),Response({'artifacts':[artifact]}),Response(content=altered.getvalue())]):
                 with self.assertRaisesRegex(ValueError,'packet_hash_mismatch'):
+                    bridge.download_packet(req,self.root/'bad.json')
+            with patch('requests.get',side_effect=responses()):
+                with self.assertRaisesRegex(ValueError,'canonical_select_binding_mismatch'):
                     bridge.download_packet({**req,'packet_sha256':'a'*64},self.root/'bad.json')
         self.assertFalse((self.root/'bad.json').exists())
 
