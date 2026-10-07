@@ -53,14 +53,15 @@ jobs:
           cp daily_worklist.json /tmp/first-worklist.json
           python job_watch.py sync
           cmp daily_worklist.json /tmp/first-worklist.json
-      - name: Drop derived validation outputs
+      - name: Drop derived and workflow-only validation outputs
         if: github.event_name == 'pull_request'
         run: |
           git restore --worktree --staged -- \
             analysis_results_jw1.json analysis_results_jw2.json analysis_results_jw3.json analysis_results_jw4.json \
             semantic_queue_jw1.json semantic_queue_jw2.json semantic_queue_jw3.json semantic_queue_jw4.json \
             daily_worklist.json job_watch_audit.json job_watch_healthcheck.json job_watch_summary.txt \
-            job_watch_run_state.json pipeline_execution.json daily_activity.json rejected_daily_updates.json || true
+            job_watch_run_state.json pipeline_execution.json daily_activity.json rejected_daily_updates.json \
+            .github/workflows/collect_jobs.yml .github/workflows/sync_semantic_state.yml || true
       - name: Commit validated migration back to PR branch
         if: github.event_name == 'pull_request'
         run: |
