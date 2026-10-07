@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "apply-20261007T1623Z-live-replayfix10",
+  "request_sha256": "2e6c9952527651f9dd0dd45c690dc73ded37b517625c852f7e2f3ff7ec1646d2",
+  "parent_request_id": "select-20261007T1619Z-live-replayfix10",
+  "packet_sha256": "26e4a4b9249818ce5395fa947acd5b64cf946871d1c188c9aa7fa2727efffce9",
+  "select_run_id": 37651252759,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "a42aad14e2fc16170f44f6b289905e9365e090e7ffda4dc895a9ee5741ebca50",
+    "job_memory_jw1.json": "576b75769b0a1677335d48d38eb7480be598d6e8335130671f446da60214a70f",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 8,
+  "applied_keys": [
+    "American Express::26011888",
+    "American Express::26014155",
+    "Banca Ifis::277244994",
+    "Satispay::4ef1e3cd-0310-4403-a5f3-b208335e01c3",
+    "Satispay::6d64a014-6885-41d9-a0c9-5a841b204374",
+    "Satispay::99a4072f-7593-4857-b1c5-1d6d4b31386a",
+    "Satispay::d884f7b2-7198-4397-ad94-2d738d576bc2",
+    "Satispay::dcda0364-9786-49b7-aa40-e80e14f41bac"
+  ],
+  "retry": {
+    "Moneyfarm::17AB7ADFEC": "jd_fetch_failed",
+    "Qonto::0b9c49fe-e8d6-4d28-b854-fbdd6b7252af": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "ce7ed120341fe880081447d8751c2927cb18c7ec02c56a6ce02f7ab65cd493a0",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 12,
+      "JW2": 20,
+      "JW3": 3,
+      "JW4": 7
+    },
+    "total": 42
+  },
+  "replayed": false
+}
