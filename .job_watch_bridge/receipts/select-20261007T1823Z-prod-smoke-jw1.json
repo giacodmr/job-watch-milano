@@ -1,0 +1,63 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-37666435485-1",
+  "batch": "jw1",
+  "created_at": "2026-10-07T18:23:43Z",
+  "fetch_errors": {
+    "SumUp::8874403002": "410 Client Error: Gone for url: https://www.sumup.com/careers/positions/rome-italy/field-sales/consulente-commerciale-sul-campo-con-esperienza/8874403002/?gh_jid=8874403002"
+  },
+  "fingerprints": {
+    "American Express::26011847": "e6d956fa3d16ee74",
+    "American Express::26014544": "8787a19127272194",
+    "Banca Ifis::277460637": "8d0e2fd16c8b048b",
+    "Intesa Sanpaolo::1445081433": "ae209f00caf91091",
+    "Qonto::ccebc25a-cc07-458e-bf9b-d36c33de441c": "f05521b00fb84656",
+    "Satispay::c1e9b79d-32b7-41c0-86b5-032871d7db71": "7a0c455a12f508e7",
+    "SumUp::8874403002": "ce4fd55a54a8b140"
+  },
+  "job_keys": [
+    "Banca Ifis::277460637",
+    "Intesa Sanpaolo::1445081433",
+    "Satispay::c1e9b79d-32b7-41c0-86b5-032871d7db71",
+    "SumUp::8874403002",
+    "Qonto::ccebc25a-cc07-458e-bf9b-d36c33de441c",
+    "American Express::26014544",
+    "American Express::26011847"
+  ],
+  "packet_sha256": "632a46562dd4dd4cc3c525fe07b11d9a5d744974d6dfb537c969db50f200a403",
+  "ready_count": 6,
+  "record_count": 7,
+  "request_id": "select-20261007T1823Z-prod-smoke-jw1",
+  "request_sha256": "a11b7a0baeb2af48b4a92f7ddcbbba99beb6c92d50703ecb14b30f80c5edb836",
+  "select_run_attempt": 1,
+  "select_run_id": 37666435485,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "6ef356a7c650f76034195e2788f7e39cca5736c29c16a3f365a7fd5040e84a97",
+    "job_memory_jw1.json": "9a73e309f53bf9b92a30bc0a34fb9bed92a3ffd344eda10dcdccf275c2e3a9ba",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "6ef356a7c650f76034195e2788f7e39cca5736c29c16a3f365a7fd5040e84a97",
+    "job_memory_jw1.json": "a1cbb311416c292265944850036224c55587967681e1fc20b6fff6cd48e11539",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "SumUp::8874403002": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "ce4fd55a54a8b140",
+        "source_url": "https://sumup.com/careers/positions/8874403002?gh_jid=8874403002"
+      },
+      "last_failure_at": "2026-10-07T18:23:43Z",
+      "retry_from": "2026-10-08",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11502304782
+}
