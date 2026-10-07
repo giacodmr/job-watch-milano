@@ -2,7 +2,7 @@
   "version": "1.0",
   "batch": "JW4",
   "batch_name": "Consumer, Luxury, Pharma & Corporate",
-  "last_mapped": "2026-09-20",
+  "last_mapped": "2026-10-04",
   "verification_summary": {
     "companies_analyzed": 52,
     "FULL": 31,
@@ -1801,6 +1801,120 @@
         "Retail frontline roles are still filtered later by Job Watch rules; the inventory itself must remain exhaustive."
       ],
       "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Smith+Nephew",
+      "batch": "JW4",
+      "priority": "P1++",
+      "ats": {
+        "family": "Workday",
+        "tenant": "smithnephew",
+        "career_site": "https://www.smith-nephew.com/en/careers",
+        "inventory_url": "https://smithnephew.wd5.myworkdayjobs.com/External",
+        "public_api_or_feed": "https://smithnephew.wd5.myworkdayjobs.com/wday/cxs/smithnephew/External/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Milano",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday CXS limit/offset with total reconciliation",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate Smith+Nephew's official External Workday inventory to exhaustion and retain target-geography roles.",
+        "fallback": "Use the official corporate careers page to rediscover the Workday site."
+      },
+      "limitations": [],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Douglas Italia",
+      "batch": "JW4",
+      "priority": "P1",
+      "ats": {
+        "family": "SAP SuccessFactors",
+        "tenant": null,
+        "career_site": "https://careers.douglas.group/",
+        "inventory_url": "https://careers.douglas.group/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "successfactors_jobs2web_candidate",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma"
+        ],
+        "pagination": "Career Site Builder-style public pages; exhaustiveness to be certified by live collector",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Attempt the official Douglas careers inventory with the SuccessFactors collector; fail closed to PARTIAL if exhaustive count reconciliation is not available.",
+        "fallback": "Use only official careers.douglas.group job pages for discovery."
+      },
+      "limitations": [
+        "SuccessFactors is inferred from the public careers URL structure; the exact backend/feed has not been independently certified."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Opella",
+      "batch": "JW4",
+      "priority": "P1",
+      "ats": {
+        "family": "Custom official careers / Workday frontend",
+        "tenant": "chloe",
+        "career_site": "https://www.opella.com/en/careers",
+        "inventory_url": "https://www.opella.com/en/careers",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_dynamic",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma",
+          "London"
+        ],
+        "pagination": "Official careers page; GitHub runner cannot certify the Workday CXS inventory because the endpoint returns HTTP 403.",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Probe Opella's official careers page and retain official links exposed by the live site.",
+        "fallback": "Keep PARTIAL coverage until the Workday CXS inventory is accessible and exhaustively reconcilable."
+      },
+      "limitations": [
+        "2026-10-04 production evidence: Opella Workday CXS returned HTTP 403 from GitHub Actions."
+      ],
+      "last_mapped": "2026-10-04"
     }
+  ],
+  "summary": {
+    "companies_analyzed": 55,
+    "FULL": 32,
+    "STRONG": 17,
+    "PARTIAL": 6,
+    "OPAQUE": 0
+  },
+  "notes": [
+    "The 2026-10-04 ATS expansion is now part of this canonical mapping; no runtime overlay is required."
   ]
 }

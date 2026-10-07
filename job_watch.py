@@ -121,13 +121,14 @@ def stage(name):
     from pipeline_state import atomic_json, attempt, record_error, refresh_run_state, load
     # Strict static integrity runs in CI. Runtime trust checks isolate batch input
     # failures and never depend on a stale derived artifact or optional script.
-    global_names = ('job_watch_rules.json','job_watch_batches.json','companies_job_watch_v2.json','watchlist_additions.json','user_job_decisions.json')
+    global_names = ('job_watch_rules.json','job_watch_batches.json','companies_job_watch_v2.json','company_candidates.json','user_job_decisions.json')
     for filename in global_names:
         try:
             data = load(filename,root=ROOT)
             if not isinstance(data,dict): raise ValueError('Required global object missing')
             if filename == 'job_watch_batches.json' and set(data.get('batches',{})) != {b.upper() for b in BATCHES}: raise ValueError('Global batch schema must define JW1-JW4')
-            if filename in {'companies_job_watch_v2.json','watchlist_additions.json'} and not isinstance(data.get('companies'),list): raise ValueError('Global company universe invalid')
+            if filename == 'companies_job_watch_v2.json' and not isinstance(data.get('companies'),list): raise ValueError('Global company universe invalid')
+            if filename == 'company_candidates.json' and not isinstance(data.get('records'),dict): raise ValueError('Global candidate staging invalid')
             if filename == 'user_job_decisions.json' and not isinstance(data.get('records'),dict): raise ValueError('Unreadable user store')
             if filename == 'job_watch_rules.json' and not data.get('run_certification_policy',{}).get('enabled'): raise ValueError('Missing certification policy')
         except (ValueError,OSError) as exc:

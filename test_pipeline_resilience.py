@@ -25,8 +25,7 @@ class Fixture:
         self.put('job_watch_rules.json',{'run_certification_policy':{'enabled':True},'daily_worklist_policy':{'backlog_limit':0}})
         self.put('job_watch_batches.json',{'batches':{b.upper():{'companies':[b.upper()]+(['Mastercard'] if b=='jw1' else [])} for b in ps.BATCHES}})
         self.put('companies_job_watch_v2.json',{'companies':companies})
-        self.put('watchlist_additions.json',{'companies':[]})
-        self.put('discovery_candidates.json',{'records':{}})
+        self.put('company_candidates.json',{'records':{},'promoted_history':{},'monitored_reviews':[]})
         self.put('user_job_decisions.json',{'records':{}})
         self.put('amazon_target_check.json',{'checked_at':'2026-10-03T06:30:00Z','target_jobs':[],
             'locations':{city:{'coverage':'VERIFIED','inventory_count':0,'api_reported_hits_sum':0} for city in ['Milan','Rome','London','Luxembourg']}})

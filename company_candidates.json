@@ -1,0 +1,1493 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-10-07",
+  "purpose": "Single operational staging registry for employers not yet in the active Job Watch company universe.",
+  "authority": {
+    "scope": "candidate staging and promotion evidence",
+    "active_company_registry": "companies_job_watch_v2.json",
+    "routing": "job_watch_batches.json",
+    "technical_access": "ats_mapping_jw1.json ... ats_mapping_jw4.json",
+    "research_watchlist": "extra_company_watchlist.json remains a separate curated research/radar file, not a staging authority."
+  },
+  "source_policies": {
+    "employer_expansion_20261004": {
+      "purpose": "Expanded employer-first radar using current and historical role evidence. Inclusion does not require a current user-fit vacancy: employers can qualify through recurring relevant corporate functions plus credible compensation signals in Milan/Rome.",
+      "policy": {
+        "core_principle": "A company may deserve monitoring even if today's vacancies are not suitable, when its local organization repeatedly hires in relevant corporate functions and compensation evidence suggests attractive future upside.",
+        "evidence_types": [
+          "current relevant role",
+          "historical relevant role",
+          "current/historical compensation from employer-provided postings",
+          "credible third-party compensation evidence",
+          "local corporate-function footprint"
+        ],
+        "promotion": "Promote into JW1-JW4 when the employer has a monitorable official source and sufficiently strong employer-level evidence; current perfect-fit vacancy is not required."
+      }
+    },
+    "autonomous_discovery": {
+      "description": "Staging registry for off-watchlist employers discovered by autonomous Job Watch research. Promotion is governed by job_watch_rules.json company_self_improvement_policy."
+    }
+  },
+  "records": {
+    "AB InBev Italia": {
+      "company": "AB InBev Italia",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "AB InBev Italia",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "adidas": {
+      "company": "adidas",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW4",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.adidas-group.com/",
+      "expected_fit": null,
+      "compensation_signal": "Current Milan Senior Retail Training Manager starts around EUR55k and Sales Manager Running around EUR50k; function-specific future roles still require validation.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "adidas",
+          "city": "Milan / Rome",
+          "recommended_batch": "JW4",
+          "status": "WATCH_EXTRA",
+          "priority": 2,
+          "role_family_evidence": "Italy organization hires across Sales, Retail/Brand, commercial management and corporate support; future planning/finance/category roles are plausible at Milan office.",
+          "seniority_evidence": "Professional/manager roles currently present in Milan and Rome.",
+          "compensation_signal": "Current Milan Senior Retail Training Manager starts around EUR55k and Sales Manager Running around EUR50k; function-specific future roles still require validation.",
+          "career_url": "https://careers.adidas-group.com/"
+        }
+      }
+    },
+    "Alfasigma": {
+      "company": "Alfasigma",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Alfasigma",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Ariston Group": {
+      "company": "Ariston Group",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW3",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Ariston Group",
+          "former_batch": "JW3",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Aurora Growth Capital": {
+      "company": "Aurora Growth Capital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Aurora Growth Capital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "B. Braun": {
+      "company": "B. Braun",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": "2026-09-20",
+      "last_seen": "2026-09-20",
+      "career_url": "https://www.bbraun.com/en/career.html",
+      "expected_fit": 74,
+      "compensation_signal": "€39k–45k RAL disclosed",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "B. Braun",
+          "first_seen": "2026-09-20",
+          "last_seen": "2026-09-20",
+          "validated_roles": [
+            {
+              "title": "Commercial Excellence & CRM Specialist",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 74,
+              "evidence": "Commercial Excellence/Salesforce/CRM strategy, forecasting, segmentation, BI and change-management scope is highly relevant, but the posting asks for 5 years of CRM management/strategy experience."
+            }
+          ],
+          "target_locations": [
+            "Milan"
+          ],
+          "expected_fit": 74,
+          "compensation_signal": "€39k–45k RAL disclosed",
+          "career_url": "https://www.bbraun.com/en/career.html",
+          "ATS_guess": "TBD",
+          "recommended_batch": "JW4",
+          "evidence": "Strong functional adjacency but current vacancy has a material 5-year direct CRM requirement; stage rather than promote."
+        }
+      }
+    },
+    "B4 Investimenti SGR": {
+      "company": "B4 Investimenti SGR",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "B4 Investimenti SGR",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "BancoPosta Fondi SGR": {
+      "company": "BancoPosta Fondi SGR",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "BancoPosta Fondi SGR",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Beiersdorf": {
+      "company": "Beiersdorf",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW4",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://www.beiersdorf.com/career/locations/italy",
+      "expected_fit": null,
+      "compensation_signal": "Exact current FP&A range not published; historical Italy Controller roughly EUR42k-45k and Demand/Supply Planner roughly EUR53k-57k, based on third-party submissions.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Beiersdorf",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "Formal Milan Finance & Controlling organization; current Junior FP&A Specialist and Sales Controlling Business Partner. Finance roles explicitly support strategic orientation, budgeting and resource allocation.",
+          "seniority_evidence": "Current Junior FP&A Specialist confirms accessible early-career professional level.",
+          "compensation_signal": "Exact current FP&A range not published; historical Italy Controller roughly EUR42k-45k and Demand/Supply Planner roughly EUR53k-57k, based on third-party submissions.",
+          "career_url": "https://www.beiersdorf.com/career/locations/italy"
+        }
+      }
+    },
+    "Benetton Group": {
+      "company": "Benetton Group",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Benetton Group",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Biogen": {
+      "company": "Biogen",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW4",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.biogen.com/",
+      "expected_fit": null,
+      "compensation_signal": "Current employer-provided Milan specialist ranges include roughly EUR58k-77.5k and EUR61k-81.25k on more senior roles, demonstrating strong pay capacity.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Biogen",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "WATCH_EXTRA",
+          "priority": 2,
+          "role_family_evidence": "Milan organization includes Customer & Market Insights/Data Analytics, Customer Excellence & Operations and commercial/market-access functions.",
+          "seniority_evidence": "Current analytics evidence is internship-level, while professional commercial roles exist at higher levels; monitor for intermediate analytics/strategy openings.",
+          "compensation_signal": "Current employer-provided Milan specialist ranges include roughly EUR58k-77.5k and EUR61k-81.25k on more senior roles, demonstrating strong pay capacity.",
+          "career_url": "https://careers.biogen.com/"
+        }
+      }
+    },
+    "Blue Ocean Finance": {
+      "company": "Blue Ocean Finance",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Blue Ocean Finance",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "BMW Group Italia": {
+      "company": "BMW Group Italia",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW3",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "BMW Group Italia",
+          "former_batch": "JW3",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Boston Scientific": {
+      "company": "Boston Scientific",
+      "status": "EMPLOYER_RADAR",
+      "recommended_batch": "JW4",
+      "priority": 3,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://jobs.bostonscientific.com/",
+      "expected_fit": null,
+      "compensation_signal": "Historical Business Analyst roughly EUR33.4k-42k and Pricing Analyst roughly EUR36k-48k; borderline for the target, so keep lower priority until stronger role/pay evidence appears.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Boston Scientific",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "EMPLOYER_RADAR",
+          "priority": 3,
+          "role_family_evidence": "Formal Finance job family plus pricing/business-analytics roles in Italy; suitable functional families recur even when current openings are not ideal.",
+          "seniority_evidence": "Business Analyst and Pricing Analyst titles are established locally.",
+          "compensation_signal": "Historical Business Analyst roughly EUR33.4k-42k and Pricing Analyst roughly EUR36k-48k; borderline for the target, so keep lower priority until stronger role/pay evidence appears.",
+          "career_url": "https://jobs.bostonscientific.com/"
+        },
+        "employer_expansion_20261004:not_priority_for_now": {
+          "company": "Boston Scientific",
+          "reason": "Kept as low-priority radar despite relevant role families because historical analyst compensation often sits below or only partly overlaps the preferred target."
+        }
+      }
+    },
+    "BU Bregal Unternehmerkapital": {
+      "company": "BU Bregal Unternehmerkapital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "BU Bregal Unternehmerkapital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Cassa Depositi e Prestiti (CDP)": {
+      "company": "Cassa Depositi e Prestiti (CDP)",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW1",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://www.opportunitadilavoro.cdp.it/",
+      "expected_fit": null,
+      "compensation_signal": "Numeric target-role range not yet validated; employer merits monitoring on role-family quality and institutional brand.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Cassa Depositi e Prestiti (CDP)",
+          "city": "Rome / Milan",
+          "recommended_batch": "JW1",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "Current and historical roles include Advisory Development Strategist, Strategic Planning & Control Specialist, Procurement Planning Analyst and other project/KPI/business-planning positions.",
+          "seniority_evidence": "CDP explicitly separates Junior from Specialist/Senior hiring and has analyst-level roles in Rome.",
+          "compensation_signal": "Numeric target-role range not yet validated; employer merits monitoring on role-family quality and institutional brand.",
+          "career_url": "https://www.opportunitadilavoro.cdp.it/"
+        }
+      }
+    },
+    "Clessidra Group": {
+      "company": "Clessidra Group",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Clessidra Group",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "COIMA": {
+      "company": "COIMA",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "COIMA",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Columbus Capital": {
+      "company": "Columbus Capital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Columbus Capital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Dell Technologies": {
+      "company": "Dell Technologies",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW2",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://jobs.dell.com/",
+      "expected_fit": null,
+      "compensation_signal": "Historical Analyst roughly EUR42.5k-46.1k; Senior Analyst Business Operations roughly EUR42.2k-45.4k. Current employer-provided technical-sales ranges in Milan/Rome are EUR44.56k-61.16k, confirming employer pay capacity.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Dell Technologies",
+          "city": "Milan / Rome",
+          "recommended_batch": "JW2",
+          "status": "WATCH_EXTRA",
+          "priority": 2,
+          "role_family_evidence": "Global job families include Business Support, Finance, Data & Analytics, Corporate Development and Operations; Italy/Milan hiring footprint is persistent.",
+          "seniority_evidence": "Analyst and Senior Analyst Business Operations titles exist in historical salary data.",
+          "compensation_signal": "Historical Analyst roughly EUR42.5k-46.1k; Senior Analyst Business Operations roughly EUR42.2k-45.4k. Current employer-provided technical-sales ranges in Milan/Rome are EUR44.56k-61.16k, confirming employer pay capacity.",
+          "career_url": "https://jobs.dell.com/"
+        }
+      }
+    },
+    "DHL Group": {
+      "company": "DHL Group",
+      "status": "EMPLOYER_RADAR",
+      "recommended_batch": "JW3",
+      "priority": 3,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.dhl.com/",
+      "expected_fit": null,
+      "compensation_signal": "Numeric target-role range not validated; retain for future role discovery rather than immediate promotion.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "DHL Group",
+          "city": "Milan area / Rome",
+          "recommended_batch": "JW3",
+          "status": "EMPLOYER_RADAR",
+          "priority": 3,
+          "role_family_evidence": "Corporate office career families explicitly include Finance & Controlling and Consulting & Project Management, both strategy/decision-support adjacent.",
+          "seniority_evidence": "Large organization with recurring professional roles; exact local early-career target evidence pending.",
+          "compensation_signal": "Numeric target-role range not validated; retain for future role discovery rather than immediate promotion.",
+          "career_url": "https://careers.dhl.com/"
+        }
+      }
+    },
+    "Dr.Feel": {
+      "company": "Dr.Feel",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Dr.Feel",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Dyson": {
+      "company": "Dyson",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": "2026-09-20",
+      "last_seen": "2026-09-20",
+      "career_url": "https://careers.dyson.com/",
+      "expected_fit": 64,
+      "compensation_signal": "High consumer-tech employer potential; exact current role range not verified",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "Dyson",
+          "first_seen": "2026-09-20",
+          "last_seen": "2026-09-20",
+          "validated_roles": [
+            {
+              "title": "Senior Key Account Manager",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 64,
+              "evidence": "Commercial strategy, profitability, forecasting and category insights overlap, but current role requires senior direct account ownership."
+            }
+          ],
+          "target_locations": [
+            "Milan",
+            "London"
+          ],
+          "expected_fit": 64,
+          "compensation_signal": "High consumer-tech employer potential; exact current role range not verified",
+          "career_url": "https://careers.dyson.com/",
+          "ATS_guess": "Enterprise portal",
+          "recommended_batch": "JW4",
+          "evidence": "Monitor for category/commercial planning/e-commerce analyst-manager roles at lower seniority."
+        }
+      }
+    },
+    "Esselunga": {
+      "company": "Esselunga",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Esselunga",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Etro": {
+      "company": "Etro",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Etro",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Fever": {
+      "company": "Fever",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": "2026-09-20",
+      "last_seen": "2026-09-20",
+      "career_url": "https://careers.feverup.com/",
+      "expected_fit": 70,
+      "compensation_signal": "Attractive package + stock options, exact base not verified",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "Fever",
+          "first_seen": "2026-09-20",
+          "last_seen": "2026-09-20",
+          "validated_roles": [
+            {
+              "title": "Market Strategy and Partnerships Manager",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 70,
+              "evidence": "Market growth strategy, partnerships and data-driven prioritization; 3+ years top-tier consulting mandatory with additional experience preferred."
+            }
+          ],
+          "target_locations": [
+            "Milan"
+          ],
+          "expected_fit": 70,
+          "compensation_signal": "Attractive package + stock options, exact base not verified",
+          "career_url": "https://careers.feverup.com/",
+          "ATS_guess": "TBD",
+          "recommended_batch": "JW2",
+          "evidence": "Relevant role family but current Milan requirement/seniority is borderline; keep staged."
+        }
+      }
+    },
+    "Fibercop": {
+      "company": "Fibercop",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW3",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Fibercop",
+          "former_batch": "JW3",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Fitex Capital": {
+      "company": "Fitex Capital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Fitex Capital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Generali Asset Management SGR": {
+      "company": "Generali Asset Management SGR",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Generali Asset Management SGR",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Grant Thornton": {
+      "company": "Grant Thornton",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Grant Thornton",
+          "former_batch": "JW2",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Groupe HLD": {
+      "company": "Groupe HLD",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Groupe HLD",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Gruppo CDP": {
+      "company": "Gruppo CDP",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Gruppo CDP",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Gruppo Lactalis Italia": {
+      "company": "Gruppo Lactalis Italia",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Gruppo Lactalis Italia",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Heritage Holdings": {
+      "company": "Heritage Holdings",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Heritage Holdings",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Hitachi Rail": {
+      "company": "Hitachi Rail",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW3",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Hitachi Rail",
+          "former_batch": "JW3",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "HONOR": {
+      "company": "HONOR",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": "2026-09-20",
+      "last_seen": "2026-09-20",
+      "career_url": "https://www.honor.com/global/careers/",
+      "expected_fit": 78,
+      "compensation_signal": "Not disclosed; consumer-tech employer with potentially attractive upside",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "HONOR",
+          "first_seen": "2026-09-20",
+          "last_seen": "2026-09-20",
+          "validated_roles": [
+            {
+              "title": "Retail Operations Manager",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 78,
+              "evidence": "3+ years; retail project management, sales/inventory/conversion analytics, process optimization and cross-country coordination. Strong functional fit but direct regional retail-operations experience is only partial."
+            }
+          ],
+          "target_locations": [
+            "Milan"
+          ],
+          "expected_fit": 78,
+          "compensation_signal": "Not disclosed; consumer-tech employer with potentially attractive upside",
+          "career_url": "https://www.honor.com/global/careers/",
+          "ATS_guess": "TBD",
+          "recommended_batch": "JW4",
+          "evidence": "Current role is relevant but one validated sub-85 fit signal is not enough for automatic promotion under the current company policy."
+        }
+      }
+    },
+    "Hugo Boss": {
+      "company": "Hugo Boss",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Hugo Boss",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "ION Group": {
+      "company": "ION Group",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": "2026-10-04",
+      "last_seen": "2026-10-04",
+      "career_url": "https://iongroup.com/jobs/product-associate-italy-7eedac92-07aa-4cc0-b761-5b3890579ff3/",
+      "expected_fit": 84,
+      "compensation_signal": "Official €40k–45k fixed RAL",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "ION Group",
+          "first_seen": "2026-10-04",
+          "last_seen": "2026-10-04",
+          "validated_roles": [
+            {
+              "title": "Product Associate, Italy",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 84,
+              "evidence": "Permanent Milan product role explicitly targeting 3-5 years from management/business/digital-transformation or financial-services consulting; product strategy, business analysis, KPI monitoring, market intelligence and cross-functional delivery. Experience requirement is slightly above the user's tenure, so stage rather than auto-promote."
+            }
+          ],
+          "target_locations": [
+            "Milan"
+          ],
+          "expected_fit": 84,
+          "compensation_signal": "Official €40k–45k fixed RAL",
+          "career_url": "https://iongroup.com/jobs/product-associate-italy-7eedac92-07aa-4cc0-b761-5b3890579ff3/",
+          "ATS_guess": "Lever / ION careers",
+          "recommended_batch": "JW2",
+          "evidence": "High-value fintech/product employer and strong functional match; current role narrowly misses automatic promotion because it asks for 3-5 years of professional experience. Keep staged and watch for a second qualifying role or a more junior Milan opening."
+        }
+      }
+    },
+    "KIKO Milano": {
+      "company": "KIKO Milano",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "KIKO Milano",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "KYIP Capital SGR": {
+      "company": "KYIP Capital SGR",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "KYIP Capital SGR",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Lechler": {
+      "company": "Lechler",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW3",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Lechler",
+          "former_batch": "JW3",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Lutech Group": {
+      "company": "Lutech Group",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Lutech Group",
+          "former_batch": "JW2",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Marktlink": {
+      "company": "Marktlink",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Marktlink",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Max Mara Fashion Group": {
+      "company": "Max Mara Fashion Group",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Max Mara Fashion Group",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Medtronic": {
+      "company": "Medtronic",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW4",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://medtronic.wd1.myworkdayjobs.com/MedtronicCareers",
+      "expected_fit": null,
+      "compensation_signal": "Employer-published Business Finance Analyst band EUR36.64k-54.96k plus incentive; current Milan Principal Business Analyst band EUR48.72k-94.8k demonstrates upside at higher level.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Medtronic",
+          "city": "Milan / Lombardy",
+          "recommended_batch": "JW4",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "Italy organization has Finance, business analytics, market access, product and transformation roles. Historical Business Finance Analyst directly supported financial planning and leadership decision-making.",
+          "seniority_evidence": "Analyst and business-finance roles have existed below manager level.",
+          "compensation_signal": "Employer-published Business Finance Analyst band EUR36.64k-54.96k plus incentive; current Milan Principal Business Analyst band EUR48.72k-94.8k demonstrates upside at higher level.",
+          "career_url": "https://medtronic.wd1.myworkdayjobs.com/MedtronicCareers"
+        }
+      }
+    },
+    "Meta": {
+      "company": "Meta",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": "2026-09-20",
+      "last_seen": "2026-09-20",
+      "career_url": "https://www.metacareers.com/jobs/",
+      "expected_fit": 68,
+      "compensation_signal": "Very high employer compensation potential; role-specific Italian range not verified",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "Meta",
+          "first_seen": "2026-09-20",
+          "last_seen": "2026-09-20",
+          "validated_roles": [
+            {
+              "title": "Client Partner - CPG, STE (13 months)",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 68,
+              "evidence": "Strong CPG/client strategy overlap but current role is materially sales/deal-closing oriented."
+            }
+          ],
+          "target_locations": [
+            "Milan",
+            "London"
+          ],
+          "expected_fit": 68,
+          "compensation_signal": "Very high employer compensation potential; role-specific Italian range not verified",
+          "career_url": "https://www.metacareers.com/jobs/",
+          "ATS_guess": "Custom",
+          "recommended_batch": "JW2",
+          "evidence": "High-value employer; wait for Strategy & Operations/Business Planning/Client Solutions role with less pure-sales ownership."
+        }
+      }
+    },
+    "Mindful Capital Partners": {
+      "company": "Mindful Capital Partners",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Mindful Capital Partners",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "MSCI": {
+      "company": "MSCI",
+      "status": "EMPLOYER_RADAR",
+      "recommended_batch": "JW1",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.msci.com/",
+      "expected_fit": null,
+      "compensation_signal": "High-value financial-data employer; no reliable Italy target-role numeric range validated in this pass.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "MSCI",
+          "city": "Milan",
+          "recommended_batch": "JW1",
+          "status": "EMPLOYER_RADAR",
+          "priority": 2,
+          "role_family_evidence": "Milan is an explicit MSCI career location even when current openings are zero; global functions include Data & Operations, Product Management, Corporate Strategy/Development and Finance.",
+          "seniority_evidence": "Role availability in Milan is episodic rather than continuous.",
+          "compensation_signal": "High-value financial-data employer; no reliable Italy target-role numeric range validated in this pass.",
+          "career_url": "https://careers.msci.com/"
+        }
+      }
+    },
+    "NTT DATA": {
+      "company": "NTT DATA",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "NTT DATA",
+          "former_batch": "JW2",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Obloo Ventures": {
+      "company": "Obloo Ventures",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Obloo Ventures",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Pandora": {
+      "company": "Pandora",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW4",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.pandoragroup.com/",
+      "expected_fit": null,
+      "compensation_signal": "Employer-provided recent Milan range EUR42k-52k plus annual performance bonus and benefits.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Pandora",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "SEMEA regional head office in Milan includes Finance, E-commerce, Merchandising, Property & Network and other corporate functions. Historical/current Merchandise Financial Planning roles cover pricing, RGM, forecasting, margin, inventory and business reviews.",
+          "seniority_evidence": "Recent Milan Merchandising Financial Planning Specialist explicitly targeted 2-5 years.",
+          "compensation_signal": "Employer-provided recent Milan range EUR42k-52k plus annual performance bonus and benefits.",
+          "career_url": "https://careers.pandoragroup.com/"
+        }
+      }
+    },
+    "Prelios": {
+      "company": "Prelios",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Prelios",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "PTS": {
+      "company": "PTS",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW2",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "PTS",
+          "former_batch": "JW2",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "PUMA": {
+      "company": "PUMA",
+      "status": "STAGED_RESEARCH",
+      "recommended_batch": null,
+      "priority": null,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "employer_expansion_20261004:not_priority_for_now": {
+          "company": "PUMA",
+          "reason": "Milan/Italy corporate finance organization exists, but currently visible Italy compensation data are mixed and mostly retail/sales; monitor opportunistically rather than promote now."
+        }
+      }
+    },
+    "Recordati": {
+      "company": "Recordati",
+      "status": "EMPLOYER_RADAR",
+      "recommended_batch": "JW4",
+      "priority": 3,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.recordati.com/",
+      "expected_fit": null,
+      "compensation_signal": "Historical Milan Brand Manager submissions around EUR60k-63k and Technology Transfer PM around EUR40k-44k show a wide but potentially attractive corporate range.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Recordati",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "EMPLOYER_RADAR",
+          "priority": 3,
+          "role_family_evidence": "Milan-headquartered pharma with broad corporate hiring and recurring finance, business, brand and project functions.",
+          "seniority_evidence": "Professional corporate roles recur, but current exact 0-5y strategy/FP&A match was not validated.",
+          "compensation_signal": "Historical Milan Brand Manager submissions around EUR60k-63k and Technology Transfer PM around EUR40k-44k show a wide but potentially attractive corporate range.",
+          "career_url": "https://careers.recordati.com/"
+        }
+      }
+    },
+    "Red Fish Capital Partners": {
+      "company": "Red Fish Capital Partners",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Red Fish Capital Partners",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "S&P Global": {
+      "company": "S&P Global",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW1",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://careers.spglobal.com/",
+      "expected_fit": null,
+      "compensation_signal": "Italy salary evidence: Associate roughly EUR45k-72k and Senior Analyst roughly EUR47.6k-51.5k; third-party evidence, not employer-posting ranges.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "S&P Global",
+          "city": "Milan",
+          "recommended_batch": "JW1",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "Milan office and explicit career families in Analytics, Business Management, Finance, Product, Ratings, Research and Operations; Milan early-career pipelines are active.",
+          "seniority_evidence": "Associate/analyst/early-career tracks exist in Milan.",
+          "compensation_signal": "Italy salary evidence: Associate roughly EUR45k-72k and Senior Analyst roughly EUR47.6k-51.5k; third-party evidence, not employer-posting ranges.",
+          "career_url": "https://careers.spglobal.com/"
+        }
+      }
+    },
+    "SACE": {
+      "company": "SACE",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW1",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://sace.wd103.myworkdayjobs.com/Sace001",
+      "expected_fit": null,
+      "compensation_signal": "Recent Rome CRM Functional Analyst posting states initial RAL not below EUR44k; other analyst postings start lower, so role-specific validation remains necessary.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "SACE",
+          "city": "Rome",
+          "recommended_batch": "JW1",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "Business area explicitly includes strategic planning; recurring analyst roles across CRM, BI, risk and business functions.",
+          "seniority_evidence": "Analyst and specialist-level hiring is recurring.",
+          "compensation_signal": "Recent Rome CRM Functional Analyst posting states initial RAL not below EUR44k; other analyst postings start lower, so role-specific validation remains necessary.",
+          "career_url": "https://sace.wd103.myworkdayjobs.com/Sace001"
+        }
+      }
+    },
+    "Samsung Electronics Italia": {
+      "company": "Samsung Electronics Italia",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW4",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://www.samsung.com/it/about-us/careers/",
+      "expected_fit": null,
+      "compensation_signal": "Employer-level professional compensation requires further numeric validation.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Samsung Electronics Italia",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "WATCH_EXTRA",
+          "priority": 2,
+          "role_family_evidence": "Milan corporate organization recruits in Finance, Sales, Marketing and Business Analysis; 2026 university recruiting explicitly included Business Analyst & Sales Support and Finance pathways.",
+          "seniority_evidence": "Strong graduate/early-career pipeline, but current professional-level target vacancy not validated in this pass.",
+          "compensation_signal": "Employer-level professional compensation requires further numeric validation.",
+          "career_url": "https://www.samsung.com/it/about-us/careers/"
+        }
+      }
+    },
+    "Sandoz": {
+      "company": "Sandoz",
+      "status": "PROMOTION_CANDIDATE",
+      "recommended_batch": "JW4",
+      "priority": 1,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://sandoz.wd103.myworkdayjobs.com/Sandoz_Careers",
+      "expected_fit": null,
+      "compensation_signal": "BPA Manager historical Milan total-pay signals around EUR59k-72k; current senior Milan posting publishes EUR90.3k-167.7k, confirming high employer pay bands.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "Sandoz",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "PROMOTION_CANDIDATE",
+          "priority": 1,
+          "role_family_evidence": "Large Milan pharma organization with BPA/business-planning, commercial, finance and corporate strategy-adjacent functions.",
+          "seniority_evidence": "Historical Milan BPA Manager salary submissions include 1-3 years of experience.",
+          "compensation_signal": "BPA Manager historical Milan total-pay signals around EUR59k-72k; current senior Milan posting publishes EUR90.3k-167.7k, confirming high employer pay bands.",
+          "career_url": "https://sandoz.wd103.myworkdayjobs.com/Sandoz_Careers"
+        }
+      }
+    },
+    "Tages Capital": {
+      "company": "Tages Capital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Tages Capital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "The Estée Lauder Companies": {
+      "company": "The Estée Lauder Companies",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "The Estée Lauder Companies",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "The Level Group": {
+      "company": "The Level Group",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "The Level Group",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "The Westin Palace, Milan": {
+      "company": "The Westin Palace, Milan",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "The Westin Palace, Milan",
+          "former_batch": "JW4",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Tikehau Capital": {
+      "company": "Tikehau Capital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Tikehau Capital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "VF Corporation": {
+      "company": "VF Corporation",
+      "status": "WATCH_EXTRA",
+      "recommended_batch": "JW4",
+      "priority": 2,
+      "first_seen": null,
+      "last_seen": null,
+      "career_url": "https://vfc.wd5.myworkdayjobs.com/vfc_careers",
+      "expected_fit": null,
+      "compensation_signal": "Current target-role numeric range not validated; employer compensation appears competitive but must be checked vacancy by vacancy.",
+      "sources": {
+        "employer_expansion_20261004:new_candidates": {
+          "company": "VF Corporation",
+          "city": "Milan",
+          "recommended_batch": "JW4",
+          "status": "WATCH_EXTRA",
+          "priority": 2,
+          "role_family_evidence": "Milan is an EMEA corporate location for VF brands (The North Face, Vans, Timberland, Napapijri etc.) and supports regional Finance and other corporate functions.",
+          "seniority_evidence": "Current/historical finance roles include Senior Accountant and broader EMEA corporate functions; lower-level planning roles can plausibly recur.",
+          "compensation_signal": "Current target-role numeric range not validated; employer compensation appears competitive but must be checked vacancy by vacancy.",
+          "career_url": "https://vfc.wd5.myworkdayjobs.com/vfc_careers"
+        }
+      }
+    },
+    "Visconti Capital": {
+      "company": "Visconti Capital",
+      "status": "NEEDS_ATS_MAPPING",
+      "recommended_batch": "JW1",
+      "priority": null,
+      "first_seen": null,
+      "last_seen": "2026-10-07",
+      "career_url": null,
+      "expected_fit": null,
+      "compensation_signal": null,
+      "sources": {
+        "batch_integrity_20261007": {
+          "company": "Visconti Capital",
+          "former_batch": "JW1",
+          "reason": "Company was routed as active but had no canonical ATS mapping; it cannot be claimed as monitored until official source access is mapped and validated."
+        }
+      }
+    },
+    "Xiaomi Technology": {
+      "company": "Xiaomi Technology",
+      "status": "STAGED_DISCOVERY",
+      "recommended_batch": "JW4",
+      "priority": null,
+      "first_seen": "2026-09-20",
+      "last_seen": "2026-09-20",
+      "career_url": "https://www.mi.com/global/about/careers/",
+      "expected_fit": 72,
+      "compensation_signal": "45-55k base disclosed for current Milan role",
+      "sources": {
+        "autonomous_discovery": {
+          "company": "Xiaomi Technology",
+          "first_seen": "2026-09-20",
+          "last_seen": "2026-09-20",
+          "validated_roles": [
+            {
+              "title": "Italy White Goods Product Manager",
+              "location": "Milan",
+              "status": "OPEN_DISCOVERED",
+              "expected_fit": 72,
+              "evidence": "3-5 years; GTM/category ownership, forecasting, inventory, pricing, profitability and e-commerce channels; material home-appliance domain gap."
+            }
+          ],
+          "target_locations": [
+            "Milan"
+          ],
+          "expected_fit": 72,
+          "compensation_signal": "45-55k base disclosed for current Milan role",
+          "career_url": "https://www.mi.com/global/about/careers/",
+          "ATS_guess": "TBD",
+          "recommended_batch": "JW4",
+          "evidence": "Strong functional overlap but domain-specific mandatory experience prevents immediate promotion."
+        }
+      }
+    }
+  },
+  "promoted_history": {},
+  "monitored_reviews": [
+    {
+      "company": "H&M",
+      "batch": "JW4",
+      "recommendation": "RAISE_PRIORITY",
+      "evidence": "Milan support office has Business Controlling as a formal work area. Historical/current Milan evidence includes Business Controller around EUR45k and Expansion Controller around EUR50k, with responsibilities in P&L, forecasting, business cases and profitability."
+    }
+  ]
+}

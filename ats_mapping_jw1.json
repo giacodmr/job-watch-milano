@@ -3,7 +3,7 @@
   "batch": "JW1",
   "batch_name": "Finance, Payments, Banking & Insurance",
   "source_repository": "giacodmr/job-watch-milano",
-  "last_mapped": "2026-09-14",
+  "last_mapped": "2026-10-04",
   "scope_note": "Technical ATS/career-inventory mapping only; this file does not contain vacancy screening results.",
   "verification_levels": {
     "FULL": "Complete official public inventory can be enumerated and completeness can be demonstrated.",
@@ -12,9 +12,9 @@
     "OPAQUE": "Official system is too closed, authenticated, anti-bot, or technically opaque for reliable verification."
   },
   "summary": {
-    "companies_analyzed": 53,
-    "FULL": 26,
-    "STRONG": 19,
+    "companies_analyzed": 56,
+    "FULL": 28,
+    "STRONG": 20,
     "PARTIAL": 8,
     "OPAQUE": 0
   },
@@ -1748,6 +1748,110 @@
         "Avature parameters/paging are visible, but an authoritative total-count contract or public feed was not independently verified."
       ],
       "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "Fiserv",
+      "batch": "JW1",
+      "priority": "P1++",
+      "ats": {
+        "family": "Workday",
+        "tenant": "fiserv",
+        "career_site": "https://www.careers.fiserv.com/",
+        "inventory_url": "https://fiserv.wd5.myworkdayjobs.com/EXT",
+        "public_api_or_feed": "https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday CXS limit/offset with total reconciliation",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official Fiserv Workday EXT inventory to exhaustion and retain target-geography roles for semantic review.",
+        "fallback": "Use the official Fiserv careers site only to rediscover the canonical Workday board if the tenant/site changes."
+      },
+      "limitations": [
+        "Some business roles are payments-domain specific; role fit must be decided from the full JD, not from title alone."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Worldpay",
+      "batch": "JW1",
+      "priority": "P1",
+      "ats": {
+        "family": "Workday",
+        "tenant": "worldpay",
+        "career_site": "https://jobs.worldpay.com/",
+        "inventory_url": "https://worldpay.wd5.myworkdayjobs.com/Worldpay_External_Careers_Site",
+        "public_api_or_feed": "https://worldpay.wd5.myworkdayjobs.com/wday/cxs/worldpay/Worldpay_External_Careers_Site/jobs"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "workday_cxs_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "Workday CXS limit/offset with total reconciliation",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official Worldpay Workday inventory to exhaustion and retain target-geography roles.",
+        "fallback": "Use Worldpay's official careers site to rediscover the Workday site if routing changes."
+      },
+      "limitations": [
+        "Product/implementation roles can be vertical or technical; full-JD semantic screening remains required."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Telepass",
+      "batch": "JW1",
+      "priority": "P1",
+      "ats": {
+        "family": "SAP SuccessFactors",
+        "tenant": null,
+        "career_site": "https://careers.telepass.com/",
+        "inventory_url": "https://careers.telepass.com/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "successfactors_jobs2web_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome"
+        ],
+        "pagination": "SuccessFactors Career Site Builder pagination/count reconciliation when exposed",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official Telepass SuccessFactors career site and reconcile displayed totals/pagination.",
+        "fallback": "If the board cannot be exhaustively enumerated, retain the official-source attempt as PARTIAL rather than substituting third-party boards."
+      },
+      "limitations": [
+        "The exact SuccessFactors backend endpoint is intentionally not guessed; verification relies on the public official Career Site Builder inventory."
+      ],
+      "last_mapped": "2026-10-04"
     }
+  ],
+  "notes": [
+    "The 2026-10-04 ATS expansion is now part of this canonical mapping; no runtime overlay is required."
   ]
 }

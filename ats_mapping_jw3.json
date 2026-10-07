@@ -1312,6 +1312,118 @@
         "Global Hitachi portal mixes sectors, so always retain Hitachi Energy company/sector filter."
       ],
       "last_mapped": "2026-09-14"
+    },
+    {
+      "company": "INWIT",
+      "batch": "JW3",
+      "priority": "P1++",
+      "ats": {
+        "family": "Oracle Recruiting Cloud / Oracle HCM",
+        "tenant": "CX_2001",
+        "career_site": "https://www.inwit.it/it/azienda/lavora-con-noi/",
+        "inventory_url": "https://fa-euqw-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/it/sites/CX_2001",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "STRONG",
+        "method": "oracle_candidate_experience_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Milano",
+          "Rome",
+          "Roma"
+        ],
+        "pagination": "Oracle Candidate Experience paged search with location facets",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official INWIT Oracle Candidate Experience site and retain Milan/Rome target roles.",
+        "fallback": "Use INWIT's official careers page to rediscover the Oracle Candidate Experience site if its host changes."
+      },
+      "limitations": [
+        "The Oracle candidate site is on an Oracle Cloud host; keep the first-party INWIT careers page as the canonical rediscovery path."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "NHOA Energy",
+      "batch": "JW3",
+      "priority": "P1_FUTURE",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://nhoa.energy/careers/",
+        "inventory_url": "https://nhoa.energy/careers/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_dynamic",
+        "location_filter_supported": false,
+        "locations": [
+          "Milan"
+        ],
+        "pagination": "Official careers page; exhaustive structured inventory endpoint not yet mapped",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Probe NHOA Energy's official careers page and capture stable official vacancy links when exposed.",
+        "fallback": "Retain PARTIAL official-source coverage until the underlying ATS/feed is mapped."
+      },
+      "limitations": [
+        "No exhaustive structured ATS/feed has yet been verified from the public careers frontend."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Cellnex Italia",
+      "batch": "JW3",
+      "priority": "P1_FUTURE",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://www.cellnex.com/talent/job-opportunities/",
+        "inventory_url": "https://www.cellnex.com/talent/job-opportunities/",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_dynamic",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Rome",
+          "Roma",
+          "Milan",
+          "Milano"
+        ],
+        "pagination": "Official job-opportunities frontend; exhaustive structured endpoint not yet mapped",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Probe Cellnex's official job-opportunities page and retain target-geography official links.",
+        "fallback": "Retain PARTIAL coverage until the underlying structured inventory can be verified."
+      },
+      "limitations": [
+        "The public page does not yet provide a mapped exhaustible backend to the current collector."
+      ],
+      "last_mapped": "2026-10-04"
     }
+  ],
+  "last_mapped": "2026-10-04",
+  "summary": {
+    "companies_analyzed": 43,
+    "FULL": 18,
+    "STRONG": 13,
+    "PARTIAL": 11,
+    "OPAQUE": 1
+  },
+  "notes": [
+    "The 2026-10-04 ATS expansion is now part of this canonical mapping; no runtime overlay is required."
   ]
 }

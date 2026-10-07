@@ -4,19 +4,20 @@
   "batch_name": "Strategy, Consulting & Tech",
   "source_repository": "giacodmr/job-watch-milano",
   "source_batch_file": "job_watch_batches.json",
-  "last_mapped": "2026-09-20",
+  "last_mapped": "2026-10-04",
   "summary": {
-    "companies_analyzed": 48,
-    "FULL": 21,
+    "companies_analyzed": 53,
+    "FULL": 24,
     "STRONG": 19,
-    "PARTIAL": 8,
+    "PARTIAL": 10,
     "OPAQUE": 0
   },
   "notes": [
     "job_watch_batches.json is the definitive source for batch membership.",
     "FULL is assigned only where the official inventory can be exhaustively enumerated or a provider-documented public job feed can represent all published postings.",
     "Structured feed URLs derived from a verified Greenhouse/Ashby/SmartRecruiters board or company identifier are recorded only when the vendor's official documentation states that the endpoint is public and unauthenticated; this session's web URL-safety layer may still prevent raw endpoint opening.",
-    "LinkedIn, Glassdoor and aggregators are not completeness sources."
+    "LinkedIn, Glassdoor and aggregators are not completeness sources.",
+    "The 2026-10-04 ATS expansion is now part of this canonical mapping; no runtime overlay is required."
   ],
   "companies": [
     {
@@ -1573,6 +1574,168 @@
         "Map the underlying ATS/structured inventory in a later remediation run before assigning VERIFIED."
       ],
       "last_mapped": "2026-09-20"
+    },
+    {
+      "company": "Docebo",
+      "batch": "JW2",
+      "priority": "P1++",
+      "ats": {
+        "family": "Lever",
+        "tenant": "docebo",
+        "career_site": "https://www.docebo.com/company/careers/",
+        "inventory_url": "https://jobs.lever.co/docebo",
+        "public_api_or_feed": "https://api.lever.co/v0/postings/docebo"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "lever_api_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "London"
+        ],
+        "pagination": "Lever API skip/limit to exhaustion",
+        "total_count_available": false,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official Docebo Lever board/API to exhaustion and retain target-geography roles.",
+        "fallback": "Use the official Docebo careers page to rediscover the Lever tenant."
+      },
+      "limitations": [
+        "Brianza roles without Milan/Milano in the official location string remain outside the current Milan/Rome/London geographic matcher."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Experian",
+      "batch": "JW2",
+      "priority": "P1",
+      "ats": {
+        "family": "SmartRecruiters",
+        "tenant": "Experian",
+        "career_site": "https://careers.smartrecruiters.com/Experian/",
+        "inventory_url": "https://careers.smartrecruiters.com/Experian/",
+        "public_api_or_feed": "https://api.smartrecruiters.com/v1/companies/Experian/postings"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "smartrecruiters_api_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Italy",
+          "Milan",
+          "Rome",
+          "London"
+        ],
+        "pagination": "SmartRecruiters company postings API pagination",
+        "total_count_available": true,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate Experian's official SmartRecruiters company inventory and retain target-geography roles.",
+        "fallback": "Use the public Experian SmartRecruiters career board to rediscover the company identifier."
+      },
+      "limitations": [
+        "Commercial/sales-heavy roles still require semantic filtering; employer inclusion is driven by Product & Proposition and adjacent strategy families."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "DAZN",
+      "batch": "JW2",
+      "priority": "P1",
+      "ats": {
+        "family": "Pinpoint / custom career site",
+        "tenant": null,
+        "career_site": "https://careers.dazn.com/",
+        "inventory_url": "https://careers.dazn.com/en/all-jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_dynamic",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "London"
+        ],
+        "pagination": "Dynamic official Pinpoint-powered board; exhaustive structured endpoint not yet mapped",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Probe the official DAZN all-jobs inventory and capture stable official role links exposed by the page.",
+        "fallback": "Keep PARTIAL coverage and remediate the Pinpoint endpoint separately; do not replace official coverage with a third-party inventory."
+      },
+      "limitations": [
+        "Collector has no dedicated Pinpoint adapter yet, so this source initially uses the official-source probe."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Spotify",
+      "batch": "JW2",
+      "priority": "P1_FUTURE",
+      "ats": {
+        "family": "Custom official careers",
+        "tenant": null,
+        "career_site": "https://www.lifeatspotify.com/",
+        "inventory_url": "https://www.lifeatspotify.com/jobs",
+        "public_api_or_feed": null
+      },
+      "verification": {
+        "level": "PARTIAL",
+        "method": "official_career_site_dynamic",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "London"
+        ],
+        "pagination": "Dynamic official careers inventory; structured exhaustive endpoint not yet mapped",
+        "total_count_available": false,
+        "full_inventory_possible": false
+      },
+      "job_watch_method": {
+        "primary": "Probe Spotify's official jobs page and collect target-geography official job links exposed by the live inventory.",
+        "fallback": "Use official Life at Spotify location/job pages only; third-party postings are discovery evidence, not inventory truth."
+      },
+      "limitations": [
+        "The current implementation cannot certify exhaustive enumeration of the custom Spotify jobs frontend."
+      ],
+      "last_mapped": "2026-10-04"
+    },
+    {
+      "company": "Contentsquare",
+      "batch": "JW2",
+      "priority": "P1_FUTURE",
+      "ats": {
+        "family": "Lever",
+        "tenant": "contentsquare",
+        "career_site": "https://careers.contentsquare.com/",
+        "inventory_url": "https://jobs.lever.co/contentsquare",
+        "public_api_or_feed": "https://api.lever.co/v0/postings/contentsquare"
+      },
+      "verification": {
+        "level": "FULL",
+        "method": "lever_api_inventory",
+        "location_filter_supported": true,
+        "locations": [
+          "Milan",
+          "Milano",
+          "London"
+        ],
+        "pagination": "Lever API skip/limit to exhaustion",
+        "total_count_available": false,
+        "full_inventory_possible": true
+      },
+      "job_watch_method": {
+        "primary": "Enumerate the official Contentsquare Lever inventory to exhaustion and retain target-geography roles.",
+        "fallback": "Use Contentsquare's official careers site to rediscover the Lever tenant."
+      },
+      "limitations": [],
+      "last_mapped": "2026-10-04"
     }
   ]
 }

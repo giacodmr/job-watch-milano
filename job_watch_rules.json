@@ -1,6 +1,6 @@
 {
   "version": "1.8",
-  "updated": "2026-10-03",
+  "updated": "2026-10-07",
   "locations": {
     "primary": [
       "Milan",
@@ -298,7 +298,7 @@
   },
   "company_self_improvement_policy": {
     "enabled": true,
-    "staging_file": "discovery_candidates.json",
+    "staging_file": "company_candidates.json",
     "purpose": "Continuously discover high-value employers outside the current watchlist without polluting the permanent company universe.",
     "discovery_sources": [
       "independent web/job-board discovery",
@@ -312,7 +312,7 @@
       "not in user exclusion list"
     ],
     "promotion_rule": "Promote to the appropriate JW batch when either (A) at least 2 distinct validated in-scope roles are observed within 30 days, or (B) one Milan/Rome role has expected fit >=85 and the employer has attractive compensation/career relevance. London-only companies require stronger evidence and expected fit >=85.",
-    "promotion_action": "On promotion, add the company to companies_job_watch_v2.json and the correct job_watch_batches.json batch, then create/update an ATS mapping. If ATS cannot yet be mapped safely, keep the company staged and continue discovery.",
+    "promotion_action": "On promotion, add the company to companies_job_watch_v2.json and the correct job_watch_batches.json batch, then create/update the canonical batch ATS mapping. If ATS cannot yet be mapped safely, keep it in company_candidates.json.",
     "pruning_rule": "Remove or archive a candidate after 60 days with no further relevant validated role.",
     "no_auto_promotion_if": [
       "mostly pure sales/marketing/CRM hiring",
@@ -320,7 +320,7 @@
       "compensation/career value is clearly below current targets",
       "official source cannot be validated"
     ],
-    "cadence": "Weekly; discovery_candidates.json is a manual staging registry consumed by ChatGPT, not an automatic collector."
+    "cadence": "Weekly; company_candidates.json is the single manual staging registry consumed by ChatGPT, not an automatic collector."
   },
   "reporting_efficiency_policy": {
     "one_daily_report": true,
@@ -627,5 +627,13 @@
     "delta_rule": "Pending NEW/materially UPDATED items survive lifecycle rollover until decided and reporting reconciled. Unchanged valid decisions are reused.",
     "backlog_rule": "Pre-existing unassigned pending rows are historical backlog; select at most 20 per stable snapshot after the daily delta. Priority pending and explicit TO_REVIEW/INTERESTED remain daily.",
     "snapshot_rule": "Before atomic persistence compare source_generated_at, priority_snapshot_at, run_id and rules_sha256 to the worklist snapshot. Abort/rebase if changed; never certify stale results."
+  },
+  "configuration_authority": {
+    "active_employer_business_metadata": "companies_job_watch_v2.json",
+    "batch_routing": "job_watch_batches.json",
+    "candidate_staging": "company_candidates.json",
+    "curated_employer_research_radar": "extra_company_watchlist.json",
+    "technical_ats_access": "ats_mapping_jw1.json ... ats_mapping_jw4.json",
+    "principle": "Each concept has one operational authority; descriptive copies do not override it."
   }
 }
