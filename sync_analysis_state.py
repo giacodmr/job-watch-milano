@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 import re
-from harden_job_watch_state import semantic_decision_valid, needs_applied_review, queue_row, queue_sort_key
+from harden_job_watch_state import semantic_decision_valid, queue_row, queue_sort_key
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -178,6 +178,7 @@ MARKETING_CRM_REVIEW_EXCEPTIONS = re.compile(
 
 SEMANTIC_FIELDS = (
     "decision",
+    "material_change",
     "reason",
     "fit_score",
     "experience_required",
@@ -268,9 +269,11 @@ def canonical_key(url: str | None) -> str | None:
     return str(url).split("#", 1)[0].rstrip("/").casefold()
 
 
-def threshold_for(location: str | None) -> int:
-    loc = (location or "").casefold()
-    return 80 if ("london" in loc or "luxembourg" in loc or "luxemburg" in loc) else 70
+def threshold_for(location: str | None, root=None) -> int:
+    from location_policy import geographies
+    config = read_json((root or ROOT) / 'job_watch_rules.json', {}).get('reporting_thresholds_by_geography', {})
+    city = next((c for c in ('Milan', 'Rome', 'Luxembourg', 'London') if c in geographies(location)), 'Milan')
+    return config.get(city, 80 if city in {'London','Luxembourg'} else 70)
 
 
 def decision_valid(
@@ -284,7 +287,7 @@ def decision_valid(
                                               "priority_company": priority_company})[0]
 
 
-def add_standard_jobs(current: dict):
+def add_standard_jobs(current: dict, root=None):
     current_all = {}
     current_open = {}
     url_to_key = {}
@@ -295,6 +298,8 @@ def add_standard_jobs(current: dict):
         for job in company.get("jobs", []):
             if not isinstance(job,dict) or not company_name or job.get("source_id") is None:
                 continue
+            from location_policy import allowed
+            if not allowed(company_name, job.get('location'), root or ROOT) and not (job.get('status') == 'UNKNOWN' and not job.get('location')): continue
             key = job_key(company_name, job.get("source_id"))
             item = dict(job)
             item["_company_name"] = company_name
@@ -317,6 +322,8 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
     source = read_json(ROOT / "amazon_target_check.json", {})
     for raw in source.get("target_jobs", []):
         if not isinstance(raw,dict): continue
+        from location_policy import allowed
+        if not allowed('Amazon', raw.get('location') or raw.get('normalized_location') or raw.get('target_city'), ROOT): continue
         unknown = raw.get('status') == 'UNKNOWN'
         if raw.get("status") not in OPEN_STATUSES and not unknown:
             continue
@@ -357,6 +364,7 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
                 "fingerprint": raw.get("fingerprint"),
                 "status": raw.get("status"),
                 "_company_name": "Amazon",
+                "first_seen_at": raw.get("first_seen_at") or source.get("checked_at"),
             }
             current_all[key] = item
             current_open[key] = item
@@ -371,8 +379,6 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
             "role_family": raw.get("role_family"),
             "job_category": raw.get("job_category"),
             "business_scope_reason": raw.get("business_scope_reason"),
-            "basic_qualifications": raw.get("basic_qualifications"),
-            "preferred_qualifications": raw.get("preferred_qualifications"),
             "required_years_mentions": raw.get("required_years_mentions"),
             "preferred_years_mentions": raw.get("preferred_years_mentions"),
             "required_min_years": raw.get("required_min_years"),
@@ -399,25 +405,21 @@ def overlay_amazon_priority(batch: str, current_all: dict, current_open: dict, u
         item["location"] = raw.get("location") or item.get("location")
 
 
-def sync_batch(batch: str) -> dict:
-    current_path = ROOT / f"current_jobs_{batch}.json"
-    state_path = ROOT / f"analysis_results_{batch}.json"
-    decisions_path = ROOT / f"semantic_decisions_{batch}.json"
-    surfaced_path = ROOT / f"surfaced_jobs_{batch}.json"
-    queue_path = ROOT / f"semantic_queue_{batch}.json"
-    user_decisions_path = ROOT / "user_job_decisions.json"
+def project_batch(batch: str, root=None, *, memory_override=None, at=None) -> dict:
+    """Pure operational projection from official current state and durable memory."""
+    from job_memory import load_memory
+    current = read_json((root or ROOT) / f'current_jobs_{batch}.json', {})
+    if not isinstance(current.get('companies'), list): raise ValueError('Invalid current inventory')
+    memory = (load_memory(batch, root or ROOT) if memory_override is None else memory_override)['records']
+    current_all, current_open, url_to_key = add_standard_jobs(current, root)
+    from job_memory import resolve_identities
+    effective, alias_keys = resolve_identities(current_all,memory)
+    decisions = {k:r.get('semantic', {}) for k,r in effective.items()}
+    surfaced_registry = {k:{**r.get('surfacing', {}), 'surfaced_at':r.get('surfacing', {}).get('last_surfaced_at'),
+        'fingerprint':r.get('surfacing', {}).get('last_surfaced_fingerprint')} for k,r in effective.items()}
+    user_decisions = {k:r.get('user', {}) for k,r in effective.items()}
 
-    current = read_json(current_path, {})
-    old_state = read_json(state_path, {"records": {}})
-    old_records = old_state.get("records") or {}
-    decisions = (read_json(decisions_path, {"records": {}}).get("records") or {})
-    surfaced_registry = (read_json(surfaced_path, {"records": {}}).get("records") or {})
-    user_decisions_payload = read_json(user_decisions_path, {"records": {}})
-    user_decisions = user_decisions_payload.get("records") or {}
-    user_decisions_backfilled = False
-
-    current_all, current_open, url_to_key = add_standard_jobs(current)
-    overlay_amazon_priority(batch, current_all, current_open, url_to_key)
+    # Priority inventory is reconciled into current_jobs during sync, not read by projections.
 
     # Mastercard is collected through the standard Workday inventory, but it is
     # a priority company in JW1 just like Amazon is in JW2. Mark it explicitly
@@ -429,11 +431,11 @@ def sync_batch(batch: str) -> dict:
 
     records = {}
     preserved = 0
-    reset = 0
 
     for key, job in current_open.items():
         company_name = job.get("_company_name")
         fingerprint = job.get("fingerprint")
+        priority_company = company_name == "Mastercard" or bool(job.get("_priority_company") or job.get("priority_company"))
         def safe_row(store):
             row = store.get(key) or {}
             if not isinstance(row,dict):
@@ -441,7 +443,7 @@ def sync_batch(batch: str) -> dict:
                 record_error('LOCAL_RECORD_ERROR','semantic_sync','INVALID_REGISTRY_RECORD','Ignore malformed row, retain registry history and reopen review',root=ROOT,batch=batch.upper(),job_key=key)
                 return {}
             return row
-        old = safe_row(old_records)
+        old = {**effective.get(key, {}).get("identity", {}), **safe_row(decisions)}
         exclusion = hard_exclusion_reason(str(job.get("title") or ""))
         # Exclude US London (Kentucky) rows already captured in this snapshot.
         loc = str(job.get("location") or "")
@@ -453,18 +455,9 @@ def sync_batch(batch: str) -> dict:
             exclusion = "salary_below_floor"
         surfaced = safe_row(surfaced_registry)
         user_decision = safe_row(user_decisions)
-        if user_decision and not user_decision.get("fingerprint") and fingerprint:
-            user_decision["fingerprint"] = fingerprint
-            user_decisions[key] = user_decision
-            user_decisions_backfilled = True
-        raw_user_decision = user_decision.get("decision")
-        user_decision_fingerprint = user_decision.get("fingerprint")
-        user_decision_stale = bool(
-            raw_user_decision == "NOT_INTERESTED"
-            and user_decision_fingerprint
-            and user_decision_fingerprint != fingerprint
-        )
-        effective_user_decision = None if user_decision_stale else raw_user_decision
+        raw_user_decision = user_decision.get('decision')
+        user_decision_fingerprint = user_decision.get('fingerprint')
+        effective_user_decision = raw_user_decision
 
         rec = {
             "company": company_name,
@@ -472,8 +465,8 @@ def sync_batch(batch: str) -> dict:
             "title": job.get("title"),
             "location": job.get("location"),
             "target_city": job.get("target_city"),
-            "priority_company": bool(job.get("_priority_company")),
-            "priority_jd_stale": bool(job.get("_priority_jd_stale")),
+            "priority_company": priority_company,
+            "priority_jd_stale": bool(job.get("_priority_jd_stale") or job.get("priority_jd_stale")),
             "role_family": job.get("role_family"),
             "job_category": job.get("job_category"),
             "canonical_url": job.get("canonical_url") or job.get("url"),
@@ -481,19 +474,20 @@ def sync_batch(batch: str) -> dict:
             "fingerprint": fingerprint,
             "current_status": job.get("status"),
             "current_open": True,
-            "threshold": threshold_for(str(job.get("target_city") or job.get("location") or "")),
-            "first_seen_at": old.get("first_seen_at") or current.get("generated_at") or utc_now(),
-            "last_seen_at": current.get("generated_at") or utc_now(),
+            "threshold": threshold_for(str(job.get("target_city") or job.get("location") or ""),root),
+            "first_seen_at": job.get("first_seen_at") or old.get("first_seen_at") or current.get("generated_at"),
+            "last_seen_at": job.get("last_seen_at") or current.get("generated_at"),
             "surfaced_at": surfaced.get("surfaced_at") or old.get("surfaced_at"),
             "surfaced_status": surfaced.get("surfaced_status") or old.get("surfaced_status"),
             "user_decision": effective_user_decision,
-            "user_decision_original": raw_user_decision,
             "user_decision_fingerprint": user_decision_fingerprint,
-            "user_decision_stale": user_decision_stale,
             "user_decision_reason": user_decision.get("reason"),
             "user_decided_at": user_decision.get("decided_at"),
             "suppress_from_apply_now": effective_user_decision in {"APPLIED", "NOT_INTERESTED"},
         }
+        if 'historical_evidence' in decision:
+            rec['requires_full_jd_review'] = True
+            rec['guardrail_reason'] = 'historical_evidence_shortened'
 
         if surfaced.get("fingerprint") or old.get("surfaced_fingerprint"):
             rec["surfaced_fingerprint"] = surfaced.get("fingerprint") or old["surfaced_fingerprint"]
@@ -522,14 +516,14 @@ def sync_batch(batch: str) -> dict:
                 "salary_source": old.get("salary_source"),
                 "reportable": False,
                 "rationale": user_decision.get("reason") or "Explicit user decision: not interested.",
-                "analyzed_at": user_decision.get("decided_at") or utc_now(),
+                "analyzed_at": user_decision.get("decided_at"),
             })
             preserved += 1
         elif effective_user_decision == "APPLIED" and not decision_valid(
             decision,
             fingerprint,
             title=job.get("title"),
-            priority_company=bool(job.get("_priority_company")),
+            priority_company=priority_company,
         ):
             rec.update({
                 "needs_analysis": False,
@@ -542,10 +536,10 @@ def sync_batch(batch: str) -> dict:
                 "salary_source": old.get("salary_source"),
                 "reportable": False,
                 "rationale": user_decision.get("reason") or "Explicit user decision: already applied.",
-                "analyzed_at": user_decision.get("decided_at") or utc_now(),
+                "analyzed_at": user_decision.get("decided_at"),
             })
             preserved += 1
-        elif exclusion and (exclusion in {"m_and_a_title_user_exclusion", "outside_target_geography", "internship", "salary_below_floor"} or (not bool(job.get("_priority_company")) and not re.search(
+        elif exclusion and (exclusion in {"m_and_a_title_user_exclusion", "outside_target_geography", "internship", "salary_below_floor"} or (not priority_company and not re.search(
             r"(?:l\.?\s*68\s*/\s*99|law\s*68\s*/\s*99|protected categor|categorie protette|categoria protetta)",
             str(job.get("title") or ""),
             re.I,
@@ -561,14 +555,14 @@ def sync_batch(batch: str) -> dict:
                 "salary_source": None,
                 "reportable": False,
                 "rationale": f"Hard-excluded by approved conservative title rule: {exclusion}.",
-                "analyzed_at": old.get("analyzed_at") if old.get("fingerprint") == fingerprint and old.get("hard_exclusion_reason") == exclusion else utc_now(),
+                "analyzed_at": old.get("analyzed_at") if old.get("fingerprint") == fingerprint and old.get("hard_exclusion_reason") == exclusion else current.get("generated_at"),
             })
             preserved += 1
         elif decision_valid(
             decision,
             fingerprint,
             title=job.get("title"),
-            priority_company=bool(job.get("_priority_company")),
+            priority_company=priority_company,
         ):
             rec.update({
                 "needs_analysis": False,
@@ -594,54 +588,33 @@ def sync_batch(batch: str) -> dict:
                 "rationale": None,
                 "analyzed_at": None,
             })
-            reset += 1
         if decision.get("analysis_method") == "chatgpt_semantic_triage" and not rec["needs_analysis"]:
             rec.update(fit_score=0, reportable=False)
-        # Pending material deltas survive NEW -> STILL_OPEN and failed/unfinished daily runs.
-        material_change = bool(old and old.get("fingerprint") != fingerprint)
-        delta_pending = bool(
-            old.get("delta_pending") or job.get("status") in {"NEW", "UPDATED"}
-            or material_change or user_decision_stale
-        )
-        if not rec["needs_analysis"] and (not rec.get("reportable") or surfaced.get("fingerprint") == fingerprint):
-            delta_pending = False
-        if delta_pending:
-            rec["delta_pending"] = True
-        rec["applied_material_update"] = bool(effective_user_decision == "APPLIED" and (
-            job.get("status") == "UPDATED" or material_change or old.get("applied_material_update")
-        ) and surfaced.get("fingerprint") != fingerprint)
-        if needs_applied_review(rec):
-            rec.update(needs_analysis=True, analysis_status="PENDING", analysis_method=None)
+        from job_memory import material_signature
+        history = effective.get(key, {}).get('surfacing', {})
+        rec.update(surfacing=history, material_signature=material_signature(rec))
+        from jd_retry import matching, eligible
+        from pipeline_state import now
+        technical = effective.get(key, {}).get('jd_fetch')
+        if matching(technical, rec):
+            rec['jd_fetch'] = technical
+        rec['worker_eligible'] = bool(rec['needs_analysis'] and eligible(technical, rec, at or now()))
         records[key] = rec
 
-    # Historical rows remain so surfaced history is not lost.
-    for key, old in old_records.items():
-        if key in records:
-            continue
-        if not isinstance(old,dict):
-            from pipeline_state import record_error
-            record_error('LOCAL_RECORD_ERROR','semantic_sync','INVALID_HISTORY_ROW','History retained in source store',root=ROOT,batch=batch.upper(),job_key=key)
-            continue
-        rec = dict(old)
-        rec["current_open"] = False
-        if rec.get("company") == "ION Group":
-            rec["excluded_company"] = True
-            rec["reportable"] = False
-        if key in current_all:
-            rec["current_status"] = current_all[key].get("status")
-            rec["last_seen_at"] = current.get("generated_at") or utc_now()
-        records[key] = rec
-
-    # A never-analyzed persisted choice can still have a real UNKNOWN/CLOSED
-    # lifecycle row. Include it without manufacturing a semantic decision.
-    for key,job in current_all.items():
-        if key in records or job.get('status') in OPEN_STATUSES: continue
-        user = user_decisions.get(key,{})
-        if not isinstance(user,dict): user = {}
-        records[key] = {'company':job.get('_company_name'),'source_id':str(job.get('source_id')),
-                        'title':job.get('title'),'location':job.get('location'),'canonical_url':job.get('canonical_url'),'apply_url':job.get('apply_url'),
-                        'fingerprint':job.get('fingerprint'),'current_status':job.get('status'),'current_open':False,'needs_analysis':False,
-                        'user_decision':user.get('decision'),'reconciliation_state':job.get('reconciliation_state')}
+    for key, job in current_all.items():
+        if key in records: continue
+        user = user_decisions.get(key, {})
+        records[key] = {**job, 'company':job.get('_company_name'), 'current_status':job.get('status'),
+            'current_open':False, 'needs_analysis':False, 'user_decision':user.get('decision'),
+            'surfacing':effective.get(key, {}).get('surfacing', {})}
+    # Missing/closed identities with active choices remain visible, without a
+    # historical inventory or archive read and without reopening semantic review.
+    for key, mem in memory.items():
+        from location_policy import allowed
+        identity = mem.get('identity', {})
+        if key not in records and key not in alias_keys and mem.get('user', {}).get('decision') in {'INTERESTED','TO_REVIEW'} and (allowed(identity.get('company'), identity.get('location'), root or ROOT) or not identity.get('location')):
+            records[key] = {**mem.get('identity', {}), 'current_open':False, 'current_status':'CLOSED',
+                'needs_analysis':False, 'user_decision':mem['user']['decision'], 'surfacing':mem.get('surfacing', {})}
 
     open_records = [r for r in records.values() if r.get("current_open")]
     pending_records = [(k, r) for k, r in records.items() if r.get("current_open") and r.get("needs_analysis")]
@@ -659,32 +632,21 @@ def sync_batch(batch: str) -> dict:
     ]
     surfaced = [r for r in reportable if r.get("surfaced_at")]
 
-    queue_records = [queue_row(key, rec) for key, rec in pending_records]
+    queue_records = [queue_row(key, rec) for key, rec in pending_records if rec['worker_eligible']]
     queue_records.sort(key=queue_sort_key)
 
     payload = {
         "version": "2.0",
         "batch": batch.upper(),
-        "synced_at": utc_now(),
         "source_generated_at": current.get("generated_at"),
-        "policy": {
-            "milan_rome_threshold": 70,
-            "london_luxembourg_threshold": 80,
-            "no_top_n_cap": True,
-            "semantic_analysis_required": True,
-            "semantic_analysis_owner": "ChatGPT recurring JW task",
-            "manager_senior_lead_auto_exclusion": False,
-            "decision_registry": decisions_path.name,
-            "surfaced_registry": surfaced_path.name,
-            "queue_file": queue_path.name,
-            "user_decisions_registry": user_decisions_path.name,
-            "never_reviewed_never_surfaced_guard": True,
-        },
         "summary": {
             "open_extracted": len(current_open),
             "open_state_records": len(open_records),
             "valid_current_analysis": preserved,
             "pending_analysis": len(pending_records),
+            "processable_pending": len(queue_records),
+            "jd_retry_deferred": sum(not r['worker_eligible'] and r.get('jd_fetch',{}).get('status') == 'RETRY_PENDING' for _,r in pending_records),
+            "jd_unavailable": sum(r.get('jd_fetch',{}).get('status') == 'JD_UNAVAILABLE' for _,r in pending_records),
             "analyzed_current": len(analyzed),
             "hard_rule_analyzed": len(hard_rule_analyzed),
             "semantic_analyzed": len(semantic_analyzed),
@@ -692,43 +654,18 @@ def sync_batch(batch: str) -> dict:
             "active_shortlist": len(active_shortlist),
             "applied_open": sum(1 for r in open_records if r.get("user_decision") == "APPLIED"),
             "not_interested_open": sum(1 for r in open_records if r.get("user_decision") == "NOT_INTERESTED"),
-            "stale_user_decisions": sum(1 for r in open_records if r.get("user_decision_stale")),
             "surfaced_current": len(surfaced),
         },
         "records": records,
     }
-    write_json(state_path, payload)
-
-    queue_payload = {
-        "version": "1.0",
-        "batch": batch.upper(),
-        "generated_at": utc_now(),
-        "pending_count": len(queue_records),
-        "instructions": (
-            "ChatGPT may close only clearly impossible roles from title+metadata; any plausibly relevant role requires the full official JD. "
-            "Manager/Senior/Lead is never an automatic exclusion and business-compatible Manager/Senior/Lead roles require full-JD review. "
-            "Persist completed decisions in the matching semantic_decisions file using job_key and the exact fingerprint."
-        ),
-        "triage_decision_fields": ["fingerprint", "analysis_status", "analysis_method=chatgpt_semantic_triage", "decision=REJECT", "reason", "rationale", "analyzed_at"],
-        "required_decision_fields": [
-            "fingerprint", "analysis_status=ANALYZED", "analysis_method=chatgpt_semantic_title_metadata|chatgpt_semantic_full_jd",
-            "fit_score", "experience_required", "mandatory_years_experience",
-            "preferred_years_experience", "mandatory_vs_preferred_requirements",
-            "people_management_required", "individual_contributor_possible",
-            "decision_scope_and_ownership", "role_level_assessment",
-            "seniority_evidence", "final_experience_status", "salary",
-            "salary_source", "reportable", "rationale", "analyzed_at"
-        ],
-        "records": queue_records,
-    }
-    write_json(queue_path, queue_payload)
-
-    if user_decisions_backfilled:
-        user_decisions_payload["records"] = user_decisions
-        user_decisions_payload["updated_at"] = utc_now()
-        write_json(user_decisions_path, user_decisions_payload)
-
+    payload['queue'] = queue_records
     return payload
+
+
+def sync_batch(batch: str) -> dict:
+    from state_maintenance import maintain_batch
+    maintain_batch(batch, ROOT)
+    return project_batch(batch)
 
 
 def main() -> int:

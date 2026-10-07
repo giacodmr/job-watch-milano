@@ -25,7 +25,7 @@ TIMEOUT = 30
 MAX_PAGES = 250
 DEFAULT_WORKERS = 6
 COLLECTOR_VERSION = "1.5"
-TARGET_LOCATION_RE = re.compile(r"(?<!\w)(milan|milano|rome|roma|london)(?!\w)", re.I)
+TARGET_LOCATION_RE = re.compile(r"(?<!\w)(milan|milano|rome|roma|london|luxembourg|luxemburg)(?!\w)", re.I)
 OPEN_STATUSES = {"NEW", "STILL_OPEN", "UPDATED"}
 
 LOCALE_SEGMENT_RE = re.compile(r"^[a-z]{2}(?:-[A-Z]{2})?$")
@@ -158,29 +158,11 @@ def html_to_text(v):
 
 
 def location_matches(location, company_name: str | None = None) -> bool:
-    """Match standard target cities; Mastercard additionally includes Luxembourg."""
-    if not location:
-        return False
-    s = str(location)
-    mastercard_lux = (
-        (company_name or "").casefold() == "mastercard"
-        and re.search(r"(?<!\\w)(luxembourg|luxemburg)(?!\\w)", s, re.I)
-    )
-    if not TARGET_LOCATION_RE.search(s) and not mastercard_lux:
-        return False
-    # London, Kentucky is in the US, not in the target UK London scope.
-    if (re.search(r"\bLondon\s*,\s*(?:KY|Kentucky)\b", s, re.I)
-            and not re.search(r"\bLondon\s*,?\s*(?:UK|GB|England|United Kingdom)\b", s, re.I)):
-        return False
-    if re.search(r"\bLondon\s*,\s*(?:ON|Ontario)(?:\s*,|\b)", s, re.I):
-        return False
-    if re.search(r"\bLondon\b.*\bCanada\b", s, re.I):
-        return False
-    if re.search(r"\bEast\s+London\b", s, re.I) and re.search(r"\b(?:ZAF|South\s+Africa)\b", s, re.I):
-        return False
-    if re.search(r"\b(?:Milan|Rome)\s*,\s*[A-Z]{2}\s*,\s*(?:US|USA|United States)\b", s, re.I):
-        return False
-    return True
+    from location_policy import allowed
+    progress = getattr(_thread_local, 'collection_progress', None)
+    company_name = company_name or (progress or {}).get('company')
+    return allowed(company_name, location, ROOT)
+
 
 def epoch_millis_to_iso(v):
     try:
@@ -331,7 +313,7 @@ def collect_lever(company):
                 canonical=raw.get("hostedUrl"),
                 apply_url=raw.get("applyUrl"),
             )
-            if location_matches(j["location"]):
+            if location_matches(j["location"], name):
                 jobs.append(j)
         except Exception as exc:
             normalization_error(company,exc,locals().get('raw',{}))
@@ -372,7 +354,7 @@ def collect_ashby(company):
                 canonical=raw.get("jobUrl") or raw.get("url"),
                 apply_url=raw.get("applyUrl"),
             )
-            if location_matches(j["location"]):
+            if location_matches(j["location"], name):
                 jobs.append(j)
         except Exception as exc:
             normalization_error(company,exc,locals().get('raw',{}))
@@ -420,7 +402,7 @@ def collect_greenhouse(company):
                 canonical=raw.get("absolute_url"),
                 apply_url=raw.get("absolute_url"),
             )
-            if location_matches(loc):
+            if location_matches(loc, name):
                 jobs.append(j)
         except Exception as exc:
             normalization_error(company,exc,locals().get('raw',{}))
@@ -476,7 +458,7 @@ def collect_smartrecruiters(company):
         try:
             loc = raw.get("location") or {}
             loc_text = ", ".join(str(x) for x in (loc.get("city"), loc.get("region"), loc.get("country")) if x)
-            if not location_matches(loc_text):
+            if not location_matches(loc_text, name):
                 continue
             dept = raw.get("department") or {}
             employment = raw.get("typeOfEmployment") or {}
@@ -659,7 +641,7 @@ def collect_workable(company):
                 canonical=raw.get("application_url") or raw.get("shortlink"),
                 apply_url=raw.get("url"),
             )
-            if location_matches(j["location"]):
+            if location_matches(j["location"], name):
                 jobs.append(j)
         except Exception as exc:
             normalization_error(company,exc,locals().get('raw',{}))
@@ -993,7 +975,7 @@ def collect_successfactors(company):
     for raw in inventory_jobs.values():
         try:
             loc = clean_text(raw.get("location"))
-            if not location_matches(loc):
+            if not location_matches(loc, name):
                 continue
             j = compact_job(
                 name,
@@ -1091,7 +1073,10 @@ def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tup
         try:
             sid = str(j["source_id"])
             k = key(name, sid)
+            if not location_matches(j.get("location"), name): continue
             old = prev.get(k)
+            j["first_seen_at"] = (old or {}).get("first_seen_at") or utc_now()
+            j["last_seen_at"] = utc_now()
             j["fingerprint"] = metadata_fingerprint(j)
             if old is None:
                 j["status"] = "NEW"
@@ -1108,6 +1093,7 @@ def reconcile_company(company: dict, result: dict, prev: dict[str, dict]) -> tup
     for k, old in prev.items():
         if not k.startswith(f"{name}::"):
             continue
+        if not location_matches(old.get("location"), name): continue
         sid = str(old.get("source_id"))
         if sid in ids:
             continue
@@ -1229,7 +1215,7 @@ def build_batch_snapshot(batch: str, workers: int = DEFAULT_WORKERS):
             "SAP SuccessFactors / jobs2web",
             "Workable",
         ],
-        "location_scope": ["Milan", "Milano", "Rome", "Roma", "London"],
+        "location_scope": ["Milan", "Milano", "Rome", "Roma", "London", "Luxembourg"],
         "coverage_note": (
             "VERIFIED means the structured/public inventory was exhausted and reconciled in this run. "
             "PARTIAL means an official method was actually attempted but exhaustiveness could not be proven. "
@@ -1433,7 +1419,7 @@ def collect_teamtailor(company):
     for sid, raw in unique.items():
         try:
             loc = teamtailor_location(raw.get("context_parts") or [])
-            if not location_matches(loc):
+            if not location_matches(loc, name):
                 continue
             jobs.append(compact_job(name, sid, title=raw.get("title"), location=loc, canonical=raw.get("url"), apply_url=raw.get("url")))
         except Exception as exc:
@@ -1608,7 +1594,7 @@ def _collect_oracle_once(company):
         try:
             sid = oracle_source_id(raw)
             loc = oracle_location(raw)
-            if not sid or not location_matches(loc):
+            if not sid or not location_matches(loc, name):
                 continue
             canonical = f"{public_base}/job/{sid}"
             jobs.append(compact_job(name, sid, title=raw.get("Title"), location=loc, department=raw.get("Department") or raw.get("Organization"), employment_type=clean_text(raw.get("JobType")) or clean_text(raw.get("ContractType")), published_at=raw.get("PostedDate"), canonical=canonical, apply_url=canonical))
@@ -2060,7 +2046,7 @@ def _collect_successfactors_once(company):
     for raw in inventory_jobs.values():
         try:
             loc = clean_text(raw.get("location"))
-            if not location_matches(loc):
+            if not location_matches(loc, name):
                 continue
             jobs.append(
                 compact_job(
@@ -2290,7 +2276,7 @@ def _sf_finish_verified(name, inventory_jobs, source_url, collector_name):
     jobs = []
     for raw in inventory_jobs.values():
         loc = clean_text(raw.get("location"))
-        if not location_matches(loc):
+        if not location_matches(loc, name):
             continue
         jobs.append(compact_job(
             name,
@@ -2838,17 +2824,18 @@ def _yello_search_pages(search_url: str, board_token: str, filter_ids=None):
     return rows, expected_count
 
 
-def _yello_target_filter_ids(office_answers):
+def _yello_target_filter_ids(office_answers, company_name=None):
     found = {key: [] for key in YELLO_TARGET_LABELS}
     for answer in office_answers:
         label = (clean_text(answer.get("label")) or "").casefold()
         for key, aliases in YELLO_TARGET_LABELS.items():
             if label in aliases:
                 found[key].append(int(answer["id"]))
-    if any(len(ids) != 1 for ids in found.values()):
+    keys = ["milan", "rome"] + (["london"] if company_name is None or location_matches("London", company_name) else [])
+    if any(len(found[key]) != 1 for key in keys):
         detail = {k: v for k, v in found.items()}
         raise NotCheckable(f"Yello target Office Location IDs are not uniquely evidenced: {detail}")
-    return [found["milan"][0], found["rome"][0], found["london"][0]]
+    return [found[key][0] for key in keys]
 
 
 def _collect_yello_once(company):
@@ -2873,7 +2860,7 @@ def _collect_yello_once(company):
             f"Yello board changed during enumeration: total={meta['total']}->{final_meta['total']}"
         )
 
-    target_filter_ids = _yello_target_filter_ids(meta["office_answers"])
+    target_filter_ids = _yello_target_filter_ids(meta["office_answers"], name)
     target_rows, target_total = _yello_search_pages(
         meta["search_url"], meta["token"], filter_ids=target_filter_ids
     )
@@ -2881,9 +2868,13 @@ def _collect_yello_once(company):
         raise NotCheckable("Yello target inventory did not reconcile exactly")
     if any(row["source_id"] not in global_ids for row in target_rows):
         raise NotCheckable("Yello target filter returned requisitions outside global inventory")
-    if any(not location_matches(row.get("location")) for row in target_rows):
+    from location_policy import geographies
+    if any(not geographies(row.get("location")) for row in target_rows):
         raise NotCheckable("Yello target filter returned a requisition without target location metadata")
 
+    # The already reconciled global metadata also supplies explicitly allowed
+    # Luxembourg rows if that board has no dedicated Luxembourg filter.
+    target_rows = {r["source_id"]:r for r in target_rows + global_rows if location_matches(r.get("location"), name)}.values()
     jobs = []
     for row in target_rows:
         try:
@@ -3238,7 +3229,7 @@ def collect_banca_ifis(company):
     for jid, row in found.items():
         try:
             loc, canonical = _banca_ifis_detail(row["url"])
-            if location_matches(loc):
+            if location_matches(loc, name):
                 jobs.append(
                     compact_job(
                         name,
@@ -3304,7 +3295,7 @@ def collect_prima_official(company):
                 if len(part) <= 100 and TARGET_LOCATION_RE.search(part):
                     loc = clean_text(part)
                     break
-            if location_matches(loc):
+            if location_matches(loc, name):
                 jobs.append(
                     compact_job(
                         name,
@@ -3469,7 +3460,7 @@ def collect_bolt(company):
                     stale_details += 1
                     continue
                 raise
-            if location_matches(detail.get("location")):
+            if location_matches(detail.get("location"), name):
                 jobs.append(
                     compact_job(
                         name,
@@ -3617,7 +3608,7 @@ def collect_occ(company):
                     stale += 1
                     continue
                 raise
-            if location_matches(location):
+            if location_matches(location, name):
                 jobs.append(
                     compact_job(
                         name,
@@ -3873,6 +3864,7 @@ def collect_company(company: dict) -> tuple[dict, bool]:
     _thread_local.collection_progress = {'company':company.get('company'),'jobs':{},'errors':[]}
     try:
         result = fn(company)
+        result['jobs'] = [j for j in result['jobs'] if location_matches(j.get('location'), company.get('company'))]
         result.setdefault('reason',None)
         if _thread_local.collection_progress['errors']:
             result['coverage'] = 'PARTIAL'
@@ -3899,7 +3891,7 @@ def collect_batch(batch: str, workers: int = DEFAULT_WORKERS):
     payload["collector_scope"] = scope
     payload["coverage_note"] = (
         "VERIFIED means the target-scope official inventory was exhausted and reconciled. "
-        "The standard scope is Milan/Rome/London; Amazon and Mastercard additionally include Luxembourg. "
+        "Milan/Rome retain their existing scope; London/Luxembourg require explicit company allowed_locations. "
         "PARTIAL means the official source was actually attempted but full enumeration could not be "
         "certified or only a rendered subset could be collected. FAILED is reserved for a supported "
         "structured collector that unexpectedly failed. NOT_CHECKED should normally be zero because "

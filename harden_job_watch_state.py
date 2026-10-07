@@ -41,6 +41,18 @@ PROTECTED_RE = re.compile(
 def semantic_decision_valid(decision: dict, rec: dict) -> tuple[bool, str | None]:
     if not isinstance(decision, dict):
         return False, "semantic_decision_missing"
+    from job_memory import assert_no_evidence_refs
+    try:
+        assert_no_evidence_refs(decision)
+    except ValueError:
+        return False, "semantic_evidence_unresolved"
+    # A shortened historical review cannot authorize a reopened vacancy, even
+    # when the ATS reuses its old fingerprint. User APPLIED/NOT_INTERESTED still
+    # suppress ordinary review at the projection boundary.
+    if 'historical_evidence' in decision:
+        return False, "historical_evidence_requires_full_review"
+    if rec.get('requires_full_jd_review') and decision.get('analysis_method') != 'chatgpt_semantic_full_jd':
+        return False, "full_jd_required"
     if decision.get("analysis_method") == "chatgpt_semantic_triage":
         required = ("fingerprint", "analysis_status", "analysis_method", "decision", "reason", "rationale", "analyzed_at")
         if any(not decision.get(f) for f in required):
@@ -93,17 +105,8 @@ def semantic_decision_valid(decision: dict, rec: dict) -> tuple[bool, str | None
     return True, None
 
 
-def needs_applied_review(rec: dict) -> bool:
-    return bool(
-        rec.get("current_open")
-        and rec.get("user_decision") == "APPLIED"
-        and (rec.get("current_status") == "UPDATED" or rec.get("applied_material_update"))
-        and rec.get("analysis_method") == "user_decision_applied"
-    )
-
-
 def queue_row(key: str, rec: dict) -> dict:
-    return {
+    return {k:v for k,v in {
         "job_key": key,
         "company": rec.get("company"),
         "source_id": rec.get("source_id"),
@@ -121,18 +124,16 @@ def queue_row(key: str, rec: dict) -> dict:
         "first_seen_at": rec.get("first_seen_at"),
         "user_decision": rec.get("user_decision"),
         "user_decision_reason": rec.get("user_decision_reason"),
-        "user_decision_stale": rec.get("user_decision_stale"),
         "never_reviewed": rec.get("analysis_status") != "ANALYZED",
         "never_surfaced": not bool(rec.get("surfaced_at")),
-        "amazon_semantic_source": "amazon_target_check.json" if rec.get("company") == "Amazon" and rec.get("priority_company") else None,
         "required_years_mentions": rec.get("required_years_mentions"),
         "preferred_years_mentions": rec.get("preferred_years_mentions"),
         "required_min_years": rec.get("required_min_years"),
         "experience_status_hint": rec.get("experience_status_hint"),
         "experience_reason_hint": rec.get("experience_reason_hint"),
         "guardrail_reason": rec.get("guardrail_reason"),
-        "applied_material_update": bool(rec.get("applied_material_update")),
-    }
+        "requires_full_jd_review": rec.get("requires_full_jd_review"),
+    }.items() if v is not None}
 
 
 def queue_sort_key(row: dict):
@@ -149,10 +150,9 @@ def queue_sort_key(row: dict):
     else:
         city_rank = 4
     return (
-        0 if row.get("user_decision") in {"TO_REVIEW", "INTERESTED"} else 1,
-        0 if row.get("applied_material_update") else 1,
         0 if row.get("priority_company") else 1,
         status_rank.get(row.get("current_status"), 9),
+        0 if re.search(r"\b(?:strategy|business analyst|business analysis|finance|pricing|planning|operations|analytics)\b", row.get("title") or "", re.I) else 1,
         city_rank,
         row.get("first_seen_at") or "",
         (row.get("company") or "").casefold(),

@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       stage:
-        description: "Collect inventories or retry JD enrichment"
+        description: "Collect official inventories"
         type: choice
-        options: [collect, enrich]
+        options: [collect]
         default: collect
   push:
     branches:
@@ -15,9 +15,9 @@ on:
       - ".job_watch_run"
       - ".job_watch_manual_run"
   schedule:
-    - cron: "30 6 * * *"
+    - cron: "0 23 * * *"
       timezone: "Europe/Rome"
-    - cron: "15 7 * * *"
+    - cron: "45 23 * * *"
       timezone: "Europe/Rome"
 
 permissions:
@@ -26,6 +26,7 @@ permissions:
 concurrency:
   group: job-watch-state-writer
   cancel-in-progress: false
+  queue: max
 
 jobs:
   freshness:
@@ -47,68 +48,13 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           python - <<'PY'
-          import json, os
-          from datetime import datetime
+          import os
           from pathlib import Path
-          from zoneinfo import ZoneInfo
+          from pipeline_state import now
+          from collection_freshness import recovery_needed
 
-          def load(path):
-              try:
-                  return json.loads(Path(path).read_text(encoding="utf-8"))
-              except Exception:
-                  return None
-
-          should = True
-          reason = "manual/push run"
-          if os.environ.get("EVENT_NAME") == "schedule":
-              today = datetime.now(ZoneInfo("Europe/Rome")).date()
-              fresh = True
-              snapshots = {}
-              for batch in ("jw1", "jw2", "jw3", "jw4"):
-                  data = load(f"current_jobs_{batch}.json") or {}
-                  generated = data.get("generated_at")
-                  snapshots[batch.upper()] = generated
-                  try:
-                      dt = datetime.fromisoformat(str(generated).replace("Z", "+00:00")).astimezone(ZoneInfo("Europe/Rome"))
-                  except Exception:
-                      fresh = False
-                      reason = f"{batch.upper()} snapshot timestamp missing/invalid"
-                      break
-                  summary = data.get("summary") or {}
-                  if int(summary.get("FAILED", 0)) or int(summary.get("NOT_CHECKED", 0)):
-                      fresh = False
-                      reason = f"{batch.upper()} has failed/unattempted sources"
-                      break
-                  if dt.date() != today:
-                      fresh = False
-                      reason = f"{batch.upper()} snapshot is not from today"
-                      break
-
-              state = load("job_watch_run_state.json") or {}
-              if fresh and (state.get("source_generated_at") or {}) != snapshots:
-                  fresh = False
-                  reason = "run-state snapshot timestamps do not match today's collected snapshots"
-
-              amazon = load("amazon_target_check.json") or {}
-              amazon_checked = amazon.get("checked_at")
-              if fresh:
-                  try:
-                      amazon_date = datetime.fromisoformat(str(amazon_checked).replace("Z", "+00:00")).astimezone(ZoneInfo("Europe/Rome")).date()
-                  except Exception:
-                      amazon_date = None
-                  if amazon_date != today:
-                      fresh = False
-                      reason = "Amazon priority snapshot is not from today"
-                  elif any(row.get("coverage") != "VERIFIED" for row in (amazon.get("locations") or {}).values()):
-                      fresh = False
-                      reason = "Amazon target inventory is incomplete"
-                  elif (state.get("priority_snapshot_at") or {}).get("Amazon") != amazon_checked:
-                      fresh = False
-                      reason = "run-state Amazon snapshot does not match today's Amazon check"
-
-              should = not fresh
-              if fresh:
-                  reason = "today's JW1-JW4, Amazon and run-state snapshots are already reconciled"
+          should = os.environ.get("EVENT_NAME") != "schedule" or recovery_needed(Path('.'), now())
+          reason = "missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday"
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write(f"should_run={'true' if should else 'false'}\n")
@@ -153,6 +99,8 @@ jobs:
           if-no-files-found: warn
           path: |
             current_jobs_jw*.json
+            job_memory_jw*.json
+            archive/*.jsonl
             amazon_target_check.json
             job_watch_healthcheck.json
             job_watch_summary.txt

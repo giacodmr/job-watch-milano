@@ -436,6 +436,14 @@ def load_previous():
         return {}
 
 
+def strip_full_jds(result):
+    from job_memory import JD_FIELDS
+    for section in ('target_jobs','excluded_business_jobs','excluded_nonbusiness_jobs'):
+        for row in result.get(section, []):
+            for field in JD_FIELDS: row.pop(field, None)
+    return result
+
+
 def main():
     previous = load_previous()
     result = {
@@ -583,6 +591,7 @@ def main():
         "L68_AMBIGUOUS": sum(x.get("status") in OPEN_STATUSES and x.get("l68_status") == "AMBIGUOUS" for x in result["target_jobs"]),
     }
 
+    strip_full_jds(result)
     atomic_json(OUTPUT,result)
     print("AMAZON", json.dumps(result["summary"], ensure_ascii=False))
     for x in result["target_jobs"]:

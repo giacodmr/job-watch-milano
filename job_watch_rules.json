@@ -214,11 +214,10 @@
   },
   "semantic_analysis_execution": {
     "owner": "ChatGPT recurring JW task",
-    "github_role": "enumerate inventory, preserve state, generate semantic queue and audit",
-    "chatgpt_role": "Review only worklist entries with needs_semantic_review=true, using matching cached official JD; persist decisions and actual reporting history.",
-    "decision_files": "semantic_decisions_jw1.json ... semantic_decisions_jw4.json",
-    "queue_files": "semantic_queue_jw1.json ... semantic_queue_jw4.json",
-    "surfaced_files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
+    "github_role": "Enumerate official in-scope metadata, derive worker pending in memory, audit and certify.",
+    "chatgpt_role": "Read the small Daily or one bounded worker packet; fetch only necessary official JDs just in time; persist validated decisions and actual chat surfacing.",
+    "decision_files": "job_memory_jw1.json ... job_memory_jw4.json : semantic",
+    "surfaced_files": "job_memory_jw1.json ... job_memory_jw4.json : surfacing",
     "rule": "DAILY_COMPLETE requires no pending mandatory daily work. FULL_SEMANTIC_COMPLETE requires no pending historical queue records.",
     "mode": "two_stage",
     "title_metadata_rule": "ChatGPT may close a role from title/company/location/metadata only when it is clearly impossible to reach the fit threshold.",
@@ -238,18 +237,20 @@
       "rationale",
       "analyzed_at"
     ],
-    "triage_rule": "Obvious title/metadata rejection only; never use for Manager/Senior/Lead/Head/Director, priority-company or protected-category ambiguity. Full review retains all existing JD fields."
+    "triage_rule": "Obvious title/metadata rejection only; never use for Manager/Senior/Lead/Head/Director, priority-company or protected-category ambiguity. Full review retains all existing JD fields.",
+    "queue": "Derived in memory from current_jobs + job_memory + business rules; no queue file"
   },
   "surface_registry_policy": {
-    "files": "surfaced_jobs_jw1.json ... surfaced_jobs_jw4.json",
+    "files": "job_memory_jw1.json ... job_memory_jw4.json : surfacing",
     "key": "job_key",
     "required_fields": [
-      "surfaced_at",
-      "surfaced_status",
-      "fingerprint (for new reporting writes)"
+      "first_surfaced_at",
+      "last_surfaced_at",
+      "surface_count",
+      "last_surfaced_fingerprint"
     ],
     "preserve_history": true,
-    "standard_roles": "Do not repeat unchanged STILL_OPEN roles after they have been surfaced; re-surface only NEW, materially UPDATED, newly reportable, or explicitly requested.",
+    "standard_roles": "Only actual chat output counts as surfaced. Ignore purely technical fingerprint changes when material metadata/conclusions are unchanged. High-fit unanswered roles may get one reminder per day within 3 days of first surfacing.",
     "priority_roles": "Reuse valid decisions; report NEW/UPDATED/newly reportable priority roles and concise counts. No repeated unchanged inventory.",
     "write_order": "Persist semantic decision first; write surfaced history only for roles actually included in the user-visible output; then re-run/sync state when possible."
   },
@@ -267,13 +268,12 @@
     "cadence": "Weekly maintenance; Amazon/Mastercard and FULL-mapped PARTIAL sources first. Daily collection still attempts every source and reports real coverage."
   },
   "daily_semantic_completion_policy": {
-    "objective": "A daily Job Watch run must fully process the current actionable delta without being blocked by the historical semantic backlog.",
+    "objective": "Complete the bounded Daily selection and actual required reporting; workers independently drain analysis debt.",
     "actionable_delta": [
-      "all NEW vacancies in target geography",
-      "all materially UPDATED vacancies",
-      "all newly discovered AUTONOMOUS_DELTA vacancies",
-      "all open Amazon and Mastercard priority vacancies that are new/updated or not yet semantically decided",
-      "previously open never-surfaced roles that are selected for today's backlog tranche"
+      "Bounded snapshot selection of NEW/UPDATED in-scope candidates",
+      "All newly reportable interesting findings",
+      "Explicit INTERESTED and TO_REVIEW remain visible",
+      "High-fit unanswered reminders within 3 days"
     ],
     "backlog_policy": {
       "blocks_daily_completion": false,
@@ -583,7 +583,7 @@
     "action_rule": "For run status, inspect the actual GitHub Actions run conclusion and relevant job logs, not only committed output files."
   },
   "user_decision_policy": {
-    "registry": "user_job_decisions.json",
+    "registry": "job_memory_jw1.json ... job_memory_jw4.json : user",
     "statuses": [
       "TO_REVIEW",
       "INTERESTED",
@@ -593,17 +593,18 @@
     "rules": [
       "Vacancy-specific user decisions persist independently of NEW/STILL_OPEN/UPDATED lifecycle status.",
       "TO_REVIEW and INTERESTED open vacancies remain actionable until resolved and cannot disappear into historical backlog merely by becoming STILL_OPEN.",
-      "APPLIED vacancies are excluded from the apply-now list but remain monitored for closure/update.",
       "NOT_INTERESTED vacancies are suppressed from normal user-facing reports while retaining history.",
       "Never generalize one vacancy decision into a company-wide, role-family or keyword exclusion without explicit user instruction.",
-      "User explicitly instructed that every vacancy with M&A in the job title must be automatically excluded in all four batches irrespective of employer; M&A mentioned only in the job description does not trigger the rule."
+      "User explicitly instructed that every vacancy with M&A in the job title must be automatically excluded in all four batches irrespective of employer; M&A mentioned only in the job description does not trigger the rule.",
+      "APPLIED is durable memory, excluded from normal monitoring/re-review/reporting.",
+      "NOT_INTERESTED suppresses the vacancy identity across fingerprints and reconciled source-ID aliases."
     ],
     "morning_output": [
-      "NEW_TODAY",
+      "NEW_INTERESTING",
+      "INTERESTED",
       "TO_REVIEW",
-      "INTERESTED_STILL_OPEN",
-      "AUTONOMOUS_DELTA",
-      "APPLIED_UPDATES"
+      "REMINDER",
+      "HEALTH"
     ],
     "rejection_reasons": [
       "DOMAIN_GAP",
@@ -623,17 +624,25 @@
   ],
   "daily_worklist_policy": {
     "file": "daily_worklist.json",
-    "backlog_limit": 20,
-    "delta_rule": "Pending NEW/materially UPDATED items survive lifecycle rollover until decided and reporting reconciled. Unchanged valid decisions are reused.",
-    "backlog_rule": "Pre-existing unassigned pending rows are historical backlog; select at most 20 per stable snapshot after the daily delta. Priority pending and explicit TO_REVIEW/INTERESTED remain daily.",
-    "snapshot_rule": "Before atomic persistence compare source_generated_at, priority_snapshot_at, run_id and rules_sha256 to the worklist snapshot. Abort/rebase if changed; never certify stale results."
+    "delta_rule": "Bounded NEW/UPDATED snapshot selection plus all new interesting findings and explicit active choices. Unfinished analysis remains derivable for workers across lifecycle rollover.",
+    "backlog_rule": "Internal debt is processed by independent recurring 1–30 vacancy workers. Finishing the Daily selection never pulls more debt into morning completion.",
+    "snapshot_rule": "Before atomic persistence compare source_generated_at, priority_snapshot_at, run_id and rules_sha256 to the worklist snapshot. Abort/rebase if changed; never certify stale results.",
+    "worker_batch_size": 20,
+    "reminder_days": 3,
+    "reminder_min_fit": 80
   },
   "configuration_authority": {
     "active_employer_business_metadata": "companies_job_watch_v2.json",
     "batch_routing": "job_watch_batches.json",
     "candidate_staging": "company_candidates.json",
-    "curated_employer_research_radar": "extra_company_watchlist.json",
     "technical_ats_access": "ats_mapping_jw1.json ... ats_mapping_jw4.json",
-    "principle": "Each concept has one operational authority; descriptive copies do not override it."
+    "principle": "Each concept has one operational authority; descriptive copies do not override it.",
+    "company_location_allowlist": "companies_job_watch_v2.json : allowed_locations (canonical names and explicit aliases); Italian search scope unchanged"
+  },
+  "reporting_thresholds_by_geography": {
+    "Milan": 70,
+    "Rome": 70,
+    "London": 80,
+    "Luxembourg": 80
   }
 }

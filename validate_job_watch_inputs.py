@@ -12,7 +12,6 @@ REQUIRED_CONFIG = (
     "job_watch_batches.json",
     "companies_job_watch_v2.json",
     "company_candidates.json",
-    "user_job_decisions.json",
 )
 
 def load(name):
@@ -25,24 +24,6 @@ def load(name):
         raise SystemExit(f"INPUT ERROR: {name} invalid JSON: {e}")
 
 
-def prior_records_count(name):
-    try:
-        log = subprocess.run(
-            ["git", "log", "-n", "1", "--format=%H", "--", name],
-            cwd=ROOT, capture_output=True, text=True, check=True,
-        ).stdout.strip()
-        if not log:
-            return None
-        cp = subprocess.run(
-            ["git", "show", f"{log}^:{name}"],
-            cwd=ROOT, capture_output=True, text=True, check=True,
-        )
-        prior = json.loads(cp.stdout)
-        records = prior.get("records")
-        return len(records) if isinstance(records, dict) else None
-    except Exception:
-        return None
-
 for name in REQUIRED_CONFIG:
     load(name)
 
@@ -52,6 +33,11 @@ if not isinstance(companies.get("companies"), list):
 company_names = [r.get("company") for r in companies["companies"] if isinstance(r, dict)]
 if len(company_names) != len(set(company_names)) or any(not x for x in company_names):
     raise SystemExit("INPUT ERROR: active company registry contains blank/duplicate names")
+known_locations={'Milan','Rome','London','Luxembourg'}
+for company in companies['companies']:
+    locations=company.get('allowed_locations')
+    assert isinstance(locations,list) and set(locations)<=known_locations, f"Invalid allowed_locations: {company['company']}"
+    assert len(locations)==len(set(locations)), f"Duplicate allowed_locations: {company['company']}"
 candidates = load("company_candidates.json")
 if not isinstance(candidates.get("records"), dict):
     raise SystemExit("INPUT ERROR: company_candidates.json records must be an object")
@@ -59,78 +45,45 @@ for key, row in candidates["records"].items():
     if not isinstance(key, str) or not isinstance(row, dict) or row.get("company") != key:
         raise SystemExit(f"INPUT ERROR: invalid company candidate {key}")
 
-user_decisions = load("user_job_decisions.json")
-allowed_user_statuses = {"TO_REVIEW", "INTERESTED", "APPLIED", "NOT_INTERESTED"}
-if not isinstance(user_decisions.get("records"), dict):
-    raise SystemExit("INPUT ERROR: user_job_decisions.json records must be an object")
-for key, value in user_decisions["records"].items():
-    if not isinstance(key, str) or not isinstance(value, dict):
-        raise SystemExit("INPUT ERROR: invalid user job decision record")
-    if value.get("decision") not in allowed_user_statuses:
-        raise SystemExit(f"INPUT ERROR: invalid user decision status for {key}")
-    if not value.get("decided_at"):
-        raise SystemExit(f"INPUT ERROR: user decision {key} lacks decided_at")
-    if not value.get("fingerprint"):
-        if value.get("decision") == "NOT_INTERESTED":
-            raise SystemExit(f"INPUT ERROR: NOT_INTERESTED user decision {key} lacks fingerprint")
-        print(
-            f"INPUT WARNING: user decision {key} lacks fingerprint; "
-            "allowed temporarily for TO_REVIEW/INTERESTED/APPLIED until the vacancy is reconciled."
-        )
-
-# Existing records without a historic reason are preserved. New/revised rejections need feedback.
+from job_memory import load_memory, validate_memory, older_timestamp, unpack_memory
+owners = {c:b.lower() for b,g in load('job_watch_batches.json')['batches'].items() for c in g['companies']}
 try:
-    previous_user = json.loads(subprocess.run(["git", "show", "HEAD:user_job_decisions.json"], cwd=ROOT,
-                               capture_output=True, text=True, check=True).stdout).get("records", {})
-except Exception:
-    previous_user = {}
-for key, row in user_decisions["records"].items():
-    category = row.get("rejection_reason")
-    if category is not None and category not in REJECTION_REASONS:
-        raise SystemExit(f"INPUT ERROR: invalid rejection_reason for {key}")
-    prior = previous_user.get(key, {})
-    changed = any(row.get(f) != prior.get(f) for f in ("decision", "reason", "decided_at", "fingerprint"))
-    if row.get("decision") == "NOT_INTERESTED" and changed:
-        if not category or reason_is_vague(row.get("reason")):
-            raise SystemExit(f"INPUT ERROR: {key}: ask user for rejection reason before persisting NOT_INTERESTED")
-        inferred = infer_rejection_reason(row.get("reason"))
-        if inferred and inferred != category:
-            raise SystemExit(f"INPUT ERROR: {key}: rejection_reason conflicts with explicit reason")
+    migration_baseline=json.loads(subprocess.run(['git','show','HEAD:user_job_decisions.json'],cwd=ROOT,capture_output=True,text=True,check=True).stdout)['records']
+except (ValueError,KeyError,subprocess.CalledProcessError): migration_baseline={}
+for b in BATCHES:
+    memory=load_memory(b, ROOT)
+    validate_memory(memory,b,owners)
+    # A schema upgrade is audited separately; normal edits cannot erase memory.
+    try:
+        previous = unpack_memory(json.loads(subprocess.run(['git','show',f'HEAD:job_memory_{b}.json'],cwd=ROOT,capture_output=True,text=True,check=True).stdout))['records']
+    except (ValueError,KeyError,subprocess.CalledProcessError): previous={}
+    assert set(previous) <= set(memory['records']), f'Memory keys lost in {b}'
+    for key, row in memory['records'].items():
+        prior=previous.get(key,{})
+        for section in ('semantic','user','surfacing'):
+            assert not prior.get(section) or row.get(section), f'Durable section erased: {key}:{section}'
+        user=row.get('user', {})
+        old=prior.get('user', {})
+        if old.get('decided_at') and user.get('decided_at'):
+            assert not older_timestamp(user['decided_at'],old['decided_at']), f'Older user decision overwrote {key}'
+        category=user.get('rejection_reason')
+        if category is not None: assert category in REJECTION_REASONS, f'Invalid rejection reason: {key}'
+        # The first schema-upgrade commit is checked against preserved legacy
+        # choices; all subsequent new/revised rejections need explicit feedback.
+        if not previous: old=migration_baseline.get(key,old)
+        if user.get('decision')=='NOT_INTERESTED' and user!=old:
+            assert category and not reason_is_vague(user.get('reason')), f'Ask rejection reason: {key}'
+            inferred=infer_rejection_reason(user.get('reason'))
+            assert not inferred or inferred==category, f'Conflicting rejection reason: {key}'
+        if row.get('surfacing') and prior.get('surfacing'):
+            assert row['surfacing']['first_surfaced_at']==prior['surfacing']['first_surfaced_at'], f'First surface timestamp changed: {key}'
+            assert row['surfacing']['surface_count']>=prior['surfacing']['surface_count'], f'Surface count decreased: {key}'
 
 rules = load("job_watch_rules.json")
 if not (rules.get("run_certification_policy") or {}).get("enabled"):
     raise SystemExit("INPUT ERROR: run_certification_policy missing/disabled")
 
-for b in BATCHES:
-    load(f"ats_mapping_{b}.json")
-    decisions = load(f"semantic_decisions_{b}.json")
-    surfaced = load(f"surfaced_jobs_{b}.json")
-    if not isinstance(decisions.get("records"), dict):
-        raise SystemExit(f"INPUT ERROR: semantic_decisions_{b}.json records must be an object")
-    if not isinstance(surfaced.get("records"), dict):
-        raise SystemExit(f"INPUT ERROR: surfaced_jobs_{b}.json records must be an object")
-    prior_decisions = prior_records_count(f"semantic_decisions_{b}.json")
-    prior_surfaced = prior_records_count(f"surfaced_jobs_{b}.json")
-    if prior_decisions is not None and len(decisions["records"]) < prior_decisions:
-        raise SystemExit(
-            f"INPUT ERROR: semantic decision history shrank in {b}: "
-            f"{prior_decisions}->{len(decisions['records'])}"
-        )
-    if prior_surfaced is not None and len(surfaced["records"]) < prior_surfaced:
-        raise SystemExit(
-            f"INPUT ERROR: surfaced history shrank in {b}: "
-            f"{prior_surfaced}->{len(surfaced['records'])}"
-        )
-    for key, value in decisions["records"].items():
-        if not isinstance(key, str) or not isinstance(value, dict):
-            raise SystemExit(f"INPUT ERROR: invalid semantic decision record in {b}")
-        if "fingerprint" not in value or "analysis_status" not in value:
-            raise SystemExit(f"INPUT ERROR: semantic decision {key} in {b} lacks fingerprint/status")
-    for key, value in surfaced["records"].items():
-        if not isinstance(key, str) or not isinstance(value, dict):
-            raise SystemExit(f"INPUT ERROR: invalid surfaced record in {b}")
-        if not value.get("surfaced_at") or not value.get("surfaced_status"):
-            raise SystemExit(f"INPUT ERROR: surfaced record {key} in {b} lacks timestamp/status")
+for b in BATCHES: load(f'ats_mapping_{b}.json')
 
 # Run identity, coverage and completion are derived, never trusted inputs.
 print("Job Watch persistent input validation passed.")

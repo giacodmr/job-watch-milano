@@ -14,6 +14,7 @@ permissions:
 concurrency:
   group: job-watch-state-writer
   cancel-in-progress: false
+  queue: max
 
 jobs:
   collect-amazon:
@@ -50,6 +51,8 @@ jobs:
           if-no-files-found: warn
           path: |
             current_jobs_jw*.json
+            job_memory_jw*.json
+            archive/*.jsonl
             amazon_target_check.json
             job_watch_healthcheck.json
             job_watch_summary.txt

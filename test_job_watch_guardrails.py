@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 
-from harden_job_watch_state import REQUIRED_SEMANTIC_FIELDS, needs_applied_review, semantic_decision_valid
+from harden_job_watch_state import REQUIRED_SEMANTIC_FIELDS, semantic_decision_valid
 
 
 class GuardrailTests(unittest.TestCase):
@@ -45,13 +45,9 @@ class GuardrailTests(unittest.TestCase):
         self.assertTrue(valid)
         self.assertIsNone(reason)
 
-    def test_applied_updated_needs_review(self):
-        self.assertTrue(needs_applied_review({
-            "current_open": True,
-            "user_decision": "APPLIED",
-            "current_status": "UPDATED",
-            "analysis_method": "user_decision_applied",
-        }))
+    def test_applied_updated_is_suppressed(self):
+        from daily_worklist import action_reason
+        self.assertIsNone(action_reason({'current_open':True,'user_decision':'APPLIED','current_status':'UPDATED'}))
 
 
 if __name__ == "__main__":

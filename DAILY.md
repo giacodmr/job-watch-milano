@@ -1,37 +1,61 @@
-# JobWatch Daily
+# Job Watch Daily
 
-Le regole permanenti sono in `job_watch_rules.json`. Questo file descrive soltanto l'esecuzione.
+Le business rule canoniche restano in `job_watch_rules.json`. La Daily legge soltanto quel file, `daily_worklist.json` e il riepilogo health. Non caricare inventory, memoria integrale, archivio o JD complete nel contesto della chat.
 
-1. Leggi `daily_worklist.json`, `job_watch_healthcheck.json` e le regole. Verifica data Europe/Rome, `run_id`, timestamp delle quattro fonti, snapshot Amazon e hash delle regole. Se la raccolta è vecchia/in corso o lo snapshot cambia, aspetta il collector/recovery e ricarica il worklist. Non certificare una lettura obsoleta.
-2. Processa prima tutte le righe con `needs_semantic_review=true` e `action` diversa da `HISTORICAL_BACKLOG`. Le altre riusano la decisione: non riaprire la JD. Usa `jd` solo se associata allo stesso fingerprint; recupera la JD ufficiale se manca. Triage breve soltanto nei casi ammessi; review completa per plausibili/ambigui, priority e seniority/L.68/99. Registra errori reali senza inventare decisioni.
-3. Mantieni TO_REVIEW/INTERESTED visibili, APPLIED fuori dall'apply-now, NOT_INTERESTED persistente sul fingerprint. Mostra nuove opportunità, aggiornamenti materiali, novità Amazon/Mastercard e hidden gems; non ripetere inventari immutati. Persisti `surfaced_at`, `surfaced_status` e **fingerprint** solo per ciò che hai realmente riportato.
-4. Fai una ricerca autonoma leggera con evidenza per batch, anche se non produce risultati. Usa aggregatori solo per discovery, conferma su fonti ufficiali. Eventuali nuove vacancy devono entrare nei `current_jobs_<batch>.json` con ID/URL ufficiali, fingerprint e summary riconciliati prima del sync: non aumentare soltanto i contatori. La manutenzione ATS, deep discovery e promozione/pruning di `company_candidates.json` sono settimanali.
-5. Dopo il delta, processa la tranche `HISTORICAL_BACKLOG` se resta capacità. Non è un requisito per DAILY_COMPLETE e non allargare la tranche durante lo stesso snapshot. Nessun limite alle nuove opportunità valide.
-6. Accumula gli aggiornamenti in **un solo** `daily_updates.json` usando il formato sotto. Il workflow sync li valida/unisce ai registri esistenti e rimuove il patch consumato. In locale: `python job_watch.py sync`. Prima della scrittura confronta nuovamente lo snapshot con quello corrente.
-7. Registra in `activity` le ricerche realmente eseguite, con `query`, `checked_at`, `source_url`, `result` e `discoveries` (chiavi ufficiali presenti negli snapshot, lista vuota se nessuna scoperta). Il sync unisce queste evidenze in `daily_activity.json`. `job_watch_run_state.json` è derivato: non scrivere flag di completamento o timestamp copiati. Priority è VERIFIED/PARTIAL/FAILED/NOT_RUN, derivata dalla raccolta ufficiale; JW3/JW4 non richiedono una priority inventata.
-8. Attendi il workflow sync; verifica la conclusione Actions e il **nuovo healthcheck persistito**, stesso run_id. `DAILY_COMPLETE` e `FULL_SEMANTIC_COMPLETE` sono distinti. Il health elenca `remaining_work` quando manca lavoro effettivo. Errori locali/source e copertura PARTIAL possono produrre COMPLETE_WITH_WARNINGS; una vacancy non verificabile resta UNKNOWN con la scelta utente preservata e un warning di manutenzione. GLOBAL_FATAL_ERROR impedisce la certificazione di tutto il run.
+1. Verifica lo snapshot e la giornata operativa Europe/Rome: la raccolta delle 23:00 del giorno precedente serve la Daily delle 09:00 del giorno successivo. Se cambia durante il lavoro, ricarica la worklist prima di inviare aggiornamenti.
+2. Mostra le `NEW_INTERESTING`, tutte le scelte `INTERESTED` e `TO_REVIEW` in perimetro, e i `REMINDER`. Per scelte attive chiuse/non verificabili, mostra un breve avviso di lifecycle. Aggiungi una riga coverage/health; il debito semantico resta interno.
+3. Le `NEW_CANDIDATE` sono una selezione di massimo 20 vacancy dal nuovo snapshot, non un inventario da mostrare. Recupera la JD ufficiale solo per una vacancy realmente da analizzare. Non salvare il testo. I risultati interessanti diventeranno `NEW_INTERESTING` al sync successivo. Nessun limite alle nuove opportunità valide già valutate.
+4. “Già vista” significa effettivamente comunicata in chat. Non marcare come surfaced le vacancy raccolte, analizzate o soltanto presenti nella worklist. I reminder high-fit sono ammessi una volta al giorno, solo nei tre giorni dal primo surfacing noto; non estendere la finestra a ogni reminder. Le variazioni tecniche del fingerprint non bastano a riaprire il reporting. Un cambiamento materiale nei contenuti semanticamente valutati può essere indicato con `material_change: true` nella decisione.
+5. `NOT_INTERESTED` sopprime l'identità anche se cambia fingerprint. `APPLIED` conserva la scelta e resta fuori dalla Daily e dalla normale re-review. Non generare APPLIED_UPDATE. Le scelte precedenti non vanno eliminate quando la vacancy chiude.
+6. Esegui la ricerca autonoma leggera per batch e registra query, data, fonte e risultato reali. Una scoperta deve entrare nell'inventory ufficiale del batch con ID, URL, fingerprint, `first_seen_at` e summary riconciliati. ATS maintenance/deep discovery restano settimanali.
+7. Invia una patch piccola con lo snapshot copiato dalla worklist, quindi esegui `python job_watch.py sync`. Leggi il nuovo health persistito: DAILY_COMPLETE riguarda selezione Daily/reporting/ricerca/copertura; FULL_SEMANTIC_COMPLETE richiede anche debito zero. Non fabbricare evidenze per ottenere COMPLETE.
 
-Non caricare inventari, analysis results o cache integrali per il normale lavoro semantico. Quando serve una correzione specifica, leggi soltanto il relativo file/record. Non eliminare chiavi storiche né trasformare rejection reasons in hard rules.
-
-## Patch piccolo
-
-Copia `snapshot` esattamente dal worklist. Le sezioni non modificate si possono omettere. Le chiavi batch sono minuscole.
+Le sezioni della patch sono comandi, non nomi di file persistenti. Il sync aggiorna solo le memorie interessate, conserva le sezioni indipendenti e registra ricevute di replay:
 
 ```json
 {
   "version": "1.0",
-  "snapshot": {"run_id": "...", "source_generated_at": {}, "priority_snapshot_at": {}, "rules_sha256": "...", "source_sha256": {}},
-  "semantic_decisions": {"jw1": {"Company::ID": {"fingerprint": "...", "analysis_status": "ANALYZED", "analysis_method": "chatgpt_semantic_triage", "decision": "REJECT", "reason": "WRONG_FUNCTION", "rationale": "Motivo concreto", "analyzed_at": "..."}}},
-  "surfaced_jobs": {"jw1": {"Company::ID": {"fingerprint": "...", "surfaced_at": "...", "surfaced_status": "NEW"}}},
-  "user_decisions": {"Company::ID": {"decision": "NOT_INTERESTED", "fingerprint": "...", "reason": "Troppo senior", "rejection_reason": "TOO_SENIOR", "decided_at": "..."}},
-  "activity": {"JW1": {"searches": [{"query": "Ricerca realmente eseguita", "checked_at": "...", "source_url": "https://fonte-ufficiale.example", "result": "Esito verificato"}], "discoveries": []}}
+  "snapshot": {"run_id": "copia l'intero snapshot della worklist"},
+  "semantic_decisions": {"jw3": {"Company::ID": {
+    "fingerprint": "...", "analysis_status": "ANALYZED",
+    "analysis_method": "chatgpt_semantic_triage", "decision": "REJECT",
+    "reason": "WRONG_FUNCTION", "rationale": "Motivo concreto e breve.", "analyzed_at": "..."
+  }}},
+  "surfaced_jobs": {"jw3": {"Company::OTHER_ID": {
+    "fingerprint": "...", "surfaced_at": "...", "surfaced_status": "NEW"
+  }}},
+  "user_decisions": {"Company::ID": {
+    "decision": "NOT_INTERESTED", "fingerprint": "...",
+    "reason": "Troppo senior", "rejection_reason": "TOO_SENIOR", "decided_at": "..."
+  }},
+  "activity": {"JW3": {"searches": [{
+    "query": "ricerca realmente eseguita", "checked_at": "...",
+    "source_url": "https://fonte-ufficiale.example", "result": "esito verificato"
+  }], "discoveries": []}}
 }
 ```
 
-L'esempio illustra sezioni indipendenti; una vacancy scartata non va aggiunta a surfaced_jobs. Per review completa usa i campi già prescritti in `job_watch_rules.json`/`harden_job_watch_state.py`. Il codice accetta soltanto semantic/surfaced patch riferiti a righe presenti nel worklist e allo stesso fingerprint. Le registrazioni utente conservano tutti i record precedenti.
+Ometti le sezioni non usate. L'esempio snapshot è abbreviato; copialo integralmente. Per review completa usa i campi di `harden_job_watch_state.REQUIRED_SEMANTIC_FIELDS`, inclusi seniority, esperienza, salary e guardrail L.68/99. Triage non ammesso per priority, seniority o ambiguità L.68/99. Nuove rejection richiedono un motivo esplicito; se vago chiedi il motivo, senza inventarlo.
 
-Per un nuovo NOT_INTERESTED con motivo chiaro, il sync inferisce la categoria quando manca. Se l'utente dice soltanto «scarta», «no», «togli», «non mi interessa», chiedi il motivo prima di persistere, con opzioni cliccabili se supportate. Fallback: seniority · salary · funzione · sede · determinato · sales · tecnico · dominio · altro. Non inventare motivi storici mancanti.
+Quando il packet contiene `requires_full_jd_review: true` / `guardrail_reason: historical_evidence_shortened`, la vacancy è riapparsa dopo l'abbreviazione delle evidenze storiche: leggi la JD ufficiale e restituisci una nuova review completa. La vecchia conclusione non chiude il lavoro, anche con lo stesso fingerprint. Non inviare `historical_evidence` o riferimenti `$e` nelle patch: sono soltanto dettagli dello storage, risolti e verificati dal codice.
 
-`job_watch_summary.txt` contiene il riepilogo immediato, pubblicato anche nella pagina Actions. Una patch con snapshot cambiato viene conservata per reload/re-review e non scrive registri; una riga invalida viene isolata in `rejected_daily_updates.json` mentre le altre righe valide sono salvate. Il lock serializza processi locali; le scritture dei registri usano un journal recuperabile. Non scrivere JSON derivati a mano.
+# Worker indipendenti durante la giornata
 
-Ogni patch consumata ha una ricevuta (`applied_update_ids` in `daily_activity.json`). Il replay da un checkout Actions vecchio è un no-op: non può sovrascrivere decisioni/evidenze più recenti. Le righe rifiutate richiedono una patch corretta, non il replay della vecchia.
+Ogni worker riceve soltanto un batch di 1–30 vacancy. La selezione è derivata da current + memory del suo batch, con priorità Amazon/Mastercard, NEW/UPDATED, ruoli plausibili, geography e oldest-first. Non dipende dalla Daily né dai file degli altri batch.
+
+```sh
+python semantic_worker.py select jw3 --limit 20
+python semantic_worker.py select jw3 --limit 20 --fetch
+```
+
+Il primo comando produce metadata e uno snapshot locale al batch; il secondo aggiunge JD temporanee a stdout. Consuma quel packet in memoria nella sessione, senza committarlo o inserirlo nella worklist. I fallimenti fetch restano `jd_error`, non diventano decisioni inventate. Non richiedere `--fetch` quando basta un triage ammesso su metadata. Per i ruoli plausibili/priority usa la JD ufficiale, verificando corrispondenza ID e requisiti.
+
+Il worker restituisce un oggetto `{"batch":"jw3","snapshot":{...},"semantic_decisions":{"Company::ID":{...}}}` e lo applica:
+
+```sh
+python semantic_worker.py apply jw3 --patch /tmp/jw3-decisions.json
+```
+
+Il commit è atomico, controlla snapshot e guardrail, è replay-safe e modifica soltanto `job_memory_jw3.json`. JW1/JW2/JW4 seguono lo stesso contratto. Rimuovi il packet temporaneo dopo l'uso. Ripeti selezione → analisi → apply fino a coda vuota, poi rigenera la Daily con `python job_watch.py project`. La PR fornisce i worker eseguibili; la ricorrenza e l'esecuzione ChatGPT sono responsabilità del runner/chat già configurato, non di un finto analizzatore deterministico.
+
+I fallimenti JD tecnici non sono review o scelte utente. I riepiloghi distinguono pending processabili, retry rinviati al giorno successivo e JD_UNAVAILABLE. Questi ultimi escono dalla selezione automatica, conservano il debito semantico e le eventuali scelte attive. Zero lavoro processabile non significa FULL_SEMANTIC_COMPLETE. Il lifecycle tecnico è gestito dal bridge SELECT, non modificato dalla chat Daily.

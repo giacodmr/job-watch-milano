@@ -1,3 +1,7 @@
+# Report storico — superato dal refactor dello stato vacancy
+
+Per lo stato corrente vedere `STATE_REFACTOR_REPORT.md` e `STRUCTURAL_AUDIT.md`.
+
 # Audit e refactor strutturale — 3 ottobre 2026
 
 1. **Root causes.** Catena globale di subprocess fatal, eccezioni locali non classificate, persistenza subordinata alla certificazione, tre implementazioni del completamento con flag manuali, priorità PARTIAL trattata come errore globale, timestamp copiati senza hash, assenza di lock/transazione e replay di patch consumate. L’audit prima del codice è in [STRUCTURAL_AUDIT.md](STRUCTURAL_AUDIT.md), con autorità/writer/reader e state machine.

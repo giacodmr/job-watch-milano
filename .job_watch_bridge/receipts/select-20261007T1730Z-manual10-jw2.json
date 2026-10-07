@@ -1,0 +1,80 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-37659687651-1",
+  "batch": "jw2",
+  "created_at": "2026-10-07T17:31:30Z",
+  "fetch_errors": {
+    "Amazon::10570709": "404 Client Error: Not Found for url: https://www.amazon.jobs/en/jobs/10570709/eu-head-of-regulatory-approvals-drone-delivery-eu-uk-regulatory-affairs-prime-air",
+    "Amazon::10570710": "404 Client Error: Not Found for url: https://www.amazon.jobs/en/jobs/10570710/eu-regulatory-affairs-specialist-drone-delivery-eu-uk-regulatory-affairs-prime-air"
+  },
+  "fingerprints": {
+    "Amazon::10568732": "92d1c65509d7a6c0",
+    "Amazon::10570234": "7be629194463fd5a",
+    "Amazon::10570267": "eb94e15c46a8a4bc",
+    "Amazon::10570269": "f484486a2f4d930d",
+    "Amazon::10570295": "c55582448ff0383e",
+    "Amazon::10570352": "c370c5b134a2d694",
+    "Amazon::10570657": "d76d3db5638998bc",
+    "Amazon::10570709": "42b354483ce59fec",
+    "Amazon::10570710": "c05597d53229e1ab",
+    "Amazon::10571090": "d73a374eeb6edb28"
+  },
+  "job_keys": [
+    "Amazon::10570295",
+    "Amazon::10570657",
+    "Amazon::10570709",
+    "Amazon::10570710",
+    "Amazon::10570269",
+    "Amazon::10568732",
+    "Amazon::10571090",
+    "Amazon::10570267",
+    "Amazon::10570234",
+    "Amazon::10570352"
+  ],
+  "packet_sha256": "1b504e2a693e6b622bf7d388955d8070bb5226267fac0c345430ee5f8dd630d5",
+  "ready_count": 8,
+  "record_count": 10,
+  "request_id": "select-20261007T1730Z-manual10-jw2",
+  "request_sha256": "33deae25b2a1aa8032b666818fce3be6ae8ae6b90b387d699de2f89cd5fc8bfb",
+  "select_run_attempt": 1,
+  "select_run_id": 37659687651,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "7f9105bb63ed16d64d097b4aced98eb39bca35cf0142fa6075a340d1cfa7e236",
+    "job_memory_jw2.json": "290e59a5cb49d2f922dab2fe4de23d52f82a2084f593598bb4784a76807bd48e",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "7f9105bb63ed16d64d097b4aced98eb39bca35cf0142fa6075a340d1cfa7e236",
+    "job_memory_jw2.json": "ebbd95612791167a22030a11535862cbb4552c16f6d3d83eb419e560b86b3939",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10570709": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "42b354483ce59fec",
+        "source_url": "https://www.amazon.jobs/en/jobs/10570709/eu-head-of-regulatory-approvals-drone-delivery-eu-uk-regulatory-affairs-prime-air"
+      },
+      "last_failure_at": "2026-10-07T17:31:30Z",
+      "retry_from": "2026-10-08",
+      "status": "RETRY_PENDING"
+    },
+    "Amazon::10570710": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "c05597d53229e1ab",
+        "source_url": "https://www.amazon.jobs/en/jobs/10570710/eu-regulatory-affairs-specialist-drone-delivery-eu-uk-regulatory-affairs-prime-air"
+      },
+      "last_failure_at": "2026-10-07T17:31:30Z",
+      "retry_from": "2026-10-08",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11500033238
+}
