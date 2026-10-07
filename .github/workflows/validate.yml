@@ -39,6 +39,7 @@ jobs:
                 exit 1
               fi
             fi
+            python fix_tests_company_config.py
           else
             echo "Migration already applied on this branch."
           fi
