@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-07T19:02:46Z",
+  "generated_at": "2026-10-07T22:14:42Z",
   "run_id": "0a1538f466bf413781b43d9a",
   "snapshot": {
     "run_id": "0a1538f466bf413781b43d9a",
@@ -36,8 +36,8 @@
   "batches": {
     "JW1": {
       "status": "NEEDS_REVIEW",
-      "processable_semantic_pending": 0,
-      "jd_retry_deferred": 2,
+      "processable_semantic_pending": 2,
+      "jd_retry_deferred": 0,
       "jd_unavailable": 0,
       "daily_complete": false,
       "full_semantic_complete": false,
@@ -48,6 +48,11 @@
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW1",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
+        },
         {
           "batch": "JW1",
           "action": "REPORT_OPPORTUNITIES",
@@ -77,6 +82,11 @@
       "remaining_work": [
         {
           "batch": "JW2",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
+        },
+        {
+          "batch": "JW2",
           "action": "REPORT_OPPORTUNITIES",
           "count": 36,
           "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
@@ -104,6 +114,11 @@
       "remaining_work": [
         {
           "batch": "JW3",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
+        },
+        {
+          "batch": "JW3",
           "action": "REPORT_OPPORTUNITIES",
           "count": 12,
           "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
@@ -129,6 +144,11 @@
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW4",
+          "action": "COLLECT_CURRENT_DAY",
+          "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
+        },
         {
           "batch": "JW4",
           "action": "SEMANTIC_REVIEW",
@@ -176,8 +196,8 @@
     }
   },
   "daily_actionable_remaining": 81,
-  "processable_semantic_pending": 34,
-  "jd_retry_deferred": 2,
+  "processable_semantic_pending": 36,
+  "jd_retry_deferred": 0,
   "jd_unavailable": 0,
   "historical_backlog_remaining": 33,
   "source_failures": 0,
@@ -1383,6 +1403,11 @@
   "remaining_work": [
     {
       "batch": "JW1",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
+    },
+    {
+      "batch": "JW1",
       "action": "REPORT_OPPORTUNITIES",
       "count": 9,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
@@ -1391,6 +1416,11 @@
       "batch": "JW1",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW2",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
     },
     {
       "batch": "JW2",
@@ -1405,6 +1435,11 @@
     },
     {
       "batch": "JW3",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
+    },
+    {
+      "batch": "JW3",
       "action": "REPORT_OPPORTUNITIES",
       "count": 12,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
@@ -1413,6 +1448,11 @@
       "batch": "JW3",
       "action": "AUTONOMOUS_SEARCH",
       "reason": "Search official sources; record actual query/date/source/result in activity"
+    },
+    {
+      "batch": "JW4",
+      "action": "COLLECT_CURRENT_DAY",
+      "reason": "Official source snapshot is not for the current Rome workday (23:00 collection boundary)"
     },
     {
       "batch": "JW4",
