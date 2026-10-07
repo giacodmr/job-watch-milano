@@ -1,0 +1,174 @@
+name: ChatGPT Job Watch Bridge
+
+on:
+  push:
+    branches:
+      - refactor/job-state-simplification
+    paths:
+      - ".job_watch_bridge/requests/*.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: job-watch-state-writer
+  cancel-in-progress: false
+
+jobs:
+  bridge:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check requests==2.32.5
+
+      - name: Identify bridge request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t paths < <(
+            git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" -- ".job_watch_bridge/requests/*.json"
+          )
+          if [ "${#paths[@]}" -ne 1 ]; then
+            echo "Expected exactly one bridge request in triggering commit, found ${#paths[@]}" >&2
+            printf '%s\n' "${paths[@]}" >&2
+            exit 1
+          fi
+          request_path="${paths[0]}"
+          readarray -t request_meta < <(
+            python - "$request_path" <<'PY'
+          import json, sys
+          with open(sys.argv[1], encoding="utf-8") as f:
+              data = json.load(f)
+          print(data.get("action", ""))
+          print(data.get("request_id", ""))
+          print(data.get("parent_request_id", ""))
+          PY
+          )
+          action="${request_meta[0]}"
+          request_id="${request_meta[1]}"
+          parent_request_id="${request_meta[2]}"
+          case "$action" in
+            select|apply) ;;
+            *) echo "Unsupported bridge action: $action" >&2; exit 1 ;;
+          esac
+          echo "path=$request_path" >> "$GITHUB_OUTPUT"
+          echo "action=$action" >> "$GITHUB_OUTPUT"
+          echo "request_id=$request_id" >> "$GITHUB_OUTPUT"
+          echo "parent_request_id=$parent_request_id" >> "$GITHUB_OUTPUT"
+
+      - name: Build temporary worker packet
+        if: steps.request.outputs.action == 'select'
+        id: select
+        shell: bash
+        run: |
+          set -euo pipefail
+          python job_watch_bridge.py \
+            --request "${{ steps.request.outputs.path }}" \
+            --packet-output /tmp/job-watch-packet.json \
+            | tee /tmp/job-watch-bridge-select-receipt.json
+          echo "CHATGPT_PACKET_BEGIN"
+          cat /tmp/job-watch-packet.json
+          echo
+          echo "CHATGPT_PACKET_END"
+
+      - name: Upload temporary worker packet
+        if: steps.request.outputs.action == 'select'
+        uses: actions/upload-artifact@v7
+        with:
+          name: job-watch-packet-${{ github.sha }}
+          path: |
+            /tmp/job-watch-packet.json
+            /tmp/job-watch-bridge-select-receipt.json
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Apply validated semantic decision
+        if: steps.request.outputs.action == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python job_watch_bridge.py \
+            --request "${{ steps.request.outputs.path }}" \
+            --receipt-output /tmp/job-watch-bridge-apply-receipt.json
+
+      - name: Validate state before publication
+        if: steps.request.outputs.action == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python preflight_job_watch.py
+          python validate_job_watch_inputs.py
+          python -m unittest -q
+          python job_watch.py sync
+          python validate_job_watch_state.py --strict
+          cp daily_worklist.json /tmp/bridge-worklist.json
+          python job_watch.py sync
+          cmp daily_worklist.json /tmp/bridge-worklist.json
+          git diff --check
+
+      - name: Remove processed bridge requests
+        if: steps.request.outputs.action == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
+          request="${{ steps.request.outputs.path }}"
+          parent="${{ steps.request.outputs.parent_request_id }}"
+          rm -f "$request" ".job_watch_bridge/requests/${parent}.json"
+
+      - name: Publish validated checkpoint
+        if: steps.request.outputs.action == 'apply'
+        id: publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          request_id="${{ steps.request.outputs.request_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No repository changes produced by apply request" >&2
+            exit 1
+          fi
+          git commit -m "Apply Job Watch bridge request ${request_id}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          local_sha="$(git rev-parse HEAD)"
+          remote_sha="$(git ls-remote origin "refs/heads/${GITHUB_REF_NAME}" | awk '{print $1}')"
+          test "$local_sha" = "$remote_sha"
+          echo "commit_sha=$local_sha" >> "$GITHUB_OUTPUT"
+          echo "Remote checkpoint verified: $remote_sha"
+
+      - name: Emit apply receipt
+        if: steps.request.outputs.action == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "CHATGPT_APPLY_RECEIPT_BEGIN"
+          cat /tmp/job-watch-bridge-apply-receipt.json
+          echo
+          printf '{"remote_commit_sha":"%s"}\n' "${{ steps.publish.outputs.commit_sha }}"
+          echo "CHATGPT_APPLY_RECEIPT_END"
+
+      - name: Preserve bridge receipt on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: job-watch-bridge-failure-${{ github.run_id }}
+          retention-days: 2
+          if-no-files-found: ignore
+          path: |
+            /tmp/job-watch-bridge-*.json
+            /tmp/job-watch-packet.json
