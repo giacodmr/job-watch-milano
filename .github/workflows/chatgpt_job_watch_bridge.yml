@@ -85,10 +85,6 @@ jobs:
             --request "${{ steps.request.outputs.path }}" \
             --packet-output /tmp/job-watch-packet.json \
             | tee /tmp/job-watch-bridge-select-receipt.json
-          echo "CHATGPT_PACKET_BEGIN"
-          cat /tmp/job-watch-packet.json
-          echo
-          echo "CHATGPT_PACKET_END"
 
       - name: Upload temporary worker packet
         if: steps.request.outputs.action == 'select'
