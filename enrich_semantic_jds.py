@@ -114,6 +114,35 @@ def ashby(url,source_id,mapping):
     if len(text)<120: raise FetchError("Ashby detail text too short")
     return text,api,"ashby_board_detail"
 
+def oracle(url, source_id, title):
+    """Oracle CE serves an empty app shell; fetch the public external JD by ID."""
+    path = urlparse(url).path
+    match = re.search(r'/sites/([A-Za-z0-9_]+)/job/([^/]+)', path)
+    if not match or unquote(match.group(2)) != str(source_id):
+        raise FetchError('Oracle URL/requisition ID mismatch')
+    response = s.get(url, timeout=25, allow_redirects=True)
+    response.raise_for_status()
+    backend = re.search(r'data-apibaseurl=["\']([^"\']+)', response.text, re.I)
+    base = urlparse(html.unescape(backend.group(1))) if backend else urlparse(url)
+    if base.scheme != 'https' or not (base.hostname or '').endswith('.oraclecloud.com'):
+        raise FetchError('Oracle public backend not identified on official page')
+    api = f'https://{base.netloc}/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails'
+    detail = s.get(api, params={'onlyData':'true', 'expand':'all',
+        'finder':f'ById;Id="{source_id}",siteNumber={match.group(1)}'},
+        headers={'Ora-Irc-Language':'en', 'REST-Framework-Version':'1'}, timeout=25)
+    detail.raise_for_status()
+    rows = detail.json().get('items', [])
+    item = next((r for r in rows if str(r.get('Id')) == str(source_id)), None)
+    if not item or str(item.get('Title') or '').strip().casefold() != str(title or '').strip().casefold():
+        raise FetchError('Oracle detail does not match requested requisition/title')
+    fields = ('ExternalDescriptionStr', 'ExternalResponsibilitiesStr', 'ExternalQualificationsStr',
+              'CorporateDescriptionStr', 'OrganizationDescriptionStr')
+    parts = [clean_html(item.get(k)) for k in fields if item.get(k)]
+    text = '\n'.join(dict.fromkeys(parts))
+    if len(clean_html(item.get('ExternalDescriptionStr'))) < 120:
+        raise FetchError('Oracle external job description missing or too short')
+    return text, detail.url, 'oracle_ce_external_detail'
+
 def fallback(url, title):
     response=s.get(url,timeout=25,allow_redirects=True)
     response.raise_for_status()
@@ -148,6 +177,8 @@ def fetch_jd(rec,mapping):
     if "smartrecruiters" in fam or "smartrecruiters.com" in host: return smartrecruiters(url,rec.get("source_id"),mapping)
     if "lever" in fam or "lever.co" in host: return lever(url,rec.get("source_id"),mapping)
     if "ashby" in fam or "ashbyhq.com" in host: return ashby(url,rec.get("source_id"),mapping)
+    if re.search(r'/sites/[A-Za-z0-9_]+/job/', urlparse(url).path):
+        return oracle(url, rec.get('source_id'), rec.get('title'))
     return fallback(url, rec.get("title"))
 
 def fetch_candidates(batch, limit=20, root=None, fetch=False):
