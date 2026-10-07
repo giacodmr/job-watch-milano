@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       stage:
-        description: "Collect inventories or retry JD enrichment"
+        description: "Collect official inventories"
         type: choice
-        options: [collect, enrich]
+        options: [collect]
         default: collect
   push:
     branches:
@@ -153,6 +153,8 @@ jobs:
           if-no-files-found: warn
           path: |
             current_jobs_jw*.json
+            job_memory_jw*.json
+            archive/*.jsonl
             amazon_target_check.json
             job_watch_healthcheck.json
             job_watch_summary.txt

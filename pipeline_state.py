@@ -69,16 +69,27 @@ def recover_transaction(root):
     if not journal.exists(): return
     tx = json.loads(journal.read_text())
     # A durable journal means a validated commit was started. Complete it.
+    for name, item in tx.get('appends', {}).items():
+        path = root/name
+        path.parent.mkdir(exist_ok=True)
+        with path.open('a+b') as stream:
+            stream.truncate(item['offset'])
+            stream.seek(0, 2)
+            stream.write(item['text'].encode())
+            stream.flush(); os.fsync(stream.fileno())
     for name, payload in tx['writes'].items(): atomic_json(root / name, payload)
     for name in tx.get('remove', []): (root / name).unlink(missing_ok=True)
     journal.unlink()
 
 
-def transaction(writes, remove=(), root=None, expected_snapshot=None):
+def transaction(writes, remove=(), root=None, expected_snapshot=None, appends=None):
     root = root or ROOT
     if expected_snapshot is not None and snapshot(root) != expected_snapshot:
         raise StaleSnapshot('Official inventory/rules changed; reload worklist and review changed fingerprints')
-    atomic_json(root / '.job_watch.transaction.json', {'writes': writes, 'remove': list(remove)})
+    entries = {name: {'offset':(root/name).stat().st_size if (root/name).exists() else 0,
+        'text': ''.join(json.dumps(row,ensure_ascii=False,sort_keys=True,separators=(',', ':'))+'\n' for row in rows)}
+        for name, rows in (appends or {}).items()}
+    atomic_json(root / '.job_watch.transaction.json', {'writes': writes, 'remove': list(remove), 'appends':entries})
     recover_transaction(root)
 
 
@@ -119,7 +130,7 @@ def attempt(stage, fn, batch=None, company=None, root=None):
 
 def source_identity(root=None):
     root = root or ROOT
-    names = [f'current_jobs_{b}.json' for b in BATCHES] + ['amazon_target_check.json', 'job_watch_rules.json', 'job_watch_batches.json']
+    names = [f'current_jobs_{b}.json' for b in BATCHES] + ['amazon_target_check.json', 'job_watch_rules.json', 'job_watch_batches.json', 'companies_job_watch_v2.json']
     hashes = {name: hashlib.sha256((root/name).read_bytes()).hexdigest() if (root/name).exists() else None for name in names}
     return hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(), hashes
 

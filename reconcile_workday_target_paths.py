@@ -35,7 +35,6 @@ from collector import (
 ROOT = Path(__file__).resolve().parent
 BATCHES = ("jw1", "jw2", "jw3", "jw4")
 PATH_LOCATION_COMPANIES = {"Euronext"}
-ACTIVE_USER_DECISIONS = {"TO_REVIEW", "INTERESTED", "APPLIED"}
 CORPORATE_LISTING_METHOD = "official_corporate_listing_contains_workday_link"
 
 
@@ -235,6 +234,7 @@ def upsert_recovered(jobs: list[dict], candidate: dict, *, persisted_decision: b
     if existing and existing.get("status") in OPEN_STATUSES:
         return False
     if existing:
+        candidate["first_seen_at"] = existing.get("first_seen_at")
         old_fp = existing.get("fingerprint")
         candidate["status"] = "STILL_OPEN" if old_fp == candidate.get("fingerprint") else "UPDATED"
         jobs[jobs.index(existing)] = candidate
@@ -245,12 +245,15 @@ def upsert_recovered(jobs: list[dict], candidate: dict, *, persisted_decision: b
 
 
 def active_decisions_for_company(company_name: str) -> list[tuple[str, dict]]:
-    decisions = (read_json("user_job_decisions.json", {"records": {}}) or {}).get("records") or {}
+    from job_memory import load_memory
+    groups = read_json('job_watch_batches.json', {'batches':{}})['batches']
+    batch = next((b.lower() for b,g in groups.items() if company_name in g['companies']), None)
+    decisions = {k:r.get('user', {}) for k,r in load_memory(batch,ROOT)['records'].items()} if batch else {}
     prefix = f"{company_name}::"
     return [
         (job_key[len(prefix):], row or {})
         for job_key, row in decisions.items()
-        if job_key.startswith(prefix) and (row or {}).get("decision") in ACTIVE_USER_DECISIONS
+        if job_key.startswith(prefix) and (row or {}).get("decision") in {"TO_REVIEW", "INTERESTED"}
     ]
 
 
@@ -295,7 +298,10 @@ def reconcile_persisted_decisions(company_name: str, mapped: dict, jobs: list[di
             if existing is None:
                 # Retain metadata from the analysis history when available. The
                 # user registry remains untouched, even without a historical JD.
-                history = next((read_json(f'analysis_results_{b}.json',{}).get('records',{}).get(key) for b in BATCHES if key in read_json(f'analysis_results_{b}.json',{}).get('records',{})),{}) or {}
+                from job_memory import load_memory
+                groups = read_json('job_watch_batches.json', {'batches':{}})['batches']
+                owner = next((b.lower() for b,g in groups.items() if company_name in g['companies']), None)
+                history = load_memory(owner,ROOT)['records'].get(key,{}).get('identity',{}) if owner else {}
                 existing = {f:history.get(f) for f in ('title','location','canonical_url','apply_url','fingerprint') if history.get(f) is not None}
                 existing.update(company=company_name,source_id=source_id,fingerprint=existing.get('fingerprint') or decision.get('fingerprint'))
                 jobs.append(existing)

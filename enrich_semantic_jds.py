@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-import json, re, html, time
+import json, re, html
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse, unquote
 import requests
-from daily_worklist import build_worklist
 
 ROOT=Path(__file__).resolve().parent
 BATCHES=("jw1","jw2","jw3","jw4")
@@ -12,13 +11,6 @@ UA="Mozilla/5.0 (compatible; JobWatchSemanticEnricher/1.0)"
 s=requests.Session(); s.headers.update({"User-Agent":UA,"Accept-Language":"en-US,en;q=0.8"})
 
 class FetchError(Exception): pass
-def load(name, default=None):
-    p=ROOT/name
-    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
-def dump(name, obj):
-    from pipeline_state import stable_dump
-    stable_dump(name,obj,ROOT)
-
 
 def now(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
 def clean_html(x):
@@ -158,50 +150,27 @@ def fetch_jd(rec,mapping):
     if "ashby" in fam or "ashbyhq.com" in host: return ashby(url,rec.get("source_id"),mapping)
     return fallback(url, rec.get("title"))
 
-def main(batches=BATCHES):
-    worklist = build_worklist()
-    amazon = load("amazon_target_check.json", {}) or {}
-    amazon_by_url = {str(r.get("apply_url", "")).rstrip("/"): r for r in amazon.get("target_jobs", [])}
-    for b in batches:
-        mapping=load(f"ats_mapping_{b}.json",{}) or {}
-        byco={x.get("company"):x for x in mapping.get("companies",[]) if x.get("company")}
-        cache=load(f"semantic_jd_cache_{b}.json",{}) or {"version":"1.0","batch":b,"records":{}}
-        cache.setdefault("records",{})
-        todo=[r for r in worklist["records"] if r["batch"] == b.upper() and r["needs_semantic_review"]]
-        ok=fail=reuse=0
-        for i,r in enumerate(todo,1):
-            k=r.get("job_key"); fp=r.get("fingerprint"); old=cache["records"].get(k)
-            if old and old.get("fingerprint")==fp and old.get("status")=="OK" and len(old.get("text") or "")>=120:
-                reuse+=1; continue
-            if old and old.get("fingerprint")==fp and old.get("status")=="FAILED":
-                try:
-                    age=(datetime.now(timezone.utc)-datetime.fromisoformat(old["fetched_at"].replace("Z","+00:00"))).total_seconds()
-                except (KeyError, ValueError):
-                    age=86400
-                if age < 21600:  # failed endpoints get a six-hour cooldown
-                    from pipeline_state import record_error
-                    record_error('LOCAL_RECORD_ERROR','enrichment','JD_UNAVAILABLE',old.get('error') or 'JD fetch cooldown',root=ROOT,batch=b.upper(),company=r.get('company'),job_key=k)
-                    fail+=1; continue
+def fetch_candidates(batch, limit=20, root=None, fetch=False):
+    """Small ephemeral worker packet. No cache or daily-state writes."""
+    from sync_analysis_state import project_batch
+    from location_policy import allowed
+    from pipeline_state import load as read
+    root = root or ROOT
+    todo = project_batch(batch, root)['queue'][:limit]
+    mapping = read(f'ats_mapping_{batch}.json', {}, root)
+    byco = {x['company']:x for x in mapping.get('companies',[])}
+    result = []
+    for rec in todo:
+        if not allowed(rec['company'], rec.get('location'), root): continue
+        rec = dict(rec)
+        if fetch:
             try:
-                raw=amazon_by_url.get(str(r.get("canonical_url") or r.get("apply_url") or "").rstrip("/")) if r.get("company")=="Amazon" else None
-                if raw and raw.get("fingerprint")==fp and raw.get("description"):
-                    txt="\n".join(clean_html(raw.get(f)) for f in ("description","basic_qualifications","preferred_qualifications") if raw.get(f))
-                    source=raw["apply_url"]; method="amazon_collected_official_jd"
-                else:
-                    txt,source,method=fetch_jd(r,byco.get(r.get("company"),{}))
-                cache["records"][k]={"fingerprint":fp,"status":"OK","fetched_at":now(),"company":r.get("company"),"title":r.get("title"),"location":r.get("location"),"source_url":source,"method":method,"text":txt[:40000]}
-                ok+=1
-            except Exception as e:
-                from pipeline_state import record_error
-                record_error('LOCAL_RECORD_ERROR','enrichment','JD_UNAVAILABLE',e,root=ROOT,batch=b.upper(),company=r.get('company'),job_key=k)
-                cache["records"][k]={"fingerprint":fp,"status":"FAILED","fetched_at":now(),"company":r.get("company"),"title":r.get("title"),"location":r.get("location"),"source_url":r.get("canonical_url") or r.get("apply_url"),"method":"failed","error":str(e)[:500],"text":""}
-                fail+=1
-            if i%25==0: print(f"{b}: {i}/{len(todo)} ok={ok} fail={fail} reuse={reuse}",flush=True)
-            time.sleep(0.05)
-        cache["generated_at"]=now(); cache["actionable_count"]=len(todo)
-        cache["ok_count"]=sum(1 for v in cache["records"].values() if v.get("status")=="OK")
-        cache["failed_count"]=sum(1 for v in cache["records"].values() if v.get("status")=="FAILED")
-        dump(f"semantic_jd_cache_{b}.json",cache)
-        print(f"{b}: actionable={len(todo)} fetched={ok} reused={reuse} failed={fail}")
+                text, source, method = fetch_jd(rec, byco.get(rec['company'], {}))
+                rec['jd'] = {'text':text[:40000], 'source_url':source, 'method':method, 'fetched_at':now()}
+            except Exception as exc:
+                rec['jd_error'] = str(exc)[:500]
+        result.append(rec)
+    return result
 
-if __name__=="__main__": main()
+if __name__ == '__main__':
+    raise SystemExit('Use semantic_worker.py select <batch> --fetch for just-in-time JD packets')

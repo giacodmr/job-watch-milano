@@ -20,7 +20,7 @@ def validate(root=ROOT):
     entrypoints = list(root.glob('.github/workflows/*.y*ml'))
     if (root / 'job_watch.py').is_file():
         entrypoints.append(root / 'job_watch.py')
-    required_scripts = ('job_watch.py','pipeline_state.py','collector.py','reconcile_workday_target_paths.py','amazon_target_check.py','sync_analysis_state.py','harden_job_watch_state.py','daily_worklist.py','enrich_semantic_jds.py','audit_job_watch.py','certify_job_watch.py','validate_job_watch_state.py','validate_job_watch_inputs.py','preflight_job_watch.py','test_daily_pipeline.py','test_job_watch_guardrails.py','test_workday_path_reconciliation.py','test_pipeline_resilience.py')
+    required_scripts = ('job_watch.py','pipeline_state.py','collector.py','reconcile_workday_target_paths.py','amazon_target_check.py','sync_analysis_state.py','harden_job_watch_state.py','daily_worklist.py','enrich_semantic_jds.py','audit_job_watch.py','certify_job_watch.py','validate_job_watch_state.py','validate_job_watch_inputs.py','preflight_job_watch.py','test_daily_pipeline.py','test_job_watch_guardrails.py','test_workday_path_reconciliation.py','test_pipeline_resilience.py','job_memory.py','state_maintenance.py','location_policy.py','semantic_worker.py','test_job_memory.py')
     for name in required_scripts:
         if not (root/name).is_file(): errors.append(f'Pipeline contract: missing entrypoint {name}')
     for path in root.glob('*.py'):
@@ -61,7 +61,7 @@ def validate(root=ROOT):
                 except SyntaxError as e:
                     errors.append(f'{name}: syntax error {e}')
     for name in ('job_watch_rules.json', 'job_watch_batches.json', 'companies_job_watch_v2.json',
-                 'user_job_decisions.json', 'company_candidates.json','pipeline_contract.json'):
+                 'company_candidates.json','pipeline_contract.json'):
         if not isinstance(data.get(name), dict):
             errors.append(f'{name}: required object missing')
     batches = data.get('job_watch_batches.json', {}).get('batches', {})
@@ -78,7 +78,7 @@ def validate(root=ROOT):
         seen.update(members)
         if set(members) & excluded or not set(members) <= universe:
             errors.append(f'{b}: excluded/unknown company assigned')
-        for stem in ('ats_mapping', 'current_jobs', 'analysis_results', 'semantic_queue', 'semantic_decisions', 'surfaced_jobs', 'semantic_jd_cache'):
+        for stem in ('ats_mapping', 'current_jobs', 'job_memory'):
             name = f'{stem}_{b}.json'; item = data.get(name)
             if not isinstance(item, dict) or str(item.get('batch', '')).lower() != b:
                 errors.append(f'{name}: required schema/batch mismatch')
@@ -86,7 +86,7 @@ def validate(root=ROOT):
             if not re.fullmatch(r'[12]\.\d+', str(item.get('version', ''))):
                 errors.append(f'{name}: unsupported/missing schema version')
             field = 'companies' if stem in {'ats_mapping','current_jobs'} else 'records'
-            expected = list if field == 'companies' or stem == 'semantic_queue' else dict
+            expected = list if field == 'companies'  else dict
             if not isinstance(item.get(field), expected):
                 errors.append(f'{name}: incompatible {field} schema')
             if stem == 'current_jobs':

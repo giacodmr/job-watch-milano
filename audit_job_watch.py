@@ -59,20 +59,6 @@ def extracted_open_keys(current: dict) -> set[str]:
     return keys
 
 
-def priority_overlay_keys(batch: str, existing: set[str]) -> set[str]:
-    extra = set()
-    if batch == "jw2":
-        data = read_json(ROOT / "amazon_target_check.json", {})
-        for job in data.get("target_jobs", []):
-            if job.get("status") not in OPEN_STATUSES:
-                continue
-            c = canonical_key(job.get("apply_url"))
-            key = f"url::{c}" if c else f"id::Amazon::{job.get('job_id')}"
-            if key not in existing:
-                extra.add(key)
-    return extra
-
-
 def run_certification(batch: str, current: dict, run_state: dict) -> dict:
     from pipeline_state import search_complete, priority_status, snapshot
     required = {'jw1':'Mastercard','jw2':'Amazon'}.get(batch)
@@ -90,15 +76,20 @@ def run_certification(batch: str, current: dict, run_state: dict) -> dict:
 def audit_batch(batch: str, run_state: dict) -> dict:
     current = read_json(ROOT / f"current_jobs_{batch}.json", {})
     mapping = read_json(ROOT / f"ats_mapping_{batch}.json", {"companies": []})
-    state = read_json(ROOT / f"analysis_results_{batch}.json", {"records": {}})
-    queue = read_json(ROOT / f"semantic_queue_{batch}.json", {"records": []})
-    user_decisions = (read_json(ROOT / "user_job_decisions.json", {"records": {}}).get("records") or {})
+    from sync_analysis_state import project_batch
+    from daily_worklist import build_worklist
+    state = project_batch(batch, ROOT)
+    queue = {'records':state['queue'], 'pending_count':len(state['queue'])}
+    from pipeline_state import snapshot
+    work = read_json(ROOT/'daily_worklist.json', {})
+    if work.get('snapshot') != snapshot(ROOT): work = build_worklist()
+    assigned = {r['job_key'] for r in work['records'] if r['batch']==batch.upper() and r['needs_semantic_review']}
     rules = read_json(ROOT / "job_watch_rules.json", {})
     never_disappear_since = ((rules.get("user_decision_policy") or {}).get("never_disappear_since"))
     certification = run_certification(batch, current, run_state)
 
     base_keys = extracted_open_keys(current)
-    overlay_keys = priority_overlay_keys(batch, base_keys)
+    overlay_keys = set()  # Official priority rows already live in current_jobs.
     extracted_open = len(base_keys) + len(overlay_keys)
 
     records = list((state.get("records") or {}).values())
@@ -124,7 +115,7 @@ def audit_batch(batch: str, run_state: dict) -> dict:
     base_inventory_reconciliation = summary_target == len(base_keys)
     state_reconciliation = extracted_open == len(open_records)
 
-    actionable_delta = [r for r in open_records if action_reason(r)]
+    actionable_delta = [r for k,r in state["records"].items() if r.get("current_open") and (action_reason(r) or k in assigned)]
     actionable_pending = [r for r in actionable_delta if r.get("needs_analysis")]
     actionable_analyzed = [
         r for r in actionable_delta
@@ -134,7 +125,6 @@ def audit_batch(batch: str, run_state: dict) -> dict:
         r for r in actionable_analyzed
         if (
             r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}
-            or r.get("applied_material_update") is True
             or (
                 r.get("reportable") is True
                 and r.get("user_decision") not in {"APPLIED", "NOT_INTERESTED"}
@@ -145,12 +135,11 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             )
         )
     ]
-    actionable_surfaced = [r for r in actionable_reportable if r.get("surfaced_at") and (
-        r.get("surfaced_fingerprint") == r.get("fingerprint") or (not r.get("surfaced_fingerprint") and not (r.get("delta_pending") or r.get("applied_material_update")))
-    )]
+    actionable_reportable = [r for r in actionable_reportable if action_reason(r) == 'NEW_INTERESTING']
+    actionable_surfaced = []
 
     analysis_complete = len(analyzed) == extracted_open and not pending
-    reporting_reconciliation = len(reportable) == len(surfaced) if analysis_complete else False
+    reporting_reconciliation = not any(action_reason(r) == "NEW_INTERESTING" for r in reportable) if analysis_complete else False
     actionable_delta_complete = not actionable_pending
     actionable_reporting_reconciliation = (
         len(actionable_reportable) == len(actionable_surfaced)
@@ -216,12 +205,6 @@ def audit_batch(batch: str, run_state: dict) -> dict:
             "historical_backlog_remaining": max(0, len(pending) - len(actionable_pending)),
             "explicit_user_review_open": sum(1 for r in open_records if r.get("user_decision") in {"TO_REVIEW", "INTERESTED"}),
             "applied_open": sum(1 for r in open_records if r.get("user_decision") == "APPLIED"),
-            "applied_material_updates_pending": sum(
-                1 for r in open_records
-                if r.get("user_decision") == "APPLIED"
-                and r.get("applied_material_update") is True
-                and r.get("needs_analysis")
-            ),
             "not_interested_open": sum(1 for r in open_records if r.get("user_decision") == "NOT_INTERESTED"),
             "guarded_never_reviewed_open": sum(
                 1 for r in open_records

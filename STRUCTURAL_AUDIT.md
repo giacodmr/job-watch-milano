@@ -1,46 +1,42 @@
-# Structural audit before refactor — 2026-10-03
+# State architecture — daily-first
 
-Baseline: main 720f974, including the semantic decisions subsequently persisted after PR #4. No user or semantic history will be discarded.
+## Authority e dependency map
 
-## Root cause analysis
-
-1. job_watch.stage chains subprocesses with check=True. Record reconciliation can abort Amazon, manifest initialization, sync, audit and publication after successful collection. Collector workers isolate network failures, but batch loops and post-worker reconciliation do not isolate malformed jobs.
-2. Reconciliation throws ordinary RuntimeError/HTTP errors for absent titles, ambiguous matches and inaccessible listings. An active user choice whose source disappeared has no representable unresolved lifecycle. Recovered rows are only written after the entire batch succeeds.
-3. Input/preflight scans mix global trust failures with batch stores, derived files and optional stages. A bad JW1 file can block JW2-4. Runtime integrity requires every Amazon city VERIFIED: PARTIAL becomes a process failure even though ordinary PARTIAL sources are tolerated.
-4. Audit, certify and validate_certified_run each implement completion. Manual semantic/autonomous/priority flags and timestamp copies add independent authorities. Initializing resets all flags, including non-applicable priority checks. A zero-work daily can remain false without a useful action explaining why.
-5. Valid source output is published only after every later validator succeeds. A commit race resets generated files and reruns, but can discard the consumed semantic patch. No local process lock or crash-safe registry transaction exists; Actions serialization alone does not protect two local invocations or stale queued checkouts.
-6. Workflow static checks find literal .py references but miss unittest module selectors, dynamic stages and invalid status declarations. Future refactors can leave stale references. Collector has active layered adapter overrides, so removing those blindly would break supported ATS; simplify wrapper plumbing separately from adapter behavior.
-7. Source FAILED/UNKNOWN and missing active decisions are mixed with semantic blockers. Historical backlog is correctly separated in some metrics, but completion flags obscure that separation. Old CLOSED rows can disappear from later source inventories; history must be retained.
-8. Snapshot tokens use timestamps, not source content. A source/rules change between patch validation and multiple writes is not checked at commit. JD caches and user-choice backfills also write without a transaction.
-
-## Previous state machine
-
-collect -> reconcile -> Amazon -> initialize false flags -> sync -> enrich -> worklist -> audit -> certify -> two validators -> publish. Every thrown error aborts all following steps. Completion is an AND of data checks and mutable manifest claims; collection success is unrelated to semantic daily completeness.
-
-## Authorities, readers and writers
-
-| Domain/files | Authority and writer | Readers |
+| Dato | Prima: writer / reader | Dopo |
 |---|---|---|
-| rules, batches, company union, ATS mappings | maintained configuration | collector, sync, preflight, worklist, certification |
-| current_jobs_jw* | collector plus first-party reconciliation | sync, audit, worklist snapshot, certification |
-| amazon_target_check | priority collector | JW2 overlay, JD enrichment, snapshot, certification |
-| user_job_decisions | explicit user choices; sync only backfills known fingerprints | reconcile, sync, worklist, certification |
-| semantic_decisions_jw* | validated exact-fingerprint reviews | sync; never derived from a completion flag |
-| surfaced_jobs_jw* | actual user-visible reporting history | sync, worklist, audit |
-| semantic_jd_cache_jw* | enrichment cache, fingerprint-bound | worklist, semantic review |
-| discovery_candidates | manual staging, not automatically verified | autonomous discovery/maintenance |
-| analysis_results, semantic_queue | derived by sync | worklist, audit, certification |
-| daily_worklist | derived actionable projection | reviewer, enrichment, patch validation |
-| daily_updates | transient snapshot-bound command | entry point consumes validated updates |
-| old run_state | manual claims plus copied source timestamps | three different certification implementations |
-| audit, healthcheck | derived audit/certification | user, workflow, validators |
+| Stato ufficiale | collector, reconcile → current → sync/audit | current per batch; first_seen/last_seen e lifecycle ufficiale; CLOSED fuori dal current |
+| Review GPT | patch → semantic_decisions → sync | patch/worker → job_memory.semantic → projection/validator |
+| Scelte utente | patch → user_job_decisions globale → reconcile/sync | job_memory.user per batch; identità soppressa anche su fingerprint nuovo |
+| Mostrato in chat | patch → surfaced_jobs → sync/worklist/audit | job_memory.surfacing; primo/ultimo timestamp, count, fingerprint e firma materiale |
+| Analysis | sync → analysis_results, con first_seen e storia unici → worklist/audit/validator | project_batch(current, memory, rules); solo in memoria |
+| Pending | sync → semantic_queue → audit/validator | queue derivata; packet worker di 1–30 righe |
+| JD | enrichment → semantic_jd_cache → worklist, più testo nello snapshot Amazon | fetch_candidates(..., fetch=True) → stdout temporaneo; scartato dopo review |
+| Daily | analysis + cache + surfaced + users | current + memory + rules; metadata, breve conclusione, tasks |
+| Storia chiusi | current/analysis hot | archivio JSONL compatto, scritto senza leggerlo; memorie decisionali preservate |
+| Geography | regex città, quasi tutte le società London | allowed_locations nella company authority, prima del JD fetch |
 
-All snapshot, registry, cache, run-state and derived writers mutate persistent JSON. Prior FULL requires all open jobs analyzed/reported; DAILY requires actionable delta analyzed/reported, search evidence and priority verification. Historical STILL_OPEN backlog alone does not block DAILY. Fingerprint changes invalidate prior review and NOT_INTERESTED suppression; APPLIED monitors updates without returning to apply-now. Rejection reasons are feedback, not hard filters.
+La pipeline è `OFFICIAL SOURCES → current_jobs_jw1..jw4 → job_memory_jw1..jw4 → daily_worklist`, con JD just-in-time e archive freddo. Le frecce indicano dipendenze: current e memory sono autorità distinte, non copie della stessa proiezione. Amazon conserva un receipt ufficiale di priority coverage con metadata/hint e fingerprint; i campi JD completi vengono rimossi dopo classificazione/twin linkage e prima della persistenza. La sua overlay è riconciliata in current da sync; la proiezione normale legge soltanto current/memory.
 
-## New responsibility boundaries
+## Invarianti
 
-Global rules/universe/user-store trust -> isolated collection with atomic per-batch checkpoint -> isolated record/source reconciliation -> independent priority inventory -> snapshot identity from source contents/rules -> transactional review patches -> per-batch semantic projection -> worklist -> metrics -> ONE deterministic certifier -> publication even on scoped errors. Static preflight is strict CI; runtime guards classify errors and continue unaffected stages. Source losses retain UNKNOWN, never claim CLOSED without verified absence. Explicit search evidence is an input in daily_activity; manual completion booleans are retired through a one-time archived migration.
+- Ogni current in perimetro è proiettabile senza analysis file. Pending = open + needs_analysis dopo regole e decisioni; nessuna queue versionata.
+- Semantic, user e surfacing sono sezioni indipendenti. Nessun full JD in memoria. I guardrail esperienza/seniority/L.68/salary restano validati.
+- APPLIED e NOT_INTERESTED non generano re-review ordinaria. INTERESTED/TO_REVIEW restano visibili in perimetro, inclusa una nota di lifecycle quando necessario.
+- Nessun modello/config version invalida automaticamente decisioni valide. Fingerprint e contesto del modello/regole sono distinti.
+- Surfacing richiede effettivo output in chat. Reminders high-fit, una volta al giorno e prima di 72 ore dal primo surfacing noto. Titolo/location/famiglia e flag semantico materiale distinguono materiale da variazioni tecniche.
+- La selezione Daily è bounded su uno snapshot ufficiale: decidere una riga non assegna nuovo debito. I worker selezionano invece i pending rimanenti fino a zero.
+- Il worker di un batch legge soltanto current/memory/ATS mapping del batch e configurazione condivisa, e scrive soltanto la sua memoria. Lock e journal proteggono commit, replay e append dell'archivio.
+- CLOSED vengono archiviati e rimossi dal current. Archivio mai letto da runtime quotidiano. Le memorie pregresse restano conservate per deduplica e scelte.
+- Migrazione verificata prima della rimozione dei 21 file legacy. Decisioni non attribuibili a un batch sono preservate nel receipt, senza silent drop.
 
-States: PENDING -> COLLECTED -> NEEDS_REVIEW -> COMPLETE/COMPLETE_WITH_WARNINGS. New snapshot or changed fingerprint returns to COLLECTED/NEEDS_REVIEW. GLOBAL_FATAL_ERROR alone produces BLOCKED_GLOBAL. Batch failures expose recovery tasks and do not block unrelated batches. Local/source failures degrade coverage and create maintenance warnings. FAILED/NOT_RUN priority requires retry; PARTIAL can certify with warnings once valid actionable work is handled.
+## Compromessi deliberati
 
-Failure taxonomy: LOCAL_RECORD_ERROR(record), SOURCE_ERROR(source), BATCH_ERROR(batch), GLOBAL_FATAL_ERROR(global). Every error carries stage/code and applicable batch/company/job_key, plus concrete remediation. Pipeline stage reports describe execution; final health describes coverage AND functional work, never equates a green Action with complete semantic work.
+La memoria semantica conserva i campi di evidenza già richiesti dai guardrail, anche per review storiche e chiuse. Non tronchiamo retroattivamente queste evidenze per ottenere un file artificiosamente piccolo. ChatGPT riceve soltanto packet piccoli e rationale abbreviata nella Daily; non deve leggere l'intera memoria.
+
+I registri surfaced precedenti conservavano spesso un solo timestamp, talvolta senza fingerprint. L'upgrade conserva esattamente quel dato e usa quel timestamp come primo/ultimo noto e count 1 se manca un conteggio. Non può ricostruire messaggi chat mancanti; questi conteggi sono limiti inferiori, non storia inventata.
+
+I siti che nascondono la location nell'inventory richiedono ancora una pagina di dettaglio per localizzarla. Non vengono avviati ulteriori fetch JD o review dopo un'esclusione geography. Gli inventory globali inevitabili vengono filtrati appena è disponibile la location.
+
+Il modulo d'upgrade è mantenuto per restore/rebase ripetibili e test di migrazione, senza dual-write né fallback readers runtime. Una ricorrenza GPT deve invocare il worker e produrre conclusioni reali; il codice non simula analisi ChatGPT. Nessuna nuova automazione viene installata dalla PR.
+
+Vedi `STATE_REFACTOR_REPORT.md` e il receipt `state_migration_report.json` per misure e validazione sullo snapshot migrato.

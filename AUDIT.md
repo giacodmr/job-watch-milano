@@ -1,3 +1,7 @@
+# Audit storico precedente al refactor daily-first
+
+Questo documento conserva la diagnosi precedente. Per architettura e comportamento correnti leggere `STRUCTURAL_AUDIT.md`, `DAILY.md` e `STATE_REFACTOR_REPORT.md`; i riferimenti legacy qui sotto non sono istruzioni operative.
+
 > Audit storico del primo intervento. Per l’architettura e il risultato correnti vedere [REFACTOR_REPORT.md](REFACTOR_REPORT.md) e [STRUCTURAL_AUDIT.md](STRUCTURAL_AUDIT.md).
 
 # Audit e semplificazione JobWatch — 3 ottobre 2026
