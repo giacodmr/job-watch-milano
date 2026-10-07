@@ -26,6 +26,7 @@ permissions:
 concurrency:
   group: job-watch-state-writer
   cancel-in-progress: false
+  queue: max
 
 jobs:
   freshness:

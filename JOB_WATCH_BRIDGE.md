@@ -1,122 +1,142 @@
-# ChatGPT Job Watch bridge
+# ChatGPT Job Watch bridge — batch v2.0
 
-This bridge lets a ChatGPT task use the repository's existing semantic worker without
-assuming that the ChatGPT container can clone GitHub or reach ATS endpoints directly.
+The bridge is enabled for request pushes only on `refactor/job-state-simplification`.
+No recurring Worker is activated and no main merge or collector schedule change is made.
+ChatGPT supplies the actual semantic judgment; Actions only fetches, validates and persists.
 
-It is intentionally enabled only on `refactor/job-state-simplification` during the
-pilot. It does not merge `main`, create schedules, change business rules, or replace
-ChatGPT semantic judgment with deterministic scoring.
+## Batch protocol
 
-## Protocol
+Write one request per commit under `.job_watch_bridge/requests/<request_id>.json`.
+IDs contain letters, digits, underscores or hyphens and are at most 120 characters.
+Process one request at a time and verify its remote checkpoint before the next request.
 
-Requests are small JSON files committed to:
+Select example:
 
-`.job_watch_bridge/requests/<request_id>.json`
+```json
+{"version":"2.0","request_id":"night-20261008-0200-jw1-select","action":"select","batch":"jw1","limit":10,"fetch":true,"exclude_keys":[]}
+```
 
-A push of exactly one added/modified request starts
-`.github/workflows/chatgpt_job_watch_bridge.yml`. A cleanup-only deletion is a no-op.
-The workflow shares the `job-watch-state-writer` concurrency group with the existing
-state writers.
+Both select and apply accept 1–20 records; `semantic_worker` continues to support 1–30.
+A packet is scoped to one JW. The initial Worker budget is two sequential packets of
+10 per scheduled run, 20 attempted vacancies overall. Optional expected_job_key and
+expected_fingerprint are assertions on the first selected record, not target selectors.
 
-### 1. Select
+Every selected record is in the same packet artifact with its complete fetched JD or
+jd_error. One failed fetch no longer aborts the successful records. EMPTY is a normal
+no-work result. Full JD text is not silently truncated. Do not force 20 very long JDs
+into model context by shortening them; reduce packet size instead.
 
-Example:
+The select receipt includes the run ID, exact packet SHA-256, keys, fingerprints,
+ready count, fetch errors and UTC creation time. This metadata-only receipt is committed
+under `.job_watch_bridge/receipts/`; no JD is stored there. It supports recovery and
+finite retry cooldowns even after the artifact expires.
+
+The packet exists only in Actions temporary storage and an artifact with one-day
+retention. ChatGPT downloads it once through the connector and verifies its byte hash.
+Normal and error logs must never print packet stdout, JD text or decoded JSON failures.
+Failure diagnostics also expire after one day. No new versioned JD cache is introduced.
+
+Apply example:
 
 ```json
 {
-  "version": "1.0",
-  "request_id": "pilot-20261007-amex-26014697-select",
-  "action": "select",
-  "batch": "jw1",
-  "limit": 1,
-  "fetch": true,
-  "expected_job_key": "American Express::26014697",
-  "expected_fingerprint": "800a57fabae4cb1e"
+  "version":"2.0", "request_id":"night-20261008-0200-jw1-apply",
+  "action":"apply", "batch":"jw1",
+  "parent_request_id":"night-20261008-0200-jw1-select",
+  "select_run_id":123456789,
+  "packet_sha256":"<exact 64-character packet hash>",
+  "patch":{"batch":"jw1","snapshot":{"...":"copy exact packet snapshot"},
+           "semantic_decisions":{"Company::ID":{"...":"real complete semantic fields"}}}
 }
 ```
 
-The runner executes `semantic_worker.py select ... --fetch`. The full packet, including
-the just-in-time public JD, is never committed and is not printed to the Actions log.
-It is uploaded as an Actions artifact with one-day retention. ChatGPT retrieves the
-run artifact through the GitHub connector, downloads the ZIP and reads
-`job-watch-packet.json`. The log contains only the compact select receipt, including a
-SHA-256 of the exact packet bytes.
+The runner loads the latest branch state before a queued apply, downloads the artifact
+from the successful select run and checks repository/branch/workflow, parent request,
+SHA, packet snapshot and selected membership. The packet hash is now verified, rather
+than merely carried as a traceability field. Expired/missing artifacts require a new select.
+Protocol v1 pending requests must be regenerated with v2 and a fresh select; do not
+relabel old packets as v2 or fabricate the run ID.
 
-If the expected identity/fingerprint does not match, or the JD fetch fails, the run
-fails and no semantic state is changed.
+## Atomic persistence and partial retry
 
-### 2. Apply
+Snapshot/global/packet errors fail the whole request without publishing semantic state.
+Within a valid packet, the bridge prevalidates each review with the existing semantic
+guardrails and passes all valid reviews to ONE worker apply with the same all-or-nothing semantics.
+Invalid/omitted reviews and failed JD fetches are listed individually in `retry`.
 
-ChatGPT reads the packet, performs the semantic review, and commits one apply request:
+The worker transaction writes its own batch memory and the metadata request receipt
+together in one journal. Recovery cannot leave a successful batch without its replay
+receipt. No user decision or surfacing event is created by this path. A receipt is a
+published checkpoint only after its commit is confirmed on the remote branch.
 
-```json
-{
-  "version": "1.0",
-  "request_id": "pilot-20261007-amex-26014697-apply",
-  "action": "apply",
-  "batch": "jw1",
-  "parent_request_id": "pilot-20261007-amex-26014697-select",
-  "packet_sha256": "<sha256 from select receipt>",
-  "patch": {
-    "batch": "jw1",
-    "snapshot": {"...": "..."},
-    "semantic_decisions": {
-      "American Express::26014697": {"...": "..."}
-    }
-  }
-}
-```
+The persistent apply receipt records request-content hash, accepted-patch hash,
+applied keys, retry reasons and pending before. The emitted receipt additionally
+contains pending after and the verified remote commit SHA. COMPLETE requests are
+cleaned up; PARTIAL requests remain intact so unresolved review drafts are not lost.
+Replaying the same request returns zero applications, even after the artifact expires
+or a later user choice changes memory. Reusing an ID with different content is rejected.
 
-The bridge accepts at most five decisions and passes the patch to
-`semantic_worker.py apply`. Snapshot, fingerprint, ownership, historical-evidence,
-seniority, protected-category and semantic-field guardrails remain enforced by the
-existing worker/code. `packet_sha256` is carried as a traceability receipt; it does not
-replace the authoritative snapshot/fingerprint validation performed by `apply`.
+Correct a residual review with a NEW select/snapshot and NEW apply request ID. An apply
+changes its memory snapshot, so the original snapshot cannot simply be reused for the
+residual. Preserve and explicitly revalidate earlier judgments; never replace hashes
+blindly. The Worker reconciles and deletes older partial requests only after all their
+residuals have been validly resolved. Receipts do not authorize overwriting newer choices.
 
-The runner then executes the standard validations from `MAINTENANCE.md`, performs a
-second sync stability check, removes the processed select/apply request files, commits
-the validated state, pushes only to the triggering branch, and verifies the remote SHA.
+For failed fetches, the Worker uses the select receipt to defer identical key/fingerprint
+retries for six hours and passes `exclude_keys`; a changed fingerprint is checked anew.
+The exclusion is a scheduling hint only and does not modify eligibility or semantic
+priority rules. Retry outstanding work automatically, never suppress it permanently.
 
-The apply receipt reports pending counts before/after and the verified remote commit
-SHA. Worker processing does not create surfacing history.
+## Validation, publication and concurrency
 
-## Replay, stale requests and cleanup
+Each apply runs preflight, input validation, the complete unittest suite ONCE, sync,
+strict state validation, a second sync/worklist stability comparison, and diff checking.
+There is no per-vacancy suite or extra sync inside bridge.apply.
 
-- `semantic_worker.py apply` remains replay-safe through its existing patch receipt.
-- A stale snapshot or changed fingerprint fails before publication.
-- Exactly one added/modified request file is accepted per triggering commit.
-- Cleanup-only deletion commits are recognized as no-op runs rather than failed jobs.
-- The workflow ignores bot-authored cleanup/publication pushes, preventing loops.
-- Select requests remain in the branch until their matching apply succeeds; the apply
-  commit removes both request files. A read-only verification request can be explicitly
-  deleted after its result has been checked.
-- Full JD text exists only in the transient Actions artifact, never in repository state,
-  a new JD cache, or the normal Actions log. Successful packet artifacts expire after
-  one day; failure diagnostics expire after two days.
-- No credential is accepted in request JSON; GitHub's built-in token is used only by
-  Actions for the branch push.
+PR CI can reuse a successful ancestral validation only when code/static inputs have
+identical hashes and the new commit contains transport metadata alone. A bot-generated
+state checkpoint requires proof that the exact parent apply run completed the full
+validation step successfully. Missing proof or API errors fall back to full validation.
+Code/config changes always get the full suite. Occasional fallback revalidation is
+intentional; the guarantee is one suite in each apply, never skipping an unproven check.
 
-## Pilot verified on 7 October 2026
+All state writers retain `job-watch-state-writer`, `cancel-in-progress: false` and
+`queue: max`. The queue can still saturate, and request creation advances the branch;
+the Worker therefore keeps only one request in flight and reconciles missing receipts.
+Publication uses an explicit state-file set and ordinary fast-forward push, verifies
+the remote SHA, and never force pushes. On a race the remote request remains available;
+reload and retry with unchanged guardrails. There is no blind generated-state rebase.
+For a still-unprocessed request, increment optional `retry_attempt` to create a real
+request-file diff and a new push event; writing identical bytes does not reliably
+retrigger a workflow. Once a receipt exists, the ID/content are immutable: use a new ID.
+Only dependencies use a pip cache; full JDs never do. Select still fetches sequentially;
+bounded HTTP concurrency is deferred until real per-host timings justify it.
 
-The manual ChatGPT pilot completed for `American Express::26014697`:
+## Night schedule proposal — not activated
 
-- exact key and fingerprint `800a57fabae4cb1e` selected on GitHub Actions;
-- official Oracle Candidate Experience external JD fetched just in time;
-- ChatGPT produced a real full-JD semantic review;
-- `semantic_worker.py apply` committed one decision and all validations passed;
-- JW1 semantic pending moved 41 -> 40 and total semantic pending 71 -> 70;
-- the validated checkpoint was pushed and the remote SHA was verified;
-- a fresh subsequent worker selection returned a Satispay vacancy, proving the Amex
-  vacancy was no longer selected;
-- no surfacing was written for the technical worker processing.
+- One **Job Watch Worker** task: **02:00, 04:00, 06:00, 07:00 Europe/Rome**.
+- Maximum **20 attempts/run**, normally two packets of 10: up to **80 attempts/night**,
+  across all JW combined. Actual saved reviews depend on successful fetch/validation.
+- One existing **Job Watch Daily** task: **09:00 Europe/Rome**.
+- Proposed collector ordering: **00:30**, recovery **01:15**, before the first Worker.
+  Current collector schedules remain **06:30/07:15** until an explicit operational
+  switch. Keeping them means most overnight work uses the previous collection, and
+  the 07:00 Worker can overlap collection. A new morning collection can also obsolete
+  Daily activity certification until the reporting runner uses the fresh snapshot.
 
-This verifies the manual bridge path. It still does not prove an unattended scheduled
-ChatGPT Worker run: that must be tested after the recurring Worker task is explicitly
-configured and authorized.
+The durable Worker prompt is `CHATGPT_WORKER_PROMPT.txt`. The single handoff document
+`CHATGPT_HANDOFF_E_RICORRENZE.md` includes the context and both recurring-chat prompts.
+No schedule was activated or merged by this change. The existing manual v1 Amex pilot
+passed, reducing total semantic pending 71→70. This does not certify the new v2 live
+10/20 batch or an unattended night run. Those require separate manual/live verification
+and final authorization of the operational branch and task settings.
 
-## Production gate
+## Timing model to measure
 
-Only after user approval should the recurring Worker prompt be changed to use this
-bridge protocol and the Worker task be activated. Before activation, set the exact
-verified operational branch in both Worker and Daily prompts. Do not keep writing to a
-closed PR branch and do not merge `main` autonomously.
+The observed v1 pilot was ~12s select/fetch and ~40s apply/validation/sync/push.
+Do not multiply the one-off ~20-minute bridge development session by vacancy count.
+v2 adds an original-artifact download and a small select-receipt commit; measure those.
+Keep separate select, model review, transfer, apply, queue time, failures and retries.
+A planning range was 5–13 min for 10 and 8–24 min for 20 including model work, not a
+benchmark or an SLA. Two 10-record checkpoints trade an extra apply setup for earlier
+persistence and smaller model context. Do not claim throughput until live measurements.

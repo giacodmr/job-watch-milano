@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, re, html
+import json, re, html, hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse, unquote
@@ -181,13 +181,14 @@ def fetch_jd(rec,mapping):
         return oracle(url, rec.get('source_id'), rec.get('title'))
     return fallback(url, rec.get("title"))
 
-def fetch_candidates(batch, limit=20, root=None, fetch=False):
+def fetch_candidates(batch, limit=20, root=None, fetch=False, exclude_keys=()):
     """Small ephemeral worker packet. No cache or daily-state writes."""
     from sync_analysis_state import project_batch
     from location_policy import allowed
     from pipeline_state import load as read
     root = root or ROOT
-    todo = project_batch(batch, root)['queue'][:limit]
+    excluded = set(exclude_keys)
+    todo = [r for r in project_batch(batch, root)['queue'] if r['job_key'] not in excluded][:limit]
     mapping = read(f'ats_mapping_{batch}.json', {}, root)
     byco = {x['company']:x for x in mapping.get('companies',[])}
     result = []
@@ -197,7 +198,8 @@ def fetch_candidates(batch, limit=20, root=None, fetch=False):
         if fetch:
             try:
                 text, source, method = fetch_jd(rec, byco.get(rec['company'], {}))
-                rec['jd'] = {'text':text[:40000], 'source_url':source, 'method':method, 'fetched_at':now()}
+                rec['jd'] = {'text':text, 'source_url':source, 'method':method, 'fetched_at':now(),
+                             'text_sha256': hashlib.sha256(text.encode()).hexdigest()}
             except Exception as exc:
                 rec['jd_error'] = str(exc)[:500]
         result.append(rec)

@@ -14,7 +14,7 @@ def batch_snapshot(batch, root=ROOT):
     names = [f'current_jobs_{batch}.json',f'job_memory_{batch}.json','job_watch_rules.json','companies_job_watch_v2.json','job_watch_batches.json']
     return {name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}
 
-def apply_packet(batch, patch, root=ROOT):
+def apply_packet(batch, patch, root=ROOT, bridge_receipt=None):
     from sync_analysis_state import project_batch
     with writer_lock(root):
         memory = load_memory(batch,root)
@@ -38,7 +38,15 @@ def apply_packet(batch, patch, root=ROOT):
         groups=load('job_watch_batches.json',root=root)['batches']
         owners={c:b.lower() for b,g in groups.items() for c in g['companies']}
         validate_memory(memory,batch,owners)
-        transaction({f'job_memory_{batch}.json':pack_memory(memory)},root=root)
+        writes = {f'job_memory_{batch}.json':pack_memory(memory)}
+        if bridge_receipt is not None:
+            name, receipt = bridge_receipt
+            path = Path(name)
+            if path.parent != Path('.job_watch_bridge/receipts') or path.suffix != '.json':
+                raise ValueError('Invalid bridge receipt path')
+            (root / path.parent).mkdir(parents=True, exist_ok=True)
+            writes[name] = receipt
+        transaction(writes,root=root)
         return len(updates)
 
 def main():
@@ -48,6 +56,7 @@ def main():
     parser.add_argument('--limit',type=int,default=20)
     parser.add_argument('--fetch',action='store_true')
     parser.add_argument('--patch',type=Path)
+    parser.add_argument('--exclude-key',action='append',default=[])
     args=parser.parse_args()
     if args.action=='apply':
         if not args.patch: parser.error('--patch required')
@@ -56,7 +65,7 @@ def main():
         if not 1<=args.limit<=30: parser.error('--limit must be 1–30')
         from enrich_semantic_jds import fetch_candidates
         token=batch_snapshot(args.batch)
-        records=fetch_candidates(args.batch,args.limit,fetch=args.fetch)
+        records=fetch_candidates(args.batch,args.limit,fetch=args.fetch,exclude_keys=args.exclude_key)
         if token!=batch_snapshot(args.batch): raise SystemExit('Sources changed while fetching; reload')
         print(json.dumps({'batch':args.batch,'snapshot':token,'records':records},ensure_ascii=False))
 
