@@ -1,9 +1,9 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-07T06:10:24Z",
-  "run_id": "c44569652afbfa06572aa48b",
+  "generated_at": "2026-10-07T10:03:33Z",
+  "run_id": "f8bd05f8fcc6f6bb32bc59e4",
   "snapshot": {
-    "run_id": "c44569652afbfa06572aa48b",
+    "run_id": "f8bd05f8fcc6f6bb32bc59e4",
     "source_generated_at": {
       "JW1": "2026-10-07T06:03:28Z",
       "JW2": "2026-10-07T06:06:15Z",
@@ -13,15 +13,15 @@
     "priority_snapshot_at": {
       "Amazon": "2026-10-07T06:09:44.744046+00:00"
     },
-    "rules_sha256": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
+    "rules_sha256": "f74b97e5ecf926579c9653901218844b018c199cbf631cde58e0dfe4abb720b1",
     "source_sha256": {
       "current_jobs_jw1.json": "b851c005197a4bfff6bffea1428ad71903003665bbf5aaa15f61314b5dc514b1",
       "current_jobs_jw2.json": "04d495abcb46dbed0659ea4e053d37357d30b6bde88f0c1072da2f1df6618805",
       "current_jobs_jw3.json": "34f80b2571565e606a0693c6ba19e3e4ec94541bcca3668bf78932cecd0efd08",
       "current_jobs_jw4.json": "764be1343eecb4b5f6ef9f3e8c8afcecff6ac599d914d6d500a5f6282637e000",
       "amazon_target_check.json": "f7480f8913983cce76d8a6cc45450f8eed3c1a3dfc9cf4e672b43a2a5f7a6fef",
-      "job_watch_rules.json": "44e0330142cf227286a969a10463271ae876fd57cee97146a39f07a2077e0c2b",
-      "job_watch_batches.json": "e35717551f1de8c0ca00d66516c32196a04eaeeba7886e187e136aa468a9ac80"
+      "job_watch_rules.json": "f74b97e5ecf926579c9653901218844b018c199cbf631cde58e0dfe4abb720b1",
+      "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38"
     }
   },
   "status": "NEEDS_REVIEW",
@@ -185,7 +185,7 @@
   "source_failures": 0,
   "partial_sources": 115,
   "error_counts": {
-    "record": 11,
+    "record": 5,
     "source": 115,
     "batch": 0,
     "global": 0
@@ -1270,66 +1270,6 @@
       "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Nike",
       "job_key": "Nike::R-91871"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "American Express",
-      "job_key": "American Express::26011847"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "American Express",
-      "job_key": "American Express::26013626"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "American Express",
-      "job_key": "American Express::26014697"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "Trade Republic",
-      "job_key": "Trade Republic::5614731003"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW1",
-      "company": "Moneyfarm",
-      "job_key": "Moneyfarm::CD263B24E7"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "enrichment",
-      "code": "JD_UNAVAILABLE",
-      "message": "official page does not expose a matching job description",
-      "batch": "JW4",
-      "company": "Amplifon",
-      "job_key": "Amplifon::13366"
     }
   ],
   "stage_reports": {
@@ -1363,6 +1303,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1374,18 +1317,6 @@
     },
     "semantic_sync:JW4": {
       "status": "COMPLETE"
-    },
-    "enrichment:JW1": {
-      "status": "COMPLETE_WITH_WARNINGS"
-    },
-    "enrichment:JW2": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW3": {
-      "status": "COMPLETE"
-    },
-    "enrichment:JW4": {
-      "status": "COMPLETE_WITH_WARNINGS"
     },
     "worklist": {
       "status": "COMPLETE"
