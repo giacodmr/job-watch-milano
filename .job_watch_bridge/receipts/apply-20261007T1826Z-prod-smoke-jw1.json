@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "apply-20261007T1826Z-prod-smoke-jw1",
+  "request_sha256": "361535d039bde2ef7926ed8c7edfb3568bdf9ba8ab81af52e34bcaae3225e34e",
+  "parent_request_id": "select-20261007T1823Z-prod-smoke-jw1",
+  "packet_sha256": "632a46562dd4dd4cc3c525fe07b11d9a5d744974d6dfb537c969db50f200a403",
+  "select_run_id": 37666435485,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "6ef356a7c650f76034195e2788f7e39cca5736c29c16a3f365a7fd5040e84a97",
+    "job_memory_jw1.json": "9a73e309f53bf9b92a30bc0a34fb9bed92a3ffd344eda10dcdccf275c2e3a9ba",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 6,
+  "applied_keys": [
+    "American Express::26011847",
+    "American Express::26014544",
+    "Banca Ifis::277460637",
+    "Intesa Sanpaolo::1445081433",
+    "Qonto::ccebc25a-cc07-458e-bf9b-d36c33de441c",
+    "Satispay::c1e9b79d-32b7-41c0-86b5-032871d7db71"
+  ],
+  "retry": {
+    "SumUp::8874403002": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "6aacc4b38f8657f49e7f3221db110d5b3a4c6894042f921356ea400c1ced78ef",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 6,
+      "JW2": 36,
+      "JW3": 6,
+      "JW4": 22
+    },
+    "total": 70
+  },
+  "replayed": false
+}
