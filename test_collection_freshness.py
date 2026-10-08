@@ -47,7 +47,7 @@ class CollectionFreshnessTests(unittest.TestCase):
             self.f.put('current_jobs_jw3.json',cur)
             self.assertTrue(recovery_needed(self.root,'2026-10-08T21:45:00Z'))
         self.complete('2026-10-08T21:05:00Z')
-        cur=self.f.get('current_jobs_jw3.json');cur['summary']['PARTIAL']=1
+        cur=self.f.get('current_jobs_jw3.json');cur['summary']['FAILED']=0;cur['summary']['NOT_CHECKED']=0;cur['summary']['PARTIAL']=1
         self.f.put('current_jobs_jw3.json',cur)
         self.assertFalse(recovery_needed(self.root,'2026-10-08T21:45:00Z'))
         self.complete('2026-10-08T21:05:00Z')
