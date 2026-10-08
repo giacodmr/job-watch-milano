@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 ROME = ZoneInfo('Europe/Rome')
 BATCHES = ('jw1', 'jw2', 'jw3', 'jw4')
 AMAZON_CITIES = ('Milan', 'Rome', 'London', 'Luxembourg')
+SNAPSHOT_KEYS = ('run_id', 'source_generated_at', 'priority_snapshot_at', 'rules_sha256', 'source_sha256')
 
 
 def workday(stamp):
@@ -42,28 +43,28 @@ def _same_workday(stamp, expected):
 def worker_snapshot_ready(root, at):
     """Return True when the Worker may safely analyse available inventory.
 
-    Coverage quality is deliberately not part of this gate. PARTIAL, FAILED or
-    NOT_CHECKED sources remain visible in health and may cause Collector recovery,
-    but do not invalidate jobs successfully collected from other sources.
+    Readiness requires both the correct Rome workday and exact persisted snapshot
+    identity. Coverage quality is deliberately not part of this gate: PARTIAL,
+    FAILED or NOT_CHECKED sources remain visible in health and may cause Collector
+    recovery, but do not invalidate jobs successfully collected from other sources.
     """
     expected = workday(at)
-    snapshots = {}
     for batch in BATCHES:
-        data = _load(root, f'current_jobs_{batch}.json')
-        stamp = data.get('generated_at')
+        stamp = _load(root, f'current_jobs_{batch}.json').get('generated_at')
         if not _same_workday(stamp, expected):
             return False
-        snapshots[batch.upper()] = stamp
+
+    amazon_stamp = _load(root, 'amazon_target_check.json').get('checked_at')
+    if not _same_workday(amazon_stamp, expected):
+        return False
 
     state = _load(root, 'job_watch_run_state.json')
-    if state.get('source_generated_at') != snapshots:
+    try:
+        from pipeline_state import snapshot
+        current = snapshot(root)
+    except (ValueError, OSError, TypeError):
         return False
-
-    amazon = _load(root, 'amazon_target_check.json')
-    stamp = amazon.get('checked_at')
-    if not _same_workday(stamp, expected):
-        return False
-    return (state.get('priority_snapshot_at') or {}).get('Amazon') == stamp
+    return all(state.get(key) == current.get(key) for key in SNAPSHOT_KEYS)
 
 
 def recovery_needed(root, at):
