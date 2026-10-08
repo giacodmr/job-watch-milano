@@ -178,7 +178,7 @@ bounded HTTP concurrency is deferred until real per-host timings justify it.
 The 23:00 collection on D supplies the workday D+1. Freshness uses this Rome boundary
 for both recovery and Daily certification, including DST and delayed recovery after
 midnight. Earlier same-day morning snapshots do not skip the new evening collection.
-Incomplete/failed/unattempted sources, including PARTIAL, require recovery. Timestamps
+Failed/unattempted sources (FAILED/NOT_CHECKED) require recovery. PARTIAL sources remain reported as incomplete coverage but do not alone require repeated recovery when the workday snapshots are fresh and coherent. Timestamps
 remain actual UTC collection times; no synthetic next-day inventory date is written.
 Schedules execute from GitHub's default branch `main`; production is active.
 
