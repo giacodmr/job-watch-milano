@@ -39,12 +39,16 @@ concurrency:
 jobs:
   freshness:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       should_run: ${{ steps.guard.outputs.should_run }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
+          # A queued run retains its event SHA. Read the state published by the
+          # preceding writer after acquiring workflow-level concurrency.
+          ref: main
           fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -54,19 +58,27 @@ jobs:
         id: guard
         env:
           EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          EVENT_SHA: ${{ github.sha }}
         run: |
           python - <<'PY'
           import os
+          import subprocess
           from pathlib import Path
           from pipeline_state import now
           from collection_freshness import recovery_needed
 
-          should = os.environ.get("EVENT_NAME") != "schedule" or recovery_needed(Path('.'), now())
+          checked_at = now()
+          should = os.environ.get("EVENT_NAME") != "schedule" or recovery_needed(Path('.'), checked_at)
           reason = "missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday"
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write(f"should_run={'true' if should else 'false'}\n")
           print(("Collector required: " if should else "Collector skipped: ") + reason)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+              f.write(f"Event: {os.environ['EVENT_NAME']}\n\nCron: {os.environ.get('SCHEDULE', '')}\n\n")
+              f.write(f"Event SHA: {os.environ['EVENT_SHA']}\n\nState SHA: {subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()}\n\n")
+              f.write(f"Checked at (UTC): {checked_at}\n\nCollector required: {should} ({reason})\n")
           PY
 
   collect:
@@ -79,6 +91,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Set up Python
