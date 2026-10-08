@@ -8,7 +8,7 @@ I pilot live hanno verificato packet 10/20, JD temporanee, errori isolati, APPLY
 
 | Componente | Orari Europe/Rome | Limite e funzione |
 |---|---|---|
-| Collector GitHub | 23:00; recovery 23:45 + fallback | Recovery per snapshot stale/incoerenti, FAILED/NOT_CHECKED e copertura Amazon incompleta; PARTIAL persistenti restano maintenance debt |
+| Collector GitHub | 23:07, 23:17, 23:32, 23:47 Europe/Rome | Recovery per snapshot stale/incoerenti, FAILED/NOT_CHECKED e copertura Amazon incompleta; PARTIAL persistenti restano maintenance debt |
 | Job Watch Worker | 00:00, 02:00, 04:00, 05:30 | Una sola task, massimo 20 tentativi/run, normalmente 10 + 10 |
 | Job Watch Daily | 09:00 | Reporting/surfacing/reminder/scelte attive |
 
