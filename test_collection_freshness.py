@@ -41,11 +41,15 @@ class CollectionFreshnessTests(unittest.TestCase):
         self.assertTrue(recovery_needed(self.root,'2026-10-08T21:00:00Z'))
 
     def test_incomplete_sources_or_mismatched_state_require_recovery(self):
-        for field in ('FAILED','NOT_CHECKED','PARTIAL'):
+        for field in ('FAILED','NOT_CHECKED'):
             self.complete('2026-10-08T21:05:00Z')
             cur=self.f.get('current_jobs_jw3.json');cur['summary'][field]=1
             self.f.put('current_jobs_jw3.json',cur)
             self.assertTrue(recovery_needed(self.root,'2026-10-08T21:45:00Z'))
+        self.complete('2026-10-08T21:05:00Z')
+        cur=self.f.get('current_jobs_jw3.json');cur['summary']['PARTIAL']=1
+        self.f.put('current_jobs_jw3.json',cur)
+        self.assertFalse(recovery_needed(self.root,'2026-10-08T21:45:00Z'))
         self.complete('2026-10-08T21:05:00Z')
         state=self.f.get('job_watch_run_state.json');state['source_generated_at']['JW1']='wrong'
         self.f.put('job_watch_run_state.json',state)
