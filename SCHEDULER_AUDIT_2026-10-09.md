@@ -8,7 +8,7 @@ della mancata creazione non è esposta dalle API GitHub consultate: ritardo,
 evento scartato e registrazione interna difettosa restano possibilità non
 distinguibili senza verifica GitHub. Non è provata una restrizione dell'account.
 
-I due bug di recovery corretti sotto non spiegano l'assenza della run: si
+I bug di recovery e preflight corretti sotto non spiegano l'assenza della run: si
 manifestano soltanto dopo che un evento ha già avviato il workflow.
 
 Repository ID: `1353778491`; workflow ID: `358220754`.
@@ -164,3 +164,35 @@ Repository Actions are enabled and no custom execution policies exist.
 The test cron commit, expected slots and controlled disable/enable timestamp
 are listed above. We need the internal reason for missing run creation,
 not diagnosis of a failed or runner-queued job. This request has not been sent.
+
+## Verifica finale del recovery su production
+
+Fix idempotenza e rimozione cron temporaneo pubblicati in `ce041bf`.
+La run [37856874464](https://github.com/giacodmr/job-watch-milano/actions/runs/37856874464)
+è un vero evento **push**, creato 8 ottobre 22:59:47 UTC, conclusione success
+alle 23:00:26 UTC. Non è un evento schedule. La run ha atteso il Sync
+[37856874463](https://github.com/giacodmr/job-watch-milano/actions/runs/37856874463):
+job Sync 22:59:51–23:00:14 UTC; freshness 23:00:17–23:00:25 UTC.
+Il guard ha registrato event SHA `ce041bf756ceef46d3ae8ce262b0c0492e88c4df`,
+state SHA **`d7e3ed1ea3c9cc550ef809273e3a3a04c982a072`**, checked-at 23:00:22 UTC,
+`Collector required: False (complete snapshots for this Rome workday)`.
+Job collect skipped: nessuna raccolta duplicata. È confermato dal vivo che
+un tentativo accodato legge il main pubblicato dal writer precedente.
+
+CI [37856874476](https://github.com/giacodmr/job-watch-milano/actions/runs/37856874476)
+success, creata 22:59:47 UTC, conclusa 23:00:22 UTC: 143 test PASS in 6.932s,
+preflight/input/state strict/worklist PASS. Lo Sync ha aggiornato soltanto
+la proiezione worklist e i conteggi audit; nessuna modifica a inventari,
+memory o archive. Il controllo finale delle 23:01:14 UTC conferma byte per byte
+i quattro inventari della collection verificata, readiness true e recovery false.
+Workflow active, quattro cron production, queue max e checkout main confermati.
+Worktree di audit pulito prima di questo aggiornamento documentale; la modifica
+preesistente nel checkout originale è stata preservata.
+
+Ultima lettura schedule 8 ottobre 23:00:40 UTC (9 ottobre 01:00:40 Rome):
+28 run storiche, nessuna nuova run dopo il 7 ottobre. La riattivazione non è
+quindi certificata come riparazione. Resta necessario osservare un nuovo
+`event=schedule`; solo GitHub può ispezionare il motivo interno degli eventi
+mancanti. Non serve un intervento manuale per applicare questi fix: sono su main.
+
+**Verdetto: FIX APPLICATO, SCHEDULE REALE NON ANCORA VERIFICATO.**
