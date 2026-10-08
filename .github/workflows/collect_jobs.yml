@@ -28,11 +28,6 @@ on:
     - cron: "47 23 * * *"
       timezone: "Europe/Rome"
 
-    # TEMPORARY trigger verification: 9 October 2026, 00:12–00:57 Rome.
-    # Remove after observing event=schedule; production slots above stay intact.
-    - cron: "12,27,42,57 0 9 10 *"
-      timezone: "Europe/Rome"
-
 permissions:
   contents: write
 
@@ -74,8 +69,11 @@ jobs:
           from collection_freshness import recovery_needed
 
           checked_at = now()
-          should = os.environ.get("EVENT_NAME") != "schedule" or recovery_needed(Path('.'), checked_at)
-          reason = "missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday"
+          # Sentinel pushes are recovery attempts too: a preceding writer may
+          # have completed the collection while this run waited for concurrency.
+          manual = os.environ.get("EVENT_NAME") == "workflow_dispatch"
+          should = manual or recovery_needed(Path('.'), checked_at)
+          reason = "manual dispatch requested" if manual else ("missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday")
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write(f"should_run={'true' if should else 'false'}\n")

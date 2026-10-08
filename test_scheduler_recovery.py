@@ -63,6 +63,7 @@ class QueuedScheduleTests(unittest.TestCase):
                 self.assertIn('should_run=false', output)
                 self.assertIn('State SHA: ' + published_sha, summary)
                 self.assertIn('Event SHA: ' + event_sha, summary)
+            self.assertIn('should_run=false', guard('push')[0])
             self.assertIn('should_run=true', guard('workflow_dispatch')[0])
             current = fixture.get('current_jobs_jw3.json')
             current['summary']['FAILED'] = 1
@@ -71,3 +72,4 @@ class QueuedScheduleTests(unittest.TestCase):
             git('add', '.')
             git('commit', '-m', 'Incomplete collection needs recovery')
             self.assertIn('should_run=true', guard()[0])
+            self.assertIn('should_run=true', guard('push')[0])
