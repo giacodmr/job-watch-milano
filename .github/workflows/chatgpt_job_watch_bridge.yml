@@ -72,6 +72,23 @@ jobs:
           else:
               raise SystemExit('Queued request disappeared without a receipt')
           PY
+      - name: Enforce fresh coherent snapshot before new SELECT
+        if: steps.request.outputs.action == 'select'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import job_watch_bridge as bridge
+          from collection_freshness import worker_snapshot_ready
+          from pipeline_state import now
+          request = json.loads(Path('/tmp/job-watch-bridge-request.json').read_text())
+          if bridge.existing_receipt(request):
+              print('Existing immutable SELECT receipt found; replay is allowed.')
+          elif not worker_snapshot_ready(Path('.'), now()):
+              raise SystemExit('worker_snapshot_not_ready: Collector recovery required before a new SELECT')
+          else:
+              print('Worker snapshot is fresh and coherent; new SELECT allowed.')
+          PY
       - name: Build temporary batch packet
         id: select
         if: steps.request.outputs.action == 'select'

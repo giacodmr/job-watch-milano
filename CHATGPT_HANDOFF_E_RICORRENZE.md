@@ -1,6 +1,6 @@
 # Job Watch — handoff unico e istruzioni delle ricorrenze
 
-Repository `giacodmr/job-watch-milano`. Branch operativo di produzione: `main`. PR #11 (`refactor/job-state-simplification`) è già merged e non è più il branch operativo. Worker, Daily e collector sono attivi; durante le run ordinarie non modificare codice, regole, allowlist, soglie o pianificazioni.
+Repository `giacodmr/job-watch-milano`. Branch operativo di produzione: `main`. PR #11 (`refactor/job-state-simplification`) è già merged e non è più il branch operativo. Worker, Daily e collector sono componenti di produzione; durante le run ordinarie non modificare codice, regole, allowlist, soglie o pianificazioni.
 
 I pilot live hanno verificato packet 10/20, JD temporanee, errori isolati, APPLY atomico, checkpoint e replay SELECT/APPLY immutabili, senza surfacing. Il bridge v2 è ora il percorso di produzione: non ridisegnarlo durante l'operatività ordinaria.
 
@@ -8,11 +8,13 @@ I pilot live hanno verificato packet 10/20, JD temporanee, errori isolati, APPLY
 
 | Componente | Orari Europe/Rome | Limite e funzione |
 |---|---|---|
-| Collector GitHub | 23:00; recovery 23:45 | Recovery salta solo snapshot freschi e completi |
+| Collector GitHub | 23:00; recovery 23:45 + fallback | Recovery per snapshot stale/incoerenti, FAILED/NOT_CHECKED e copertura Amazon incompleta; PARTIAL persistenti restano maintenance debt |
 | Job Watch Worker | 00:00, 02:00, 04:00, 05:30 | Una sola task, massimo 20 tentativi/run, normalmente 10 + 10 |
 | Job Watch Daily | 09:00 | Reporting/surfacing/reminder/scelte attive |
 
-La raccolta delle 23:00 del giorno D serve Worker e Daily del giorno D+1. Timestamp UTC originali preservati; freschezza calcolata Europe/Rome con confine operativo alle 23:00, inclusi ritardi oltre mezzanotte e cambio d'ora. Le fonti PARTIAL restano segnalate come copertura incompleta, ma da sole non impongono una nuova recovery quando gli snapshot sono fresh e coerenti.
+La raccolta delle 23:00 del giorno D serve Worker e Daily del giorno D+1. Timestamp UTC originali preservati; freschezza calcolata Europe/Rome con confine operativo alle 23:00, inclusi ritardi oltre mezzanotte e cambio d'ora.
+
+**Collector recovery e Worker preflight sono due decisioni diverse.** `collection_freshness.recovery_needed` può chiedere al Collector un nuovo tentativo quando ci sono FAILED/NOT_CHECKED o la copertura Amazon target non è VERIFIED. Il Worker, invece, usa `collection_freshness.worker_snapshot_ready`: se gli snapshot del workday e i checkpoint/hash sono freschi e coerenti, può analizzare le vacancy effettivamente raccolte anche in presenza di PARTIAL, FAILED o NOT_CHECKED su alcune fonti. La coverage resta esplicitamente degradata e non autorizza chiusure da fonti non verificate, ma non deve bloccare globalmente tutta la coda semantica. PARTIAL non viene ritentato automaticamente a ogni fallback: la remediation è maintenance non bloccante secondo `job_watch_rules.json`. Il bridge rifiuta programmaticamente un nuovo SELECT quando `worker_snapshot_ready` è false; i replay SELECT già checkpointati restano consentiti.
 
 Nessun budget persistente per notte: 80 è soltanto il massimo teorico 4 × 20. Una run manuale aggiuntiva autorizzata ha il proprio limite. Con EMPTY si passa agli altri JW; zero lavoro eleggibile termina normalmente la run. Il secondo packet usa sempre lo stato fresco dopo APPLY e checkpoint del primo.
 
@@ -32,7 +34,7 @@ Le autorità restano `current_jobs_jw1..4.json` e `job_memory_jw1..4.json`; `dai
 
 ## Prompt permanente — Job Watch Worker
 
-Usa come fonte canonica `CHATGPT_WORKER_PROMPT.txt`. In sintesi: branch operativo `main`; riconcilia request/receipt; non scambiare vecchie PARTIAL checkpointate per lavorazioni attive; massimo 20 tentativi/run normalmente 10+10; SELECT v2 con JD complete temporanee; review reali solo per JD riuscite; APPLY atomico; replay idempotenti; nessun surfacing o user decision dal Worker.
+Usa come fonte canonica `CHATGPT_WORKER_PROMPT.txt`. In sintesi: branch operativo `main`; preflight su `worker_snapshot_ready`, non su `recovery_needed`; riconcilia request/receipt; non scambiare coverage debt o vecchie PARTIAL checkpointate per lavorazioni attive; massimo 20 tentativi/run normalmente 10+10; SELECT v2 con JD complete temporanee; review reali solo per JD riuscite; APPLY atomico; replay idempotenti; nessun surfacing o user decision dal Worker.
 
 ## Prompt permanente — Job Watch Daily
 
