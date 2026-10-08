@@ -184,6 +184,9 @@ def stage(name):
     attempt('snapshot',lambda:refresh_run_state(ROOT),root=ROOT)
     if name == 'sync': attempt('semantic_patch',lambda:apply_updates(locked=True),root=ROOT)
     for b in BATCHES: attempt('semantic_sync',lambda b=b:invoke("sync_analysis_state","sync_batch",b),batch=b,root=ROOT)
+    # Maintenance can enrich priority rows, recount inventories and archive CLOSED
+    # jobs. Checkpoint their final hashes so a complete collection becomes a no-op.
+    attempt('snapshot',lambda:refresh_run_state(ROOT),root=ROOT)
     attempt('worklist',lambda:invoke('daily_worklist','main'),root=ROOT)
     for b in BATCHES: attempt('metrics',lambda b=b:invoke('audit_job_watch','write_batch_metrics',b),batch=b,root=ROOT)
     # Validation failures invalidate certification, not valid collection checkpoints.

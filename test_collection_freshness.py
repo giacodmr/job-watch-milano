@@ -97,6 +97,32 @@ class CollectionFreshnessTests(unittest.TestCase):
         self.assertFalse(worker_snapshot_ready(self.root, '2026-10-08T21:45:00Z'))
         self.assertTrue(recovery_needed(self.root, '2026-10-08T21:45:00Z'))
 
+    def test_collector_checkpoints_final_maintained_inventory_for_recovery(self):
+        self.complete('2026-10-08T21:05:00Z')
+        current = self.f.get('current_jobs_jw3.json')
+        # Real maintenance adds lifecycle fields and recounts this fresh row.
+        current['companies'][0]['jobs'] = [{
+            'source_id': 'fresh', 'title': 'Business Analyst', 'location': 'Milan',
+            'fingerprint': 'fresh-fingerprint', 'status': 'NEW',
+            'canonical_url': 'https://official.example/fresh',
+        }]
+        self.f.put('current_jobs_jw3.json', current)
+        self.checkpoint()
+        with self.f.modules(), patch('collector.collect_batch'), patch('reconcile_workday_target_paths.reconcile_batch'), patch('amazon_target_check.main'):
+            with ps.writer_lock(self.root):
+                self.assertTrue(job_watch.stage('collect'))
+            maintained = self.f.get('current_jobs_jw3.json')
+            self.assertIn('first_seen_at', maintained['companies'][0]['jobs'][0])
+            self.assertTrue(worker_snapshot_ready(self.root, '2026-10-08T21:45:00Z'))
+            self.assertFalse(recovery_needed(self.root, '2026-10-08T21:45:00Z'))
+            for key in ('run_id', 'source_sha256'):
+                self.assertEqual(self.f.get('job_watch_run_state.json')[key], ps.snapshot(self.root)[key])
+            snapshots = {p.name: p.read_bytes() for p in self.root.glob('current_jobs_jw*.json')}
+            with ps.writer_lock(self.root):
+                self.assertTrue(job_watch.stage('sync'))
+            self.assertEqual(snapshots, {p.name: p.read_bytes() for p in self.root.glob('current_jobs_jw*.json')})
+            self.assertFalse(recovery_needed(self.root, '2026-10-08T21:47:00Z'))
+
     def test_invalid_timestamp_and_dst(self):
         self.complete('invalid')
         self.assertFalse(worker_snapshot_ready(self.root, '2026-10-08T21:45:00Z'))
