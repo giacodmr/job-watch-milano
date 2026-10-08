@@ -31,7 +31,7 @@ def recovery_needed(root, at):
         except (AttributeError, TypeError, ValueError):
             return True
         summary = data.get('summary') or {}
-        if any(int(summary.get(field,0)) for field in ('FAILED','NOT_CHECKED','PARTIAL')):
+        if any(int(summary.get(field,0)) for field in ('FAILED','NOT_CHECKED')):
             return True
         snapshots[batch.upper()] = stamp
     state = load('job_watch_run_state.json')
