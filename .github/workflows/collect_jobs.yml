@@ -28,6 +28,11 @@ on:
     - cron: "47 23 * * *"
       timezone: "Europe/Rome"
 
+    # TEMPORARY trigger verification: 9 October 2026, 00:12–00:57 Rome.
+    # Remove after observing event=schedule; production slots above stay intact.
+    - cron: "12,27,42,57 0 9 10 *"
+      timezone: "Europe/Rome"
+
 permissions:
   contents: write
 
