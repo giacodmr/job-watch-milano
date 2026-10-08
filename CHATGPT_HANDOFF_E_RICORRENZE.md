@@ -12,7 +12,7 @@ I pilot live hanno verificato packet 10/20, JD temporanee, errori isolati, APPLY
 | Job Watch Worker | 00:00, 02:00, 04:00, 05:30 | Una sola task, massimo 20 tentativi/run, normalmente 10 + 10 |
 | Job Watch Daily | 09:00 | Reporting/surfacing/reminder/scelte attive |
 
-La raccolta delle 23:00 del giorno D serve Worker e Daily del giorno D+1. Timestamp UTC originali preservati; freschezza calcolata Europe/Rome con confine operativo alle 23:00, inclusi ritardi oltre mezzanotte e cambio d'ora. La recovery ritenta anche le fonti PARTIAL.
+La raccolta delle 23:00 del giorno D serve Worker e Daily del giorno D+1. Timestamp UTC originali preservati; freschezza calcolata Europe/Rome con confine operativo alle 23:00, inclusi ritardi oltre mezzanotte e cambio d'ora. Le fonti PARTIAL restano segnalate come copertura incompleta, ma da sole non impongono una nuova recovery quando gli snapshot sono fresh e coerenti.
 
 Nessun budget persistente per notte: 80 è soltanto il massimo teorico 4 × 20. Una run manuale aggiuntiva autorizzata ha il proprio limite. Con EMPTY si passa agli altri JW; zero lavoro eleggibile termina normalmente la run. Il secondo packet usa sempre lo stato fresco dopo APPLY e checkpoint del primo.
 
