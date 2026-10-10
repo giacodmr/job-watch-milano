@@ -1,0 +1,40 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261010-jw3-apply-c08",
+  "request_sha256": "8170fadeb54018e10498f90713d7b6a5dc4ce00f3cff4900e4e5534698fae6fd",
+  "parent_request_id": "manual-20261010-jw3-select-c08",
+  "packet_sha256": "86dfe9332f398db7e9053e016939e675f1d5e707fdea48c380220c07fa6fd473",
+  "select_run_id": 38050085731,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "1deec955975a51b67b22d50f6384d7df8553e550baa24ac17e4b30f88bcf7e5a",
+    "job_memory_jw3.json": "02ca7b400686e368b5c2b2d1369407ff73e4b2466da93c334c21f76247d143ef",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw3",
+  "status": "PARTIAL",
+  "applied_count": 4,
+  "applied_keys": [
+    "Prysmian::R-36305",
+    "Snam::/job/Milano-Energy-House/Organization---Processes-Optimization-Specialist_JR000385",
+    "Webuild::1264714901",
+    "Webuild::1435453533"
+  ],
+  "retry": {
+    "MET Group::744000154036660": "jd_fetch_failed",
+    "MET Group::744000154160719": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "d8655f40ecc993dcda1bf3024e6c5b67c876aadb9421dee5530c18f5470cea15",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 0,
+      "JW3": 4,
+      "JW4": 14
+    },
+    "total": 18
+  },
+  "replayed": false
+}
