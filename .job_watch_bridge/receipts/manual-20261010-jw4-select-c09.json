@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-38050769348-1",
+  "batch": "jw4",
+  "created_at": "2026-10-10T12:07:01Z",
+  "fetch_errors": {
+    "H&M::744000154619039": "HTTP 400"
+  },
+  "fingerprints": {
+    "Dolce & Gabbana::1445596133": "9eff29740dfda03f",
+    "EssilorLuxottica::1445708933": "bf9f84441e855d6d",
+    "H&M::744000154619039": "9415a8fd0dcbeb81",
+    "IQVIA::R1555517": "e484e184f2bcfcf6",
+    "IQVIA::R1573238": "207f726ce6f6edbc",
+    "Johnson & Johnson::R-100976": "65327980bbedd9fa",
+    "Novartis::/job/Milano/Content-Activation---Omnichannel-Orchestration-Manager_REQ-10083465-1": "5de9309f1f1f55ad",
+    "Novartis::/job/Milano/Data-Management---Infrastructure-Manager_REQ-10087928-1": "4f0e772c10c03e66",
+    "Prada Group::1445950433": "a866e258419c580c",
+    "Unilever::R-1188971": "04e4d953a8fbedf0"
+  },
+  "job_keys": [
+    "H&M::744000154619039",
+    "IQVIA::R1573238",
+    "Novartis::/job/Milano/Content-Activation---Omnichannel-Orchestration-Manager_REQ-10083465-1",
+    "Novartis::/job/Milano/Data-Management---Infrastructure-Manager_REQ-10087928-1",
+    "Prada Group::1445950433",
+    "Johnson & Johnson::R-100976",
+    "Unilever::R-1188971",
+    "Dolce & Gabbana::1445596133",
+    "EssilorLuxottica::1445708933",
+    "IQVIA::R1555517"
+  ],
+  "packet_sha256": "dd2d7f9d61f76ffa40e2cabc63838286136ac3117392f3eaf68e259466f1180b",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "manual-20261010-jw4-select-c09",
+  "request_sha256": "36ba07358a4fbd4349735be0218e86fb806f1cec936faae401c904543db686d3",
+  "select_run_attempt": 1,
+  "select_run_id": 38050769348,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "e728d97bd7811d4b03d409269eb9696f0e9ebe2c60d26274cb7dd3485589c851",
+    "job_memory_jw4.json": "caa8dccb675c46192e5a25a31e6f25989affb9de885e244612dce8cec809bed1",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "e728d97bd7811d4b03d409269eb9696f0e9ebe2c60d26274cb7dd3485589c851",
+    "job_memory_jw4.json": "c768fb844fc46f3ac297bf315ff04f50474486533d3e4535b640fc92d32d712d",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "H&M::744000154619039": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "9415a8fd0dcbeb81",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/HMGroup/postings/744000154619039"
+      },
+      "last_failure_at": "2026-10-10T12:07:01Z",
+      "retry_from": "2026-10-11",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11669042883
+}
