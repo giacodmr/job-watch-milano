@@ -1,0 +1,72 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-38050085731-1",
+  "batch": "jw3",
+  "created_at": "2026-10-10T11:55:13Z",
+  "fetch_errors": {
+    "MET Group::744000154036660": "HTTP 400",
+    "MET Group::744000154160719": "HTTP 400"
+  },
+  "fingerprints": {
+    "MET Group::744000154036660": "b198d88284ea9df9",
+    "MET Group::744000154160719": "530baa8507a8637e",
+    "Prysmian::R-36305": "6f17e7f1eb98071b",
+    "Snam::/job/Milano-Energy-House/Organization---Processes-Optimization-Specialist_JR000385": "a9b118341cedd539",
+    "Webuild::1264714901": "d4a8b5c8e4d26506",
+    "Webuild::1435453533": "9b839b614ab791d7"
+  },
+  "job_keys": [
+    "Webuild::1435453533",
+    "MET Group::744000154160719",
+    "MET Group::744000154036660",
+    "Prysmian::R-36305",
+    "Snam::/job/Milano-Energy-House/Organization---Processes-Optimization-Specialist_JR000385",
+    "Webuild::1264714901"
+  ],
+  "packet_sha256": "86dfe9332f398db7e9053e016939e675f1d5e707fdea48c380220c07fa6fd473",
+  "ready_count": 4,
+  "record_count": 6,
+  "request_id": "manual-20261010-jw3-select-c08",
+  "request_sha256": "b5431333f9e007dc50d5702787c0b025b33327ece4a3b4e4caf8d5ecd5b809e7",
+  "select_run_attempt": 1,
+  "select_run_id": 38050085731,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "1deec955975a51b67b22d50f6384d7df8553e550baa24ac17e4b30f88bcf7e5a",
+    "job_memory_jw3.json": "02ca7b400686e368b5c2b2d1369407ff73e4b2466da93c334c21f76247d143ef",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "1deec955975a51b67b22d50f6384d7df8553e550baa24ac17e4b30f88bcf7e5a",
+    "job_memory_jw3.json": "7c3b195d161ebbffd0c48d295725ab41e31f5b67162e3153ab299dc3debb8dc8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "MET Group::744000154036660": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "b198d88284ea9df9",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000154036660"
+      },
+      "last_failure_at": "2026-10-10T11:55:13Z",
+      "retry_from": "2026-10-11",
+      "status": "RETRY_PENDING"
+    },
+    "MET Group::744000154160719": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "530baa8507a8637e",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000154160719"
+      },
+      "last_failure_at": "2026-10-10T11:55:13Z",
+      "retry_from": "2026-10-11",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11668838509
+}
