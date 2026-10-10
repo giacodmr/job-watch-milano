@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-38047335636-1",
+  "batch": "jw1",
+  "created_at": "2026-10-10T11:08:33Z",
+  "fetch_errors": {
+    "Moneyfarm::17AB7ADFEC": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "American Express::26014013": "2595b1b57342372b",
+    "American Express::26014016": "c5c9ddb72066a775",
+    "American Express::26014790": "a6d54faaa6e065e6",
+    "American Express::26014997": "6237c03385c1d6fd",
+    "Banca Sella::JR-002442": "dbbc8bd8e86b4102",
+    "Mastercard::R-278906": "2031193c2f3aecd6",
+    "Mastercard::R-289109": "04ef47b489258152",
+    "Moneyfarm::17AB7ADFEC": "69685eafefe25ba7",
+    "Qonto::53f5103c-e7eb-4b7f-baa4-777968faf405": "ae812c856570fc13",
+    "Qonto::a40b1280-6a09-48bd-aa35-6a5f11002f57": "536318382671d661"
+  },
+  "job_keys": [
+    "Mastercard::R-278906",
+    "Mastercard::R-289109",
+    "Banca Sella::JR-002442",
+    "Qonto::a40b1280-6a09-48bd-aa35-6a5f11002f57",
+    "American Express::26014790",
+    "American Express::26014013",
+    "American Express::26014016",
+    "American Express::26014997",
+    "Qonto::53f5103c-e7eb-4b7f-baa4-777968faf405",
+    "Moneyfarm::17AB7ADFEC"
+  ],
+  "packet_sha256": "17446e32fa234421acf26f70f570319454dcee6c5cfde92e91a9811a2b157366",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "manual-20261010-jw1-select-c01",
+  "request_sha256": "92bc17567092fcc2d970d341ac3564a332e54f13e07722193616cf5b0b95b7a3",
+  "select_run_attempt": 1,
+  "select_run_id": 38047335636,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "e570155ddd8876f0f72f00dc6a579884e3e4225a0ce65a3bf097ebd3aab40559",
+    "job_memory_jw1.json": "746f16ddf3279e1b1ac8a2fa2fd62820dd2047a69df667df1e69615d85901540",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "e570155ddd8876f0f72f00dc6a579884e3e4225a0ce65a3bf097ebd3aab40559",
+    "job_memory_jw1.json": "7b91bf261732d6dc7f18e319260f1ff92c47702c855e058c2621d999863366eb",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Moneyfarm::17AB7ADFEC": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "69685eafefe25ba7",
+        "source_url": "https://apply.workable.com/j/17AB7ADFEC/apply"
+      },
+      "last_failure_at": "2026-10-10T11:08:33Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11668131464
+}
