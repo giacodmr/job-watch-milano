@@ -1,0 +1,65 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-38047745802-1",
+  "batch": "jw2",
+  "created_at": "2026-10-10T11:15:29Z",
+  "fetch_errors": {
+    "Amazon::10574518": "404 Client Error: Not Found for url: https://www.amazon.jobs/en/jobs/10574518/security-assurance-specialist-aws-compliance-and-security-assurance-emea"
+  },
+  "fingerprints": {
+    "Amazon::10488147": "9e8dc013e77d75e4",
+    "Amazon::10563627": "e64a9878cc1d9309",
+    "Amazon::10574461": "903260d80ac0d114",
+    "Amazon::10574462": "b4bcc6a2c7cfea93",
+    "Amazon::10574518": "31f8fb6a77669c45",
+    "Amazon::10574583": "4ac3ebacde0e8067",
+    "Amazon::10574605": "b6beae426b4ba4d9",
+    "Amazon::10574697": "e814c918d1a2aa43"
+  },
+  "job_keys": [
+    "Amazon::10574605",
+    "Amazon::10488147",
+    "Amazon::10574518",
+    "Amazon::10563627",
+    "Amazon::10574583",
+    "Amazon::10574462",
+    "Amazon::10574697",
+    "Amazon::10574461"
+  ],
+  "packet_sha256": "28b9e774729cd52d18983381eab59917071d631a87fcf800f19312a36ef9b297",
+  "ready_count": 7,
+  "record_count": 8,
+  "request_id": "manual-20261010-jw2-select-c03",
+  "request_sha256": "fb1783abec42dfdd2c780c619c9c774762ae6a8beb3357c080b196fbc3a71e6b",
+  "select_run_attempt": 1,
+  "select_run_id": 38047745802,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "b6f11b6656168ea68c484343abb7944522c0b6227748a0d0510abae8f848aea2",
+    "job_memory_jw2.json": "a23a5f2bdada234953fca7bed61f1d4074a7de57cf7402f6fe952e598ca4cedf",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "b6f11b6656168ea68c484343abb7944522c0b6227748a0d0510abae8f848aea2",
+    "job_memory_jw2.json": "6bf791d8c662dc959f53f823d69b6cbf5cce4983fc67deda3bf903ca239a9d80",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10574518": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "31f8fb6a77669c45",
+        "source_url": "https://www.amazon.jobs/en/jobs/10574518/security-assurance-specialist-aws-compliance-and-security-assurance-emea"
+      },
+      "last_failure_at": "2026-10-10T11:15:29Z",
+      "retry_from": "2026-10-11",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11668147186
+}
