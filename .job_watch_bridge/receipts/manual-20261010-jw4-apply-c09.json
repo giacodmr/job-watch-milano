@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261010-jw4-apply-c09",
+  "request_sha256": "9ca80f0ef416cae244d3c2fa0ea654bd0321c5f57baf1e011a78b64de9ae47f3",
+  "parent_request_id": "manual-20261010-jw4-select-c09",
+  "packet_sha256": "dd2d7f9d61f76ffa40e2cabc63838286136ac3117392f3eaf68e259466f1180b",
+  "select_run_id": 38050769348,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "e728d97bd7811d4b03d409269eb9696f0e9ebe2c60d26274cb7dd3485589c851",
+    "job_memory_jw4.json": "caa8dccb675c46192e5a25a31e6f25989affb9de885e244612dce8cec809bed1",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "Dolce & Gabbana::1445596133",
+    "EssilorLuxottica::1445708933",
+    "IQVIA::R1555517",
+    "IQVIA::R1573238",
+    "Johnson & Johnson::R-100976",
+    "Novartis::/job/Milano/Content-Activation---Omnichannel-Orchestration-Manager_REQ-10083465-1",
+    "Novartis::/job/Milano/Data-Management---Infrastructure-Manager_REQ-10087928-1",
+    "Prada Group::1445950433",
+    "Unilever::R-1188971"
+  ],
+  "retry": {
+    "H&M::744000154619039": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "140f012e0925ac48c1454be90ba62c546cc6fda68af0e2187e55c7c37e2d9e1f",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 0,
+      "JW3": 0,
+      "JW4": 13
+    },
+    "total": 13
+  },
+  "replayed": false
+}
