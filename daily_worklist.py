@@ -78,7 +78,6 @@ def build_worklist(backlog_limit=None, at=None):
                     row['technical_status'] = rec['jd_fetch']['status']
                     records.append(row)  # Preserve explicit active choices, even without a JD.
             else:
-                row.pop('first_seen_at',None)
                 row['decision'] = {f:rec[f] for f in ('fit_score','reportable','salary','salary_source','final_experience_status','l68_status') if rec.get(f) is not None}
                 if rec.get('rationale'): row['decision']['rationale']=str(rec['rationale'])[:360]
                 if not rec.get('current_open'): row['lifecycle']='CLOSED_OR_UNVERIFIED'
