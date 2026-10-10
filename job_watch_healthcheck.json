@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-10T12:12:08Z",
+  "generated_at": "2026-10-10T13:57:49Z",
   "run_id": "56025aa79f436215b25cbf90",
   "snapshot": {
     "run_id": "56025aa79f436215b25cbf90",
@@ -25,9 +25,9 @@
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
     }
   },
-  "status": "NEEDS_REVIEW",
+  "status": "COMPLETE_WITH_WARNINGS",
   "collection_status": "COMPLETE_WITH_WARNINGS",
-  "DAILY_COMPLETE": false,
+  "DAILY_COMPLETE": true,
   "FULL_SEMANTIC_COMPLETE": false,
   "priority_checks": {
     "Amazon": "VERIFIED",
@@ -35,112 +35,64 @@
   },
   "batches": {
     "JW1": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 0,
       "jd_retry_deferred": 1,
       "jd_unavailable": 1,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
-      "reporting_pending": 4,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 2,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW1",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 4,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW2": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 0,
       "jd_retry_deferred": 1,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
-      "reporting_pending": 17,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 1,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW2",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 17,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW3": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 0,
       "jd_retry_deferred": 2,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
-      "reporting_pending": 2,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 2,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW3",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 2,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW4": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 0,
       "jd_retry_deferred": 1,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
-      "reporting_pending": 4,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 1,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW4",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 4,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     }
   },
   "coverage": {
@@ -169,7 +121,7 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 27,
+  "daily_actionable_remaining": 0,
   "processable_semantic_pending": 0,
   "jd_retry_deferred": 5,
   "jd_unavailable": 1,
@@ -1358,6 +1310,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1392,52 +1347,7 @@
       "status": "COMPLETE"
     }
   },
-  "remaining_work": [
-    {
-      "batch": "JW1",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 4,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW2",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 17,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW3",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 2,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW4",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 4,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    }
-  ],
+  "remaining_work": [],
   "unresolved_user_decisions": [
     "Mastercard::R-291258",
     "Mastercard::R-292626",
