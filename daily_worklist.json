@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 84,
+    "records": 86,
     "daily_semantic_pending": 6,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 30,
-    "full_semantic_pending": 36,
-    "processable_semantic_pending": 33,
+    "historical_backlog_remaining": 21,
+    "full_semantic_pending": 27,
+    "processable_semantic_pending": 24,
     "jd_retry_deferred": 2,
     "jd_unavailable": 1
   },
@@ -412,6 +412,30 @@
         "final_experience_status": "REVIEW_UNCLEAR",
         "l68_status": "NO",
         "rationale": "Unusually strong hybrid fit: the mandatory architecture/built-environment background aligns with the user's architecture work, while the role also values program management, structured benchmarking and cross-functional delivery. London is within the Job Watch geography; up to 40% EU travel is the main practical consideration."
+      }
+    },
+    {
+      "batch": "JW2",
+      "job_key": "KPMG::826438302",
+      "action": "NEW_INTERESTING",
+      "needs_semantic_review": false,
+      "company": "KPMG",
+      "source_id": "826438302",
+      "title": "Senior Consultant F&PM | Milano",
+      "location": "Milano, IT 9 ott 2026",
+      "priority_company": false,
+      "canonical_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-F&PM-Milano/826438302/",
+      "fingerprint": "5f10869e66f8c347",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "decision": {
+        "fit_score": 78,
+        "reportable": true,
+        "salary": "EUR 33,000-41,000 gross annual base.",
+        "salary_source": "official_jd",
+        "final_experience_status": "TARGET_0_5",
+        "l68_status": "NO",
+        "rationale": "Good Milan consulting fit: process redesign, reporting, planning and technology-enabled transformation overlap with the user's consulting/analytics background. Direct finance-transformation experience is a gap, but the 2+ year requirement is close to target seniority and the salary range clears the floor."
       }
     },
     {
@@ -1556,6 +1580,30 @@
       "user_decision": "TO_REVIEW",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW2",
+      "job_key": "Amazon::10561993",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Amazon",
+      "source_id": "10561993",
+      "title": "Private Pricing Programs and Experiences , GDSP, AWS",
+      "location": "GB, London",
+      "priority_company": false,
+      "canonical_url": "https://www.amazon.jobs/en/jobs/10561993/private-pricing-programs-and-experiences-gdsp-aws",
+      "fingerprint": "08b38ae5fe004f79",
+      "current_status": "STILL_OPEN",
+      "threshold": 80,
+      "user_decision": "TO_REVIEW",
+      "user_decision_reason": "User kept AWS Private Pricing Programs & Experience; job identifier, role location and salary require fresh validation.",
+      "decision": {
+        "fit_score": 86,
+        "reportable": true,
+        "final_experience_status": "TARGET_0_5",
+        "l68_status": "NO",
+        "rationale": "Strong fit with business operations, CRM/process improvement, analytics, AI-enabled workflow design and cross-functional execution. The 3+ year requirement is a stretch versus current tenure, but still within the user's 0-5 target band and the role had already been retained for review."
+      }
     },
     {
       "batch": "JW2",
