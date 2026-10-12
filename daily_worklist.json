@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "a3ba4a117edab6f5c677ae9f",
+    "run_id": "223c727763b3f8a9eeb3e668",
     "source_generated_at": {
-      "JW1": "2026-10-11T00:12:37Z",
-      "JW2": "2026-10-11T00:15:26Z",
-      "JW3": "2026-10-11T00:16:22Z",
-      "JW4": "2026-10-11T00:18:48Z"
+      "JW1": "2026-10-12T00:27:48Z",
+      "JW2": "2026-10-12T00:31:21Z",
+      "JW3": "2026-10-12T00:32:23Z",
+      "JW4": "2026-10-12T00:35:06Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-10-11T00:19:02.546041+00:00"
+      "Amazon": "2026-10-12T00:35:22.294954+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "30af23e7e01413974b4ad889f59e3c4ed7ec76d301c7696d5a7dfae4709960b5",
-      "current_jobs_jw2.json": "acda554555a7f1db620a55c562e136045c80ed4cf414c87db54dda0ce3553833",
-      "current_jobs_jw3.json": "8c5c4bddb8b8260ed8a07b732a58daf84a12538d6b340dd1756915519ee31801",
-      "current_jobs_jw4.json": "b6b680ed17d299e332fccb35ea61512bda5df07fbf8e4ebae1c714658d3c2f9d",
-      "amazon_target_check.json": "9b5577be36ec001b682fac5cd4212e19f3aa1b49e66a058ba30c2f6d35afbe0f",
+      "current_jobs_jw1.json": "9d3d093be0245fa1bdc25d1cbce6088c563162b4da89f3ea53b0111436826865",
+      "current_jobs_jw2.json": "6fc090708263e08222829c585116b837f6262a3c40794d234184fb39eab7f6b2",
+      "current_jobs_jw3.json": "ee4a1b16f933834264ae4d7ddbe8daf3210f317ddc9a84c4775f76e940f552fc",
+      "current_jobs_jw4.json": "62f6aa3ee923e43b95c847831b148aae86b26842eb07f8fa6070c0684ef1ba4d",
+      "amazon_target_check.json": "2279801b5ff9ff7ef06b6b4cc6d1682ee35371e4faa9d638c1d514a21ef99a79",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,13 +26,13 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 82,
-    "daily_semantic_pending": 0,
+    "records": 86,
+    "daily_semantic_pending": 4,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 5,
-    "full_semantic_pending": 5,
-    "processable_semantic_pending": 0,
-    "jd_retry_deferred": 4,
+    "historical_backlog_remaining": 6,
+    "full_semantic_pending": 10,
+    "processable_semantic_pending": 9,
+    "jd_retry_deferred": 0,
     "jd_unavailable": 1
   },
   "records": [
@@ -48,7 +48,7 @@
       "priority_company": false,
       "canonical_url": "https://jd.wd103.myworkdayjobs.com/Careers_at_JD/job/ITA-Lombardy-Milan/Senior-Account-Manager---Italy_JR104243",
       "fingerprint": "1cadb9a699b649cd",
-      "current_status": "NEW",
+      "current_status": "STILL_OPEN",
       "threshold": 70,
       "first_seen_at": "2026-10-11T00:15:26Z",
       "decision": {
@@ -71,7 +71,7 @@
       "priority_company": false,
       "canonical_url": "https://careers.kpmg.it/job/Milano-Consultant-Public-Sector-MILANO/828570902/",
       "fingerprint": "74e4842c79978b44",
-      "current_status": "UPDATED",
+      "current_status": "STILL_OPEN",
       "threshold": 70,
       "first_seen_at": "2026-10-10T00:46:43Z",
       "decision": {
@@ -333,30 +333,6 @@
         "salary_source": "Campari official JD",
         "final_experience_status": "REVIEW_UNCLEAR",
         "rationale": "Very strong Milan-area commercial analytics/FP&A fit; user already INTERESTED."
-      }
-    },
-    {
-      "batch": "JW1",
-      "job_key": "Mastercard::/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
-      "action": "TO_REVIEW",
-      "needs_semantic_review": false,
-      "company": "Mastercard",
-      "source_id": "/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
-      "title": "Senior Analyst, Finance Business Partner, UK&I",
-      "location": "London, England (Angel Lane)",
-      "priority_company": true,
-      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
-      "fingerprint": "82895bf9133cb504",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "user_decision": "TO_REVIEW",
-      "user_decision_reason": "Strong strategic-finance and business-partnering fit; retain for explicit review.",
-      "first_seen_at": "2026-10-02T04:44:42Z",
-      "decision": {
-        "fit_score": 88,
-        "reportable": true,
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "rationale": "Strong strategic-finance, planning, variance-analysis and stakeholder fit."
       }
     },
     {
@@ -1038,6 +1014,23 @@
       "current_status": "UNKNOWN",
       "user_decision": "TO_REVIEW",
       "first_seen_at": "2026-10-07T06:03:28Z",
+      "decision": {},
+      "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Mastercard",
+      "source_id": "/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
+      "title": "Senior Analyst, Finance Business Partner, UK&I",
+      "location": "London, England (Angel Lane)",
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
+      "fingerprint": "82895bf9133cb504",
+      "current_status": "UNKNOWN",
+      "user_decision": "TO_REVIEW",
+      "first_seen_at": "2026-10-02T04:44:42Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
@@ -1991,6 +1984,70 @@
         "l68_status": "NO",
         "rationale": "Strong Milan fit for the user's analytics/consulting profile: business-requirements translation, KPI/dashboard design, data quality, stakeholder work and continuous improvement map well to current experience with Excel, Power BI and SAS. The main gaps are direct SQL/Tableau depth and the preferred 3+ years versus roughly 1.5-2 years current experience."
       }
+    },
+    {
+      "batch": "JW1",
+      "job_key": "American Express::26014437",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "American Express",
+      "source_id": "26014437",
+      "title": "Analyst, UK Chief Risk Officer, Ops Risk",
+      "location": "LONDON, LONDON, United Kingdom | BRIGHTON, EAST SUSSEX, United Kingdom",
+      "priority_company": false,
+      "canonical_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26014437",
+      "fingerprint": "bccdcc59e8ff6e81",
+      "current_status": "NEW",
+      "threshold": 80,
+      "first_seen_at": "2026-10-12T00:27:48Z"
+    },
+    {
+      "batch": "JW3",
+      "job_key": "Webuild::1266129201",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Webuild",
+      "source_id": "1266129201",
+      "title": "Responsabile Planning",
+      "location": "Oct 11, 2026 Roma, Italia",
+      "priority_company": false,
+      "canonical_url": "https://jobs.webuildgroup.com/job/Roma-Responsabile-Planning/1266129201/",
+      "fingerprint": "bb1e5b681be3623f",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:15:18Z"
+    },
+    {
+      "batch": "JW4",
+      "job_key": "Amplifon::13366",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Amplifon",
+      "source_id": "13366",
+      "title": "Una Laurea con Amplifon, A.A. 2026/2027",
+      "location": "Italy | Parma, Emilia Romagna, Italy | Torino, Piemonte, Italy | Padova, Veneto, Italy | Treviso, Veneto, Italy | Pisa, Toscana, Italy | Siena, Toscana, Italy | Roma, Lazio, Italy | Napoli, Campania, Italy | Bari, Puglia, Italy | Catania, Sicilia, Italy | Messina, Sicilia, Italy | Milano, Lombardia, Italy | Palermo, Sicilia, Italy | Verona, Veneto, Italy",
+      "priority_company": false,
+      "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/13366",
+      "fingerprint": "769278ad324500ff",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:16:41Z"
+    },
+    {
+      "batch": "JW4",
+      "job_key": "Ferrero::1415706633",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Ferrero",
+      "source_id": "1415706633",
+      "title": "Senior Labour Law Specialist",
+      "location": "Luxembourg, LU Oct 11, 2026",
+      "priority_company": false,
+      "canonical_url": "https://jobs.ferrero.com/job/Luxembourg-Senior-Labour-Law-Specialist/1415706633/",
+      "fingerprint": "5d58fbe72329b153",
+      "current_status": "UPDATED",
+      "threshold": 80,
+      "first_seen_at": "2026-10-07T18:21:50Z"
     }
   ],
   "lifecycle_updates": [],
