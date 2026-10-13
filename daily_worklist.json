@@ -26,16 +26,39 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 69,
-    "daily_semantic_pending": 8,
+    "records": 68,
+    "daily_semantic_pending": 6,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 27,
-    "full_semantic_pending": 35,
-    "processable_semantic_pending": 32,
+    "historical_backlog_remaining": 20,
+    "full_semantic_pending": 26,
+    "processable_semantic_pending": 23,
     "jd_retry_deferred": 2,
     "jd_unavailable": 1
   },
   "records": [
+    {
+      "batch": "JW2",
+      "job_key": "Amazon::10576108",
+      "action": "NEW_INTERESTING",
+      "needs_semantic_review": false,
+      "company": "Amazon",
+      "source_id": "10576108",
+      "title": "Talent Marketing Manager, AIM (Attraction, Influence and Marketing)",
+      "location": "GB, London",
+      "priority_company": false,
+      "canonical_url": "https://www.amazon.jobs/en/jobs/10576108/talent-marketing-manager-aim-attraction-influence-and-marketing",
+      "fingerprint": "48b8a783b45a8f19",
+      "current_status": "NEW",
+      "threshold": 80,
+      "first_seen_at": "2026-10-13T02:35:48Z",
+      "decision": {
+        "fit_score": 84,
+        "reportable": true,
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "l68_status": "NO",
+        "rationale": "Strong London stretch opportunity: strategy, marketing analytics, Excel/Tableau, KPI governance, cross-functional orchestration, automation and executive reporting align closely with the user's client-strategy and CRM/marketing work. Direct talent-marketing depth is the main gap, and the manager-level scope is a stretch, but there is no numeric experience fl"
+      }
+    },
     {
       "batch": "JW2",
       "job_key": "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Senior-Account-Manager---Italy_JR104243",
@@ -1453,24 +1476,6 @@
       }
     },
     {
-      "batch": "JW2",
-      "job_key": "Amazon::10575739",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Amazon",
-      "source_id": "10575739",
-      "title": "New Accounts Manager – Categorie Protette (L. 68/99), Seller Services",
-      "location": "IT, MI, Milan",
-      "target_city": "Milan",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10575739/new-accounts-manager-categorie-protette-l-68-99-seller-services",
-      "fingerprint": "d016fe61e3be7adf",
-      "current_status": "NEW",
-      "threshold": 70,
-      "role_family": "Marketplace / Seller Services / Strategic Accounts",
-      "first_seen_at": "2026-10-13T02:35:48Z"
-    },
-    {
       "batch": "JW1",
       "job_key": "American Express::26014894",
       "action": "NEW_CANDIDATE",
@@ -1519,22 +1524,6 @@
       "current_status": "NEW",
       "threshold": 70,
       "first_seen_at": "2026-10-13T02:33:09Z"
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Salesforce::/job/Italy---Milan/Senior-Technical-Consultant_JR361388-1",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Salesforce",
-      "source_id": "/job/Italy---Milan/Senior-Technical-Consultant_JR361388-1",
-      "title": "Senior Technical Consultant",
-      "location": "Italy - Milan",
-      "priority_company": false,
-      "canonical_url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Italy---Milan/Senior-Technical-Consultant_JR361388-1",
-      "fingerprint": "af1fcfe9b5418889",
-      "current_status": "NEW",
-      "threshold": 70,
-      "first_seen_at": "2026-10-13T02:35:48Z"
     },
     {
       "batch": "JW4",
