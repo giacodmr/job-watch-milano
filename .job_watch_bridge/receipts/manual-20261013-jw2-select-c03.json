@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-38460367050-1",
+  "batch": "jw2",
+  "created_at": "2026-10-13T20:08:15Z",
+  "fetch_errors": {
+    "Amazon::10500732": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10500732": "2bb777f47ee96df0",
+    "Amazon::10575739": "d016fe61e3be7adf",
+    "Amazon::10576108": "48b8a783b45a8f19",
+    "Amazon::10576287": "53e76e4af2e08882",
+    "Amazon::10576288": "b8065012de873b32",
+    "Amazon::10576473": "56e1981ad6159a1b",
+    "KPMG::1361403257": "cd84fcd23fd30221",
+    "KPMG::1372063857": "2f584c940b117995",
+    "KPMG::777593102": "fbf08557fa5f7ab1",
+    "Salesforce::/job/Italy---Milan/Senior-Technical-Consultant_JR361388-1": "af1fcfe9b5418889"
+  },
+  "job_keys": [
+    "Amazon::10575739",
+    "Salesforce::/job/Italy---Milan/Senior-Technical-Consultant_JR361388-1",
+    "Amazon::10576473",
+    "Amazon::10576288",
+    "Amazon::10576287",
+    "Amazon::10576108",
+    "KPMG::1372063857",
+    "Amazon::10500732",
+    "KPMG::777593102",
+    "KPMG::1361403257"
+  ],
+  "packet_sha256": "7b88634c68dc70109cd56404c73afb561eeb5bf2b18bc457c0ef150bea1638c5",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "manual-20261013-jw2-select-c03",
+  "request_sha256": "45f8df65c71c2b6edfa8093c7b1473d7d41961f31987a383bdf7e9e1a36e1303",
+  "select_run_attempt": 1,
+  "select_run_id": 38460367050,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "286aa0e9bb72c9a1f019ae0440d1e2966aee75116d1058b15fa84fd26c56a99d",
+    "job_memory_jw2.json": "5e47cabf9dc7161ec11cc45bd521881650a48bf94b347eedd82f7f05a6759596",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "286aa0e9bb72c9a1f019ae0440d1e2966aee75116d1058b15fa84fd26c56a99d",
+    "job_memory_jw2.json": "adf590a54f39dd814f28e7f561c66481362e1673720a9d9917ada858aa45a33c",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10500732": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "2bb777f47ee96df0",
+        "source_url": "https://www.amazon.jobs/en/jobs/10500732/it-infrastructure-operations-lead-data-center"
+      },
+      "last_failure_at": "2026-10-13T20:08:15Z",
+      "retry_from": "2026-10-14",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11844898579
+}
