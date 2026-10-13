@@ -1,0 +1,85 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-38460889880-1",
+  "batch": "jw1",
+  "created_at": "2026-10-13T20:12:20Z",
+  "fetch_errors": {
+    "Mastercard::R-292298": "HTTP 403",
+    "Moneyfarm::6976A00E64": "official page does not expose a matching job description",
+    "Qonto::4ccb652a-b699-486b-968b-ab1275d723bf": "HTTP 404"
+  },
+  "fingerprints": {
+    "American Express::26014437": "bccdcc59e8ff6e81",
+    "American Express::26014894": "1b614cdc43919c2a",
+    "American Express::26015030": "4de532d2fff92338",
+    "Mastercard::R-292298": "e351e9027692fcc6",
+    "Moneyfarm::6976A00E64": "50711982ff5d25c5",
+    "Qonto::4ccb652a-b699-486b-968b-ab1275d723bf": "35530cce198f8215",
+    "Qonto::522a932c-8009-4e1a-87b8-970b9d33066b": "303c3cfe11c60993"
+  },
+  "job_keys": [
+    "Mastercard::R-292298",
+    "American Express::26014894",
+    "Qonto::4ccb652a-b699-486b-968b-ab1275d723bf",
+    "Qonto::522a932c-8009-4e1a-87b8-970b9d33066b",
+    "American Express::26015030",
+    "Moneyfarm::6976A00E64",
+    "American Express::26014437"
+  ],
+  "packet_sha256": "3f8dbed88fc93839821fc7930000d13a520489cc1af6ec25b2784654515ccbb4",
+  "ready_count": 4,
+  "record_count": 7,
+  "request_id": "manual-20261013-jw1-select-c04",
+  "request_sha256": "29eb7c52fc53e5c89c86060f5ae959811237efc13e62b2f6e7a878715d075bc1",
+  "select_run_attempt": 1,
+  "select_run_id": 38460889880,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "9bfb4010796ba20940ff5a125adc2f64e4cfcdced866cf20e4b6901042a6e0af",
+    "job_memory_jw1.json": "6d75820da53330da82b357c8f8d8369b685ab91bffb832a5cc3e40f2d998c387",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "9bfb4010796ba20940ff5a125adc2f64e4cfcdced866cf20e4b6901042a6e0af",
+    "job_memory_jw1.json": "dd693a865eb543346dc2d8a18f3df092a62abdb05f0bf79ebf72824b67e2986e",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Mastercard::R-292298": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "e351e9027692fcc6",
+        "source_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/Milan-Italy/Creative-Strategist-Art_R-292298"
+      },
+      "last_failure_at": "2026-10-13T20:12:20Z",
+      "retry_from": "2026-10-14",
+      "status": "RETRY_PENDING"
+    },
+    "Moneyfarm::6976A00E64": {
+      "attempts": 3,
+      "evidence": {
+        "fingerprint": "50711982ff5d25c5",
+        "source_url": "https://apply.workable.com/j/6976A00E64/apply"
+      },
+      "last_failure_at": "2026-10-13T20:12:20Z",
+      "retry_from": "2026-10-14",
+      "status": "RETRY_PENDING"
+    },
+    "Qonto::4ccb652a-b699-486b-968b-ab1275d723bf": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "35530cce198f8215",
+        "source_url": "https://jobs.lever.co/qonto/4ccb652a-b699-486b-968b-ab1275d723bf"
+      },
+      "last_failure_at": "2026-10-13T20:12:20Z",
+      "retry_from": "2026-10-14",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 11845254096
+}
