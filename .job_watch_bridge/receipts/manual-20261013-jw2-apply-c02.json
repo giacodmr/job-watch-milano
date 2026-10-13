@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261013-jw2-apply-c02",
+  "request_sha256": "f33c8ebd95b6b9cffd1e05668dd95688a25d814776e40a57b3c23e531d1a8acc",
+  "parent_request_id": "manual-20261013-jw2-select-c02",
+  "packet_sha256": "6c68e586d7bee394b4b62749a9650aedd672087dc39880d0a06933df94f07e26",
+  "select_run_id": 38459242922,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "286aa0e9bb72c9a1f019ae0440d1e2966aee75116d1058b15fa84fd26c56a99d",
+    "job_memory_jw2.json": "2c912edd6aef22baaaa28d877206e6aa78a2783b2d7fd22980b189b96b56b014",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 8,
+  "applied_keys": [
+    "Amazon::10537234",
+    "Amazon::10554670",
+    "Amazon::10565617",
+    "Amazon::10567996",
+    "Amazon::10575480",
+    "Amazon::10575867",
+    "KPMG::1374589857",
+    "KPMG::1374607557"
+  ],
+  "retry": {
+    "Amazon::10575739": "ordinary_twin_check_missing",
+    "Salesforce::/job/Italy---Milan/Senior-Technical-Consultant_JR361388-1": "semantic_decision_experience_status_invalid"
+  },
+  "accepted_patch_sha256": "b7c4480763651f2e09e4775c8e878ce970f5e386e8a8c99cd299ee63c0046759",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 7,
+      "JW2": 23,
+      "JW3": 4,
+      "JW4": 7
+    },
+    "total": 41
+  },
+  "replayed": false
+}
