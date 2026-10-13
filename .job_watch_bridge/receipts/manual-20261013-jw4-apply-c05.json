@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261013-jw4-apply-c05",
+  "request_sha256": "625de94dc52c506af6afd8bfd0b6b628d0f306c18bcaf8d26f12289f33e78263",
+  "parent_request_id": "manual-20261013-jw4-select-c05",
+  "packet_sha256": "2df047b564671150ef065099036cbc9d02edb61725004eb4bee37bac74d351dc",
+  "select_run_id": 38461228953,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "b76589188a3b0659546ae0f5949fe2add1951e6a2d090462d3d0cf2e80248470",
+    "job_memory_jw4.json": "cc92c0c39cfaea60afd333da8d5a969c45507e92934f0baecd6207b3892e2bda",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 6,
+  "applied_keys": [
+    "Amplifon::13366",
+    "Amplifon::21520",
+    "Amplifon::21522",
+    "Ferrero::1415706633",
+    "IQVIA::R1551770",
+    "Novartis::REQ-10089728"
+  ],
+  "retry": {
+    "H&M::744000154619039": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "33a0960e97166d63306d13e64d15328da4059896d61c711ad693d5d11250fa2e",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 5,
+      "JW3": 4,
+      "JW4": 6
+    },
+    "total": 15
+  },
+  "replayed": false
+}
