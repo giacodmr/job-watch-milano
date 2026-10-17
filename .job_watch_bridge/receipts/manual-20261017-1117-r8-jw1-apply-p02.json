@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261017-1117-r8-jw1-apply-p02",
+  "request_sha256": "1d45e5601d945e8db6d1321cc3fea7cbccc471a641a9738336bea0617290affe",
+  "parent_request_id": "manual-20261017-1115-r8-jw1-select-p02",
+  "packet_sha256": "a06e7410e15ae4a0cc6c4c0b46104f61b5199c376dbc10c96e5621d84d659e10",
+  "select_run_id": 39020388520,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "0949c87f105dc847eb8883559f17209615767544c4fd1449423db11b6b621f0d",
+    "job_memory_jw1.json": "eeffa6fedd63c315b3e00e1eb20cab3592eed141d83e1e038b559d33f92eb883",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "American Express::26013624",
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/Global-Transaction-Banking-Sales-Director_JR00117467-2",
+    "Banca Sella::JR-002214",
+    "Euronext::R28661",
+    "ING Italia::REQ-10123098",
+    "Intesa Sanpaolo::1435603233",
+    "Qonto::522a932c-8009-4e1a-87b8-970b9d33066b",
+    "Qonto::6bcd0b5b-768b-49ff-8a89-3e630dbcc4a3",
+    "Satispay::29ee4c79-44ff-48f6-a7e0-8b2608989026"
+  ],
+  "retry": {
+    "Moneyfarm::6976A00E64": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "a78dd44af5ef7be011647e3d0589ab453fcec75cf6b231e7bb11d8be3b41d9ca",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 10,
+      "JW2": 0,
+      "JW3": 11,
+      "JW4": 27
+    },
+    "total": 48
+  },
+  "replayed": false
+}
