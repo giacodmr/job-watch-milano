@@ -1,0 +1,38 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261017-1051-r5-jw2-apply-p01",
+  "request_sha256": "275037fa6b69799097ae17be7cbb753b5cf310e9711b4f2a20c8d6eb0effef2e",
+  "parent_request_id": "manual-20261017-1051-r5-jw2-select-p01",
+  "packet_sha256": "da0aff5095309bb7932852dd4addd495d1cfeb7a55faa3274a17072e5a031549",
+  "select_run_id": 39018942724,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "cc6e1c3de7ae8018cb046ffc9a2cd605341fdbca29f7da868dee68a09cd176d0",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "COMPLETE",
+  "applied_count": 5,
+  "applied_keys": [
+    "KPMG::1328228457",
+    "KPMG::1367155657",
+    "KPMG::1372036357",
+    "KPMG::1372062957",
+    "KPMG::1374607557"
+  ],
+  "retry": {},
+  "accepted_patch_sha256": "3a160ff45815c82a59377247be42743f72f421f1e061241ccca3e16c1838f60d",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 25,
+      "JW2": 26,
+      "JW3": 11,
+      "JW4": 27
+    },
+    "total": 89
+  },
+  "replayed": false
+}
