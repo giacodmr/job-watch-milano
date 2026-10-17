@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261017-1128-r10-jw4-apply-p01",
+  "request_sha256": "4debf7cb0549b45d7c16a099064d142a4c56fdda64cb160e4bb7bc9235fe2944",
+  "parent_request_id": "manual-20261017-1125-r10-jw4-select-p01",
+  "packet_sha256": "e0d9f13d4c2304137bf6d92205695c2efb51395b882d65cfaab5572a387584ce",
+  "select_run_id": 39021067473,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "8abf5e2e172505d73ef0121e999ff3ed8f855d2414405d1d1119597b55b68a5d",
+    "job_memory_jw4.json": "1bc1f4a780ca2b9ff732aa8d61d041e2a4d4b65c4b68cc9d3569ec21cbffc479",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "Amplifon::21522",
+    "Avolta / Autogrill::1416092033",
+    "Ferrero::1437083733",
+    "Johnson & Johnson::R-104301",
+    "Nike::/job/Milano-Italy/Specialist-II--Brand-Marketing--Running---Training_R-91869-1",
+    "Novartis::/job/Milano/Digital-Marketing-Execution-Manager_REQ-10087311-1",
+    "Prada Group::1448633233",
+    "Sanofi::R2873032",
+    "Sky Italia::R0059892"
+  ],
+  "retry": {
+    "IQVIA::/job/Milan-Italy/COAA-Authors-Engagement-Lead_R1565453-1": "semantic_decision_fingerprint_mismatch"
+  },
+  "accepted_patch_sha256": "cdaaad8a78fadab492ae3632e9e48e34276a568530e20962f7e010047adcb2f6",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 0,
+      "JW3": 11,
+      "JW4": 23
+    },
+    "total": 34
+  },
+  "replayed": false
+}
