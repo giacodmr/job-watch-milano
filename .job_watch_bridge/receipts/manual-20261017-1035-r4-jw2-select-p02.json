@@ -1,0 +1,91 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39018773441-1",
+  "batch": "jw2",
+  "created_at": "2026-10-17T08:49:13Z",
+  "fetch_errors": {
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": "no Ashby tenant",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015": "Expecting value: line 1 column 1 (char 0)",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590": "Expecting value: line 1 column 1 (char 0)"
+  },
+  "fingerprints": {
+    "Amazon::10486961": "63475e13c270909d",
+    "Amazon::10576760": "39709b96f913be86",
+    "Amazon::10579744": "2e980b8c77631f16",
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": "f4601e46576c38ef",
+    "Experian::744000155241255": "448316abac4b9991",
+    "KPMG::1374815357": "24601e669f46f91c",
+    "KPMG::1374832557": "c0de26698800ffd8",
+    "KPMG::1374844157": "5a62d01762e36515",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015": "6fe33e4bd9a3fa0e",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590": "f099a7ce1b5a025c"
+  },
+  "job_keys": [
+    "Amazon::10576760",
+    "Experian::744000155241255",
+    "Amazon::10486961",
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca",
+    "KPMG::1374832557",
+    "KPMG::1374815357",
+    "KPMG::1374844157",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590",
+    "Amazon::10579744"
+  ],
+  "packet_sha256": "f7fd4fa6d2c004734ea2d97eaf2407e6882b171ef507790ce29a63dccc9ae6b9",
+  "ready_count": 7,
+  "record_count": 10,
+  "request_id": "manual-20261017-1035-r4-jw2-select-p02",
+  "request_sha256": "a37654815f56ea66c52095c114ad102f8000c304f15d6beee9924c3119fdb503",
+  "select_run_attempt": 1,
+  "select_run_id": 39018773441,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "a92aae3a86f9ba68e136bafca57aedc9e5853e25a81efab3e866bbacb4ff907e",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "63469c95c5768db8dcf1ddaa4f27175a443d610f415a94764206bf46845d13b4",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "f4601e46576c38ef",
+        "source_url": "https://jobs.ashbyhq.com/eightsleep/1a3538da-8cce-4217-ad52-bfdb4d5daeca"
+      },
+      "last_failure_at": "2026-10-17T08:49:13Z",
+      "retry_from": "2026-10-18",
+      "status": "RETRY_PENDING"
+    },
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "6fe33e4bd9a3fa0e",
+        "source_url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Italy---Milan/Account-Solution-Engineer_JR364015"
+      },
+      "last_failure_at": "2026-10-17T08:49:13Z",
+      "retry_from": "2026-10-18",
+      "status": "RETRY_PENDING"
+    },
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "f099a7ce1b5a025c",
+        "source_url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590"
+      },
+      "last_failure_at": "2026-10-17T08:49:13Z",
+      "retry_from": "2026-10-18",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12094839494
+}
