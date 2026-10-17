@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261017-1035-r4-jw2-apply-p02",
+  "request_sha256": "2f62d41fd2e02549c1f195d35f2da725d0a8d34bb56a28e0054260c1c729d359",
+  "parent_request_id": "manual-20261017-1035-r4-jw2-select-p02",
+  "packet_sha256": "f7fd4fa6d2c004734ea2d97eaf2407e6882b171ef507790ce29a63dccc9ae6b9",
+  "select_run_id": 39018773441,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "a92aae3a86f9ba68e136bafca57aedc9e5853e25a81efab3e866bbacb4ff907e",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 7,
+  "applied_keys": [
+    "Amazon::10486961",
+    "Amazon::10576760",
+    "Amazon::10579744",
+    "Experian::744000155241255",
+    "KPMG::1374815357",
+    "KPMG::1374832557",
+    "KPMG::1374844157"
+  ],
+  "retry": {
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": "jd_fetch_failed",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015": "jd_fetch_failed",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "4275ac9e26dea0798813b241d270837f4601c5b4cae5bf25a41f9743dd311304",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 25,
+      "JW2": 33,
+      "JW3": 11,
+      "JW4": 27
+    },
+    "total": 96
+  },
+  "replayed": false
+}
