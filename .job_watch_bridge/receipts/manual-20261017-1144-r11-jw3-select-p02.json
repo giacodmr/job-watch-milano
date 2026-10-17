@@ -1,0 +1,82 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39021695992-1",
+  "batch": "jw3",
+  "created_at": "2026-10-17T09:35:30Z",
+  "fetch_errors": {
+    "MET Group::744000154036660": "HTTP 400",
+    "MET Group::744000154160719": "HTTP 400"
+  },
+  "fingerprints": {
+    "GE Vernova::/job/Milan/Lead-TFA-Generator-Mechanical_R5056188-2": "bb5fe4a451cdac9f",
+    "MET Group::744000154036660": "b198d88284ea9df9",
+    "MET Group::744000154160719": "530baa8507a8637e",
+    "Webuild::1243541501": "4dcf0de465497c80",
+    "Webuild::1255465001": "28da79f68abde789",
+    "Webuild::1261642801": "0cfd68ed79571300",
+    "Webuild::1266129201": "bb1e5b681be3623f",
+    "Webuild::1268956601": "2882611dd5ca10af",
+    "Webuild::1382999233": "959187fc3c91ab4c",
+    "Webuild::1447669533": "807b5e085c441d31",
+    "Webuild::1448159633": "751ebc172efb0c37"
+  },
+  "job_keys": [
+    "GE Vernova::/job/Milan/Lead-TFA-Generator-Mechanical_R5056188-2",
+    "Webuild::1243541501",
+    "Webuild::1447669533",
+    "Webuild::1382999233",
+    "Webuild::1266129201",
+    "Webuild::1255465001",
+    "MET Group::744000154160719",
+    "MET Group::744000154036660",
+    "Webuild::1448159633",
+    "Webuild::1261642801",
+    "Webuild::1268956601"
+  ],
+  "packet_sha256": "76d8cf4943027ef1f3d28aa0dd6fdf3ff4da51e12d9bff70a3e233bb94a4ba34",
+  "ready_count": 9,
+  "record_count": 11,
+  "request_id": "manual-20261017-1144-r11-jw3-select-p02",
+  "request_sha256": "58e3d6e5094a9bae0d38924ce4658f94ef418cf9601dfab22fc95aacae3bf28b",
+  "select_run_attempt": 1,
+  "select_run_id": 39021695992,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "ce49f59bf64d2ad788c25cc4cf1a5b03dc9919bcf83de6adc92e537db9cb0c14",
+    "job_memory_jw3.json": "0bbd9456f8914857269d10c449d4c993919bfe3c7f4fbbb2b8381f9360b0e6ea",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "ce49f59bf64d2ad788c25cc4cf1a5b03dc9919bcf83de6adc92e537db9cb0c14",
+    "job_memory_jw3.json": "489eecc82f9290ee4988226e9b178384477b1516c7506bab7becb1f80e96dea0",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "MET Group::744000154036660": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "b198d88284ea9df9",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000154036660"
+      },
+      "last_failure_at": "2026-10-17T09:35:30Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    },
+    "MET Group::744000154160719": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "530baa8507a8637e",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000154160719"
+      },
+      "last_failure_at": "2026-10-17T09:35:30Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12097515092
+}
