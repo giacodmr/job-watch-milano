@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39020388520-1",
+  "batch": "jw1",
+  "created_at": "2026-10-17T09:15:10Z",
+  "fetch_errors": {
+    "Moneyfarm::6976A00E64": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "American Express::26013624": "7a584b01c90df1f6",
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/Global-Transaction-Banking-Sales-Director_JR00117467-2": "e1e119c257055683",
+    "Banca Sella::JR-002214": "1b8a83d05ccad10f",
+    "Euronext::R28661": "6a303d2abfb0f2e6",
+    "ING Italia::REQ-10123098": "a3a553b852a0dbee",
+    "Intesa Sanpaolo::1435603233": "23db4a113ad2242c",
+    "Moneyfarm::6976A00E64": "50711982ff5d25c5",
+    "Qonto::522a932c-8009-4e1a-87b8-970b9d33066b": "dfce258c154140e0",
+    "Qonto::6bcd0b5b-768b-49ff-8a89-3e630dbcc4a3": "cdc2a7ea24edb707",
+    "Satispay::29ee4c79-44ff-48f6-a7e0-8b2608989026": "1ee9aa92219f0064"
+  },
+  "job_keys": [
+    "Intesa Sanpaolo::1435603233",
+    "Qonto::6bcd0b5b-768b-49ff-8a89-3e630dbcc4a3",
+    "Moneyfarm::6976A00E64",
+    "Qonto::522a932c-8009-4e1a-87b8-970b9d33066b",
+    "Banca Sella::JR-002214",
+    "Satispay::29ee4c79-44ff-48f6-a7e0-8b2608989026",
+    "ING Italia::REQ-10123098",
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/Global-Transaction-Banking-Sales-Director_JR00117467-2",
+    "Euronext::R28661",
+    "American Express::26013624"
+  ],
+  "packet_sha256": "a06e7410e15ae4a0cc6c4c0b46104f61b5199c376dbc10c96e5621d84d659e10",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "manual-20261017-1115-r8-jw1-select-p02",
+  "request_sha256": "f177730ecf5a52259578aa018c754f2c820e5c7aee0f20d3f366e1c73809868f",
+  "select_run_attempt": 1,
+  "select_run_id": 39020388520,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "0949c87f105dc847eb8883559f17209615767544c4fd1449423db11b6b621f0d",
+    "job_memory_jw1.json": "eeffa6fedd63c315b3e00e1eb20cab3592eed141d83e1e038b559d33f92eb883",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "0949c87f105dc847eb8883559f17209615767544c4fd1449423db11b6b621f0d",
+    "job_memory_jw1.json": "e6c99f81cb9c1412395fe7b21dcb7174f6c1e4616015f7fa02acfa29af88c0ea",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Moneyfarm::6976A00E64": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "50711982ff5d25c5",
+        "source_url": "https://apply.workable.com/j/6976A00E64/apply"
+      },
+      "last_failure_at": "2026-10-17T09:15:10Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12096655961
+}
