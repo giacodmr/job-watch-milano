@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39018526886-1",
+  "batch": "jw2",
+  "created_at": "2026-10-17T08:45:16Z",
+  "fetch_errors": {
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": "no Ashby tenant"
+  },
+  "fingerprints": {
+    "AlixPartners::7548133003": "e9f8a3724cdf4323",
+    "Amazon::10415055": "ff24cbddcbf16bb4",
+    "Amazon::10500732": "bbad03438aca4938",
+    "Amazon::10577193": "e1bc3a1befb5e760",
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": "2c37ef0fcb5d1249",
+    "KPMG::1361396857": "1f962235d5850512",
+    "KPMG::1367089757": "106062b5eada70a8",
+    "KPMG::1372478457": "deb57aeed7475ebf",
+    "KPMG::820295402": "e9773bea896d6b12",
+    "KPMG::828570902": "cda9d0f1bc8b0c79"
+  },
+  "job_keys": [
+    "KPMG::820295402",
+    "KPMG::1372478457",
+    "KPMG::1367089757",
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346",
+    "Amazon::10577193",
+    "Amazon::10415055",
+    "Amazon::10500732",
+    "KPMG::828570902",
+    "KPMG::1361396857",
+    "AlixPartners::7548133003"
+  ],
+  "packet_sha256": "04f6a347bf2c33870016825260075241fa7af5ff851eba2d1a67f248fcbd8607",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "manual-20261017-1035-r4-jw2-select-p01",
+  "request_sha256": "ed912294ba4baece990eca572dab71b5728df7716967565964e4da3dca5cbc44",
+  "select_run_attempt": 1,
+  "select_run_id": 39018526886,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "8c08d4062358b242fba9a460d461686dec271ca316b6b1c7d0fff0ff2d828b3f",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "0d2ce6da8b280b6fb38c0d5cd0809444819c5cc8e7c51e0e9436e0d5721c86c6",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "2c37ef0fcb5d1249",
+        "source_url": "https://jobs.ashbyhq.com/eightsleep/f4e3002d-cbb5-41ad-994c-cbe3daa8b346"
+      },
+      "last_failure_at": "2026-10-17T08:45:16Z",
+      "retry_from": "2026-10-18",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12096105747
+}
