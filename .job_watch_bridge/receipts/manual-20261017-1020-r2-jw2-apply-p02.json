@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261017-1020-r2-jw2-apply-p02",
+  "request_sha256": "ef03f7bce1ac2a39bcd5c474a98d1358f59a5878663cd0d88a427a0c179b845d",
+  "parent_request_id": "manual-20261017-1020-r2-jw2-select-p02",
+  "packet_sha256": "f9244c54cf7ba1afcac751eee1f82a69d5535db27cce30dd5b1cab9d73bfe610",
+  "select_run_id": 39017545951,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "452ebc1af0ef2b34ccf1f59edb0a865312740ea936d0b0b3e8e7753887574d47",
+    "job_memory_jw2.json": "2fa88d22291633f52c39b959dba7980e4d37642186ec081d552b0ecb600f5f9b",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "Amazon::10529225",
+    "Amazon::10559152",
+    "Amazon::10565545",
+    "Amazon::10565546",
+    "Amazon::10579734",
+    "Amazon::10581171",
+    "Amazon::10581173",
+    "Amazon::10581187",
+    "Amazon::10581189"
+  ],
+  "retry": {
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364013": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "c89542e3d93871ad267f6476999992ac0db601ed148a2edf247301abc3737bc8",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 25,
+      "JW2": 60,
+      "JW3": 11,
+      "JW4": 27
+    },
+    "total": 123
+  },
+  "replayed": false
+}
