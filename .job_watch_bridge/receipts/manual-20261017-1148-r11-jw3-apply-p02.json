@@ -1,0 +1,45 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261017-1148-r11-jw3-apply-p02",
+  "request_sha256": "0d992dfdd5babace503f84f3011909dbc0f4f0439793f8d9fdd01c1a34ad34f1",
+  "parent_request_id": "manual-20261017-1144-r11-jw3-select-p02",
+  "packet_sha256": "76d8cf4943027ef1f3d28aa0dd6fdf3ff4da51e12d9bff70a3e233bb94a4ba34",
+  "select_run_id": 39021695992,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "ce49f59bf64d2ad788c25cc4cf1a5b03dc9919bcf83de6adc92e537db9cb0c14",
+    "job_memory_jw3.json": "0bbd9456f8914857269d10c449d4c993919bfe3c7f4fbbb2b8381f9360b0e6ea",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw3",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "GE Vernova::/job/Milan/Lead-TFA-Generator-Mechanical_R5056188-2",
+    "Webuild::1243541501",
+    "Webuild::1255465001",
+    "Webuild::1261642801",
+    "Webuild::1266129201",
+    "Webuild::1268956601",
+    "Webuild::1382999233",
+    "Webuild::1447669533",
+    "Webuild::1448159633"
+  ],
+  "retry": {
+    "MET Group::744000154036660": "jd_fetch_failed",
+    "MET Group::744000154160719": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "49ab2a88bf43c4cc5d0e72376cfbaafbf1c1df6e8b0eb976c136f9d01f7809ca",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 0,
+      "JW3": 9,
+      "JW4": 0
+    },
+    "total": 9
+  },
+  "replayed": false
+}
