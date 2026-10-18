@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "2188b88216088c56f0018ef2",
+    "run_id": "0c5072b29cff2f3349044c0b",
     "source_generated_at": {
-      "JW1": "2026-10-17T23:02:41Z",
-      "JW2": "2026-10-17T23:05:28Z",
-      "JW3": "2026-10-17T23:06:24Z",
-      "JW4": "2026-10-17T23:08:56Z"
+      "JW1": "2026-10-18T23:01:42Z",
+      "JW2": "2026-10-18T23:04:06Z",
+      "JW3": "2026-10-18T23:05:03Z",
+      "JW4": "2026-10-18T23:07:20Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-10-17T23:09:12.978973+00:00"
+      "Amazon": "2026-10-18T23:07:35.712642+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "32e87a97d1ed4db52a98d08e9ef8aef2ff90d7f70446fa44d71efdb02d24b2a5",
-      "current_jobs_jw2.json": "1a5980d19bac9cd7e55619d8b7353913a040273285e119c1b1059f9d0df0eda8",
-      "current_jobs_jw3.json": "d22425a335b4e782bca7c927f64722052deaeb5213324ecc7dd4d91ad45d3cd6",
-      "current_jobs_jw4.json": "19bf0cf8cba7111a78d806d42a24cee2db8b053209e46a5509e7848a6ee16c1f",
-      "amazon_target_check.json": "68b2daadbf8ec6bc2fb9a666ea9ab71befb5f378b197a4f9dcda8968b5b502b6",
+      "current_jobs_jw1.json": "cecc1811a278c20b02b4199b5e92d31cc82156f4fb4e8e532d43240a71a2b517",
+      "current_jobs_jw2.json": "be1134a6a8543dff78b79e155866a88f8e6e842c0ef738ebad12e57d91a7e7b8",
+      "current_jobs_jw3.json": "87f50b0edf871996b33518cf4e4ccc5e8063bf97dd09d04d43fae43637dd66b3",
+      "current_jobs_jw4.json": "53dd7fb0c997c72376c3cc9f046c48ded74efa1f8c9e22050552627894f6212d",
+      "amazon_target_check.json": "787f10ce8d934cb5730eff890a7a161c9139240b2282f218ea6d7a6c9494493c",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 96,
-    "daily_semantic_pending": 0,
+    "records": 100,
+    "daily_semantic_pending": 5,
     "backlog_assigned": 0,
     "historical_backlog_remaining": 0,
-    "full_semantic_pending": 0,
-    "processable_semantic_pending": 0,
+    "full_semantic_pending": 5,
+    "processable_semantic_pending": 5,
     "jd_retry_deferred": 0,
     "jd_unavailable": 0
   },
@@ -575,7 +575,7 @@
       "priority_company": false,
       "canonical_url": "https://jd.wd103.myworkdayjobs.com/Careers_at_JD/job/ITA-Lombardy-Milan/Service-Operations-Coordinator_JR104390",
       "fingerprint": "0b68b7b321dd1760",
-      "current_status": "NEW",
+      "current_status": "STILL_OPEN",
       "threshold": 70,
       "first_seen_at": "2026-10-17T23:05:28Z",
       "decision": {
@@ -1109,27 +1109,19 @@
       "batch": "JW4",
       "job_key": "Campari Group::1418194833",
       "action": "INTERESTED",
-      "needs_semantic_review": false,
+      "needs_semantic_review": true,
       "company": "Campari Group",
       "source_id": "1418194833",
       "title": "FP&A Commercial Sr. Specialist GTR (Full Time)",
-      "location": "Sesto San Giovanni, Milan, IT, 1000 19 Sept 2026",
+      "location": "Sesto San Giovanni, Milan, IT, 1000 18 Oct 2026",
       "priority_company": false,
       "canonical_url": "https://careers.camparigroup.com/job/Sesto-San-Giovanni-FP&A-Commercial-Sr_-Specialist-GTR-%28Full-Time%29-Mila-1000/1418194833/",
-      "fingerprint": "3ef41c0f93fe581d",
-      "current_status": "STILL_OPEN",
+      "fingerprint": "e51a1cbab3b665d5",
+      "current_status": "UPDATED",
       "threshold": 70,
       "user_decision": "INTERESTED",
       "user_decision_reason": "User marked this vacancy as interested.",
-      "first_seen_at": "2026-09-19T10:16:41Z",
-      "decision": {
-        "fit_score": 94,
-        "reportable": true,
-        "salary": "€46,800–54,600 base + 10% STI",
-        "salary_source": "Campari official JD",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "rationale": "Very strong Milan-area commercial analytics/FP&A fit; user already INTERESTED."
-      }
+      "first_seen_at": "2026-09-19T10:16:41Z"
     },
     {
       "batch": "JW1",
@@ -2202,6 +2194,70 @@
         "final_experience_status": "TARGET_0_5",
         "rationale": "Strong semantic fit and salary above floor; stale prior NOT_INTERESTED is not overwritten."
       }
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-292685",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Mastercard",
+      "source_id": "R-292685",
+      "title": "Manager, Risk Management",
+      "location": "London, England (Angel Lane)",
+      "priority_company": true,
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Manager--Risk-Management_R-292685",
+      "fingerprint": "6b9fd5a3b91b0c6c",
+      "current_status": "NEW",
+      "threshold": 80,
+      "first_seen_at": "2026-10-18T23:01:42Z"
+    },
+    {
+      "batch": "JW2",
+      "job_key": "KPMG::1367485857",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "KPMG",
+      "source_id": "1367485857",
+      "title": "Senior Consultant | Financial Services Milano",
+      "location": "Milano, IT 18 ott 2026",
+      "priority_company": false,
+      "canonical_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Financial-Services-Milano/1367485857/",
+      "fingerprint": "2b664652f909c2ec",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:14:46Z"
+    },
+    {
+      "batch": "JW3",
+      "job_key": "Webuild::1274702301",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Webuild",
+      "source_id": "1274702301",
+      "title": "RSPP",
+      "location": "Oct 18, 2026 Roma, Italia",
+      "priority_company": false,
+      "canonical_url": "https://jobs.webuildgroup.com/job/Roma-RSPP/1274702301/",
+      "fingerprint": "e6a628fdf77d0561",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:15:18Z"
+    },
+    {
+      "batch": "JW3",
+      "job_key": "Webuild::1397378133",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Webuild",
+      "source_id": "1397378133",
+      "title": "Responsabile Project Planning",
+      "location": "Oct 18, 2026 Milano, Italia",
+      "priority_company": false,
+      "canonical_url": "https://jobs.webuildgroup.com/job/Milano-Responsabile-Project-Planning/1397378133/",
+      "fingerprint": "ff35e4de46c51833",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:15:18Z"
     }
   ],
   "lifecycle_updates": [],
