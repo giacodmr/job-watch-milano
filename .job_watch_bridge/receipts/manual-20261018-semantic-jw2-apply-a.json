@@ -1,0 +1,47 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261018-semantic-jw2-apply-a",
+  "request_sha256": "db3901132f8c6a47a08532fde107a350298b4573d0b81254f4fdce351207f245",
+  "parent_request_id": "manual-20261018-semantic-jw2-select-a",
+  "packet_sha256": "b893435e5f3fcf6382610c4ff09446416986bb62eb2e4bb837fa4054f10b17e8",
+  "select_run_id": 39112683351,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "1a5980d19bac9cd7e55619d8b7353913a040273285e119c1b1059f9d0df0eda8",
+    "job_memory_jw2.json": "7558caad4d4440b89e2a6497708e0ac11f604930ad7930f39f55476d2147003c",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 10,
+  "applied_keys": [
+    "Amazon::10582071",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-Team-Leader_JR104396",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Service-Operations-Coordinator_JR104390",
+    "KPMG::1333364257",
+    "KPMG::1351435357",
+    "KPMG::1367348457",
+    "KPMG::1368441157",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364013",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590"
+  ],
+  "retry": {
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": "jd_fetch_failed",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-Team-Leader_JR104408": "review_not_submitted",
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "bcc93e890108ca6a893f7ddadddb8b1ece0cd7f9db7234c3faa2fa2a005ee5e4",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 11,
+      "JW3": 0,
+      "JW4": 0
+    },
+    "total": 11
+  },
+  "replayed": false
+}
