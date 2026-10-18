@@ -1,0 +1,86 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39112683351-1",
+  "batch": "jw2",
+  "created_at": "2026-10-18T08:45:48Z",
+  "fetch_errors": {
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": "no Ashby tenant",
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": "no Ashby tenant"
+  },
+  "fingerprints": {
+    "Amazon::10582071": "0efeaad5389447cc",
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": "f4601e46576c38ef",
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": "2c37ef0fcb5d1249",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-Team-Leader_JR104396": "781c1bf06615d668",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-Team-Leader_JR104408": "61921afef0042fa4",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Service-Operations-Coordinator_JR104390": "0b68b7b321dd1760",
+    "KPMG::1333364257": "43a5c3cbe17dcd46",
+    "KPMG::1351435357": "a046169ee90a2aae",
+    "KPMG::1367348457": "72b97fec9ff5bfd1",
+    "KPMG::1368441157": "5ccb07262a548815",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364013": "3aaa2bc1cc3295c0",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015": "6fe33e4bd9a3fa0e",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590": "f099a7ce1b5a025c"
+  },
+  "job_keys": [
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Service-Operations-Coordinator_JR104390",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-Team-Leader_JR104408",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-Team-Leader_JR104396",
+    "Amazon::10582071",
+    "KPMG::1351435357",
+    "KPMG::1368441157",
+    "KPMG::1367348457",
+    "KPMG::1333364257",
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346",
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015",
+    "Salesforce::/job/Italy---Milan/Lead-Account-Solution-Engineer_JR363590",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364013"
+  ],
+  "packet_sha256": "b893435e5f3fcf6382610c4ff09446416986bb62eb2e4bb837fa4054f10b17e8",
+  "ready_count": 11,
+  "record_count": 13,
+  "request_id": "manual-20261018-semantic-jw2-select-a",
+  "request_sha256": "3ec31be45f0d83520db9765fc26b36fdb9e42d1df087ec5ce31741f75fd08291",
+  "select_run_attempt": 1,
+  "select_run_id": 39112683351,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "1a5980d19bac9cd7e55619d8b7353913a040273285e119c1b1059f9d0df0eda8",
+    "job_memory_jw2.json": "7558caad4d4440b89e2a6497708e0ac11f604930ad7930f39f55476d2147003c",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "1a5980d19bac9cd7e55619d8b7353913a040273285e119c1b1059f9d0df0eda8",
+    "job_memory_jw2.json": "ec9c9a37abca6c054d88f392c1c86315a57d2020db3a294df342fa47151d43e9",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Eight Sleep::1a3538da-8cce-4217-ad52-bfdb4d5daeca": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "f4601e46576c38ef",
+        "source_url": "https://jobs.ashbyhq.com/eightsleep/1a3538da-8cce-4217-ad52-bfdb4d5daeca"
+      },
+      "last_failure_at": "2026-10-18T08:45:48Z",
+      "retry_from": "2026-10-19",
+      "status": "RETRY_PENDING"
+    },
+    "Eight Sleep::f4e3002d-cbb5-41ad-994c-cbe3daa8b346": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "2c37ef0fcb5d1249",
+        "source_url": "https://jobs.ashbyhq.com/eightsleep/f4e3002d-cbb5-41ad-994c-cbe3daa8b346"
+      },
+      "last_failure_at": "2026-10-18T08:45:48Z",
+      "retry_from": "2026-10-19",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12131266252
+}
