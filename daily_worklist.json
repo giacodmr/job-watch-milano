@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 96,
+    "records": 98,
     "daily_semantic_pending": 0,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 29,
-    "full_semantic_pending": 29,
-    "processable_semantic_pending": 29,
+    "historical_backlog_remaining": 19,
+    "full_semantic_pending": 19,
+    "processable_semantic_pending": 19,
     "jd_retry_deferred": 0,
     "jd_unavailable": 0
   },
@@ -553,6 +553,31 @@
     },
     {
       "batch": "JW2",
+      "job_key": "Amazon::10579626",
+      "action": "NEW_INTERESTING",
+      "needs_semantic_review": false,
+      "company": "Amazon",
+      "source_id": "10579626",
+      "title": "Process Expert (Surface Transportation), EU STEP Team",
+      "location": "LU, Luxembourg",
+      "priority_company": false,
+      "canonical_url": "https://www.amazon.jobs/en/jobs/10579626/process-expert-surface-transportation-eu-step-team",
+      "fingerprint": "48f65c96be3f7d6f",
+      "current_status": "STILL_OPEN",
+      "threshold": 80,
+      "first_seen_at": "2026-10-20T00:17:23Z",
+      "decision": {
+        "fit_score": 90,
+        "reportable": true,
+        "salary": "Not disclosed in official vacancy",
+        "salary_source": "No published fixed base range in official job description",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "l68_status": "NO",
+        "rationale": "Excellent fit for analytics, KPI frameworks, consulting delivery, operating-model transformation and process automation, even without direct transportation experience. Luxembourg threshold met."
+      }
+    },
+    {
+      "batch": "JW2",
       "job_key": "Amazon::10579964",
       "action": "NEW_INTERESTING",
       "needs_semantic_review": false,
@@ -619,6 +644,31 @@
         "final_experience_status": "TARGET_0_5",
         "l68_status": "NO",
         "rationale": "Business-operations/process optimization and KPI reporting align with client's analytics, CRM and cross-functional project experience; specific service logistics experience is a manageable gap. Salary undisclosed so no auto-exclusion."
+      }
+    },
+    {
+      "batch": "JW2",
+      "job_key": "KPMG::1367485857",
+      "action": "NEW_INTERESTING",
+      "needs_semantic_review": false,
+      "company": "KPMG",
+      "source_id": "1367485857",
+      "title": "Senior Consultant | Financial Services Milano",
+      "location": "Milano, IT 18 ott 2026",
+      "priority_company": false,
+      "canonical_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-Financial-Services-Milano/1367485857/",
+      "fingerprint": "2b664652f909c2ec",
+      "current_status": "STILL_OPEN",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:14:46Z",
+      "decision": {
+        "fit_score": 95,
+        "reportable": true,
+        "salary": "€33,000–€41,000 gross annual base",
+        "salary_source": "Official KPMG job description (18 Oct 2026)",
+        "final_experience_status": "TARGET_0_5",
+        "l68_status": "NO",
+        "rationale": "Almost exact match for business/insurance strategy, market sizing, analytics, financial casework, transformation and client consulting in Milan. Official €33-41k base meets floor though more than two years similar experience is a stretch."
       }
     },
     {
