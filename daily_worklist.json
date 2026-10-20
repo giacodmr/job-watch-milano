@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 99,
+    "records": 100,
     "daily_semantic_pending": 0,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 6,
-    "full_semantic_pending": 6,
-    "processable_semantic_pending": 6,
+    "historical_backlog_remaining": 0,
+    "full_semantic_pending": 0,
+    "processable_semantic_pending": 0,
     "jd_retry_deferred": 0,
     "jd_unavailable": 0
   },
@@ -1213,6 +1213,33 @@
       "first_seen_at": "2026-09-20T14:44:18Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW4",
+      "job_key": "Campari Group::1418194833",
+      "action": "INTERESTED",
+      "needs_semantic_review": false,
+      "company": "Campari Group",
+      "source_id": "1418194833",
+      "title": "FP&A Commercial Sr. Specialist GTR (Full Time)",
+      "location": "Sesto San Giovanni, Milan, IT, 1000 18 Oct 2026",
+      "priority_company": false,
+      "canonical_url": "https://careers.camparigroup.com/job/Sesto-San-Giovanni-FP&A-Commercial-Sr_-Specialist-GTR-%28Full-Time%29-Mila-1000/1418194833/",
+      "fingerprint": "e51a1cbab3b665d5",
+      "current_status": "STILL_OPEN",
+      "threshold": 70,
+      "user_decision": "INTERESTED",
+      "user_decision_reason": "User marked this vacancy as interested.",
+      "first_seen_at": "2026-09-19T10:16:41Z",
+      "decision": {
+        "fit_score": 97,
+        "reportable": true,
+        "salary": "€46,800–€54,600 gross fixed base plus STI 10%",
+        "salary_source": "Official Campari posting dated 18 Oct 2026",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "l68_status": "NO",
+        "rationale": "Near-perfect Milan commercial analytics, pricing, profitability, scenario business case, Excel/PPT, budget and strategic planning fit. Formal multinational FP&A and SAP are learning gaps, but very attractive official €46.8–54.6k base."
+      }
     },
     {
       "batch": "JW1",
