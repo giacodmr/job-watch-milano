@@ -1,0 +1,89 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39982137662-1",
+  "batch": "jw2",
+  "created_at": "2026-10-23T15:53:51Z",
+  "fetch_errors": {
+    "AlixPartners::8034439003": "404 Client Error: Not Found for url: https://www.alixpartners.com/careers/8034439003?gh_jid=8034439003"
+  },
+  "fingerprints": {
+    "AlixPartners::8034439003": "a187ab24bd577f18",
+    "Amazon::10386060": "47890222233104fd",
+    "Amazon::10570480": "8ea8eba6f5599e68",
+    "Amazon::10581568": "10eae3a024059160",
+    "Amazon::10583692": "2101cde85d660f42",
+    "Amazon::10583927": "0df4899228c2a8b8",
+    "Amazon::10584036": "fb0fa506b5e5d45a",
+    "Amazon::10584051": "430029dd5c33c2c9",
+    "Amazon::10584787": "fef8173648843f04",
+    "Amazon::10585224": "afa2f56f521cee5d",
+    "Amazon::10586136": "46dd87135078a1f7",
+    "Amazon::10586432": "279e379a7c2ade0c",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Outbound-team-leader_JR104441": "22dc6b5a998a1090",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Sorting-Team-Leader_JR104438": "16ad8b54d405f5d2",
+    "KPMG::1359540157": "9d721ef97f3e03db",
+    "KPMG::1372998757": "16754e90fcf41c0e",
+    "KPMG::1374678757": "82d22fe4b310b3ac",
+    "KPMG::1375375357": "023218c6a6dfb0b2",
+    "KPMG::1375576157": "00390936821ac353",
+    "KPMG::1375580757": "62bebc7f5da5138e"
+  },
+  "job_keys": [
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Outbound-team-leader_JR104441",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Sorting-Team-Leader_JR104438",
+    "KPMG::1375375357",
+    "AlixPartners::8034439003",
+    "KPMG::1375576157",
+    "KPMG::1359540157",
+    "KPMG::1372998757",
+    "KPMG::1374678757",
+    "KPMG::1375580757",
+    "Amazon::10585224",
+    "Amazon::10586136",
+    "Amazon::10584051",
+    "Amazon::10584036",
+    "Amazon::10584787",
+    "Amazon::10583692",
+    "Amazon::10386060",
+    "Amazon::10581568",
+    "Amazon::10583927",
+    "Amazon::10586432",
+    "Amazon::10570480"
+  ],
+  "packet_sha256": "9393a2751e3173d7b2c6af5704843bc65ecb658daa5cfc49133873563be7d6c7",
+  "ready_count": 19,
+  "record_count": 20,
+  "request_id": "jw2-20261023-semantic-next60-select-20",
+  "request_sha256": "e14579804d615f5a7abccbecbc6e7c4f9c805b6ae54070914753418ae151a648",
+  "select_run_attempt": 1,
+  "select_run_id": 39982137662,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5fec2955a3c6829a39fe91a544d4490def5be2178cbd5c55c18d32fe93d239dc",
+    "job_memory_jw2.json": "2655c4bed6df031b97818d715befebdc739bcddee945a18b169a02bedf081754",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5fec2955a3c6829a39fe91a544d4490def5be2178cbd5c55c18d32fe93d239dc",
+    "job_memory_jw2.json": "b79e878574acf87544adb4bbb80ee596e6184b29fff77728451843f56d1a54d8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "AlixPartners::8034439003": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "a187ab24bd577f18",
+        "source_url": "https://www.alixpartners.com/careers/8034439003?gh_jid=8034439003"
+      },
+      "last_failure_at": "2026-10-23T15:53:51Z",
+      "retry_from": "2026-10-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12514375579
+}
