@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "jw1-20261023-batch4-apply5",
+  "request_sha256": "3ca6b6f466b09ed05079283d49e8d6a9c7f72c0c7d7a5cda3423e569a29a9117",
+  "parent_request_id": "jw1-20261023-batch4-select7",
+  "packet_sha256": "92771326ee6d8446698062ac509a1fdcdf971f5af79ced4a5c96297a71213f77",
+  "select_run_id": 39984492924,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "dfa4c2b9d969bf69de312f873fb69d94d4c6ddf74bf9864fea0ff8a5adebbb41",
+    "job_memory_jw1.json": "0b0c175bc2b5af652e890a86dd4f3671fbe98aab2caafa4a3adae17a604873ae",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 5,
+  "applied_keys": [
+    "American Express::26014320",
+    "American Express::26014697",
+    "American Express::26015182",
+    "American Express::26015370",
+    "Banca Ifis::278460086"
+  ],
+  "retry": {
+    "Prima Assicurazioni::technical-program-manager-infrastructure-2d99c3b6-aa92-43ef-9b6d-85f186cf1592": "review_not_submitted",
+    "Qonto::1f945bad-2c45-4ac1-be06-a219dc9e1a93": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "116136d10b475e91a6fed960631214d0008d02184884f74339b2a075fff4c90c",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 6,
+      "JW2": 0,
+      "JW3": 3,
+      "JW4": 1
+    },
+    "total": 10
+  },
+  "replayed": false
+}
