@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39982142898-1",
+  "batch": "jw1",
+  "created_at": "2026-10-23T15:54:27Z",
+  "fetch_errors": {
+    "Qonto::0c9f8b02-398c-4128-bbd1-b1b0acf3956e": "HTTP 404"
+  },
+  "fingerprints": {
+    "Banca Sella::JR-002462": "286ed180217207cb",
+    "Howden::R0019920": "123fd5eb16fbe71b",
+    "Howden::R0019928": "a6bbda528af487d4",
+    "ING Italia::REQ-10123450": "cbb3b3cd4c5c4277",
+    "Intesa Sanpaolo::1449945033": "0921218b73c8ad94",
+    "Intesa Sanpaolo::1450005333": "3bff4405747252bf",
+    "Prima Assicurazioni::technical-program-manager-infrastructure-2d99c3b6-aa92-43ef-9b6d-85f186cf1592": "87e338fb7eca4ed0",
+    "Qonto::0c9f8b02-398c-4128-bbd1-b1b0acf3956e": "9da4ca5309adb5b2",
+    "Qonto::dd2078ad-9eb8-4a46-870a-2e7dc8a96eaf": "ac203d4641050d19",
+    "Satispay::40968d65-4071-4d14-8ead-f3c625130a54": "b68c47aedbd52b99"
+  },
+  "job_keys": [
+    "Prima Assicurazioni::technical-program-manager-infrastructure-2d99c3b6-aa92-43ef-9b6d-85f186cf1592",
+    "ING Italia::REQ-10123450",
+    "Intesa Sanpaolo::1450005333",
+    "Intesa Sanpaolo::1449945033",
+    "Qonto::0c9f8b02-398c-4128-bbd1-b1b0acf3956e",
+    "Qonto::dd2078ad-9eb8-4a46-870a-2e7dc8a96eaf",
+    "Satispay::40968d65-4071-4d14-8ead-f3c625130a54",
+    "Banca Sella::JR-002462",
+    "Howden::R0019920",
+    "Howden::R0019928"
+  ],
+  "packet_sha256": "f40ee94d67af43960a54d2bc332090d07ccc36a35f1b01ea091852073890b865",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "jw1-20261023-semantic-next60-select-10",
+  "request_sha256": "c6cea1734b19ec277d94ab97d97becbe04fd22ca6346a5b5242eefe39470990c",
+  "select_run_attempt": 1,
+  "select_run_id": 39982142898,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "dfa4c2b9d969bf69de312f873fb69d94d4c6ddf74bf9864fea0ff8a5adebbb41",
+    "job_memory_jw1.json": "096c2f4a0737421ab1391daceddefce742c0b8c6be2ccc90474f989b6bae4d38",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "dfa4c2b9d969bf69de312f873fb69d94d4c6ddf74bf9864fea0ff8a5adebbb41",
+    "job_memory_jw1.json": "8a42d30ec13ff25a4a7afabc1edb332f92184e0ac72d9e79b570b26f05437163",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Qonto::0c9f8b02-398c-4128-bbd1-b1b0acf3956e": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "9da4ca5309adb5b2",
+        "source_url": "https://jobs.lever.co/qonto/0c9f8b02-398c-4128-bbd1-b1b0acf3956e"
+      },
+      "last_failure_at": "2026-10-23T15:54:27Z",
+      "retry_from": "2026-10-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12513343711
+}
