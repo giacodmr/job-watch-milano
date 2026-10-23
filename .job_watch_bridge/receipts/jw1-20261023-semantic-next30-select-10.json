@@ -1,0 +1,80 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39976917558-1",
+  "batch": "jw1",
+  "created_at": "2026-10-23T15:17:39Z",
+  "fetch_errors": {
+    "Moneyfarm::7189F0D22E": "official page does not expose a matching job description",
+    "Qonto::1591d10c-c025-42ef-ab54-f9e1a3a93fa2": "HTTP 404"
+  },
+  "fingerprints": {
+    "Banca Ifis::278464392": "a3917680bc5afc2f",
+    "Banca Sella::JR-002452": "a78723ad5e6af57c",
+    "Banca Sella::JR-002463": "48389430dfe6ba61",
+    "Euronext::R29176": "736fb1ff12986cb0",
+    "ING Italia::REQ-10123528": "508a8d15520521c3",
+    "Intesa Sanpaolo::1449385233": "c17917c7024b8c00",
+    "Moneyfarm::7189F0D22E": "f8de515af11f08dc",
+    "Prima Assicurazioni::technical-program-manager-infrastructure-2d99c3b6-aa92-43ef-9b6d-85f186cf1592": "87e338fb7eca4ed0",
+    "Qonto::1591d10c-c025-42ef-ab54-f9e1a3a93fa2": "239976eb2f221dc9",
+    "Qonto::53f5103c-e7eb-4b7f-baa4-777968faf405": "4ce17f298a886881"
+  },
+  "job_keys": [
+    "Banca Sella::JR-002463",
+    "Qonto::53f5103c-e7eb-4b7f-baa4-777968faf405",
+    "Qonto::1591d10c-c025-42ef-ab54-f9e1a3a93fa2",
+    "Banca Ifis::278464392",
+    "Euronext::R29176",
+    "ING Italia::REQ-10123528",
+    "Intesa Sanpaolo::1449385233",
+    "Moneyfarm::7189F0D22E",
+    "Prima Assicurazioni::technical-program-manager-infrastructure-2d99c3b6-aa92-43ef-9b6d-85f186cf1592",
+    "Banca Sella::JR-002452"
+  ],
+  "packet_sha256": "ab0caa165a4d4e582ccaadb2ae9bce3dea65e8518b690977db2e20b781f77125",
+  "ready_count": 8,
+  "record_count": 10,
+  "request_id": "jw1-20261023-semantic-next30-select-10",
+  "request_sha256": "41d2fcf16bbbbd3bd6e0f3d13b7915d512a68a39cf820520f9415353c381dd46",
+  "select_run_attempt": 1,
+  "select_run_id": 39976917558,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "dfa4c2b9d969bf69de312f873fb69d94d4c6ddf74bf9864fea0ff8a5adebbb41",
+    "job_memory_jw1.json": "453c5f24c0f45b6470d2944d8ba9c4615ada32db3761fabd5bd0c7b658e8eb18",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "dfa4c2b9d969bf69de312f873fb69d94d4c6ddf74bf9864fea0ff8a5adebbb41",
+    "job_memory_jw1.json": "4110792fa2dd63eff0db8b8ba33781446f82a54bfaa8c100826ce55f885e421e",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Moneyfarm::7189F0D22E": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "f8de515af11f08dc",
+        "source_url": "https://apply.workable.com/j/7189F0D22E/apply"
+      },
+      "last_failure_at": "2026-10-23T15:17:39Z",
+      "retry_from": "2026-10-24",
+      "status": "RETRY_PENDING"
+    },
+    "Qonto::1591d10c-c025-42ef-ab54-f9e1a3a93fa2": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "239976eb2f221dc9",
+        "source_url": "https://jobs.lever.co/qonto/1591d10c-c025-42ef-ab54-f9e1a3a93fa2"
+      },
+      "last_failure_at": "2026-10-23T15:17:39Z",
+      "retry_from": "2026-10-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12510854762
+}
