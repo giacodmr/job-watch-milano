@@ -1,0 +1,100 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-39976898285-1",
+  "batch": "jw2",
+  "created_at": "2026-10-23T15:17:08Z",
+  "fetch_errors": {
+    "Amazon::10586087": "404 Client Error: Not Found for url: https://www.amazon.jobs/en/jobs/10586087/sr-inventory-planner-swa-s-op",
+    "KPMG::1372843757": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10484340": "a6643f3caac37a49",
+    "Amazon::10581189": "d11cbadfed1d0c74",
+    "Amazon::10583897": "eaccc08522ea40d0",
+    "Amazon::10583925": "9181a814aa57c3d6",
+    "Amazon::10584933": "34572a0465c26031",
+    "Amazon::10584948": "e0193dbce486c51d",
+    "Amazon::10585849": "aa1fc7203ba6466a",
+    "Amazon::10586087": "ee2cde11f415f816",
+    "Amazon::10586097": "9fb59c11fc62e04a",
+    "Amazon::10586474": "557a6b78f3c85e90",
+    "Amazon::10586502": "3c0f4b1206256063",
+    "Experian::744000156472489": "bee735fe35f54a8c",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Exception-Handler_JR104439": "37ba2c67873079da",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Exception-Handler_JR104442": "6e113dc06f92dd24",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-team-leader_JR104440": "7e78fa59e1bade76",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/XMLNAME-3PL-Delivery-Operations_JR104400": "fcaecf2d01f405c0",
+    "KPMG::1372843757": "955fe0d7304538d1",
+    "KPMG::1372975957": "498aa7e784d71c3a",
+    "KPMG::1375629157": "c8c7ff53e9b77b8a",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015": "821989a4132c1b94"
+  },
+  "job_keys": [
+    "Amazon::10585849",
+    "Amazon::10584948",
+    "Amazon::10584933",
+    "Amazon::10586502",
+    "Amazon::10586474",
+    "Amazon::10586087",
+    "KPMG::1372975957",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/XMLNAME-3PL-Delivery-Operations_JR104400",
+    "KPMG::1375629157",
+    "Amazon::10586097",
+    "KPMG::1372843757",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015",
+    "Amazon::10581189",
+    "Amazon::10583925",
+    "Amazon::10583897",
+    "Amazon::10484340",
+    "Experian::744000156472489",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Exception-Handler_JR104439",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Exception-Handler_JR104442",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-team-leader_JR104440"
+  ],
+  "packet_sha256": "d8ed1f95f84d4f4ecc7423c25955d161f864f8360a543a9d9251122265b53456",
+  "ready_count": 18,
+  "record_count": 20,
+  "request_id": "jw2-20261023-semantic-next30-select-20",
+  "request_sha256": "fe1e98c376075f78a7fd2714bd4fa3ba49e721b40efb2028a5090912d196510d",
+  "select_run_attempt": 1,
+  "select_run_id": 39976898285,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5fec2955a3c6829a39fe91a544d4490def5be2178cbd5c55c18d32fe93d239dc",
+    "job_memory_jw2.json": "e69ca3196ef51318d720cdb430d12fcebf72e0e0179bf1c4f0fc9d793245a529",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5fec2955a3c6829a39fe91a544d4490def5be2178cbd5c55c18d32fe93d239dc",
+    "job_memory_jw2.json": "68940e665366c2cc569d89f685164de397b94b7ca5e368381862c2d06a6a2df9",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10586087": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "ee2cde11f415f816",
+        "source_url": "https://www.amazon.jobs/en/jobs/10586087/sr-inventory-planner-swa-s-op"
+      },
+      "last_failure_at": "2026-10-23T15:17:08Z",
+      "retry_from": "2026-10-24",
+      "status": "RETRY_PENDING"
+    },
+    "KPMG::1372843757": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "955fe0d7304538d1",
+        "source_url": "https://careers.kpmg.it/job/Milano-Data-Product-&-Metadata-Governance-Assistant-Manager/1372843757/"
+      },
+      "last_failure_at": "2026-10-23T15:17:08Z",
+      "retry_from": "2026-10-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12512355108
+}
