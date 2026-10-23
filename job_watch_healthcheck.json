@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-23T15:14:03Z",
+  "generated_at": "2026-10-23T15:14:48Z",
   "run_id": "fa1dba6f914e078e73d653c1",
   "snapshot": {
     "run_id": "fa1dba6f914e078e73d653c1",
@@ -36,18 +36,24 @@
   "batches": {
     "JW1": {
       "status": "NEEDS_REVIEW",
-      "processable_semantic_pending": 35,
+      "processable_semantic_pending": 25,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 35,
+      "reporting_pending": 2,
+      "historical_backlog_remaining": 25,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW1",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 2,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+        },
         {
           "batch": "JW1",
           "action": "AUTONOMOUS_SEARCH",
@@ -151,11 +157,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 3,
-  "processable_semantic_pending": 109,
+  "daily_actionable_remaining": 5,
+  "processable_semantic_pending": 99,
   "jd_retry_deferred": 0,
   "jd_unavailable": 0,
-  "historical_backlog_remaining": 109,
+  "historical_backlog_remaining": 99,
   "source_failures": 0,
   "partial_sources": 117,
   "error_counts": {
@@ -1411,6 +1417,12 @@
     }
   },
   "remaining_work": [
+    {
+      "batch": "JW1",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 2,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+    },
     {
       "batch": "JW1",
       "action": "AUTONOMOUS_SEARCH",
