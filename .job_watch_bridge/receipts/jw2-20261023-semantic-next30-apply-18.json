@@ -1,0 +1,54 @@
+{
+  "version": "2.0",
+  "request_id": "jw2-20261023-semantic-next30-apply-18",
+  "request_sha256": "7b30960e0d84d97c65eaabfbedea017c6c290a868a1689f04d1618a09dd08525",
+  "parent_request_id": "jw2-20261023-semantic-next30-select-20",
+  "packet_sha256": "d8ed1f95f84d4f4ecc7423c25955d161f864f8360a543a9d9251122265b53456",
+  "select_run_id": 39976898285,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5fec2955a3c6829a39fe91a544d4490def5be2178cbd5c55c18d32fe93d239dc",
+    "job_memory_jw2.json": "e69ca3196ef51318d720cdb430d12fcebf72e0e0179bf1c4f0fc9d793245a529",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 18,
+  "applied_keys": [
+    "Amazon::10484340",
+    "Amazon::10581189",
+    "Amazon::10583897",
+    "Amazon::10583925",
+    "Amazon::10584933",
+    "Amazon::10584948",
+    "Amazon::10585849",
+    "Amazon::10586097",
+    "Amazon::10586474",
+    "Amazon::10586502",
+    "Experian::744000156472489",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Exception-Handler_JR104439",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Exception-Handler_JR104442",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/Inbound-team-leader_JR104440",
+    "JD.COM / Joybuy::/job/ITA-Lombardy-Milan/XMLNAME-3PL-Delivery-Operations_JR104400",
+    "KPMG::1372975957",
+    "KPMG::1375629157",
+    "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364015"
+  ],
+  "retry": {
+    "KPMG::1372843757": "jd_fetch_failed",
+    "Amazon::10586087": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "508ff408aa2208344878b22a45597758b4f48b2fb5700501a7de659b8c8dd3c1",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 23,
+      "JW2": 39,
+      "JW3": 8,
+      "JW4": 25
+    },
+    "total": 95
+  },
+  "replayed": false
+}
