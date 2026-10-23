@@ -1,0 +1,36 @@
+{
+  "version": "2.0",
+  "request_id": "jw3-20261023-batch4-apply3",
+  "request_sha256": "30ba3b08d4a3144408b55ad049a91cf4fdb38eda237ca23ebdceb7319bb480f1",
+  "parent_request_id": "jw3-20261023-batch4-select3",
+  "packet_sha256": "5399a04fe91c405e3a865a99b72ef345108b734a889ac0f57ebcfc8fa9570b16",
+  "select_run_id": 39984499020,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "b84451796cf99dd16a7db2bd1fdc882b0ac1766603d37cb10a1e700443ce38f2",
+    "job_memory_jw3.json": "d472e99d25279c68f9e7edd12597cce1216ada071230234ca41df18cf35aad45",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw3",
+  "status": "COMPLETE",
+  "applied_count": 3,
+  "applied_keys": [
+    "Prysmian::R-29783",
+    "Webuild::1203820601",
+    "Webuild::1395177733"
+  ],
+  "retry": {},
+  "accepted_patch_sha256": "f7dca70288bc16a37a900b36b6194a725a6b032387dd8251cebf3a3fd1272ab7",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 1,
+      "JW2": 0,
+      "JW3": 3,
+      "JW4": 1
+    },
+    "total": 5
+  },
+  "replayed": false
+}
