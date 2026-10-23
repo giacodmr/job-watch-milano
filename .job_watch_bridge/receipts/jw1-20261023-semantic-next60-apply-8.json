@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "jw1-20261023-semantic-next60-apply-8",
+  "request_sha256": "5ddd7928edd2c956f6cfefa8a80e79366557ae8145670bef24b87a3a59cf5be5",
+  "parent_request_id": "jw1-20261023-semantic-next60-select-10",
+  "packet_sha256": "f40ee94d67af43960a54d2bc332090d07ccc36a35f1b01ea091852073890b865",
+  "select_run_id": 39982142898,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "dfa4c2b9d969bf69de312f873fb69d94d4c6ddf74bf9864fea0ff8a5adebbb41",
+    "job_memory_jw1.json": "096c2f4a0737421ab1391daceddefce742c0b8c6be2ccc90474f989b6bae4d38",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 8,
+  "applied_keys": [
+    "Banca Sella::JR-002462",
+    "Howden::R0019920",
+    "Howden::R0019928",
+    "ING Italia::REQ-10123450",
+    "Intesa Sanpaolo::1449945033",
+    "Intesa Sanpaolo::1450005333",
+    "Qonto::dd2078ad-9eb8-4a46-870a-2e7dc8a96eaf",
+    "Satispay::40968d65-4071-4d14-8ead-f3c625130a54"
+  ],
+  "retry": {
+    "Prima Assicurazioni::technical-program-manager-infrastructure-2d99c3b6-aa92-43ef-9b6d-85f186cf1592": "review_not_submitted",
+    "Qonto::0c9f8b02-398c-4128-bbd1-b1b0acf3956e": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "0b3a4187a6eee3cea2ae009b07925a421dd1de2b35b8b94dbea98b29e4b305f2",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 15,
+      "JW2": 1,
+      "JW3": 3,
+      "JW4": 25
+    },
+    "total": 44
+  },
+  "replayed": false
+}
