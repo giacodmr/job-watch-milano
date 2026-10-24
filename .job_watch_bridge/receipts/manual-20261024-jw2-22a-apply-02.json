@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261024-jw2-22a-apply-02",
+  "request_sha256": "f9ceeeb6875d29de7ed02d0b7770f336669b7a7755b1a2a88c0f3059177fe2b7",
+  "parent_request_id": "manual-20261024-jw2-22a-select-02",
+  "packet_sha256": "5d04a5e36556926cfb44b75241e17826500565bb82d7033dcf2cd93680a43665",
+  "select_run_id": 40080673693,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "e3f64c48290b4f66e75575f0982d28c6d1d842cb2e248b771149b732a52ff404",
+    "job_memory_jw2.json": "252934e6183dcb9cf5247c59a5c0ad13627948f7932ded600cca660cabb416dd",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "Amazon::10585075",
+    "Amazon::10587229",
+    "Amazon::10587230",
+    "Amazon::10587389",
+    "Amazon::10587913",
+    "Amazon::10587917",
+    "Amazon::10587994",
+    "KPMG::1374815357",
+    "KPMG::828570902"
+  ],
+  "retry": {
+    "KPMG::1372843757": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "2bd62ba446d9125711f9f8fe451b9bae6d513000ebbb5522ab3175812fb6b243",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 10,
+      "JW2": 9,
+      "JW3": 2,
+      "JW4": 11
+    },
+    "total": 32
+  },
+  "replayed": false
+}
