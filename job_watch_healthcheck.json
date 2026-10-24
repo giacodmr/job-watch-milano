@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-23T23:58:03Z",
+  "generated_at": "2026-10-24T07:07:37Z",
   "run_id": "7f1daeb2e0fa463227812ce5",
   "snapshot": {
     "run_id": "7f1daeb2e0fa463227812ce5",
@@ -43,7 +43,7 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 5,
-      "reporting_pending": 5,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 5,
       "failed": 0,
       "not_checked": 0,
@@ -53,17 +53,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 5,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW1",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 5,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -76,7 +65,7 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 7,
-      "reporting_pending": 3,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 13,
       "failed": 0,
       "not_checked": 0,
@@ -86,17 +75,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 7,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW2",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 3,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -109,7 +87,7 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 1,
-      "reporting_pending": 2,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 1,
       "failed": 0,
       "not_checked": 0,
@@ -119,17 +97,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 1,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW3",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 2,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -142,7 +109,7 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 7,
-      "reporting_pending": 7,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 4,
       "failed": 0,
       "not_checked": 0,
@@ -152,17 +119,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 7,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW4",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 7,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     }
@@ -193,7 +149,7 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 37,
+  "daily_actionable_remaining": 20,
   "processable_semantic_pending": 43,
   "jd_retry_deferred": 0,
   "jd_unavailable": 0,
@@ -1391,6 +1347,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1433,32 +1392,10 @@
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
-      "batch": "JW1",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 5,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
       "batch": "JW2",
       "action": "SEMANTIC_REVIEW",
       "count": 7,
       "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW2",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 3,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
     },
     {
       "batch": "JW3",
@@ -1467,32 +1404,10 @@
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
-      "batch": "JW3",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 2,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
       "batch": "JW4",
       "action": "SEMANTIC_REVIEW",
       "count": 7,
       "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW4",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 7,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
     }
   ],
   "unresolved_user_decisions": [
