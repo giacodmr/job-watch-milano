@@ -1,0 +1,42 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261025-jw1-apply-b",
+  "request_sha256": "8c9424068b947f88a5d3b9ba940398cd1ffb3aafca4de3ea2c99d65f888ea294",
+  "parent_request_id": "manual-20261025-jw1-select-b",
+  "packet_sha256": "cc5e4f7e7984e966937c6972584cf71af4b353856283695231e88304c27395e4",
+  "select_run_id": 40185437425,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "0d79152806d9cf772beeaf33582c32cdde7b2a5cb5012ea137fb73811d6c362b",
+    "job_memory_jw1.json": "7a7b1c88c903d4519ede09a411198d453a5919a14f9263acaf8b7df8fe2d08f9",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 6,
+  "applied_keys": [
+    "American Express::26013624",
+    "Intesa Sanpaolo::1450721933",
+    "Intesa Sanpaolo::1450882033",
+    "Mastercard::/job/London-England-Angel-Lane/Director--Legal-Services_R-293526-1",
+    "Prima Assicurazioni::liquidatore-antifrode-06be5ba5-b7c7-4faa-bd02-1b285a170e6d",
+    "Prima Assicurazioni::liquidatore-antifrode-21319cb1-e889-4b6d-8a46-316f60367d83"
+  ],
+  "retry": {
+    "Scalapay::5013758101": "jd_fetch_failed",
+    "Moneyfarm::7189F0D22E": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "25ac52a95c0ee40946a9cd5aedd9344c91e1984ec8a97be63195ccf2cce0bcc8",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 6,
+      "JW2": 0,
+      "JW3": 2,
+      "JW4": 12
+    },
+    "total": 20
+  },
+  "replayed": false
+}
