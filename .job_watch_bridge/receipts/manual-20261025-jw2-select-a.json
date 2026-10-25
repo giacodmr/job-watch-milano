@@ -1,0 +1,57 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-40185275674-1",
+  "batch": "jw2",
+  "created_at": "2026-10-25T10:33:55Z",
+  "fetch_errors": {
+    "KPMG::1372843757": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10585121": "9aefdc838fad2a77",
+    "Amazon::10586120": "7864f5b995d7ba50",
+    "Amazon::10587370": "379298059dd8e4e6",
+    "KPMG::1372843757": "5e8961e5ed74ed26"
+  },
+  "job_keys": [
+    "Amazon::10585121",
+    "Amazon::10586120",
+    "Amazon::10587370",
+    "KPMG::1372843757"
+  ],
+  "packet_sha256": "6a72f080680cf8e0de5d67dc5940e78b252cfc869a190dbdd0574ee92662c11d",
+  "ready_count": 3,
+  "record_count": 4,
+  "request_id": "manual-20261025-jw2-select-a",
+  "request_sha256": "f70ce4f841b97a5f401416880888f1856cedce97fe209462dab64d3bb5113f9c",
+  "select_run_attempt": 1,
+  "select_run_id": 40185275674,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "348b01712de3c7b76d2ca66844ddac7e2c1bae45fad4bcb98e431255ea830140",
+    "job_memory_jw2.json": "b217af37a07f69942afe99469f0152132d18c157540a60e5fa8328f071714003",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "348b01712de3c7b76d2ca66844ddac7e2c1bae45fad4bcb98e431255ea830140",
+    "job_memory_jw2.json": "06c5d348279885f26ecf0a2bba12b488c81ccc1b727cbc4a36e41a9daf97b6b6",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "KPMG::1372843757": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "5e8961e5ed74ed26",
+        "source_url": "https://careers.kpmg.it/job/Milano-Data-Governance-Manager/1372843757/"
+      },
+      "last_failure_at": "2026-10-25T10:33:55Z",
+      "retry_from": "2026-10-26",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12595931749
+}
