@@ -1,0 +1,76 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-40185437425-1",
+  "batch": "jw1",
+  "created_at": "2026-10-25T10:36:22Z",
+  "fetch_errors": {
+    "Moneyfarm::7189F0D22E": "official page does not expose a matching job description",
+    "Scalapay::5013758101": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "American Express::26013624": "91131adbe120f9ed",
+    "Intesa Sanpaolo::1450721933": "7d1f2b53f3d931cc",
+    "Intesa Sanpaolo::1450882033": "07f52ea20eb8dfdf",
+    "Mastercard::/job/London-England-Angel-Lane/Director--Legal-Services_R-293526-1": "e0915f1a9c6d6dc3",
+    "Moneyfarm::7189F0D22E": "f8de515af11f08dc",
+    "Prima Assicurazioni::liquidatore-antifrode-06be5ba5-b7c7-4faa-bd02-1b285a170e6d": "5705375a011ab244",
+    "Prima Assicurazioni::liquidatore-antifrode-21319cb1-e889-4b6d-8a46-316f60367d83": "ee90f933c8c54a36",
+    "Scalapay::5013758101": "66b06589e36cbc44"
+  },
+  "job_keys": [
+    "Mastercard::/job/London-England-Angel-Lane/Director--Legal-Services_R-293526-1",
+    "Moneyfarm::7189F0D22E",
+    "Intesa Sanpaolo::1450882033",
+    "Intesa Sanpaolo::1450721933",
+    "Scalapay::5013758101",
+    "Prima Assicurazioni::liquidatore-antifrode-06be5ba5-b7c7-4faa-bd02-1b285a170e6d",
+    "Prima Assicurazioni::liquidatore-antifrode-21319cb1-e889-4b6d-8a46-316f60367d83",
+    "American Express::26013624"
+  ],
+  "packet_sha256": "cc5e4f7e7984e966937c6972584cf71af4b353856283695231e88304c27395e4",
+  "ready_count": 6,
+  "record_count": 8,
+  "request_id": "manual-20261025-jw1-select-b",
+  "request_sha256": "dc76046c4514daad27bd8759504244a3ec0879a5cd5bf5abcd9cd16e804b8036",
+  "select_run_attempt": 1,
+  "select_run_id": 40185437425,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "0d79152806d9cf772beeaf33582c32cdde7b2a5cb5012ea137fb73811d6c362b",
+    "job_memory_jw1.json": "7a7b1c88c903d4519ede09a411198d453a5919a14f9263acaf8b7df8fe2d08f9",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "0d79152806d9cf772beeaf33582c32cdde7b2a5cb5012ea137fb73811d6c362b",
+    "job_memory_jw1.json": "974f8b752412c464f2b0ea4c0112eed570d46b63a2410fe87724935a220bbaf1",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Moneyfarm::7189F0D22E": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "f8de515af11f08dc",
+        "source_url": "https://apply.workable.com/j/7189F0D22E/apply"
+      },
+      "last_failure_at": "2026-10-25T10:36:22Z",
+      "retry_from": "2026-10-26",
+      "status": "RETRY_PENDING"
+    },
+    "Scalapay::5013758101": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "66b06589e36cbc44",
+        "source_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5013758101"
+      },
+      "last_failure_at": "2026-10-25T10:36:22Z",
+      "retry_from": "2026-10-26",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12596101715
+}
