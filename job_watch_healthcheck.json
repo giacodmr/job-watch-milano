@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-27T15:06:49Z",
+  "generated_at": "2026-10-27T15:09:26Z",
   "run_id": "7cec098dd49696a426e6c109",
   "snapshot": {
     "run_id": "7cec098dd49696a426e6c109",
@@ -25,9 +25,9 @@
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
     }
   },
-  "status": "NEEDS_REVIEW",
+  "status": "COMPLETE_WITH_WARNINGS",
   "collection_status": "COMPLETE_WITH_WARNINGS",
-  "DAILY_COMPLETE": false,
+  "DAILY_COMPLETE": true,
   "FULL_SEMANTIC_COMPLETE": false,
   "priority_checks": {
     "Amazon": "VERIFIED",
@@ -80,26 +80,19 @@
       "remaining_work": []
     },
     "JW4": {
-      "status": "NEEDS_REVIEW",
-      "processable_semantic_pending": 4,
+      "status": "COMPLETE_WITH_WARNINGS",
+      "processable_semantic_pending": 0,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
-      "full_semantic_complete": false,
-      "gpt_run_certified": false,
-      "actionable_delta_pending": 2,
+      "daily_complete": true,
+      "full_semantic_complete": true,
+      "gpt_run_certified": true,
+      "actionable_delta_pending": 0,
       "reporting_pending": 0,
-      "historical_backlog_remaining": 2,
+      "historical_backlog_remaining": 0,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW4",
-          "action": "SEMANTIC_REVIEW",
-          "count": 2,
-          "reason": "Review exact current fingerprints in daily worklist"
-        }
-      ]
+      "remaining_work": []
     }
   },
   "coverage": {
@@ -128,11 +121,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 2,
-  "processable_semantic_pending": 6,
+  "daily_actionable_remaining": 0,
+  "processable_semantic_pending": 2,
   "jd_retry_deferred": 5,
   "jd_unavailable": 0,
-  "historical_backlog_remaining": 9,
+  "historical_backlog_remaining": 7,
   "source_failures": 0,
   "partial_sources": 118,
   "error_counts": {
@@ -1399,14 +1392,7 @@
       "status": "COMPLETE"
     }
   },
-  "remaining_work": [
-    {
-      "batch": "JW4",
-      "action": "SEMANTIC_REVIEW",
-      "count": 2,
-      "reason": "Review exact current fingerprints in daily worklist"
-    }
-  ],
+  "remaining_work": [],
   "unresolved_user_decisions": [
     "Mastercard::/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
     "Mastercard::R-275678",
