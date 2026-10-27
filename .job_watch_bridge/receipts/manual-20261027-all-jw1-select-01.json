@@ -1,0 +1,89 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-40527307252-1",
+  "batch": "jw1",
+  "created_at": "2026-10-27T15:04:34Z",
+  "fetch_errors": {
+    "Moneyfarm::7189F0D22E": "official page does not expose a matching job description",
+    "Moneyfarm::D10747D941": "official page does not expose a matching job description",
+    "Scalapay::5013758101": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "American Express::26011967": "030d9cd514ab92aa",
+    "American Express::26013779": "c1a5f7d41ac1b48a",
+    "American Express::26014192": "f30e128279e180b3",
+    "Mastercard::R-292685": "1d4900fda30af2fc",
+    "Mastercard::R-294595": "a8c3fa6b6c8f150c",
+    "Moneyfarm::7189F0D22E": "f8de515af11f08dc",
+    "Moneyfarm::D10747D941": "8034e9d4e1d43cf2",
+    "Scalapay::5013758101": "66b06589e36cbc44",
+    "Wise::744000157840511": "8a2db609d982b5af"
+  },
+  "job_keys": [
+    "Mastercard::R-294595",
+    "Mastercard::R-292685",
+    "Wise::744000157840511",
+    "American Express::26011967",
+    "American Express::26013779",
+    "American Express::26014192",
+    "Moneyfarm::D10747D941",
+    "Moneyfarm::7189F0D22E",
+    "Scalapay::5013758101"
+  ],
+  "packet_sha256": "e4713ccf6ea84bf87fee2431480ec5beb06a2cdc95d7f9eaf822b7bd519aca17",
+  "ready_count": 6,
+  "record_count": 9,
+  "request_id": "manual-20261027-all-jw1-select-01",
+  "request_sha256": "c1802a5968d01cd9df665ff5edf812badfdde5af31279ad7c457d3fc1dfbea38",
+  "select_run_attempt": 1,
+  "select_run_id": 40527307252,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "e33f95cbc705525c55416728abb14f64cb4757d9ec1daad15b57093d37342f76",
+    "job_memory_jw1.json": "d5073f15fa5f77d494ea309fe97eb6c6cc9504f0a16f7faf56c8f80c30438b92",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "e33f95cbc705525c55416728abb14f64cb4757d9ec1daad15b57093d37342f76",
+    "job_memory_jw1.json": "976540f4d8947de709e3c2c018c93021aab22463d0c8b2643c5f7065b35ae23d",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Moneyfarm::7189F0D22E": {
+      "attempts": 3,
+      "evidence": {
+        "fingerprint": "f8de515af11f08dc",
+        "source_url": "https://apply.workable.com/j/7189F0D22E/apply"
+      },
+      "last_failure_at": "2026-10-27T15:04:34Z",
+      "retry_from": "2026-10-28",
+      "status": "RETRY_PENDING"
+    },
+    "Moneyfarm::D10747D941": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "8034e9d4e1d43cf2",
+        "source_url": "https://apply.workable.com/j/D10747D941/apply"
+      },
+      "last_failure_at": "2026-10-27T15:04:34Z",
+      "retry_from": "2026-10-28",
+      "status": "RETRY_PENDING"
+    },
+    "Scalapay::5013758101": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "66b06589e36cbc44",
+        "source_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5013758101"
+      },
+      "last_failure_at": "2026-10-27T15:04:34Z",
+      "retry_from": "2026-10-28",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12744991161
+}
