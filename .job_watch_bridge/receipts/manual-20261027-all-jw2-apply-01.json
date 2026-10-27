@@ -1,0 +1,43 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261027-all-jw2-apply-01",
+  "request_sha256": "bd6341e20ddb019d04c72f12f1dffd0096f9e4bcca86573e6865cf79d03d600a",
+  "parent_request_id": "manual-20261027-all-jw2-select-01",
+  "packet_sha256": "99f3d5e8ee27575933abb28650646ffb9a4761d7e384adce57860d7942c100f1",
+  "select_run_id": 40525690036,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "b5923a27b7aa8f0530602fa69b06c11532b2906cd0e30d8b4f4c19c51ee5d3e6",
+    "job_memory_jw2.json": "494eb8e4aa0e1a21319a5934754727d76b4e2c390af392f985b2402d48f5a135",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "COMPLETE",
+  "applied_count": 10,
+  "applied_keys": [
+    "Amazon::10438776",
+    "Amazon::10511860",
+    "Amazon::10568660",
+    "Amazon::10586275",
+    "Amazon::10587370",
+    "Amazon::10588115",
+    "Amazon::10588437",
+    "Amazon::10588480",
+    "Amazon::10588675",
+    "Amazon::10589435"
+  ],
+  "retry": {},
+  "accepted_patch_sha256": "8a53260abd9888351457a1170e1924f677966fe79efff3f4703a8d3ccb456638",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 9,
+      "JW2": 19,
+      "JW3": 2,
+      "JW4": 4
+    },
+    "total": 34
+  },
+  "replayed": false
+}
