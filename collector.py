@@ -3834,7 +3834,127 @@ def collect_phenom(company):
     }
 
 
+
+# === ATS COVERAGE RECOVERY: MOLLIE / ASHBY CROSS-INVENTORY ===
+# A branded corporate career page is not automatically equivalent to its
+# application ATS. Prove the same published requisition IDs are present in
+# both the company inventory and the public ATS feed before claiming VERIFIED.
+MOLLIE_UUID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I)
+
+
+def _mollie_site_snapshot(inventory):
+    try:
+        body, final_url = get_html(inventory)
+    except requests.RequestException as exc:
+        raise NotCheckable(f"Mollie corporate inventory could not be read: {type(exc).__name__}") from exc
+    if urlparse(final_url).hostname != "jobs.mollie.com":
+        raise NotCheckable("Mollie corporate inventory redirected outside the official host")
+    parser = BasicTextLinkParser()
+    parser.feed(body)
+    ids = set()
+    for link in parser.links:
+        url = urljoin(final_url, clean_text(link.get("href")) or "")
+        p = urlparse(url)
+        if p.hostname != "jobs.mollie.com":
+            continue
+        matched = re.fullmatch(r"/vacancies/(" + MOLLIE_UUID_RE.pattern + r")/?", p.path, re.I)
+        if matched:
+            ids.add(matched.group(1).lower())
+    counts = set()
+    parts = parser.text_parts
+    for i in range(1, len(parts)):
+        if parts[i].casefold() == "jobs" and re.fullmatch(r"\d{1,5}", parts[i - 1]):
+            counts.add(int(parts[i - 1]))
+    if len(counts) != 1 or not ids:
+        raise NotCheckable("Mollie official listing has no unambiguous total and job links")
+    total = counts.pop()
+    if total != len(ids):
+        raise NotCheckable(f"Mollie site count mismatch: listed={len(ids)}, total={total}")
+    return ids, total
+
+
+def _mollie_ashby_id(raw):
+    url = clean_text(raw.get("jobUrl")) or ""
+    p = urlparse(url)
+    if p.scheme != "https" or p.hostname != "jobs.ashbyhq.com":
+        raise NotCheckable("Mollie Ashby posting URL is missing or non-official")
+    matched = re.fullmatch(r"/Mollie/(" + MOLLIE_UUID_RE.pattern + r")/?", p.path, re.I)
+    if not matched:
+        raise NotCheckable("Mollie Ashby posting has no stable UUID")
+    return matched.group(1).lower()
+
+
+def collect_mollie_verified(company):
+    name = company["company"]
+    inventory = clean_text((company.get("ats") or {}).get("inventory_url")) or ""
+    if urlparse(inventory).hostname != "jobs.mollie.com" or urlparse(inventory).path.rstrip("/") != "/vacancies":
+        raise NotCheckable("Mollie official corporate inventory mapping has changed")
+    before_ids, before_total = _mollie_site_snapshot(inventory)
+    api_url = "https://api.ashbyhq.com/posting-api/job-board/Mollie"
+    try:
+        data = get_json(api_url, {"includeCompensation": "false"})
+    except (requests.RequestException, ValueError) as exc:
+        raise NotCheckable(f"Mollie Ashby feed not accessible: {type(exc).__name__}") from exc
+    if not isinstance(data, dict) or str(data.get("apiVersion")) != "1" or not isinstance(data.get("jobs"), list):
+        raise NotCheckable("Mollie Ashby public feed schema does not match documented contract")
+
+    matched = {}
+    for raw in data["jobs"]:
+        if not isinstance(raw, dict):
+            raise NotCheckable("Mollie Ashby feed contains a malformed row")
+        if raw.get("isListed") is False:
+            continue  # Not part of the publicly listed company inventory.
+        sid = _mollie_ashby_id(raw)
+        if sid in matched:
+            raise NotCheckable(f"Mollie Ashby duplicate requisition ID: {sid}")
+        location_parts = [clean_text(raw.get("location"))]
+        for loc in raw.get("secondaryLocations") or []:
+            if not isinstance(loc, dict):
+                raise NotCheckable(f"Mollie Ashby malformed secondary location: {sid}")
+            location_parts.append(clean_text(loc.get("location")))
+        location = " | ".join(v for v in location_parts if v)
+        title = clean_text(raw.get("title"))
+        if not title or not location:
+            raise NotCheckable(f"Mollie Ashby missing title/location for {sid}")
+        matched[sid] = (raw, location)
+
+    feed_ids = set(matched)
+    if feed_ids != before_ids:
+        raise NotCheckable(
+            f"Mollie site/Ashby listing mismatch: site={len(before_ids)}, feed={len(feed_ids)}, "
+            f"site_only={len(before_ids-feed_ids)}, feed_only={len(feed_ids-before_ids)}"
+        )
+    # Catch board changes during enumeration rather than certifying stale totals.
+    after_ids, after_total = _mollie_site_snapshot(inventory)
+    if after_ids != before_ids or after_total != before_total:
+        raise NotCheckable("Mollie corporate board changed while reconciling Ashby postings")
+
+    jobs = []
+    for sid, (raw, loc) in matched.items():
+        if not location_matches(loc, name):
+            continue
+        jobs.append(compact_job(
+            name, sid, title=raw["title"], location=loc,
+            department=raw.get("department"), team=raw.get("team"),
+            employment_type=raw.get("employmentType"),
+            published_at=raw.get("publishedAt"),
+            updated_at=raw.get("updatedAt"),
+            canonical=f"https://jobs.mollie.com/vacancies/{sid}",
+            apply_url=raw.get("applyUrl") or raw.get("jobUrl"),
+        ))
+    return {
+        "coverage": "VERIFIED",
+        "collector": "mollie_first_party_ashby_parity_v1",
+        "inventory_count": before_total,
+        "jobs": jobs,
+        "source_url": inventory,
+        "reconciliation": {"public_list_count": before_total, "ats_list_count": len(feed_ids)},
+    }
+
+
 def choose(company):
+    if company.get("company") == "Mollie":
+        return collect_mollie_verified
     if phenom_family(company):
         return collect_phenom
     if amazon_family(company):
