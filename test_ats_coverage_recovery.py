@@ -73,7 +73,7 @@ class MollieParityContract(unittest.TestCase):
 
     def test_rejects_extra_ats_posting_not_in_company_inventory(self):
         with patch.object(collector, "get_html", return_value=board()), \
-             patch.object(collector, "get_json", return_value=feed((A, B, C), ("Milan", "London", "Milan"))):
+             patch.object(collector, "get_json", return_value=feed((A, B, C), ("Milan", "Rome", "Milan"))):
             result, _ = collector.collect_company(MOLLIE)
         self.assertEqual(result["coverage"], "PARTIAL")
         self.assertIn("feed_only=1", result["reason"])
