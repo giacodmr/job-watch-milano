@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-28T09:16:34Z",
+  "generated_at": "2026-10-28T09:19:25Z",
   "run_id": "54076ca5265f04adae4aa54c",
   "snapshot": {
     "run_id": "54076ca5265f04adae4aa54c",
@@ -57,26 +57,19 @@
       ]
     },
     "JW2": {
-      "status": "NEEDS_REVIEW",
-      "processable_semantic_pending": 18,
+      "status": "COMPLETE_WITH_WARNINGS",
+      "processable_semantic_pending": 8,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
-      "actionable_delta_pending": 4,
+      "gpt_run_certified": true,
+      "actionable_delta_pending": 0,
       "reporting_pending": 0,
-      "historical_backlog_remaining": 14,
+      "historical_backlog_remaining": 8,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW2",
-          "action": "SEMANTIC_REVIEW",
-          "count": 4,
-          "reason": "Review exact current fingerprints in daily worklist"
-        }
-      ]
+      "remaining_work": []
     },
     "JW3": {
       "status": "NEEDS_REVIEW",
@@ -149,11 +142,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 10,
-  "processable_semantic_pending": 33,
+  "daily_actionable_remaining": 6,
+  "processable_semantic_pending": 23,
   "jd_retry_deferred": 0,
   "jd_unavailable": 0,
-  "historical_backlog_remaining": 23,
+  "historical_backlog_remaining": 17,
   "source_failures": 0,
   "partial_sources": 115,
   "error_counts": {
@@ -1398,12 +1391,6 @@
       "batch": "JW1",
       "action": "SEMANTIC_REVIEW",
       "count": 3,
-      "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW2",
-      "action": "SEMANTIC_REVIEW",
-      "count": 4,
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
