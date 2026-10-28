@@ -3919,18 +3919,18 @@ def collect_mollie_verified(company):
         matched[sid] = (raw, location)
 
     feed_ids = set(matched)
-    if feed_ids != before_ids:
-        raise NotCheckable(
-            f"Mollie site/Ashby listing mismatch: site={len(before_ids)}, feed={len(feed_ids)}, "
-            f"site_only={len(before_ids-feed_ids)}, feed_only={len(feed_ids-before_ids)}"
-        )
     # Catch board changes during enumeration rather than certifying stale totals.
     after_ids, after_total = _mollie_site_snapshot(inventory)
     if after_ids != before_ids or after_total != before_total:
         raise NotCheckable("Mollie corporate board changed while reconciling Ashby postings")
 
+    # The two independently official sources may disagree. Persist target jobs
+    # that are present in BOTH inventories as partial observations, while
+    # refusing to certify a board with even one unmatched or missing ID.
+    both_ids = before_ids & feed_ids
     jobs = []
-    for sid, (raw, loc) in matched.items():
+    for sid in sorted(both_ids):
+        raw, loc = matched[sid]
         if not location_matches(loc, name):
             continue
         jobs.append(compact_job(
@@ -3942,13 +3942,27 @@ def collect_mollie_verified(company):
             canonical=f"https://jobs.mollie.com/vacancies/{sid}",
             apply_url=raw.get("applyUrl") or raw.get("jobUrl"),
         ))
+    complete = before_ids == feed_ids
+    difference = {
+        "public_list_count": before_total,
+        "ats_list_count": len(feed_ids),
+        "id_intersection_count": len(both_ids),
+        "site_only_ids": sorted(before_ids - feed_ids)[:10],
+        "feed_only_ids": sorted(feed_ids - before_ids)[:10],
+    }
+    reason = None if complete else (
+        f"Mollie site/Ashby listing mismatch: site={len(before_ids)}, feed={len(feed_ids)}, "
+        f"site_only={len(before_ids-feed_ids)}, feed_only={len(feed_ids-before_ids)}; "
+        "retained only official requisitions present in both inventories"
+    )
     return {
-        "coverage": "VERIFIED",
+        "coverage": "VERIFIED" if complete else "PARTIAL",
         "collector": "mollie_first_party_ashby_parity_v1",
         "inventory_count": before_total,
         "jobs": jobs,
         "source_url": inventory,
-        "reconciliation": {"public_list_count": before_total, "ats_list_count": len(feed_ids)},
+        "reconciliation": difference,
+        "reason": reason,
     }
 
 
