@@ -23,7 +23,7 @@ def board(ids=(A, B), count=None):
     ), "https://jobs.mollie.com/vacancies"
 
 
-def feed(ids=(A, B), locs=("Milan", "London")):
+def feed(ids=(A, B), locs=("Milan", "Rome")):
     return {"apiVersion": "1", "jobs": [{
         "jobUrl": f"https://jobs.ashbyhq.com/Mollie/{sid}",
         "applyUrl": f"https://jobs.ashbyhq.com/Mollie/{sid}/application",
