@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-28T01:18:52Z",
+  "generated_at": "2026-10-28T07:02:16Z",
   "run_id": "54076ca5265f04adae4aa54c",
   "snapshot": {
     "run_id": "54076ca5265f04adae4aa54c",
@@ -53,11 +53,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 3,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -80,11 +75,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 13,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -107,11 +97,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 2,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -134,11 +119,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 1,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     }
@@ -1376,6 +1356,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1418,20 +1401,10 @@
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
       "batch": "JW2",
       "action": "SEMANTIC_REVIEW",
       "count": 13,
       "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
     },
     {
       "batch": "JW3",
@@ -1440,20 +1413,10 @@
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
       "batch": "JW4",
       "action": "SEMANTIC_REVIEW",
       "count": 1,
       "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
     }
   ],
   "unresolved_user_decisions": [
