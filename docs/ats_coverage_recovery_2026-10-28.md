@@ -35,6 +35,18 @@ Queste classi sono **sintesi diagnostiche** delle reason persistite; per la caus
 - `.github/workflows/ats_coverage_recovery.yml`: CI read-only su pull request con smoke che registra JSON dei conteggi e fallisce quando la prova di parità non riesce.
 - **Promozioni certificate/persistite: 0** finché una vera raccolta successiva all'implementazione non conferma il contratto e aggiorna `job_watch_healthcheck.json` in sicurezza. Questo documento non inventa una conversione.
 
+## Live read-only smoke del primo intervento (28 ottobre 2026)
+
+Esecuzione GitHub Actions: https://github.com/giacodmr/job-watch-milano/actions/runs/40699165468
+
+- **9/9 regressioni specifiche PASS** nel workflow live; il workflow complessivo separa recupero osservato e certificazione della completezza.
+- Sito corporate Mollie: **51** offerte ufficiali con ID; feed pubblicato Ashby: **52** posting `isListed` (una presente solo nel feed).
+- **51/51** posting del sito corporate riconciliati per UUID con Ashby; 1 posting extra sul feed: `98151e48-ec31-46c1-9417-6db32a6019f7`.
+- **11** vacancy con sede perimetrale (Milano) già confermate da **entrambe** le fonti e restituite dal nuovo collector. Ruoli e URL nel file [mollie_official_observed_20261028.csv](mollie_official_observed_20261028.csv). Tra questi, Business Development Manager e Implementation Manager I - Italy.
+- **Coverage risultante `PARTIAL`** (non `VERIFIED`). La difformità sul feed **impedisce la certificazione**. La test suite può riuscire pur mantenendo `PARTIAL` nel smoke: significa soltanto che la raccolta parziale è sicura, non che la copertura sia esaustiva.
+- **Stato pubblicato su `main` non modificato da questo smoke**; i ruoli non hanno ancora `first_seen_at` persistito. Il CSV ha campo `first_seen_at` volutamente vuoto e `persisted_in_main=false`. Evitare di etichettarli `NEW` prima di confrontarli con la memoria semantica e di far passare la raccolta di produzione.
+- **Prossimo fix concreto**: verificare se la requisizione extra è ritirata o presente su altro canale ufficiale; solo dopo risolvere il perimetro certificabile. Non sopprimere opportunisticamente il record in più per far quadrare il totale.
+
 ## Priorità lavoro successivo
 
 **A1 fintech/payments:** Nexi, Revolut, PayPal, Worldline, Mollie, Checkout.com, Dojo. Priorità ridurre i falsi negativi sulla base dei portali ufficiali: per Worldline verificare le richieste tile/SuccessFactors e gli URL stabili prima di usare 65 come totale attendibile.
