@@ -73,7 +73,7 @@ class MollieParityContract(unittest.TestCase):
         self.assertIn("feed_only=1", result["reason"])
 
     def test_unlisted_ashby_rows_do_not_count_as_public_jobs(self):
-        payload = feed((A, B, C), ("Milan", "London", "Milan"))
+        payload = feed((A, B, C), ("Milan", "Rome", "Milan"))
         payload["jobs"][-1]["isListed"] = False
         with patch.object(collector, "get_html", return_value=board()), \
              patch.object(collector, "get_json", return_value=payload):
