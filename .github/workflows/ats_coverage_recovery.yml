@@ -1,0 +1,68 @@
+name: ATS Coverage Recovery - Live Mollie Contract
+on:
+  pull_request:
+    paths:
+      - "collector.py"
+      - "ats_mapping_jw1.json"
+      - "test_ats_coverage_recovery.py"
+      - ".github/workflows/ats_coverage_recovery.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  official-inventory-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check requests==2.32.5
+      - name: Regression tests (no production state writes)
+        run: python -m unittest -q test_ats_coverage_recovery
+      - name: Live first-party / Ashby ID parity (read-only)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import collector
+
+          companies = json.loads(Path("ats_mapping_jw1.json").read_text())["companies"]
+          company = next(c for c in companies if c["company"] == "Mollie")
+          result, attempted = collector.collect_company(company)
+          evidence = {
+              "attempted": attempted,
+              "company": "Mollie",
+              "coverage": result.get("coverage"),
+              "collector": result.get("collector"),
+              "source_url": result.get("source_url"),
+              "inventory_count": result.get("inventory_count"),
+              "target_jobs_validated": len(result.get("jobs") or []),
+              "reconciliation": result.get("reconciliation"),
+              "reason": result.get("reason"),
+              "sample": [
+                  {"source_id": row["source_id"], "title": row["title"],
+                   "location": row["location"], "canonical_url": row["canonical_url"]}
+                  for row in (result.get("jobs") or [])[:50]
+              ],
+          }
+          print(json.dumps(evidence, ensure_ascii=False, indent=2))
+          Path("mollie_live_evidence.json").write_text(json.dumps(evidence, indent=2) + "\n")
+          if result.get("coverage") == "PARTIAL" and result.get("jobs"):
+              print("RETRIEVAL PASS; COVERAGE PARTIAL: no full-inventory certificate")
+          elif result.get("coverage") == "VERIFIED":
+              print("RETRIEVAL PASS; COVERAGE VERIFIED: parity certified for this read-only run")
+          else:
+              raise SystemExit("No safe official target jobs extracted and no certificate available")
+          PY
+      - name: Upload read-only source evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mollie-read-only-parity
+          retention-days: 7
+          if-no-files-found: ignore
+          path: mollie_live_evidence.json

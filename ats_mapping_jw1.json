@@ -1096,11 +1096,11 @@
       "company": "Mollie",
       "batch": "JW1",
       "ats": {
-        "family": "Custom Mollie career site; backend ATS unresolved",
-        "tenant": null,
+        "family": "Ashby public posting API + Mollie official job listing",
+        "tenant": "Mollie",
         "career_site": "https://jobs.mollie.com/",
         "inventory_url": "https://jobs.mollie.com/vacancies",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://api.ashbyhq.com/posting-api/job-board/Mollie"
       },
       "verification": {
         "level": "STRONG",
@@ -1111,19 +1111,19 @@
           "Milan",
           "London"
         ],
-        "pagination": "single all-vacancies inventory / no reliable numeric count",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Official corporate listing reconciled by stable UUID with complete Ashby public posting API",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Enumerate every row on the official Vacancies page and use the location metadata/location pages to select Milan/Italy/London.",
+        "primary": "Compare all corporate vacancies UUIDs and displayed job count with listed Ashby public postings; certify only equal sets and stable source count, then filter existing allowed locations.",
         "fallback": "Use the official locations index and jobs.mollie.com job-detail discovery to reconcile roles."
       },
       "limitations": [
-        "The UI can display an inconsistent '0 jobs' counter while vacancies are present, so the counter cannot be used as completeness proof.",
-        "Backend ATS/vendor remains unresolved."
+        "The corporate counter is accepted only when it is unambiguous, equals unique linked vacancies and the public Ashby feed has exactly matching IDs; otherwise PARTIAL.",
+        "The confirmed application ATS is Ashby (Mollie board); any blocked feed, board drift, or scope mismatch remains PARTIAL."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-28"
     },
     {
       "company": "SumUp",
