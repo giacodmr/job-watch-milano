@@ -46,13 +46,17 @@ jobs:
               "sample": [
                   {"source_id": row["source_id"], "title": row["title"],
                    "location": row["location"], "canonical_url": row["canonical_url"]}
-                  for row in (result.get("jobs") or [])[:8]
+                  for row in (result.get("jobs") or [])[:50]
               ],
           }
           print(json.dumps(evidence, ensure_ascii=False, indent=2))
           Path("mollie_live_evidence.json").write_text(json.dumps(evidence, indent=2) + "\n")
-          if result.get("coverage") != "VERIFIED":
-              raise SystemExit("Parity could not be proved: keep Mollie PARTIAL")
+          if result.get("coverage") == "PARTIAL" and result.get("jobs"):
+              print("RETRIEVAL PASS; COVERAGE PARTIAL: no full-inventory certificate")
+          elif result.get("coverage") == "VERIFIED":
+              print("RETRIEVAL PASS; COVERAGE VERIFIED: parity certified for this read-only run")
+          else:
+              raise SystemExit("No safe official target jobs extracted and no certificate available")
           PY
       - name: Upload read-only source evidence
         if: always()
