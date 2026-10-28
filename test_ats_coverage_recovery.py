@@ -41,7 +41,11 @@ class MollieParityContract(unittest.TestCase):
         self.assertTrue(attempted)
         self.assertEqual(result["coverage"], "VERIFIED")
         self.assertEqual(result["inventory_count"], 2)
-        self.assertEqual(result["reconciliation"], {"public_list_count": 2, "ats_list_count": 2})
+        self.assertEqual(result["reconciliation"]["public_list_count"], 2)
+        self.assertEqual(result["reconciliation"]["ats_list_count"], 2)
+        self.assertEqual(result["reconciliation"]["id_intersection_count"], 2)
+        self.assertEqual(result["reconciliation"]["site_only_ids"], [])
+        self.assertEqual(result["reconciliation"]["feed_only_ids"], [])
         self.assertEqual({job["source_id"] for job in result["jobs"]}, {A, B})
         self.assertEqual(result["jobs"][0]["canonical_url"], f"https://jobs.mollie.com/vacancies/{A}")
         self.assertEqual(result["jobs"][0]["location"], "Milan")
@@ -64,6 +68,8 @@ class MollieParityContract(unittest.TestCase):
             result, _ = collector.collect_company(MOLLIE)
         self.assertEqual(result["coverage"], "PARTIAL")
         self.assertIn("site/Ashby listing mismatch", result["reason"])
+        self.assertEqual(len(result["jobs"]), 1)
+        self.assertEqual(result["jobs"][0]["source_id"], A)
 
     def test_rejects_extra_ats_posting_not_in_company_inventory(self):
         with patch.object(collector, "get_html", return_value=board()), \
@@ -71,6 +77,9 @@ class MollieParityContract(unittest.TestCase):
             result, _ = collector.collect_company(MOLLIE)
         self.assertEqual(result["coverage"], "PARTIAL")
         self.assertIn("feed_only=1", result["reason"])
+        self.assertEqual({j["source_id"] for j in result["jobs"]}, {A, B})
+        self.assertEqual(result["reconciliation"]["feed_only_ids"], [C])
+        self.assertEqual(result["reconciliation"]["id_intersection_count"], 2)
 
     def test_unlisted_ashby_rows_do_not_count_as_public_jobs(self):
         payload = feed((A, B, C), ("Milan", "Rome", "Milan"))
