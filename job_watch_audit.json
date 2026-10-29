@@ -41,7 +41,7 @@
       },
       "partial_remediation": {
         "count": 24,
-        "full_mapping_but_partial": 4,
+        "full_mapping_but_partial": 3,
         "companies": [
           {
             "company": "Allianz",
@@ -68,15 +68,6 @@
             "collector": "probe_official_inventory",
             "reason": "NotCheckable: Official inventory is reachable (200, 72936 bytes) but no safe exhaustive collector is implemented yet for Custom/legacy official Crédit Agricole recruitment portal (vendor unresolved); retained 0 validated observed jobs",
             "source_url": "https://jobs.credit-agricole.it/Pages/Offre/ListeOffre.aspx?lcid=2057&showSearchUrl=1",
-            "priority_full_mapping": true
-          },
-          {
-            "company": "Worldline",
-            "mapping_level": "FULL",
-            "ats_family": "SAP SuccessFactors Recruiting",
-            "collector": "collect_successfactors",
-            "reason": "NotCheckable: SuccessFactors inventory exposes total=65 but no stable public job links; retained 0 validated observed jobs",
-            "source_url": "https://jobs.worldline.com/viewalljobs/",
             "priority_full_mapping": true
           },
           {
@@ -257,6 +248,15 @@
             "collector": "probe_official_inventory",
             "reason": "NotCheckable: Official inventory is reachable (200, 137707 bytes) but no safe exhaustive collector is implemented yet for Custom official job-posting portal; retained 0 validated observed jobs",
             "source_url": "https://www.unipol.com/it/persone/lavora-con-noi/job-posting",
+            "priority_full_mapping": false
+          },
+          {
+            "company": "Worldline",
+            "mapping_level": "PARTIAL",
+            "ats_family": "SAP SuccessFactors Recruiting",
+            "collector": "collect_successfactors",
+            "reason": "NotCheckable: SuccessFactors inventory exposes total=65 but no stable public job links; retained 0 validated observed jobs",
+            "source_url": "https://jobs.worldline.com/viewalljobs/",
             "priority_full_mapping": false
           }
         ]
