@@ -1,0 +1,67 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-40867872010-1",
+  "batch": "jw4",
+  "created_at": "2026-10-29T11:45:59Z",
+  "fetch_errors": {
+    "IQVIA::R1576870": "HTTP 403"
+  },
+  "fingerprints": {
+    "Campari Group::1452117333": "1c572de8120dddb5",
+    "Campari Group::1452242733": "397912fd8420258e",
+    "Ferrero::1442484633": "9dc659be0ca129ef",
+    "Ferrero::1450481333": "90a9a5de41e07895",
+    "IQVIA::R1576870": "71bb35e5802fa62c",
+    "Johnson & Johnson::R-107461": "ebcef7243108fad5",
+    "MSD::/job/ITA---Lazio---Roma/Business-Insights-Analyst_R404192-2": "0c6a8c802d0d8cca",
+    "Prada Group::1452177933": "efed13c9e1e21c5e",
+    "Prada Group::1452225733": "de325281615ad306"
+  },
+  "job_keys": [
+    "Prada Group::1452225733",
+    "Campari Group::1452242733",
+    "IQVIA::R1576870",
+    "Prada Group::1452177933",
+    "Johnson & Johnson::R-107461",
+    "MSD::/job/ITA---Lazio---Roma/Business-Insights-Analyst_R404192-2",
+    "Ferrero::1442484633",
+    "Ferrero::1450481333",
+    "Campari Group::1452117333"
+  ],
+  "packet_sha256": "6662963600a67a82773e164ec251bdf719ed58e70b1fcee4b42f21cf769d391a",
+  "ready_count": 8,
+  "record_count": 9,
+  "request_id": "manual-20261029-1245-jw4-select01",
+  "request_sha256": "a4461e3ec27fcf0aa65ac545071ba89d2dea6c09f41eefaefd471e238dd77f84",
+  "select_run_attempt": 1,
+  "select_run_id": 40867872010,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "890520baf30eaeee77f287cdb01bdf0126a543ed2792f739dc60c378bd00cd52",
+    "job_memory_jw4.json": "a40889e1f3fd10f1d395f9e342e6e23dafb3251ee1cabe992657c3d557f712f8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "890520baf30eaeee77f287cdb01bdf0126a543ed2792f739dc60c378bd00cd52",
+    "job_memory_jw4.json": "4ebe4d1125ea6eb2e2c3c7af35583e803fde6ac54a62b25f0fec132a21383600",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "IQVIA::R1576870": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "71bb35e5802fa62c",
+        "source_url": "https://iqvia.wd1.myworkdayjobs.com/IQVIA/job/Milan-Italy/Global-Rare-Disease-Regulatory-Affairs-Specialist-EU-INT_R1576870"
+      },
+      "last_failure_at": "2026-10-29T11:45:59Z",
+      "retry_from": "2026-10-30",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 12894801430
+}
