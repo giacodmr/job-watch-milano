@@ -1606,8 +1606,23 @@ def _collect_oracle_once(company):
                     (clean_text(raw.get("PrimaryLocationCountry")) or "").casefold() in {"italy", "italia", "it"}
                     or (clean_text(raw.get("PrimaryLocation")) or "").casefold() in {"italy", "italia"}
                 ):
-                    ambiguous_country_jobs.append(sid)
-                continue
+                    # Nexi's Oracle board lists city-ambiguous Italy jobs.
+                    # Recover a target only if the first-party, ID/title-matched
+                    # external JobDetail explicitly says the role is based there.
+                    # Generic descriptions, headquarters, and inferred geography
+                    # are NOT sufficient to turn this global board VERIFIED.
+                    from nexi_collector import confirmed_target_city
+                    try:
+                        confirmed = confirmed_target_city(raw, selected_host, site)
+                    except NotCheckable:
+                        confirmed = None
+                    if confirmed and location_matches(confirmed, name):
+                        loc = confirmed
+                    else:
+                        ambiguous_country_jobs.append(sid)
+                        continue
+                else:
+                    continue
             canonical = f"{public_base}/job/{sid}"
             jobs.append(compact_job(name, sid, title=raw.get("Title"), location=loc, department=raw.get("Department") or raw.get("Organization"), employment_type=clean_text(raw.get("JobType")) or clean_text(raw.get("ContractType")), published_at=raw.get("PostedDate"), canonical=canonical, apply_url=canonical))
         except Exception as exc:
