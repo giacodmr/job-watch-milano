@@ -81,7 +81,7 @@ def main():
     "count_fragments":excerpts(r.text,("Total Jobs","Total Results","Showing","Total","Results","totalJobs","totalRecords","Search results","jobOffset","jobRecordsPerPage"),18),
    },ensure_ascii=False)[:14000])
   if name.startswith("fineco"):
-    m=re.search(r'<script[^>]*__NEXT_DATA__[^>]*>(.*?)</script>',r.text,re.I|re.S)
+   m=re.search(r'<script[^>]*__NEXT_DATA__[^>]*>(.*?)</script>',r.text,re.I|re.S)
    if m:
     try:
      data=json.loads(m.group(1));pp=data.get("props",{}).get("pageProps",{})
