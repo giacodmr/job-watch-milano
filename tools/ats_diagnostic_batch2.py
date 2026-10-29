@@ -88,6 +88,27 @@ def report(name,url,session):
                     "office_or_remote":sum(1 for v in values if "milan" in str(v.get("locations")).lower() or "rome" in str(v.get("locations")).lower() or "london" in str(v.get("locations")).lower()),
                     "target_examples":[{"id":v.get("id"),"text":v.get("text"),"locations":v.get("locations"),"team":v.get("team")} for v in values if "milan" in str(v.get("locations")).lower() or "rome" in str(v.get("locations")).lower() or "london" in str(v.get("locations")).lower()][:6]
                 },ensure_ascii=False,default=str)[:12500])
+                import unicodedata
+                for v in [z for z in values if "london" in str(z.get("locations")).lower()][:2]:
+                    slug=unicodedata.normalize("NFKD",str(v.get("text",""))).encode("ascii","ignore").decode("ascii").lower()
+                    slug=re.sub(r"[^a-z0-9]+","-",slug).strip("-")
+                    candidates=[
+                        f"https://www.revolut.com/careers/position/{slug}-{v['id']}/",
+                        f"https://www.revolut.com/careers/position/{v['id']}/",
+                    ]
+                    for cand in candidates:
+                        try:
+                            rr=session.get(cand,timeout=16)
+                            mm=re.search(r'<script\b[^>]*id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>',rr.text,re.I|re.S)
+                            dd=json.loads(mm.group(1)) if mm else {}
+                            pp2=dd.get("props",{}).get("pageProps",{})
+                            print("REVOLUT_DETAIL "+json.dumps({
+                                "candidate":cand,"http":rr.status_code,"final_url":rr.url,
+                                "pageProps_keys":list(pp2),"position_id":(pp2.get("position") or {}).get("id") if isinstance(pp2.get("position"),dict) else None,
+                                "page_title":re.findall(r"<h1[^>]*>(.*?)</h1>",rr.text,re.S|re.I)[:1],
+                            },ensure_ascii=False)[:1300])
+                        except requests.RequestException as exc:
+                            print("REVOLUT_DETAIL "+json.dumps({"candidate":cand,"error":type(exc).__name__}))
                 walk(pp)
             except (ValueError, TypeError) as exc:
                 print("REVOLUT_NEXT_ERROR "+str(exc)[:160])
@@ -109,6 +130,20 @@ def report(name,url,session):
 def main():
     session = requests.Session()
     session.headers["User-Agent"] = "job-watch-milano/ATS-public-contract-audit"
+    try:
+        import collector
+        data,api=collector.oracle_get_page("fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com","CX_1",0)
+        root=collector.oracle_extract_root(data)
+        rows=root.get("requisitionList") or []
+        print("NEXI_ORACLE_SCHEMA "+json.dumps({
+            "total":root.get("TotalJobsCount"),"first_keys":list(rows[0]) if rows else [],
+            "examples":[{"Id":x.get("Id"),"Title":x.get("Title"),
+                         "PrimaryLocation":x.get("PrimaryLocation"),
+                         "secondaryLocations":x.get("secondaryLocations"),
+                         "otherWorkLocations":x.get("otherWorkLocations")} for x in rows[:3]],
+        },ensure_ascii=False,default=str)[:6500])
+    except Exception as exc:
+        print("NEXI_ORACLE_SCHEMA_ERROR "+type(exc).__name__+" "+str(exc)[:180])
     for name,url in SOURCES.items():
         result=report(name,url,session)
         if result:
