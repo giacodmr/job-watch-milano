@@ -27,7 +27,7 @@ CITY_FIELD_RE=re.compile(
     r'<div[^>]*class=["\'][^"\']*\barticle__content__view__field__value\b[^"\']*["\'][^>]*>(.*?)</div>',
     re.I|re.S
 )
-SPAN_RE=re.compile(r'<span[^>]*class=["\']([^"\']*\bjob-info-icon\b[^"\']*)["\'][^>]*>(.*?)</span>',re.I|re.S)
+SPAN_RE=re.compile(r'<span[^>]*class=["\']([^"\']*job-info-icon[^"\']*)["\'][^>]*>(.*?)</span>',re.I|re.S)
 
 
 def _official(url, detail=False, sid=None):
