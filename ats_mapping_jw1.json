@@ -1197,34 +1197,35 @@
       "company": "Dojo",
       "batch": "JW1",
       "ats": {
-        "family": "Greenhouse for core roles; Lever also observed for some field-sales recruiting",
-        "tenant": null,
+        "family": "Greenhouse public API + Dojo first-party Astro corporate vacancies board",
+        "tenant": "dojo",
         "career_site": "https://dojo.careers/",
         "inventory_url": "https://dojo.careers/jobs",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://boards-api.greenhouse.io/v1/boards/dojo/jobs"
       },
       "verification": {
         "level": "STRONG",
-        "method": "official_inventory_with_multiple_recruiting_paths",
+        "method": "first_party_astro_greenhouse_total_id_order_detail_parity",
         "location_filter_supported": true,
         "locations": [
           "Italy",
           "Milan",
           "London"
         ],
-        "pagination": "Load more; no stable total observed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Dojo first-party Astro Jobs component exposes first-page 10 rows plus load-more; certified complete via its own Greenhouse publisher meta.total and all 24 posting IDs, with stable second snapshot",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Enumerate dojo.careers/jobs using location/department/employment filters and repeatedly load all results; deduplicate canonical job URLs.",
-        "fallback": "Cross-check official application links because some hiring streams may hand off to different ATS providers; use official-domain search for reconciliation."
+        "primary": "Parse official dojo.careers/jobs first-party Astro job rows; cross-check publisher Greenhouse token dojo meta.total, stable IDs, ordered first page and canonical company URLs; verify matching official detail pages for target positions and stable second snapshot.",
+        "fallback": "If first-party/Greenhouse reconciliation fails, keep PARTIAL and separately audit source drift. Do not fold dojoitaly freelancer field-sales board into corporate roles."
       },
       "limitations": [
-        "Core roles use Greenhouse, while some field-sales recruitment has used Lever.",
-        "No displayed total or single verified backend board covers every recruiting path."
+        "Certification covers the mapped corporate careers board dojo.careers/jobs only, which is backed by Greenhouse board dojo.",
+        "A separate Greenhouse board dojoitaly publishes mainly independent Italian field-sales opportunities; it is not included in the corporate board source and must not be silently mixed into standard employment roles.",
+        "If the first-party initial batch and complete Greenhouse publisher differ, or target details fail, runtime coverage remains PARTIAL."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-29"
     },
     {
       "company": "Trade Republic",
