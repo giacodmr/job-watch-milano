@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-29T20:20:05Z",
+  "generated_at": "2026-10-29T20:43:15Z",
   "run_id": "75f6fc2ef0d0f311b17147f4",
   "snapshot": {
     "run_id": "75f6fc2ef0d0f311b17147f4",
@@ -36,23 +36,23 @@
   "batches": {
     "JW1": {
       "status": "NEEDS_REVIEW",
-      "processable_semantic_pending": 35,
+      "processable_semantic_pending": 25,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
-      "actionable_delta_pending": 5,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 30,
+      "actionable_delta_pending": 0,
+      "reporting_pending": 1,
+      "historical_backlog_remaining": 25,
       "failed": 0,
       "not_checked": 0,
       "remaining_work": [
         {
           "batch": "JW1",
-          "action": "SEMANTIC_REVIEW",
-          "count": 5,
-          "reason": "Review exact current fingerprints in daily worklist"
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 1,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
         },
         {
           "batch": "JW1",
@@ -169,11 +169,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 17,
-  "processable_semantic_pending": 61,
+  "daily_actionable_remaining": 13,
+  "processable_semantic_pending": 51,
   "jd_retry_deferred": 0,
   "jd_unavailable": 0,
-  "historical_backlog_remaining": 44,
+  "historical_backlog_remaining": 39,
   "source_failures": 0,
   "partial_sources": 113,
   "error_counts": {
@@ -1395,9 +1395,9 @@
   "remaining_work": [
     {
       "batch": "JW1",
-      "action": "SEMANTIC_REVIEW",
-      "count": 5,
-      "reason": "Review exact current fingerprints in daily worklist"
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 1,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
       "batch": "JW1",
