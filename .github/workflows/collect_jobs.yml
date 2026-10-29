@@ -63,17 +63,23 @@ jobs:
         run: |
           python - <<'PY'
           import os
+          import json
           import subprocess
           from pathlib import Path
           from pipeline_state import now
-          from collection_freshness import recovery_needed
+          from collection_freshness import recovery_needed, manual_collection_requested
 
           checked_at = now()
           # Sentinel pushes are recovery attempts too: a preceding writer may
           # have completed the collection while this run waited for concurrency.
-          manual = os.environ.get("EVENT_NAME") == "workflow_dispatch"
+          payload_path = os.environ.get("GITHUB_EVENT_PATH")
+          try:
+              payload = json.loads(Path(payload_path).read_text()) if payload_path else {}
+          except (OSError, ValueError):
+              payload = {}
+          manual = manual_collection_requested(os.environ.get("EVENT_NAME"), payload)
           should = manual or recovery_needed(Path('.'), checked_at)
-          reason = "manual dispatch requested" if manual else ("missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday")
+          reason = "explicit manual collector recovery requested" if manual else ("missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday")
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write(f"should_run={'true' if should else 'false'}\n")
