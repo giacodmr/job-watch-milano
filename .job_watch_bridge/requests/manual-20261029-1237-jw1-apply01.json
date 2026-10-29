@@ -1,0 +1,278 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261029-1237-jw1-apply01",
+  "action": "apply",
+  "batch": "jw1",
+  "parent_request_id": "manual-20261029-1237-jw1-select01",
+  "select_run_id": 40866984308,
+  "packet_sha256": "ced473a6841963cf5744e38c8f51145849966348b82b55cda196e6f6cf642da2",
+  "patch": {
+    "batch": "jw1",
+    "snapshot": {
+      "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+      "current_jobs_jw1.json": "6919d680ec663a980e2a2f66c5e3447d3872620ac87bcbc503778c261ac45056",
+      "job_memory_jw1.json": "7a576a587749330430e11b5c28d38a94617b22b1e38acab37b5f50fdeb0075d7",
+      "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+      "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+    },
+    "semantic_decisions": {
+      "ING Italia::REQ-10123943": {
+        "fingerprint": "78847b18a14c599f",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 29,
+        "experience_required": "Internship/stage; no required work experience",
+        "mandatory_years_experience": 0,
+        "preferred_years_experience": 0,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Economics/finance/management engineering degree",
+            "Basic banking knowledge",
+            "Excel, Italian and communication"
+          ],
+          "preferred": [
+            "Prior comparable role",
+            "Erasmus",
+            "Visual Basic, English"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Support mapping Retail Banking processes, budgeting, forecasting, P&L reporting under supervision",
+        "role_level_assessment": "ENTRY_JUNIOR",
+        "seniority_evidence": "Stageur/internship, €1,500 per month, assists Finance Business Advice team",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "€1,500 monthly internship allowance (official)",
+        "salary_source": "official ING Workday JD",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "Despite Milan finance-planning exposure, this is explicitly a stage/internship, not a full-time professional move; €1,500 monthly fails fixed-base career objective.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "Mollie::a47018ac-0a29-4ba0-88cf-9616fdb03b71": {
+        "fingerprint": "01fb57f1660cd8ac",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 42,
+        "experience_required": "No mandatory years stated; strong professional dbt/SQL and financial data modelling required",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Strong SQL and dbt modelling",
+            "Automated data quality checks and reporting pipelines",
+            "Financial reconciliation data assets",
+            "Collaboration with Engineering, Treasury and Finance"
+          ],
+          "preferred": [
+            "BigQuery/GCP, Airflow",
+            "Fintech/banking financial data experience"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own core dbt marts, financial data reliability and data quality tests for daily ledger reconciliation",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Technical analytics engineering role with independently owned production data models; no people management",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": "Not published",
+        "salary_source": "official Mollie Ashby JD (salary not published)",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "Payments employer is attractive, but daily work is hands-on dbt/SQL engineering and financial data reconciliation; substantial technical stack gap and wrong functional trajectory.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "Mollie::48cebb11-ab36-4e25-86d3-2cee945a2a91": {
+        "fingerprint": "3e03ffb15637ed8e",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 59,
+        "experience_required": "1–3 years SQL and working dbt",
+        "mandatory_years_experience": 1,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "1–3 years SQL with working dbt models and tests",
+            "BI dashboard tooling",
+            "Data visualization and storytelling",
+            "Business-stakeholder collaboration"
+          ],
+          "preferred": [
+            "GTM/Revenue Operations/Marketing experience"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Independently own dbt models, fixes and adoption/impact dashboards for Revenue Operations Customer Insights",
+        "role_level_assessment": "EARLY_MID",
+        "seniority_evidence": "Analytics Engineer I: explicit 1–3 years and independently shipped dbt data models, no team management",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "Not published",
+        "salary_source": "official Mollie Ashby JD (salary not published)",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "Good GTM/customer analytics overlap, but actual deliverable is SQL/dbt modelling and tests rather than commercial strategy; mandatory dbt experience not demonstrated.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "Howden::R0019990": {
+        "fingerprint": "3daaa8064eeb4572",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 44,
+        "experience_required": "3–5 years in the same role at leading insurance brokers required",
+        "mandatory_years_experience": 3,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "3–5 years in employee benefits insurance broking",
+            "Consolidated insurance-domain knowledge",
+            "Client servicing, operational administration and portfolio growth",
+            "Italian, English, Excel and communication"
+          ],
+          "preferred": []
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own employee-benefits client portfolio, insurer relationships, proposals and operational servicing; commercial growth",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Specialty Manager requires 3–5 years specifically at major insurance brokerage and insurance specialist expertise",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "€45,000–€50,000 fixed annual gross salary (official)",
+        "salary_source": "official Howden Workday JD",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "Competitive Milan compensation and relevant employer, but mandatory insurance brokerage years and specialist client-book ownership not met; heavy servicing/new business rather than strategy.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "ING Italia::REQ-10123884": {
+        "fingerprint": "62cf661b0c7bbcbb",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 65,
+        "experience_required": "Experienced payments commercial contract/partner specialist; no explicit numeric years",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Strong contract/negotiation/vendor-management experience",
+            "Proven complex commercial negotiations",
+            "Operational resilience and third-party risk",
+            "Financial/pricing analysis, executive reporting",
+            "English and Italian"
+          ],
+          "preferred": [
+            "Card issuing, processing, schemes and payment providers",
+            "DORA and outsourcing regulation"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Independently negotiate and own card/payment partner contracts, commercial commitments, SLAs, provider performance and steering reporting",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "Senior Expert title and explicit autonomous end-to-end negotiations and strategic vendor ownership; not a people-management role",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": "Starting fixed €48,000 per year plus variable (official)",
+        "salary_source": "official ING Workday JD",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "Attractive Milan payments and €48k salary with commercial analysis overlap, but explicit proven complex contract negotiation and partner governance ownership are missing; below 70 due to mandatory experience gap.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "Mollie::2e25199b-bd05-4594-aade-ee6a2112c648": {
+        "fingerprint": "67527321352535b4",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 31,
+        "experience_required": "Around 5 years commercial experience, including 3 years owning full-cycle sales",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Five years of commercial selling and three years full-cycle ownership",
+            "35–50 cold calls weekly and new merchant prospecting",
+            "Complex negotiations and MEDDIC/value selling",
+            "Italian/English"
+          ],
+          "preferred": [
+            "Payments/fintech/SaaS sales"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Individual quota-carrying full-cycle outbound seller for mid-market and enterprise merchant acquisition",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Business Development Manager, explicit high-volume outbound cold outreach and closing sales; no direct reports",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "Not published",
+        "salary_source": "official Mollie Ashby JD (salary not published)",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "This is pure outbound new-business sales with cold calling and sales-cycle targets, explicitly excluded from user's business strategy career scope.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "Mollie::1e73c5ec-31d5-4350-a1a7-ee6f6e769f7e": {
+        "fingerprint": "a07f1c1fe6164b8a",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 77,
+        "experience_required": "Up to 3 years e-commerce or payments in a similar role",
+        "mandatory_years_experience": 0,
+        "preferred_years_experience": 3,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Ability to own complex merchant implementation from handover to go-live",
+            "Project planning, stakeholder coordination, testing and documentation",
+            "Understanding API/integration concepts",
+            "Fluent Italian and English"
+          ],
+          "preferred": [
+            "Payments or e-commerce experience/familiarity"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own post-sales merchant integration delivery, launch scheduling, testing coordination and implementation playbooks with cross-functional teams",
+        "role_level_assessment": "EARLY_MID",
+        "seniority_evidence": "Implementation Manager I, up to 3 years in similar role; no direct people management specified",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "Not published",
+        "salary_source": "official Mollie Ashby JD (salary not published)",
+        "l68_status": "NO",
+        "reportable": true,
+        "rationale": "Milan-priority fintech with junior/early-mid requirements and strong cross-functional project/operations skills; relevant to payments entry, but operational implementation more technical/delivery-led than business strategy. Compensation needs validation.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      },
+      "Mollie::9c3e0b6f-ce76-4bd7-9144-cabce7d5b555": {
+        "fingerprint": "8ef746eab8b17396",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "fit_score": 55,
+        "experience_required": "Extensive prior end-to-end product leadership required; years not quantified",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Hands-on leadership of cross-functional product team",
+            "Full product lifecycle launch and scale",
+            "Ownership of net-new banking product propositions and APIs"
+          ],
+          "preferred": [
+            "Banking/payments product context"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own major greenfield Business Banking product area and daily work of product/design/data team, without direct reports",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "Senior Product Manager building net-new banking products, leads autonomous cross-functional team and full product lifecycle",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": "Not published",
+        "salary_source": "official Mollie Ashby JD (salary not published)",
+        "l68_status": "NO",
+        "reportable": false,
+        "rationale": "Strategic fintech employer, but senior hands-on product delivery and banking product ownership are far beyond evidenced product-management experience; does not clear 70 Milan threshold.",
+        "analyzed_at": "2026-10-29T11:41:24.581Z"
+      }
+    }
+  }
+}
