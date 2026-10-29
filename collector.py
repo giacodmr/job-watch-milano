@@ -1590,16 +1590,47 @@ def _collect_oracle_once(company):
     if total is None or len(rows) != total:
         raise NotCheckable(f"Oracle count mismatch: retrieved={len(rows)}, total={total}")
     jobs = []
+    ambiguous_country_jobs = []
     for raw in rows:
         try:
             sid = oracle_source_id(raw)
             loc = oracle_location(raw)
-            if not sid or not location_matches(loc, name):
+            if not sid:
+                raise NotCheckable("Oracle requisition lacks public stable ID")
+            if not location_matches(loc, name):
+                # Nexi's Oracle API currently provides country-only "Italy"
+                # for several postings, without Milan/Rome city metadata.
+                # A global total match cannot certify geography coverage.
+                # Do not silently turn those into zero target vacancies.
+                if name == "Nexi" and (
+                    (clean_text(raw.get("PrimaryLocationCountry")) or "").casefold() in {"italy", "italia", "it"}
+                    or (clean_text(raw.get("PrimaryLocation")) or "").casefold() in {"italy", "italia"}
+                ):
+                    ambiguous_country_jobs.append(sid)
                 continue
             canonical = f"{public_base}/job/{sid}"
             jobs.append(compact_job(name, sid, title=raw.get("Title"), location=loc, department=raw.get("Department") or raw.get("Organization"), employment_type=clean_text(raw.get("JobType")) or clean_text(raw.get("ContractType")), published_at=raw.get("PostedDate"), canonical=canonical, apply_url=canonical))
         except Exception as exc:
             normalization_error(company,exc,locals().get('raw',{}))
+    if ambiguous_country_jobs:
+        return {
+            "coverage": "PARTIAL",
+            "collector": "oracle_recruiting_cloud_ce_metadata",
+            "inventory_count": len(rows),
+            "jobs": jobs,
+            "source_url": source_url or inventory,
+            "reason": (
+                f"Oracle global inventory enumerated {len(rows)}/{total} requisitions, but "
+                f"{len(ambiguous_country_jobs)} Italian listings expose country-only locations; "
+                "Milan/Rome membership is not independently proven"
+            ),
+            "reconciliation": {
+                "global_total": total,
+                "country_only_italy_count": len(ambiguous_country_jobs),
+                "country_only_sample_ids": sorted(ambiguous_country_jobs)[:12],
+                "geography_certified": False,
+            },
+        }
     return {"coverage": "VERIFIED", "collector": "oracle_recruiting_cloud_ce_metadata", "inventory_count": len(rows), "jobs": jobs, "source_url": source_url or inventory}
 
 
@@ -3967,6 +3998,9 @@ def collect_mollie_verified(company):
 
 
 def choose(company):
+    if company.get("company") == "Revolut":
+        from revolut_collector import collect_revolut
+        return collect_revolut
     if company.get("company") == "Mollie":
         return collect_mollie_verified
     if phenom_family(company):
