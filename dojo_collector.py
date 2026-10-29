@@ -59,6 +59,8 @@ def _astro_unwrap(value):
         return [_astro_unwrap(item) for item in value[1]]
     if isinstance(value, dict):
         return {k:_astro_unwrap(v) for k,v in value.items()}
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
     raise c.NotCheckable("Dojo first-party Astro job payload has unsupported structure")
 
 
