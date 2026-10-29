@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "tools/ats_worldline_probe.py"
+      - "tools/ats_worldline_inventory_audit.py"
       - ".github/workflows/ats_worldline_probe.yml"
 permissions:
   contents: read
@@ -18,3 +19,5 @@ jobs:
       - run: python -m pip install requests==2.32.5
       - name: Inspect Worldline public SuccessFactors page and JavaScript contract
         run: python tools/ats_worldline_probe.py
+      - name: Enumerate full Worldline public jobs endpoint and validate target details
+        run: python tools/ats_worldline_inventory_audit.py
