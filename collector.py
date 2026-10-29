@@ -3967,6 +3967,9 @@ def collect_mollie_verified(company):
 
 
 def choose(company):
+    if company.get("company") == "Revolut":
+        from revolut_collector import collect_revolut
+        return collect_revolut
     if company.get("company") == "Mollie":
         return collect_mollie_verified
     if phenom_family(company):
