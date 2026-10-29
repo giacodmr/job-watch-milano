@@ -4,7 +4,9 @@ Global board has 85 complete IDs. The four Italian country-only job cards
 need official per-ID details before any geographic certification. Probe the
 public, documented CE detail REST resource without authentication/bypass.
 """
-import html,json,re,requests
+import html,json,re,requests,sys
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from urllib.parse import urlparse
 import collector as c
 HOST="fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com"
