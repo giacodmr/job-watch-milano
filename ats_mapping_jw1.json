@@ -1004,15 +1004,15 @@
       "company": "Worldline",
       "batch": "JW1",
       "ats": {
-        "family": "SAP SuccessFactors Recruiting",
+        "family": "SAP SuccessFactors Recruiting / official legacy recruiting search and dynamic widget",
         "tenant": "Worldline jobs",
         "career_site": "https://jobs.worldline.com/",
         "inventory_url": "https://jobs.worldline.com/viewalljobs/",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://jobs.worldline.com/services/recruiting/v1/jobs"
       },
       "verification": {
-        "level": "FULL",
-        "method": "official_all_jobs_inventory",
+        "level": "PARTIAL",
+        "method": "official_recruiting_legacy_api_bounded_observations_unreconciled_counts",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1020,16 +1020,21 @@
           "Rome",
           "London"
         ],
-        "pagination": "numbered pages; 50 results per page observed",
+        "pagination": "Public legacy search API returns 10 records per page and totalJobs=221, but current /viewalljobs lists 65 and API repeats IDs/changes order. Treat as PARTIAL; verify individual first-party detail URLs and explicit Italy-Milan/Italy-Rome metadata.",
         "total_count_available": true,
-        "full_inventory_possible": true
+        "full_inventory_possible": false
       },
       "job_watch_method": {
-        "primary": "Use viewalljobs, filter by keyword/location where needed, and exhaust numbered pages until the displayed total is reached.",
-        "fallback": "Use Worldline careers landing pages only to rediscover the canonical SuccessFactors inventory."
+        "primary": "Enumerate first-party /services/recruiting/v1/jobs with bounded pageNumber and first-party portal reference; keep only corporate brand Worldline and explicit Italy-Milan or Italy-Rome details with ID/title parity; do NOT certify global completeness while totals/order disagree.",
+        "fallback": "Reconcile new SuccessFactors widget search with official 65 corporate listing and the legacy 221 count; do not turn PARTIAL into VERIFIED by deduplication alone."
       },
-      "limitations": [],
-      "last_mapped": "2026-09-14"
+      "limitations": [
+        "Official /viewalljobs/ displays 65 while the first-party legacy search API shows 221 result rows / only 170 distinct IDs, with unstable first-page order.",
+        "The public recruiting endpoint can include PAYONE / ANZ Worldline affiliate postings; only exact Worldline-branded rows are retained.",
+        "Locations must be explicit Italy-Milan or Italy-Rome from provider's structured jobLocationShort array, not generic language or country aliases.",
+        "Coverage remains PARTIAL until complete publisher scope, row IDs and stable order/count reconcile."
+      ],
+      "last_mapped": "2026-10-29"
     },
     {
       "company": "Scalable Capital",

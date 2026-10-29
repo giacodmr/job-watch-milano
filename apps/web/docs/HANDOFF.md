@@ -4,6 +4,8 @@
 
 Base audit: main `0f6287a461de3951ba6dc4d2a00235a5fde494fd`, 2026-10-29. Branch fondazioni `codex/web-phase-zero`, PR verso main senza merge automatico. Stato implementato: app locale, schema SQL, health, test, CI e contratti. Stato non implementato: importer, dati operativi nel DB, auth remota, dispatcher comandi, analisi diretta arbitraria, deploy. Leggere l'esito verifiche in `VALIDATION.md` e il prossimo incarico in `../../../PLANS.md`.
 
+PR: https://github.com/giacodmr/job-watch-milano/pull/23. Main successivo `6725fefa45e5bab0494ceb05b9edb2fe999a1e1f` integrato nel branch web, con audit addendum per Worldline. Nessuna scrittura o merge su main effettuati da questo incarico.
+
 ## Riprendere in Codex
 
 1. Leggere AGENTS e piano; verificare PR e branch correnti con strumenti GitHub autorizzati. Fetch e confrontare main con lo SHA audit: nuovi cambi alle fonti richiedono aggiornamento dell'audit prima di una sync.

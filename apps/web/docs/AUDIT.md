@@ -2,6 +2,12 @@
 
 Analisi read-only del codice effettivo `main`, SHA `0f6287a461de3951ba6dc4d2a00235a5fde494fd`, acquisito il 2026-10-29. La directory locale iniziale era su un altro branch con modifiche utente; questo lavoro usa un worktree dedicato dal main remoto. Nessun dato operativo è stato aggiornato dall'audit.
 
+## Addendum: avanzamento main durante il lavoro
+
+Prima della consegna è stato confrontato anche main `6725fefa45e5bab0494ceb05b9edb2fe999a1e1f`, poi integrato nel solo branch web. I commit upstream aggiungono `worldline_collector.py`, il dispatch Worldline in `collector.choose`, nove test dedicati, strumenti/documentazione e `.github/workflows/ats_worldline_probe.yml`, oltre a checkpoint operativi. Il collector nuovo recupera metadati da fonte ufficiale e dettagli verificati, mantenendo intenzionalmente `coverage=PARTIAL` per conteggi/ordine non riconciliati: conferma il requisito di non dedurre chiusure dalle assenze in una fonte parziale. Non cambia le autorità di aziende, regole, memoria, alias, worker o bridge descritte sotto.
+
+I conteggi citati nell'audit principale sono quelli dello SHA iniziale, non dati aggiornati dalla web app. I cambiamenti operativi upstream sono stati recepiti tramite merge nel branch dedicato, senza modificarli; il diff della PR rispetto al main aggiornato contiene soltanto i file di Fase 0. Anche la suite Python aggiornata è verificata in copia temporanea (esito in VALIDATION.md).
+
 ## Autorità per dominio
 
 - **Policy globale:** `job_watch_rules.json`, sezioni `configuration_authority`, `user_decision_policy`, `analysis_policy`, `daily_worklist_policy`, geografie e certificazione. La policy effettiva è implementata anche in `sync_analysis_state.py`, `harden_job_watch_state.py`, `location_policy.py`, `rejection_reasons.py`: non basta importare un JSON e reinterpretarlo in TypeScript.

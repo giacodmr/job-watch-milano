@@ -3998,6 +3998,9 @@ def collect_mollie_verified(company):
 
 
 def choose(company):
+    if company.get("company") == "Worldline":
+        from worldline_collector import collect_worldline
+        return collect_worldline
     if company.get("company") == "UniCredit":
         from unicredit_collector import collect_unicredit
         return collect_unicredit

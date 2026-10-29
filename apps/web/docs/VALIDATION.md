@@ -12,6 +12,7 @@ Eseguite il 2026-10-29 su worktree dedicato da main `0f6287a461de3951ba6dc4d2a00
 - `npm run dev:api`: Worker e D1 dichiarati **local**, server 127.0.0.1:8787. HTTP health 200 con `database: ready`, schema 2, sync disabilitata, accesso produzione false e UTC. HTML 200 con CSP same-origin e no-store.
 - Browser in-app: pagina React renderizzata, API raggiungibile e schema pronto; click «Verifica di nuovo» aggiorna l'orario Europe/Rome da una nuova risposta; nessun errore o warning console rilevato. Vista stretta del pannello verificata visivamente, senza KPI o dati operativi inventati.
 - Suite Python invariata: **197 test, OK**, 9,383 s. Eseguita con requests 2.32.5 dell'ambiente Python locale esistente in una copia temporanea estratta da `git archive HEAD` della base analizzata, fuori dal checkout operativo. Le scritture delle fixture/proiezioni della suite restano nella copia temporanea. Nessun collector produttivo o workflow schedulato avviato.
+- Dopo il riallineamento al main `6725fefa45e5bab0494ceb05b9edb2fe999a1e1f`: suite Python aggiornata **206 test, OK**, 11,148 s, sempre in una nuova copia temporanea isolata. I nove test aggiuntivi sono quelli Worldline ricevuti da main; il codice produttivo rimane identico a quell'upstream.
 - `git diff --check`: senza errori. Verifica diff rispetto alla base per file produttivi Python/JSON/archive e workflow preesistenti: nessuna modifica. Il branch locale utente iniziale non è stato modificato.
 
 ## Copertura significativa

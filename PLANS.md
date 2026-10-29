@@ -4,6 +4,8 @@
 
 Audit di `main` a `0f6287a461de3951ba6dc4d2a00235a5fde494fd` (2026-10-29). Risultati e rischi in `apps/web/docs/AUDIT.md`. Nuova applicazione isolata, schema D1 versionato, health locale, contratti, test e CI dedicata. Nessun import operativo, comando remoto, autenticazione remota attiva o deploy.
 
+Addendum audit e riallineamento al main `6725fefa45e5bab0494ceb05b9edb2fe999a1e1f` completati prima della consegna; PR #23 per la revisione delle fondazioni.
+
 Criteri: build strict, test API e SQL su D1 locale, doppia applicazione migrazioni, bundle Worker verificato senza upload; nessuna modifica ai file produttivi preesistenti. Consultare `apps/web/docs/VALIDATION.md` per l'esito effettivo.
 
 ## Fase 1: sincronizzazione di sola lettura, ancora locale
