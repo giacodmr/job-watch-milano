@@ -77,7 +77,19 @@ jobs:
               payload = json.loads(Path(payload_path).read_text()) if payload_path else {}
           except (OSError, ValueError):
               payload = {}
-          manual = manual_collection_requested(os.environ.get("EVENT_NAME"), payload)
+          # GitHub App pushes can omit commits[].modified in the event payload.
+          # Resolve the exact triggering commit, never a later main HEAD.
+          changed_paths = []
+          if os.environ.get("EVENT_NAME") == "push":
+              try:
+                  changed_paths = subprocess.check_output(
+                      ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", os.environ["EVENT_SHA"]],
+                      text=True,
+                  ).splitlines()
+              except (subprocess.CalledProcessError, KeyError):
+                  changed_paths = []
+          manual = manual_collection_requested(os.environ.get("EVENT_NAME"), payload, changed_paths)
+          print(f"Explicit manual sentinel in event commit: {'.job_watch_manual_run' in changed_paths}")
           should = manual or recovery_needed(Path('.'), checked_at)
           reason = "explicit manual collector recovery requested" if manual else ("missing, stale or incomplete collection for this Rome workday" if should else "complete snapshots for this Rome workday")
 
