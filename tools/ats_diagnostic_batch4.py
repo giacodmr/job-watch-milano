@@ -77,11 +77,11 @@ def main():
    print("UNICREDIT_CONTRACT "+json.dumps({
     "name":name,"detail_links":len(jobs),"detail_samples":jobs[:18],
     "pagination_count":len(pages),"pagination_samples":pages[:12],
-    "jobId_unique":sorted(set(re.findall(r"jobId[=&#;\\\]+(\\d{4,})",r.text,re.I)))[:18],
+    "jobId_unique":sorted(set(re.findall(r"jobId=(\d{4,})",r.text,re.I)))[:18],
     "count_fragments":excerpts(r.text,("Total Jobs","Total Results","Showing","Total","Results","totalJobs","totalRecords","Search results","jobOffset","jobRecordsPerPage"),18),
    },ensure_ascii=False)[:14000])
   if name.startswith("fineco"):
-   m=re.search(r'<script\\b[^>]*id=["\\']__NEXT_DATA__["\\'][^>]*>(.*?)</script>',r.text,re.I|re.S)
+    m=re.search(r'<script[^>]*__NEXT_DATA__[^>]*>(.*?)</script>',r.text,re.I|re.S)
    if m:
     try:
      data=json.loads(m.group(1));pp=data.get("props",{}).get("pageProps",{})
