@@ -176,10 +176,13 @@ def collect_dojo(company):
     _check_first_batch(first,batch,more,all_jobs,total)
     found=[]
     for item in all_jobs:
+        # Independently validate every first-party detail, not merely the ten
+        # server-visible first-page cards or the subset allowed by geography.
+        url=_verify_official_detail(item)
         loc=c.clean_text((item.get("location") or {}).get("name"))
         if not c.location_matches(loc,"Dojo"):
+            time.sleep(0.08)
             continue
-        url=_verify_official_detail(item)
         department=" | ".join(str(x.get("name")) for x in (item.get("departments") or []) if isinstance(x,dict) and x.get("name")) or None
         found.append(c.compact_job("Dojo",str(item["id"]),title=item["title"],location=loc,
            department=department,updated_at=item.get("updated_at"),canonical=url,apply_url=url))
@@ -199,7 +202,8 @@ def collect_dojo(company):
            "scope":"dojo.careers corporate jobs board, not dojoitaly independent self-employed field-sales board",
            "first_party_initial_batch":len(first),
            "greenhouse_count":total,
-           "official_target_details_verified":len(found),
+           "official_details_verified":total,
+           "target_jobs_retained_by_existing_geography":len(found),
            "stable_two_snapshots":True,
        },
     }
