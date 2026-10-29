@@ -40,6 +40,20 @@ class NexiOracle(unittest.TestCase):
                          "https://fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/3001")
         self.assertEqual(get.call_args_list[1].args[-1], 2)
 
+    def test_country_only_italian_oracle_rows_do_not_fake_full_milan_coverage(self):
+        rows=[
+            {"Id":"1101","Title":"Product Manager - ECR","PrimaryLocation":"Italy","PrimaryLocationCountry":"Italy","secondaryLocations":[]},
+            {"Id":"1102","Title":"Commercial Analyst","PrimaryLocation":"Milan, Italy","PrimaryLocationCountry":"Italy","secondaryLocations":[]},
+        ]
+        with patch.object(collector,"oracle_backend_hosts",return_value=["fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com"]),\
+             patch.object(collector,"oracle_get_page",return_value=(oracle_page(2,rows),"https://official.example/api")):
+            result,_=collector.collect_company(NEXI)
+        self.assertEqual(result["coverage"],"PARTIAL")
+        self.assertEqual(result["inventory_count"],2)
+        self.assertEqual(result["reconciliation"]["country_only_italy_count"],1)
+        self.assertEqual(result["reconciliation"]["country_only_sample_ids"],["1101"])
+        self.assertEqual([j["source_id"] for j in result["jobs"]],["1102"])
+
     def test_incomplete_oracle_returns_partial_not_verified(self):
         pages = [(oracle_page(2, [{"Id":"3001","Title":"Strategy Analyst","PrimaryLocation":"Milan, Italy"}]),"https://official.example/api")]
         with patch.object(collector, "oracle_backend_hosts", return_value=["fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com"]),\
