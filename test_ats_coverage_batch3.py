@@ -82,7 +82,7 @@ class DojoATS(TestCase):
                 dojo._verify_official_detail(row)
 
     def test_real_collector_demands_two_complete_snapshots(self):
-        a=gh(D1,"Brand Designer","London")
+        a=gh(D1,"Brand Designer","Milan")
         b=gh(D2,"Account Manager","Madrid")
         first=[{"id":D1,"title":a["title"],"url":a["absolute_url"]}]
         with patch.object(dojo,"_corporate_snapshot",side_effect=[(first,1,True),(first,1,True)]),\
@@ -95,7 +95,7 @@ class DojoATS(TestCase):
         self.assertEqual(result["inventory_count"],2)
         self.assertEqual(len(result["jobs"]),1)
         self.assertEqual(result["jobs"][0]["source_id"],D1)
-        detail.assert_called_once()
+        self.assertEqual(detail.call_count,2)
 
     def test_drift_keeps_partial_instead_of_faking_certification(self):
         a=gh(D1,"Brand Designer","London")
