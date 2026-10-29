@@ -1296,15 +1296,15 @@
       "company": "Checkout.com",
       "batch": "JW1",
       "ats": {
-        "family": "Custom dynamic Checkout.com careers platform; ATS backend unresolved",
-        "tenant": null,
+        "family": "Ashby public job board, confirmed by Checkout.com corporate careers link",
+        "tenant": "checkout.com",
         "career_site": "https://www.checkout.com/careers",
         "inventory_url": "https://www.checkout.com/jobs",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://api.ashbyhq.com/posting-api/job-board/checkout.com"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_dynamic_inventory",
+        "level": "STRONG",
+        "method": "first_party_corporate_link_public_ashby_unique_ids_listing_metadata_twice",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -1312,19 +1312,20 @@
           "Rome",
           "London"
         ],
-        "pagination": "dynamic search/filtering; paging/count not reliably exposed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Public Ashby posting endpoint serves complete current listed job array with IDs; verify first-party corporate link and two identical snapshots",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official /jobs inventory and its location/department controls; collect all job-detail URLs returned interactively.",
-        "fallback": "Use official-domain search restricted to checkout.com job/careers URLs and validate each role in the official inventory."
+        "primary": "Discover Checkout.com official Ashby board from corporate /jobs link; enumerate provider's full public posting API with unique UUID, location, isListed, canonical/application URL checks; require unchanged second snapshot, then apply existing Milan/Rome allowlist.",
+        "fallback": "Retain PARTIAL if corporate board ownership or publisher schema changes, and revalidate public job ID and location contract."
       },
       "limitations": [
-        "Crawler-visible state can incorrectly show '0 Jobs found' while the company is actively hiring, indicating JavaScript/data-hydration dependence.",
-        "No stable ATS/feed or complete count was resolved."
+        "Checkout.com first-party Webflow page renders no usable server-side jobs, so complete inventory is based on its directly linked official Ashby publisher.",
+        "Unlisted Ashby postings are excluded from publicly advertised roles, but reconciled as part of feed drift detection.",
+        "The existing Checkout.com geographic allowlist is Milan/Rome, and is unchanged."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-29"
     },
     {
       "company": "Airwallex",
