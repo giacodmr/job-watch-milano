@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261029-1237-jw1-apply01",
+  "request_sha256": "6111242afe1de493cdf666237f6cf14b4e64b6f7d0d4a5b480c14c641f828357",
+  "parent_request_id": "manual-20261029-1237-jw1-select01",
+  "packet_sha256": "ced473a6841963cf5744e38c8f51145849966348b82b55cda196e6f6cf642da2",
+  "select_run_id": 40866984308,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "6919d680ec663a980e2a2f66c5e3447d3872620ac87bcbc503778c261ac45056",
+    "job_memory_jw1.json": "7a576a587749330430e11b5c28d38a94617b22b1e38acab37b5f50fdeb0075d7",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 8,
+  "applied_keys": [
+    "Howden::R0019990",
+    "ING Italia::REQ-10123884",
+    "ING Italia::REQ-10123943",
+    "Mollie::1e73c5ec-31d5-4350-a1a7-ee6f6e769f7e",
+    "Mollie::2e25199b-bd05-4594-aade-ee6a2112c648",
+    "Mollie::48cebb11-ab36-4e25-86d3-2cee945a2a91",
+    "Mollie::9c3e0b6f-ce76-4bd7-9144-cabce7d5b555",
+    "Mollie::a47018ac-0a29-4ba0-88cf-9616fdb03b71"
+  ],
+  "retry": {
+    "Moneyfarm::D10747D941": "jd_fetch_failed",
+    "Scalapay::5013758101": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "cded19eebbc34bb8b044d84864f52b900158666fe853ec4088523c83a28cdcc6",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 11,
+      "JW2": 21,
+      "JW3": 1,
+      "JW4": 9
+    },
+    "total": 42
+  },
+  "replayed": false
+}
