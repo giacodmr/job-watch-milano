@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from collection_freshness import workday, recovery_needed, worker_snapshot_ready
+from collection_freshness import workday, recovery_needed, worker_snapshot_ready, manual_collection_requested
 from test_pipeline_resilience import Fixture
 import pipeline_state as ps
 import job_watch
@@ -149,3 +149,28 @@ class CollectionFreshnessTests(unittest.TestCase):
         with self.f.modules(), patch.object(certify_job_watch, 'now', return_value='2026-10-10T07:00:00Z'):
             health = certify_job_watch.certify(self.root)
         self.assertEqual(sum(t['action'] == 'COLLECT_CURRENT_DAY' for t in health['remaining_work']), 4)
+
+
+class ExplicitManualCollectTrigger(unittest.TestCase):
+    def test_manual_dispatch_always_requests_collection(self):
+        self.assertTrue(manual_collection_requested('workflow_dispatch', {}))
+
+    def test_manual_sentinel_push_forces_collection(self):
+        event={'commits':[{'modified':['.job_watch_manual_run']}]}
+        self.assertTrue(manual_collection_requested('push',event))
+
+    def test_normal_run_sentinel_remains_subject_to_freshness(self):
+        self.assertFalse(manual_collection_requested('push',{'commits':[{'modified':['.job_watch_run']}]}))
+
+    def test_unrelated_sources_do_not_force(self):
+        for event in ({'commits':[{'modified':['job_memory_jw1.json']}]},
+                      {'commits':[]}, {}, {'commits':'not-an-array'}):
+            with self.subTest(event=event):
+                self.assertFalse(manual_collection_requested('push',event))
+
+    def test_head_commit_fallback_and_new_manual_file(self):
+        self.assertTrue(manual_collection_requested('push',{'head_commit':{'added':['.job_watch_manual_run']}}))
+
+    def test_other_events_never_force_collection(self):
+        self.assertFalse(manual_collection_requested('schedule',{'commits':[{'modified':['.job_watch_manual_run']}]}))
+        self.assertFalse(manual_collection_requested('pull_request',{'commits':[{'modified':['.job_watch_manual_run']}]}))
