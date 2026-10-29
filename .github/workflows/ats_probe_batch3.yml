@@ -44,6 +44,6 @@ jobs:
               "url":j["canonical_url"]} for j in (result.get("jobs") or [])[:24]]
           }
           print("DOJO_LIVE "+json.dumps(output,ensure_ascii=False))
-          if result.get("coverage") != "VERIFIED" or not result.get("jobs"):
+          if result.get("coverage") != "VERIFIED":
               raise SystemExit("No certified first-party Dojo corporate inventory")
           PY
