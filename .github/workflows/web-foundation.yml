@@ -1,0 +1,38 @@
+name: Web foundation
+on:
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/web-foundation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/web-foundation.yml'
+permissions:
+  contents: read
+concurrency:
+  group: web-foundation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci --no-fund --no-audit
+      - run: npm run check
+      - run: npm run db:migrate:local
+      - run: npm run db:migrate:local
+      - run: npm run worker:check
