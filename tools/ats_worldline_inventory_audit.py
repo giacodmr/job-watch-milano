@@ -33,15 +33,23 @@ def main():
   if len(totals)!=1:raise RuntimeError("Worldline API total drift")
   if not rows:break
   result.extend(rows)
+  if len(result)>=first:break
   if i in (0,1,2,10,20):print("WORLDLINE_PAGE "+json.dumps({"index":i,"count":len(rows),"totalJobs":n,"first":[r.get("response") for r in rows[:1]]},ensure_ascii=False)[:1700])
  else:raise RuntimeError("Exceeded max pages")
  ids=[str((row.get("response") or {}).get("id") or "") for row in result]
  print("WORLDLINE_SCAN "+json.dumps({"pages":i,"total":first,"records":len(ids),"unique":len(set(ids)),
     "missing_ids":sum(not x for x in ids),"first_ids":ids[:12],"last_ids":ids[-12:]},ensure_ascii=False))
+ brands={}
+ for row in result:
+  info=row.get("response") or {}
+  names=info.get("sfstd_marketingBrand_obj") or ["UNKNOWN"]
+  for brand in names:brands[str(brand)]=brands.get(str(brand),0)+1
+ print("WORLDLINE_BRANDS "+json.dumps(brands,ensure_ascii=False))
  candidates=[]
  for row in result:
   info=row.get("response") or {}
   loc=info.get("jobLocationShort") or []
+  if "Worldline" not in (info.get("sfstd_marketingBrand_obj") or []):continue
   if any(re.search(r"(?:Italy|Italia)[-\s,]*(?:Milan|Milano|Rome|Roma)|(?:Milan|Milano|Rome|Roma)",str(q),re.I) for q in loc):
    candidates.append({"id":info.get("id"),"title":info.get("unifiedStandardTitle"),
      "locations":loc,"seniority":info.get("filter6"),"family":info.get("custJobFamily"),"url":official_link(row)})
