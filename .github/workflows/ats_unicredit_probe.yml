@@ -1,0 +1,49 @@
+name: ATS UniCredit - Public Paginated Inventory Probe
+on:
+  pull_request:
+    paths:
+      - "tools/ats_unicredit_probe.py"
+      - "tools/ats_unicredit_detail_probe.py"
+      - "unicredit_collector.py"
+      - "test_unicredit_collector.py"
+      - "collector.py"
+      - "ats_mapping_jw1.json"
+      - ".github/workflows/ats_unicredit_probe.yml"
+      - "collector.py"
+      - "ats_mapping_jw1.json"
+permissions:
+  contents: read
+jobs:
+  read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests==2.32.5
+      - name: UniCredit regression contracts
+        run: python -m unittest -q test_unicredit_collector
+      - name: Inspect exact first-party detail city markup
+        run: python tools/ats_unicredit_detail_probe.py
+      - name: Exhaust every advertised UniCredit page and check job city evidence
+        run: python tools/ats_unicredit_probe.py
+      - name: Validate full first-party official UniCredit collector
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import collector
+          record=next(c for c in json.loads(Path("ats_mapping_jw1.json").read_text())["companies"] if c["company"]=="UniCredit")
+          result,attempted=collector.collect_company(record)
+          print("UNICREDIT_LIVE "+json.dumps({
+            "attempted":attempted,"coverage":result.get("coverage"),"collector":result.get("collector"),
+            "inventory_count":result.get("inventory_count"),"reason":result.get("reason"),
+            "reconciliation":result.get("reconciliation"),
+            "city_jobs":[{"id":x["source_id"],"title":x["title"],"location":x["location"],"url":x["canonical_url"]}
+              for x in (result.get("jobs") or [])],
+          },ensure_ascii=False))
+          if result.get("coverage")!="VERIFIED":
+            raise SystemExit("UniCredit global / Italy-City reconciliation not fully certified")
+          PY

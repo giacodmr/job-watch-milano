@@ -448,15 +448,15 @@
       "company": "UniCredit",
       "batch": "JW1",
       "ats": {
-        "family": "Custom enterprise career portal; backend ATS unresolved",
-        "tenant": null,
+        "family": "Avature UniCredit official Group careers portal with HTML job details",
+        "tenant": "UniCredit group careers",
         "career_site": "https://www.unicreditgroup.eu/it/careers.html",
         "inventory_url": "https://careers.unicredit.eu/en_GB/jobsuche/SearchJobs/",
         "public_api_or_feed": null
       },
       "verification": {
         "level": "STRONG",
-        "method": "official_search_portal",
+        "method": "avature_first_party_html_global_legend_15_per_page_id_parity_and_italian_detail_city",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -464,19 +464,21 @@
           "Rome",
           "London"
         ],
-        "pagination": "paged search; jobRecordsPerPage parameter observed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Official result legend 1–15 of N results; paginate jobOffset at 15-job increments, reconcile exactly N unique numeric requisitions, verify Italy JobDetail structured City field and stable first page",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use UniCredit's official SearchJobs portal, set location filters, maximize records per page where supported, and iterate all result pages.",
-        "fallback": "Use UniCredit Group careers to rediscover the SearchJobs portal if direct access is blocked."
+        "primary": "Enumerate all UniCredit global Avature official SearchJobs result pages, verify official result legend and unique IDs; inspect structured City field in each Italy JobDetail, retain only explicit Milan/Rome; recheck first-page stability.",
+        "fallback": "If complete global enumeration, first-page stability, first-party details or any Italian City field cannot be verified, emit PARTIAL and retain only validated observed target roles."
       },
       "limitations": [
-        "Direct crawler access can return HTTP 406/session-sensitive behavior.",
-        "Backend vendor and a stable machine-readable inventory endpoint were not resolved."
+        "Some global careers cards list only the country Italy: precise location must be read from the official JobDetail 'City' field.",
+        "Reported jobRecordsPerPage=1000 is ignored; the official portal actually pages at 15, so all N pages must be visited.",
+        "The existing UniCredit company allowed_locations remains Milan/Rome.",
+        "HTML shape, numeric IDs and city metadata are fail-closed: never infer Milan/Rome from description text."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-29"
     },
     {
       "company": "FinecoBank",
