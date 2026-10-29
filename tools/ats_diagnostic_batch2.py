@@ -59,6 +59,29 @@ def report(name,url,session):
         return {"source":name,"error":type(exc).__name__,"hint":str(exc)[:150]}
     p=Metadata()
     p.feed(r.text)
+    if name == "revolut":
+        m=re.search(r'<script\b[^>]*id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>',r.text,re.I|re.S)
+        if m:
+            try:
+                data=json.loads(m.group(1))
+                print("REVOLUT_NEXT_KEYS "+json.dumps({"top":list(data),"props":list(data.get("props",{})),"pageProps":list(data.get("props",{}).get("pageProps",{}))}))
+                def walk(node,path="",depth=0):
+                    if depth>9: return
+                    if isinstance(node,dict):
+                        for k,v in node.items():
+                            pth=(path+"."+k) if path else k
+                            if any(x in k.casefold() for x in ("position","job","vacanc","career","listing")):
+                                sample=(list(v[0]) if isinstance(v,list) and v and isinstance(v[0],dict) else list(v)[:12] if isinstance(v,dict) else "")
+                                print("REVOLUT_KEY "+json.dumps({"path":pth,"kind":type(v).__name__,"length":len(v) if isinstance(v,(list,dict,str)) else None,"sample_keys":sample},ensure_ascii=False)[:900])
+                            walk(v,pth,depth+1)
+                    elif isinstance(node,list) and node and isinstance(node[0],dict) and len(node)>10:
+                        sample={"path":path,"n":len(node),"first_keys":list(node[0])[:25]}
+                        if any(x in str(node[0]).lower()[:900] for x in ("office","remote","position","title")) or len(node)>=50:
+                            print("REVOLUT_ARRAY "+json.dumps(sample,ensure_ascii=False)[:900])
+                        walk(node[0],path+"[0]",depth+1)
+                walk(data.get("props",{}).get("pageProps",{}))
+            except (ValueError, TypeError) as exc:
+                print("REVOLUT_NEXT_ERROR "+str(exc)[:160])
     relevant_links = [x for x in p.links if any(k in x["href"].casefold() for k in ("/job/", "/jobs/", "career", "position", "open", "recruit", "workday"))]
     print(json.dumps({
         "source":name,"http_status":r.status_code,"url":r.url,"length":len(r.content),
