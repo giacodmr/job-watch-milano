@@ -1,0 +1,43 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261029-1245-jw4-apply01",
+  "request_sha256": "83d8a2580ae0f243b6d82f78aeece5e388f8af09c4686c20465cc47c1684434f",
+  "parent_request_id": "manual-20261029-1245-jw4-select01",
+  "packet_sha256": "6662963600a67a82773e164ec251bdf719ed58e70b1fcee4b42f21cf769d391a",
+  "select_run_id": 40867872010,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "890520baf30eaeee77f287cdb01bdf0126a543ed2792f739dc60c378bd00cd52",
+    "job_memory_jw4.json": "a40889e1f3fd10f1d395f9e342e6e23dafb3251ee1cabe992657c3d557f712f8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 8,
+  "applied_keys": [
+    "Campari Group::1452117333",
+    "Campari Group::1452242733",
+    "Ferrero::1442484633",
+    "Ferrero::1450481333",
+    "Johnson & Johnson::R-107461",
+    "MSD::/job/ITA---Lazio---Roma/Business-Insights-Analyst_R404192-2",
+    "Prada Group::1452177933",
+    "Prada Group::1452225733"
+  ],
+  "retry": {
+    "IQVIA::R1576870": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "3a3a347fb7b0bb75aa4bfd26b0ee6fad5882985761bdacf41b9d1530d7ee8cea",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 3,
+      "JW2": 11,
+      "JW3": 1,
+      "JW4": 8
+    },
+    "total": 23
+  },
+  "replayed": false
+}
