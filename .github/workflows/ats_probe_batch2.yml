@@ -20,5 +20,25 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install requests==2.32.5
+      - name: Regression contracts
+        run: python -m unittest -q test_ats_coverage_batch2
       - name: Inspect Worldline, Revolut and Nexi public HTML
         run: python tools/ats_diagnostic_batch2.py
+      - name: Live Nexi Oracle public requisitions, read only
+        run: |
+          python - <<'PY'
+          import json
+          import collector
+          from pathlib import Path
+
+          row = next(r for r in json.loads(Path("ats_mapping_jw1.json").read_text())["companies"] if r["company"] == "Nexi")
+          result, attempted = collector.collect_company(row)
+          print(json.dumps({
+            "attempted":attempted,"company":"Nexi","coverage":result.get("coverage"),
+            "collector":result.get("collector"),"inventory_count":result.get("inventory_count"),
+            "target_jobs_validated":len(result.get("jobs") or []),
+            "reason":result.get("reason"),"source_url":result.get("source_url"),
+            "sample":[{"id":j.get("source_id"),"title":j.get("title"),"location":j.get("location"),
+                       "url":j.get("canonical_url")} for j in (result.get("jobs") or [])[:15]],
+          },ensure_ascii=False,indent=2))
+          PY
