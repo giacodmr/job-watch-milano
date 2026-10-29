@@ -1,0 +1,87 @@
+"""Read-only bounded inspection of official ATS HTML surfaces (no auth/bypass)."""
+import json
+import re
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlparse
+
+import requests
+
+SOURCES = {
+    "worldline_first": "https://jobs.worldline.com/viewalljobs/",
+    "worldline_second": "https://jobs.worldline.com/viewalljobs/50/",
+    "worldline_search": "https://jobs.worldline.com/search/",
+    "revolut": "https://www.revolut.com/careers/",
+    "nexi": "https://www.nexigroup.com/it/people/lavora-in-nexi/posizioni-aperte/",
+}
+HINTS = ["job", "jobs", "career", "post", "position", "offer", "vacan", "ashby", "workday", "successfactor", "apiendpoint", "searchquery", "tile", "iframe", "graphql", "__next_data__", "requisition"]
+UUID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I)
+
+
+class Metadata(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.links = []
+        self.scripts = []
+        self.iframes = []
+        self.tags = {}
+    def handle_starttag(self, tag, attrs):
+        d = dict(attrs)
+        self.tags[tag] = self.tags.get(tag, 0) + 1
+        if tag == "a" and d.get("href"):
+            self.links.append({"href":d["href"],"text":d.get("aria-label"),"class":d.get("class")})
+        if tag == "script":
+            self.scripts.append({"src":d.get("src"),"id":d.get("id"),"type":d.get("type")})
+        if tag == "iframe":
+            self.iframes.append({"src":d.get("src")})
+
+
+def snippets(body, tokens, max_snips=12, radius=140):
+    found = []
+    for term in tokens:
+        pos = 0
+        count = 0
+        while len(found) < max_snips and count < 2:
+            m = re.search(re.escape(term), body[pos:], flags=re.I)
+            if not m:
+                break
+            idx = pos + m.start()
+            excerpt = re.sub(r"\s+", " ", body[max(0,idx-radius):idx+radius])
+            found.append({"needle":term,"excerpt":excerpt[:2*radius]})
+            pos = idx + len(term)
+            count += 1
+    return found
+
+
+def report(name,url,session):
+    try:
+        r=session.get(url,headers={"Accept":"text/html,application/xhtml+xml"},timeout=22)
+    except requests.RequestException as exc:
+        return {"source":name,"error":type(exc).__name__,"hint":str(exc)[:150]}
+    p=Metadata()
+    p.feed(r.text)
+    relevant_links = [x for x in p.links if any(k in x["href"].casefold() for k in ("/job/", "/jobs/", "career", "position", "open", "recruit", "workday"))]
+    print(json.dumps({
+        "source":name,"http_status":r.status_code,"url":r.url,"length":len(r.content),
+        "links_total":len(p.links),"links_relevant_count":len(relevant_links),
+        "links_relevant_sample":relevant_links[:25],
+        "script_count":len(p.scripts),"script_sources":p.scripts[:18],
+        "iframes":p.iframes[:12],
+        "tag_counts":{x:p.tags.get(x) for x in ("a","article","table","tr","script","iframe")},
+        "job_urls_text_matches":len(re.findall(r"/job/|/jobs/|/vacancies/|job-posting|jobPosting",r.text,re.I)),
+        "uuid_count":len(set(UUID_RE.findall(r.text))),
+        "hints":snippets(r.text,["apiEndpoint","searchQuery","jobs2web","job-tile","joblist","jobList","jobData","careerSiteCompanyId","__NEXT_DATA__","We have","requisitions"],max_snips=12),
+    },ensure_ascii=False)[:9000])
+    return None
+
+
+def main():
+    session = requests.Session()
+    session.headers["User-Agent"] = "job-watch-milano/ATS-public-contract-audit"
+    for name,url in SOURCES.items():
+        result=report(name,url,session)
+        if result:
+            print(json.dumps(result,ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()
