@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - "tools/ats_nexi_city_probe.py"
+      - "nexi_collector.py"
+      - "test_nexi_collector.py"
+      - "collector.py"
+      - "ats_mapping_jw1.json"
       - ".github/workflows/ats_nexi_city_probe.yml"
 permissions:
   contents: read
@@ -16,5 +20,25 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install requests==2.32.5
+      - name: Nexi public Oracle city evidence regression contracts
+        run: python -m unittest -q test_nexi_collector
       - name: Enumerate Nexi Oracle inventory and check four official per-ID job detail locations
         run: python tools/ats_nexi_city_probe.py
+      - name: Validate safe partial official Nexi collector and Milan Product Manager
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import collector
+          company=next(x for x in json.loads(Path("ats_mapping_jw1.json").read_text())["companies"] if x["company"]=="Nexi")
+          result,_=collector.collect_company(company)
+          print("NEXI_LIVE "+json.dumps({
+             "coverage":result.get("coverage"),"inventory":result.get("inventory_count"),
+             "reason":result.get("reason"),"reconciliation":result.get("reconciliation"),
+             "jobs":[{"id":j["source_id"],"title":j["title"],"location":j["location"],
+                "url":j["canonical_url"]} for j in result.get("jobs") or []]},ensure_ascii=False))
+          if result.get("coverage")!="PARTIAL" or result.get("inventory_count")!=85:
+             raise SystemExit("Nexi inventory/source contract unexpectedly changed")
+          if not any(j["source_id"]=="3847" and j["location"]=="Milan" for j in result.get("jobs") or []):
+             raise SystemExit("Nexi Product Manager ECR city not evidenced by role-specific official JD")
+          PY
