@@ -49,5 +49,90 @@ class NexiOracle(unittest.TestCase):
         self.assertNotEqual(result["inventory_count"], 2)
 
 
+class RevolutNextData(unittest.TestCase):
+    @staticmethod
+    def row(sid, name, location):
+        return {"id": sid, "text": name, "locations": location, "team": "Operations"}
+
+    @staticmethod
+    def html(rows, count=None, total=None):
+        import html as html_module
+        payload={"props":{"pageProps":{"positions":rows,"widgetData":{
+            "careers-teams-widget":{"total":len(rows) if total is None else total}}}}}
+        label=len(rows) if count is None else count
+        return f'<h1>We have {label} open positions</h1><script id="__NEXT_DATA__" type="application/json">{json.dumps(payload)}</script>'
+
+    def test_contract_counts_ids_and_locations_global_before_filter(self):
+        import revolut_collector as rc
+        rows=[
+            self.row("cfb550df-3acc-4f7d-b6d0-faaf2090ad08","Credit Manager (Policy)",[
+                {"name":"London","country":"United Kingdom","type":"office"},
+                {"name":"UK - Remote","country":"United Kingdom","type":"remote"}]),
+            self.row("531a667a-805b-47c8-8749-cc0e536ed122","Credit Manager (Policy)",[
+                {"name":"Sao Paulo","country":"Brazil","type":"office"}]),
+        ]
+        with patch.object(collector,"get_html",return_value=(self.html(rows),rc.BOARD)):
+            jobs,total=rc._board_snapshot()
+        self.assertEqual(total,2)
+        self.assertEqual(len(jobs),2)
+        self.assertIn("London, United Kingdom",jobs[rows[0]["id"]]["location"])
+
+    def test_rejects_mismatched_visible_and_widget_counts(self):
+        import revolut_collector as rc
+        rows=[self.row("cfb550df-3acc-4f7d-b6d0-faaf2090ad08","Credit Manager",[
+            {"name":"London","country":"United Kingdom","type":"office"}])]
+        for wrong in ({"count":2},{"total":2}):
+            with self.subTest(wrong=wrong),patch.object(collector,"get_html",return_value=(self.html(rows,**wrong),rc.BOARD)):
+                with self.assertRaises(collector.NotCheckable):
+                    rc._board_snapshot()
+
+    def test_duplicate_uuid_invalidates_full_inventory(self):
+        import revolut_collector as rc
+        row=self.row("cfb550df-3acc-4f7d-b6d0-faaf2090ad08","Credit Manager",[
+            {"name":"London","country":"United Kingdom","type":"office"}])
+        with patch.object(collector,"get_html",return_value=(self.html([row,row]),rc.BOARD)):
+            with self.assertRaises(collector.NotCheckable):
+                rc._board_snapshot()
+
+    def test_detail_route_requires_same_official_uuid(self):
+        import revolut_collector as rc
+        sid="cfb550df-3acc-4f7d-b6d0-faaf2090ad08"
+        for detail in (
+            {"id":sid,"text":"Credit Manager"},
+            {"id":"531a667a-805b-47c8-8749-cc0e536ed122","text":"Credit Manager"},
+        ):
+            page={"props":{"pageProps":{"position":detail}}}
+            url=f"https://www.revolut.com/careers/position/{sid}/"
+            with patch.object(collector,"get_html",return_value=(f'<script id="__NEXT_DATA__">{json.dumps(page)}</script>',url)):
+                if detail["id"]==sid:self.assertEqual(rc._validate_detail(sid,"Credit Manager"),url)
+                else:
+                    with self.assertRaises(collector.NotCheckable):
+                        rc._validate_detail(sid,"Credit Manager")
+
+    def test_collect_returns_verified_only_after_stable_second_snapshot(self):
+        import revolut_collector as rc
+        sid="cfb550df-3acc-4f7d-b6d0-faaf2090ad08"
+        observed={sid:{"title":"Credit Manager","location":"London, United Kingdom","team":"Credit"}}
+        with patch.object(rc,"_board_snapshot",side_effect=[(observed,1),(observed,1)]),\
+             patch.object(rc,"_validate_detail",return_value=f"https://www.revolut.com/careers/position/{sid}/"),\
+             patch.object(rc.time,"sleep"):
+            result,_=collector.collect_company({"company":"Revolut"})
+        self.assertEqual(result["coverage"],"VERIFIED")
+        self.assertEqual(result["inventory_count"],1)
+        self.assertEqual([j["source_id"] for j in result["jobs"]],[sid])
+
+    def test_volatile_board_remains_partial_and_retains_validated_jobs(self):
+        import revolut_collector as rc
+        sid="cfb550df-3acc-4f7d-b6d0-faaf2090ad08"
+        observed={sid:{"title":"Credit Manager","location":"London, United Kingdom","team":"Credit"}}
+        with patch.object(rc,"_board_snapshot",side_effect=[(observed,1),({},0)]),\
+             patch.object(rc,"_validate_detail",return_value=f"https://www.revolut.com/careers/position/{sid}/"),\
+             patch.object(rc.time,"sleep"):
+            result,_=collector.collect_company({"company":"Revolut"})
+        self.assertEqual(result["coverage"],"PARTIAL")
+        self.assertEqual(len(result["jobs"]),1)
+        self.assertIn("changed during collection",result["reason"])
+
+
 if __name__ == "__main__":
     unittest.main()
