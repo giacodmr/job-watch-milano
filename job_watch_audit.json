@@ -4,7 +4,7 @@
   "batches": {
     "JW1": {
       "batch": "JW1",
-      "source_generated_at": "2026-10-29T21:35:06Z",
+      "source_generated_at": "2026-10-29T21:53:06Z",
       "company_ats_coverage": {
         "VERIFIED": 32,
         "PARTIAL": 24,
@@ -12,28 +12,28 @@
         "NOT_CHECKED": 0
       },
       "vacancy_analysis_coverage": {
-        "base_extracted_open": 404,
+        "base_extracted_open": 411,
         "priority_overlay_open": 0,
-        "extracted_open": 404,
-        "state_records_open": 404,
-        "analyzed_current": 355,
-        "hard_rule_analyzed": 179,
+        "extracted_open": 411,
+        "state_records_open": 411,
+        "analyzed_current": 360,
+        "hard_rule_analyzed": 184,
         "semantic_analyzed": 176,
-        "pending_analysis": 49,
-        "queue_pending": 49,
+        "pending_analysis": 51,
+        "queue_pending": 51,
         "jd_retry_deferred": 0,
         "jd_unavailable": 0,
-        "analysis_pct": 87.87,
-        "actionable_delta_open": 25,
+        "analysis_pct": 87.59,
+        "actionable_delta_open": 7,
         "actionable_delta_analyzed": 5,
-        "actionable_delta_pending": 20,
-        "historical_backlog_remaining": 29,
+        "actionable_delta_pending": 2,
+        "historical_backlog_remaining": 49,
         "explicit_user_review_open": 4,
         "applied_open": 0,
         "not_interested_open": 14,
         "guarded_never_reviewed_open": 0,
-        "never_reviewed_open": 49,
-        "never_surfaced_pending": 49,
+        "never_reviewed_open": 51,
+        "never_surfaced_pending": 51,
         "reportable_above_threshold_or_priority": 14,
         "surfaced_ever_current": 13,
         "actionable_reportable": 1,
@@ -48,7 +48,7 @@
             "mapping_level": "FULL",
             "ats_family": "Branded global careers search (dynamic; vendor not independently confirmed)",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 485225 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 485506 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
             "source_url": "https://careers.allianz.com/global/en/search-results",
             "priority_full_mapping": true
           },
@@ -156,7 +156,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "Custom branded dynamic careers search; ATS backend unresolved",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 106614 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 106443 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
             "source_url": "https://careers.marsh.com/eu/en/search-results",
             "priority_full_mapping": false
           },
@@ -165,7 +165,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Custom corporate open-positions list",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 193449 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 193451 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
             "source_url": "https://www.mediobanca.com/en/work-with-us/open-positions.html",
             "priority_full_mapping": false
           },
@@ -174,7 +174,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Avature",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 106234 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 106240 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
             "source_url": "https://www.metlifecareers.com/en_US/ml/SearchJobs",
             "priority_full_mapping": false
           },
@@ -228,7 +228,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Custom global careers platform with faceted search; ATS backend unresolved",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 648935 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 648936 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
             "source_url": "https://careers.societegenerale.com/en/search?from=home",
             "priority_full_mapping": false
           },
@@ -253,9 +253,9 @@
           {
             "company": "Worldline",
             "mapping_level": "PARTIAL",
-            "ats_family": "SAP SuccessFactors Recruiting",
-            "collector": "collect_successfactors",
-            "reason": "NotCheckable: SuccessFactors inventory exposes total=65 but no stable public job links; retained 0 validated observed jobs",
+            "ats_family": "SAP SuccessFactors Recruiting / official legacy recruiting search and dynamic widget",
+            "collector": "worldline_sf_official_recruiting_partial_validated_details_v1",
+            "reason": "Worldline corporate list shows 65 postings, but public recruiting API declares 221 records and returned 157 distinct IDs in 221 rows; publisher scope/order cannot be reconciled. Retained 7 Milan/Rome official detail-verified requisitions only.",
             "source_url": "https://jobs.worldline.com/viewalljobs/",
             "priority_full_mapping": false
           }
@@ -275,7 +275,7 @@
         "gpt_run_certified": false
       },
       "run_certification": {
-        "run_id": "4c96481796d031f78aa69b63",
+        "run_id": "186dc5b1fcdeca064f685ad0",
         "autonomous_search_complete": false,
         "priority_check_required": true,
         "priority_check_status": "VERIFIED",
@@ -289,10 +289,10 @@
     },
     "JW2": {
       "batch": "JW2",
-      "source_generated_at": "2026-10-29T21:37:44Z",
+      "source_generated_at": "2026-10-29T21:55:42Z",
       "company_ats_coverage": {
-        "VERIFIED": 23,
-        "PARTIAL": 30,
+        "VERIFIED": 24,
+        "PARTIAL": 29,
         "FAILED": 0,
         "NOT_CHECKED": 0
       },
@@ -325,15 +325,15 @@
         "actionable_surfaced": 0
       },
       "partial_remediation": {
-        "count": 30,
-        "full_mapping_but_partial": 6,
+        "count": 29,
+        "full_mapping_but_partial": 5,
         "companies": [
           {
             "company": "Bolt",
             "mapping_level": "FULL",
             "ats_family": "Greenhouse-backed custom Bolt careers front-end",
             "collector": "bolt_paginated_positions_inventory_v18",
-            "reason": "11 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
+            "reason": "16 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
             "source_url": "https://bolt.eu/en/careers/positions/",
             "priority_full_mapping": true
           },
@@ -374,15 +374,6 @@
             "priority_full_mapping": true
           },
           {
-            "company": "Salesforce",
-            "mapping_level": "FULL",
-            "ats_family": "Workday",
-            "collector": "workday_cxs_metadata",
-            "reason": "Workday count mismatch: total=1575, retrieved=1576",
-            "source_url": "https://salesforce.wd12.myworkdayjobs.com/wday/cxs/salesforce/External_Career_Site/jobs",
-            "priority_full_mapping": true
-          },
-          {
             "company": "Altman Solon",
             "mapping_level": "PARTIAL",
             "ats_family": "Altman Solon custom experienced-hire careers board",
@@ -405,7 +396,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "Avature (white-label Bain career flow)",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 151079 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 151229 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
             "source_url": "https://www.bain.com/careers/find-a-role/",
             "priority_full_mapping": false
           },
@@ -414,7 +405,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Custom",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 34148 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 34152 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
             "source_url": "https://www.be-tse.it/it/jobs/",
             "priority_full_mapping": false
           },
@@ -450,7 +441,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "Avature",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 78458 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 78224 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
             "source_url": "https://deloittecm.avature.net/en_US/careers/SearchJobs/",
             "priority_full_mapping": false
           },
@@ -459,7 +450,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Expedia Group custom career front-end (backend not independently confirmed)",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 95902 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed); retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 96317 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed); retained 0 validated observed jobs",
             "source_url": "https://careers.expediagroup.com/jobs/",
             "priority_full_mapping": false
           },
@@ -477,7 +468,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Google Careers custom platform",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 1399625 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 1399629 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
             "source_url": "https://www.google.com/about/careers/applications/jobs/results/",
             "priority_full_mapping": false
           },
@@ -513,7 +504,7 @@
             "mapping_level": "STRONG",
             "ats_family": "SAP SuccessFactors backend + Microsoft custom candidate portal",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 681785 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 681789 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
             "source_url": "https://apply.careers.microsoft.com/careers",
             "priority_full_mapping": false
           },
@@ -540,7 +531,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Phenom career front-end (application backend not independently revalidated)",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 166881 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated); retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 166726 bytes) but no safe exhaustive collector is implemented yet for Phenom career front-end (application backend not independently revalidated); retained 0 validated observed jobs",
             "source_url": "https://jobs-it.pwc.com/it/en/search-results",
             "priority_full_mapping": false
           },
@@ -558,7 +549,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "Custom official careers",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 31002 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 28365 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
             "source_url": "https://www.lifeatspotify.com/jobs",
             "priority_full_mapping": false
           },
@@ -614,7 +605,7 @@
         "gpt_run_certified": false
       },
       "run_certification": {
-        "run_id": "4c96481796d031f78aa69b63",
+        "run_id": "186dc5b1fcdeca064f685ad0",
         "autonomous_search_complete": false,
         "priority_check_required": true,
         "priority_check_status": "VERIFIED",
@@ -628,21 +619,21 @@
     },
     "JW3": {
       "batch": "JW3",
-      "source_generated_at": "2026-10-29T21:39:19Z",
+      "source_generated_at": "2026-10-29T21:56:38Z",
       "company_ats_coverage": {
-        "VERIFIED": 10,
-        "PARTIAL": 33,
+        "VERIFIED": 11,
+        "PARTIAL": 32,
         "FAILED": 0,
         "NOT_CHECKED": 0
       },
       "vacancy_analysis_coverage": {
-        "base_extracted_open": 80,
+        "base_extracted_open": 122,
         "priority_overlay_open": 0,
-        "extracted_open": 80,
-        "state_records_open": 80,
-        "analyzed_current": 80,
-        "hard_rule_analyzed": 39,
-        "semantic_analyzed": 41,
+        "extracted_open": 122,
+        "state_records_open": 122,
+        "analyzed_current": 122,
+        "hard_rule_analyzed": 43,
+        "semantic_analyzed": 79,
         "pending_analysis": 0,
         "queue_pending": 0,
         "jd_retry_deferred": 0,
@@ -653,19 +644,19 @@
         "actionable_delta_pending": 0,
         "historical_backlog_remaining": 0,
         "explicit_user_review_open": 0,
-        "applied_open": 2,
-        "not_interested_open": 5,
+        "applied_open": 3,
+        "not_interested_open": 8,
         "guarded_never_reviewed_open": 0,
         "never_reviewed_open": 0,
         "never_surfaced_pending": 0,
-        "reportable_above_threshold_or_priority": 5,
-        "surfaced_ever_current": 5,
+        "reportable_above_threshold_or_priority": 7,
+        "surfaced_ever_current": 7,
         "actionable_reportable": 0,
         "actionable_surfaced": 0
       },
       "partial_remediation": {
-        "count": 33,
-        "full_mapping_but_partial": 9,
+        "count": 32,
+        "full_mapping_but_partial": 8,
         "companies": [
           {
             "company": "Alpiq",
@@ -717,7 +708,7 @@
             "mapping_level": "FULL",
             "ats_family": "Avature",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 143188 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 143196 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
             "source_url": "https://jobs.siemens-energy.com/en_US/jobs/Jobs",
             "priority_full_mapping": true
           },
@@ -737,15 +728,6 @@
             "collector": "collect_successfactors",
             "reason": "NotCheckable: Evidenced SuccessFactors search page has no reconcilable inventory total; retained 0 validated observed jobs",
             "source_url": "https://jobs.terna.it/",
-            "priority_full_mapping": true
-          },
-          {
-            "company": "Webuild",
-            "mapping_level": "FULL",
-            "ats_family": "SAP SuccessFactors / Career Site Builder (inferred from portal pattern)",
-            "collector": "collect_successfactors",
-            "reason": "NotCheckable: SuccessFactors public inventory request unavailable from runner: HTTPSConnectionPool(host='jobs.webuildgroup.com', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='jobs.webuildgroup.com', port=443) at 0x7f0de0d11220>, 'Connection to jobs.webuildgroup.com timed out. (connect timeout=30)')); retained 0 validated observed jobs",
-            "source_url": "https://jobs.webuildgroup.com/",
             "priority_full_mapping": true
           },
           {
@@ -771,7 +753,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "new/migrated enterprise platform (unconfirmed)",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 174502 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed); retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 174503 bytes) but no safe exhaustive collector is implemented yet for new/migrated enterprise platform (unconfirmed); retained 0 validated observed jobs",
             "source_url": "https://www.autostrade.it/it/persone/entra-nel-team",
             "priority_full_mapping": false
           },
@@ -780,7 +762,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "Custom official careers",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 652546 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 652545 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
             "source_url": "https://www.cellnex.com/talent/job-opportunities/",
             "priority_full_mapping": false
           },
@@ -980,7 +962,7 @@
         "gpt_run_certified": false
       },
       "run_certification": {
-        "run_id": "4c96481796d031f78aa69b63",
+        "run_id": "186dc5b1fcdeca064f685ad0",
         "autonomous_search_complete": false,
         "priority_check_required": false,
         "priority_check_status": "NOT_APPLICABLE",
@@ -994,7 +976,7 @@
     },
     "JW4": {
       "batch": "JW4",
-      "source_generated_at": "2026-10-29T21:42:08Z",
+      "source_generated_at": "2026-10-29T21:59:08Z",
       "company_ats_coverage": {
         "VERIFIED": 29,
         "PARTIAL": 26,
@@ -1038,7 +1020,7 @@
             "mapping_level": "FULL",
             "ats_family": "Custom AbbVie careers platform; application ATS not conclusively identified",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 210265 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 208925 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
             "source_url": "https://careers.abbvie.com/en/jobs",
             "priority_full_mapping": true
           },
@@ -1083,7 +1065,7 @@
             "mapping_level": "FULL",
             "ats_family": "Custom LVMH group careers platform",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 2162201 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 2162200 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
             "source_url": "https://www.lvmh.com/en/join-us/our-job-offers",
             "priority_full_mapping": true
           },
@@ -1137,7 +1119,7 @@
             "mapping_level": "PARTIAL",
             "ats_family": "Custom Coca-Cola HBC career search; application ATS not conclusively identified",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 1894 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 1898 bytes) but no safe exhaustive collector is implemented yet for Custom Coca-Cola HBC career search; application ATS not conclusively identified; retained 0 validated observed jobs",
             "source_url": "https://it.coca-colahellenic.com/en/working-with-us/search-and-apply",
             "priority_full_mapping": false
           },
@@ -1182,7 +1164,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Custom IKEA careers platform",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 1061994 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 1122596 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
             "source_url": "https://jobs.ikea.com/en/search-jobs/",
             "priority_full_mapping": false
           },
@@ -1191,7 +1173,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Eightfold.ai (PCS)",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 219127 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 220788 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
             "source_url": "https://careers.kering.com/careers",
             "priority_full_mapping": false
           },
@@ -1200,7 +1182,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Custom Kraft Heinz careers frontend; application backend not conclusively identified",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 13273 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 13261 bytes) but no safe exhaustive collector is implemented yet for Custom Kraft Heinz careers frontend; application backend not conclusively identified; retained 0 validated observed jobs",
             "source_url": "https://careers.kraftheinz.com/",
             "priority_full_mapping": false
           },
@@ -1254,7 +1236,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 393951 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 403256 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
             "source_url": "https://join.pmicareers.com/it/it/search-results",
             "priority_full_mapping": false
           },
@@ -1263,7 +1245,7 @@
             "mapping_level": "STRONG",
             "ats_family": "Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified",
             "collector": "probe_official_inventory",
-            "reason": "NotCheckable: Official inventory is reachable (200, 305586 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+            "reason": "NotCheckable: Official inventory is reachable (200, 340526 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
             "source_url": "https://www.pgcareers.com/global/en/search-results/",
             "priority_full_mapping": false
           }
@@ -1283,7 +1265,7 @@
         "gpt_run_certified": false
       },
       "run_certification": {
-        "run_id": "4c96481796d031f78aa69b63",
+        "run_id": "186dc5b1fcdeca064f685ad0",
         "autonomous_search_complete": false,
         "priority_check_required": false,
         "priority_check_status": "NOT_APPLICABLE",
