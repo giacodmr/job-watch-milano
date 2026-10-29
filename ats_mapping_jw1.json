@@ -383,34 +383,35 @@
       "company": "Revolut",
       "batch": "JW1",
       "ats": {
-        "family": "Custom global career platform; ATS backend unresolved",
+        "family": "Revolut first-party Next.js careers positions inventory",
         "tenant": null,
         "career_site": "https://www.revolut.com/careers/",
         "inventory_url": "https://www.revolut.com/careers/",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://www.revolut.com/careers/ (__NEXT_DATA__.props.pageProps.positions, server-rendered)"
       },
       "verification": {
         "level": "STRONG",
-        "method": "official_inventory_with_total_and_facets",
+        "method": "first_party_nextjs_positions_three_count_parity_and_uuid_details",
         "location_filter_supported": true,
         "locations": [
           "Italy",
           "Milan",
           "London"
         ],
-        "pagination": "dynamic/lazy rendering with team and location filters",
+        "pagination": "Server-rendered __NEXT_DATA__ contains complete positions; require heading count == careers-teams-widget.total == unique positions length, verify target official UUID details, recheck stable board",
         "total_count_available": true,
-        "full_inventory_possible": false
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Read the displayed global job total, filter by target location, then exhaust all rendered result batches and verify retrieved rows against the filtered count.",
-        "fallback": "Use official-domain search restricted to revolut.com/careers for missing job-detail URLs and reconcile against the displayed inventory count."
+        "primary": "Use Revolut official Next.js careers positions embedded in public page; require 3-way count parity, validate target role URLs against official detail UUID, and recheck stable second inventory.",
+        "fallback": "When the list is malformed, missing locations, or unstable, retain individually validated roles as PARTIAL; no promotion based on HTTP status or count alone."
       },
       "limitations": [
-        "Dynamic/lazy-loaded results prevent a clean backend enumeration with the currently mapped method.",
-        "ATS/vendor and public feed were not independently identified."
+        "Certification is scoped to the first-party careers board worldwide openings, not every unpublished group hiring channel.",
+        "Only Milan/Rome and explicitly allowed London roles are retained after global enumeration.",
+        "Every target job URL is checked against the detail embedded official UUID; unavailable details prevent full certification."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-29"
     },
     {
       "company": "Intesa Sanpaolo",
