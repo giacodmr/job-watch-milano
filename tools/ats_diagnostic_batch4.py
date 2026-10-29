@@ -12,6 +12,7 @@ PAGES={
  "checkout_ashby":"https://api.ashbyhq.com/posting-api/job-board/checkout.com",
  "unicredit_bigpage":"https://careers.unicredit.eu/en_GB/jobsuche/SearchJobs/?jobRecordsPerPage=1000",
  "unicredit_page2":"https://careers.unicredit.eu/en_GB/jobsuche/SearchJobs/?jobRecordsPerPage=15&jobOffset=15",
+ "unicredit_far":"https://careers.unicredit.eu/en_GB/jobsuche/SearchJobs/?jobRecordsPerPage=15&jobOffset=300",
  "nexi_italy":"https://fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/requisitions?location=Italy&locationId=300000000462006&locationLevel=country&mode=location",
 }
 HINTS=("__NEXT_DATA__","__NUXT__","__PRELOADED_STATE__","__APOLLO_STATE__","jobPosting","job-board","jobs","jobCount","pagination","job-list","apiEndpoint","workday","greenhouse","eightfold","job-boards","SuccessFactors","requisition","apply","talentlink","jobRecordsPerPage")
@@ -74,6 +75,15 @@ def main():
    # Show real same-host job detail URL, pagination links, and any advertised count.
    jobs=[x for x in p.links if x.get("href") and re.search(r"jobId=|/jobsuche/Jobs|/jobsuche/Job|/jobsuche/ViewJob",x["href"],re.I)]
    pages=[x for x in p.links if x.get("href") and "jobOffset=" in x["href"]]
+   article_chunks=re.findall(r"<article\b[^>]*>.*?</article>",r.text,re.I|re.S)
+   first_card=next((x for x in article_chunks if "JobDetail/" in x), "")
+   print("UNICREDIT_ARTICLE "+json.dumps({
+    "name":name,"article_chunks":len(article_chunks),
+    "card_sample":re.sub(r"\s+"," ",first_card)[:6500],
+    "pagination_next":len(re.findall(r'paginationNextLink[^>]+href=|class=["\'][^"\']*paginationNextLink',r.text,re.I)),
+    "numeric_text":re.findall(r">[\s]*[\d,\.]{2,}[\s]*(?:Jobs|Positions|offers|results|of\s+[\d,\.]+)?[\s]*<",r.text,re.I)[:25],
+    "page_pagination":re.findall(r"paginationLink[^>]*",r.text,re.I)[:12],
+   },ensure_ascii=False)[:8500])
    print("UNICREDIT_CONTRACT "+json.dumps({
     "name":name,"detail_links":len(jobs),"detail_samples":jobs[:18],
     "pagination_count":len(pages),"pagination_samples":pages[:12],
