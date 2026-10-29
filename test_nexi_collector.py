@@ -55,7 +55,7 @@ class NexiOracleCityTests(unittest.TestCase):
     def test_global_complete_does_not_certify_ambiguous_italy(self):
         rows=[card(),card("3174","Graduate IT"),{"Id":"7000","Title":"German job","PrimaryLocation":"Berlin"}]
         payload={"items":[{"TotalJobsCount":3,"requisitionList":rows}]}
-        company={"company":"Nexi","ats":{"inventory_url":"https://"+HOST+"/hcmUI/CandidateExperience/en/sites/CX_1/jobs"}}
+        company={"company":"Nexi","ats":{"family":"Oracle Recruiting Cloud / Oracle HCM", "inventory_url":"https://"+HOST+"/hcmUI/CandidateExperience/en/sites/CX_1/jobs"}}
         with patch.object(c,"oracle_backend_hosts",return_value=[HOST]),\
              patch.object(c,"oracle_get_page",return_value=(payload,"https://"+HOST+"/hcmRestApi/resources/latest/recruitingCEJobRequisitions")) ,\
              patch.object(nex,"confirmed_target_city",side_effect=["Milan",None]):
