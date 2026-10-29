@@ -79,7 +79,16 @@ def report(name,url,session):
                         if any(x in str(node[0]).lower()[:900] for x in ("office","remote","position","title")) or len(node)>=50:
                             print("REVOLUT_ARRAY "+json.dumps(sample,ensure_ascii=False)[:900])
                         walk(node[0],path+"[0]",depth+1)
-                walk(data.get("props",{}).get("pageProps",{}))
+                pp=data.get("props",{}).get("pageProps",{})
+                values=pp.get("positions",[])
+                print("REVOLUT_POSTINGS "+json.dumps({
+                    "count":len(values),
+                    "widgetData":pp.get("widgetData",{}).get("careers-teams-widget"),
+                    "first3":[{"id":v.get("id"),"text":v.get("text"),"locations":v.get("locations"),"team":v.get("team"),"desc_prefix":str(v.get("description"))[:120]} for v in values[:3]],
+                    "office_or_remote":sum(1 for v in values if "milan" in str(v.get("locations")).lower() or "rome" in str(v.get("locations")).lower() or "london" in str(v.get("locations")).lower()),
+                    "target_examples":[{"id":v.get("id"),"text":v.get("text"),"locations":v.get("locations"),"team":v.get("team")} for v in values if "milan" in str(v.get("locations")).lower() or "rome" in str(v.get("locations")).lower() or "london" in str(v.get("locations")).lower()][:6]
+                },ensure_ascii=False,default=str)[:12500])
+                walk(pp)
             except (ValueError, TypeError) as exc:
                 print("REVOLUT_NEXT_ERROR "+str(exc)[:160])
     relevant_links = [x for x in p.links if any(k in x["href"].casefold() for k in ("/job/", "/jobs/", "career", "position", "open", "recruit", "workday"))]
