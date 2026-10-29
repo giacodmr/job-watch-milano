@@ -8,6 +8,8 @@ Implementato: exporter da archivio Git isolato, validazione manifest e byte hash
 
 Non implementato: auth remota/JWT, endpoint ingestion, MCP server, dispatcher comandi, selezione arbitraria di analisi, cron/polling o deploy. Nessuna API LLM o risorsa cloud. Leggere README e PHASE1_VALIDATION per comandi, metriche, screenshot e limiti.
 
+PR di consegna: https://github.com/giacodmr/job-watch-milano/pull/25. Commit implementazione verificato su GitHub: `016594232473c459cc9a7bcb9a8cb6abb6a14908` (albero identico al commit locale). Eventuali aggiornamenti documentali successivi non cambiano lo snapshot dati importato.
+
 ## Riprendere il lavoro
 
 1. Leggere AGENTS, PLANS, AUDIT, SYNC_CONTRACT, ARCHITECTURE, questo handoff e le tre skill frontend per task UI. Usare il repository, non la sola conversazione.
