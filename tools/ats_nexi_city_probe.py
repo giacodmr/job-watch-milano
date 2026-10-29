@@ -78,7 +78,16 @@ def main():
                  "count":len(items) if isinstance(items,list) else None,"response_keys":list(data)[:20] if isinstance(data,dict) else [],
                  "error":str(data.get("title") or data.get("detail") or "")[:400] if isinstance(data,dict) and not items else "",
                  "first":filtered(items[0]) if isinstance(items,list) and items else None},ensure_ascii=False,default=str)[:13000])
-                if isinstance(items,list) and items:break
+                if isinstance(items,list) and items:
+                    item=items[0]
+                    raw=c.html_to_text(item.get("ExternalDescriptionStr") or "") or ""
+                    normalized=re.sub(r"\\s+"," ",raw)
+                    fragments=[]
+                    for match in list(re.finditer(r"\\b(?:milan|milano|rome|roma|verona|vicenza|padova|location|place of work|sede|workplace|headquarter|office)\\b",normalized,re.I))[:16]:
+                        fragments.append({"word":match.group(0),"context":normalized[max(0,match.start()-130):match.end()+240]})
+                    print("NEXI_DESCRIPTION_CITY "+json.dumps({"id":sid,"length":len(normalized),"head":normalized[:900],
+                       "matches":fragments},ensure_ascii=False)[:10500])
+                    break
             except requests.RequestException as e:
                 print("NEXI_DETAIL_ERR "+json.dumps({"id":sid,"finder":finder,"error":str(e)[:180]}))
 if __name__=="__main__":main()
