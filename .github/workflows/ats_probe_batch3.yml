@@ -21,5 +21,29 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check requests==2.32.5
+      - name: Dojo adapter regression contracts
+        run: python -m unittest -q test_ats_coverage_batch3
       - name: Inspect first-party and public ATS boards
         run: python tools/ats_diagnostic_batch3.py
+      - name: Live official Dojo corporate 24-job parity (read-only)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import collector
+
+          row=next(c for c in json.loads(Path("ats_mapping_jw1.json").read_text())["companies"] if c["company"]=="Dojo")
+          result,attempted=collector.collect_company(row)
+          output={
+            "attempted":attempted,"company":"Dojo",
+            "coverage":result.get("coverage"),"collector":result.get("collector"),
+            "inventory_count":result.get("inventory_count"),
+            "validated_target_count":len(result.get("jobs") or []),
+            "reason":result.get("reason"),"reconciliation":result.get("reconciliation"),
+            "sample":[{"id":j["source_id"],"title":j["title"],"location":j["location"],
+              "url":j["canonical_url"]} for j in (result.get("jobs") or [])[:24]]
+          }
+          print("DOJO_LIVE "+json.dumps(output,ensure_ascii=False))
+          if result.get("coverage") != "VERIFIED" or not result.get("jobs"):
+              raise SystemExit("No certified first-party Dojo corporate inventory")
+          PY
