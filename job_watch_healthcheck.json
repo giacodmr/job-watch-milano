@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-29T11:41:55Z",
+  "generated_at": "2026-10-29T11:45:11Z",
   "run_id": "1ef0a298a35aec7a5131a990",
   "snapshot": {
     "run_id": "1ef0a298a35aec7a5131a990",
@@ -57,19 +57,26 @@
       ]
     },
     "JW2": {
-      "status": "COMPLETE_WITH_WARNINGS",
-      "processable_semantic_pending": 21,
+      "status": "NEEDS_REVIEW",
+      "processable_semantic_pending": 11,
       "jd_retry_deferred": 0,
       "jd_unavailable": 1,
-      "daily_complete": true,
+      "daily_complete": false,
       "full_semantic_complete": false,
-      "gpt_run_certified": true,
+      "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 22,
+      "reporting_pending": 1,
+      "historical_backlog_remaining": 12,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": []
+      "remaining_work": [
+        {
+          "batch": "JW2",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 1,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+        }
+      ]
     },
     "JW3": {
       "status": "COMPLETE_WITH_WARNINGS",
@@ -128,11 +135,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 1,
-  "processable_semantic_pending": 34,
+  "daily_actionable_remaining": 2,
+  "processable_semantic_pending": 24,
   "jd_retry_deferred": 1,
   "jd_unavailable": 3,
-  "historical_backlog_remaining": 38,
+  "historical_backlog_remaining": 28,
   "source_failures": 0,
   "partial_sources": 115,
   "error_counts": {
@@ -1375,6 +1382,12 @@
   "remaining_work": [
     {
       "batch": "JW1",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 1,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+    },
+    {
+      "batch": "JW2",
       "action": "REPORT_OPPORTUNITIES",
       "count": 1,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
