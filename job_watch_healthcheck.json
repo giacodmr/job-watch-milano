@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-29T11:48:17Z",
+  "generated_at": "2026-10-29T11:50:16Z",
   "run_id": "1ef0a298a35aec7a5131a990",
   "snapshot": {
     "run_id": "1ef0a298a35aec7a5131a990",
@@ -79,19 +79,26 @@
       ]
     },
     "JW3": {
-      "status": "COMPLETE_WITH_WARNINGS",
-      "processable_semantic_pending": 1,
+      "status": "NEEDS_REVIEW",
+      "processable_semantic_pending": 0,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": true,
+      "daily_complete": false,
       "full_semantic_complete": false,
-      "gpt_run_certified": true,
+      "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 1,
+      "reporting_pending": 1,
+      "historical_backlog_remaining": 0,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": []
+      "remaining_work": [
+        {
+          "batch": "JW3",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 1,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+        }
+      ]
     },
     "JW4": {
       "status": "NEEDS_REVIEW",
@@ -142,11 +149,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 4,
-  "processable_semantic_pending": 15,
+  "daily_actionable_remaining": 5,
+  "processable_semantic_pending": 14,
   "jd_retry_deferred": 2,
   "jd_unavailable": 3,
-  "historical_backlog_remaining": 20,
+  "historical_backlog_remaining": 19,
   "source_failures": 0,
   "partial_sources": 115,
   "error_counts": {
@@ -1395,6 +1402,12 @@
     },
     {
       "batch": "JW2",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 1,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+    },
+    {
+      "batch": "JW3",
       "action": "REPORT_OPPORTUNITIES",
       "count": 1,
       "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
