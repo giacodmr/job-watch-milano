@@ -46,4 +46,33 @@ def main():
    print("WORLDLINE_JS_ERR "+json.dumps({"url":u,"reason":str(e)[:130]}));continue
   print("WORLDLINE_JS "+json.dumps({"url":u,"status":r.status_code,"size":len(r.content),
    "snippets":terms(r.text,("vmod","widget","career","joblist","searchJobs","jobRequisition","jobId","jobUrl","apiURL","api2.successfactors","searchajax","jobs2web","/job/","recruiting","jobSearch","rest/v1","/api/"))},ensure_ascii=False)[:11500])
-if __name__=="__main__":main()
+
+def api_test():
+ sess=requests.Session()
+ sess.headers.update({"User-Agent":"Mozilla/5.0 (compatible; public-ATS-validation)", "Referer":"https://jobs.worldline.com/search/?unified=legacy","Origin":"https://jobs.worldline.com"})
+ sess.get("https://jobs.worldline.com/search/?unified=legacy",timeout=25)
+ endpoint="https://jobs.worldline.com/services/recruiting/v1/jobs"
+ data=[
+  {"keywords":"","locale":"en_US","location":"","pageNumber":0,"sortBy":"recent"},
+  {"keywords":"","locale":"en_US","location":"","pageNumber":1,"sortBy":"recent"},
+  {"keywords":"","locale":"en_US","location":"","pageNumber":2,"sortBy":"recent"},
+ ]
+ for payload in data:
+  try:
+   r=sess.post(endpoint,json=payload,timeout=25)
+   try:
+    o=r.json()
+    preview={k:v for k,v in o.items() if k!="jobSearchResult"} if isinstance(o,dict) else o
+    jobs=o.get("jobSearchResult") if isinstance(o,dict) else []
+    if isinstance(jobs,list):
+     preview["job_count"]=len(jobs)
+     preview["first_job"]=jobs[:3]
+   except ValueError:
+    preview=r.text[:900]
+   print("WORLDLINE_API "+json.dumps({"request":payload,"status":r.status_code,"url":r.url,"size":len(r.content),
+    "result":preview},ensure_ascii=False,default=str)[:11500])
+  except requests.RequestException as e:print("WORLDLINE_API_ERR "+json.dumps({"request":payload,"error":str(e)[:200]}))
+if __name__=="__main__":
+ main()
+ api_test()
+
