@@ -68,7 +68,7 @@ def worker_snapshot_ready(root, at):
 
 
 
-def manual_collection_requested(event_name, event):
+def manual_collection_requested(event_name, event, changed_paths=()):
     """Recognize explicit workflow dispatch or a changed manual-run sentinel.
 
     A routine .job_watch_run push remains subject to the Rome workday
@@ -77,7 +77,11 @@ def manual_collection_requested(event_name, event):
     """
     if event_name == 'workflow_dispatch':
         return True
-    if event_name != 'push' or not isinstance(event, dict):
+    if event_name != 'push':
+        return False
+    if '.job_watch_manual_run' in set(changed_paths or ()):
+        return True
+    if not isinstance(event, dict):
         return False
     commits = event.get('commits') or []
     if not isinstance(commits,list):
