@@ -25,13 +25,13 @@ New `revolut_collector.py` plus dispatch in `collector.py`:
 - Respect per-detail pacing and shared bounded requests/retries; rerun the complete inventory and demand identical UUID sets and totals.
 - Preserve individually validated jobs as PARTIAL on transient detail or second snapshot failure. Never treat 200 alone as completeness.
 
-Read-only live smoke (GitHub Actions 40868310492): **321/321 global requisitions; 56 target-location requisitions, all with verified first-party URLs and matching detail UUIDs; second snapshot 321/321 and stable; coverage VERIFIED on that execution.** This is not proof of persisted production state until the normal Collector publishes and healthcheck is read back.
+Read-only live smoke ([GitHub Actions 40868594618](https://github.com/giacodmr/job-watch-milano/actions/runs/40868594618)): **321/321 global requisitions; 56 target-location requisitions, all with verified first-party URLs and matching detail UUIDs; second snapshot 321/321 and stable; coverage VERIFIED on that execution.** This is not proof of persisted production state until the normal Collector publishes and healthcheck is read back.
 
 ## Nexi (JW1): mapped to official Oracle, partial geographic proof
 
 The Nexi first-party corporate country selector links to Oracle Recruiting Cloud Candidate Experience `CX_1`, host `fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com`. The existing Oracle adapter already implements public `recruitingCEJobRequisitions` with `findReqs`, `limit`, `offset`, unique requisition IDs and total count.
 
-Read-only test: **85 global requisitions enumerated** on the official Oracle API, but **0 have Milan/Rome locations sufficiently established in the public metadata**. Several country-filtered Italian requisitions expose `Italy` rather than city-level metadata. The observed `0 target jobs` is **not** a proof there are none.
+Read-only test: **85/85 global requisitions enumerated** on the official Oracle API; **4 Italian requisitions have country-only locations**; **0 have Milan/Rome locations sufficiently established in the public metadata**. Evidence: https://github.com/giacodmr/job-watch-milano/actions/runs/40868594618. Several country-filtered Italian requisitions expose `Italy` rather than city-level metadata. The observed `0 target jobs` is **not** a proof there are none.
 
 Safety intervention: Nexi Italy-only requisitions are explicitly counted as geographic unknowns and force **PARTIAL**. Do not silently promote to VERIFIED based on 85/85 if city metadata is insufficient. Do not alter the user's geographic filters to include all of Italy. Next step: identify public detail city/location evidence or reconcile Nexi Oracle `GeographyId` against a documented official, public city-code source, checking only qualified records.
 
@@ -46,7 +46,7 @@ The scope is not certified. Next concrete change: inspect only public SuccessFac
 - `collector.py`: Revolut dispatch, Oracle Italy country-only ambiguity guard.
 - `revolut_collector.py`: new official first-party inventory and detail verification adapter.
 - `ats_mapping_jw1.json`: Nexi Oracle CE official board; Revolut first-party Next.js board.
-- `test_ats_coverage_batch2.py`: 10 regression contracts (Nexi and Revolut), including count mismatch, duplicate UUID, invalid detail UUID, unstable inventory, and country-only Italy.
+- `test_ats_coverage_batch2.py`: 10 regression contracts (162 total repository tests validated in [GitHub Actions 40868594619](https://github.com/giacodmr/job-watch-milano/actions/runs/40868594619)) (Nexi and Revolut), including count mismatch, duplicate UUID, invalid detail UUID, unstable inventory, and country-only Italy.
 - `tools/ats_diagnostic_batch2.py` and `.github/workflows/ats_probe_batch2.yml`: read-only live source contract diagnostics and smoke.
 
 Guardrails: `job_watch_rules.json`, `companies_job_watch_v2.json`, decisions, job memories, source snapshots, semantic surfacing, Worker SELECT/APPLY and existing scheduled workflows are untouched by this PR. No paid services, authentication bypasses or third-party vacancy links.
