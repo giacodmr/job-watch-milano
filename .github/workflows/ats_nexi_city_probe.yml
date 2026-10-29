@@ -1,0 +1,20 @@
+name: ATS Nexi - Oracle CE Official City Probe
+on:
+  pull_request:
+    paths:
+      - "tools/ats_nexi_city_probe.py"
+      - ".github/workflows/ats_nexi_city_probe.yml"
+permissions:
+  contents: read
+jobs:
+  read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests==2.32.5
+      - name: Enumerate Nexi Oracle inventory and check four official per-ID job detail locations
+        run: python tools/ats_nexi_city_probe.py
