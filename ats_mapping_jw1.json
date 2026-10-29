@@ -124,34 +124,34 @@
       "company": "Nexi",
       "batch": "JW1",
       "ats": {
-        "family": "Custom / embedded ATS unresolved",
-        "tenant": null,
+        "family": "Oracle Recruiting Cloud / Oracle HCM (Nexi official Candidate Experience CX_1)",
+        "tenant": "CX_1",
         "career_site": "https://www.nexigroup.com/it/people/lavora-in-nexi/posizioni-aperte/",
-        "inventory_url": "https://www.nexigroup.com/it/people/lavora-in-nexi/posizioni-aperte/",
-        "public_api_or_feed": null
+        "inventory_url": "https://fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/jobs",
+        "public_api_or_feed": "https://fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_career_site_dynamic",
+        "level": "STRONG",
+        "method": "oracle_public_requisition_inventory_count_parity",
         "location_filter_supported": true,
         "locations": [
           "Italy",
           "Milan",
           "Rome"
         ],
-        "pagination": "dynamic/embedded; pagination mechanism not reliably exposed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Oracle Recruiting Cloud public finder requisitionList with limit/offset and TotalJobsCount; certify only equal stable unique-ID count",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official Nexi job-openings page and its own country/location controls; capture every job URL returned by the embedded inventory.",
-        "fallback": "Use web discovery restricted to nexigroup.com for individual official job pages and reconcile them to the careers page."
+        "primary": "Enumerate the Nexi official Oracle Candidate Experience CX_1 requisition list via public Oracle CE endpoint; verify total/unique IDs; preserve official requisition URLs and filter target locations after enumeration.",
+        "fallback": "If the public Oracle endpoint is inaccessible, preserve PARTIAL and use the corporate country selector to reconfirm the official CX_1 board; do not infer board completeness from a country-filtered page."
       },
       "limitations": [
-        "Underlying ATS/vendor and structured inventory endpoint were not resolved.",
-        "Dynamic embedding prevents a reliable proof that the complete inventory was retrieved."
+        "Nexi's official corporate country selector exposes the Oracle Candidate Experience CX_1 board; enumeration scope is this board, not every subsidiary's independent ATS.",
+        "Promote VERIFIED only after live Oracle API total, stable IDs, and valid geographic metadata reconcile for this run."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-29"
     },
     {
       "company": "Prima Assicurazioni",
