@@ -1,0 +1,24 @@
+name: ATS UniCredit - Public Paginated Inventory Probe
+on:
+  pull_request:
+    paths:
+      - "tools/ats_unicredit_probe.py"
+      - ".github/workflows/ats_unicredit_probe.yml"
+      - "unicredit_collector.py"
+      - "test_unicredit_collector.py"
+      - "collector.py"
+      - "ats_mapping_jw1.json"
+permissions:
+  contents: read
+jobs:
+  read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests==2.32.5
+      - name: Exhaust every advertised UniCredit page and check job city evidence
+        run: python tools/ats_unicredit_probe.py
