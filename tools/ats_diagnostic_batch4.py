@@ -77,6 +77,11 @@ def main():
    pages=[x for x in p.links if x.get("href") and "jobOffset=" in x["href"]]
    article_chunks=re.findall(r"<article\b[^>]*>.*?</article>",r.text,re.I|re.S)
    first_card=next((x for x in article_chunks if "JobDetail/" in x), "")
+   total_m=re.search(r'>\s*559\s*<',r.text)
+   if total_m:
+    print("UNICREDIT_TOTAL_HTML "+json.dumps({
+     "name":name,"around":re.sub(r"\s+"," ",r.text[max(0,total_m.start()-500):total_m.end()+430]),
+    },ensure_ascii=False))
    print("UNICREDIT_ARTICLE "+json.dumps({
     "name":name,"article_chunks":len(article_chunks),
     "card_sample":re.sub(r"\s+"," ",first_card)[:6500],
