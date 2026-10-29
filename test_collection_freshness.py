@@ -174,3 +174,9 @@ class ExplicitManualCollectTrigger(unittest.TestCase):
     def test_other_events_never_force_collection(self):
         self.assertFalse(manual_collection_requested('schedule',{'commits':[{'modified':['.job_watch_manual_run']}]}))
         self.assertFalse(manual_collection_requested('pull_request',{'commits':[{'modified':['.job_watch_manual_run']}]}))
+
+    def test_commit_diff_fallback_handles_missing_github_push_file_metadata(self):
+        payload={"commits":[],"head_commit":{"id":"abc"}}
+        self.assertTrue(manual_collection_requested("push",payload,[".job_watch_manual_run"]))
+        self.assertFalse(manual_collection_requested("push",payload,[".job_watch_run"]))
+        self.assertFalse(manual_collection_requested("schedule",payload,[".job_watch_manual_run"]))
