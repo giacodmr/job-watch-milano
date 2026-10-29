@@ -1,0 +1,26 @@
+name: ATS Batch 4 - Official Source Discovery
+on:
+  pull_request:
+    paths:
+      - "tools/ats_diagnostic_batch4.py"
+      - ".github/workflows/ats_probe_batch4.yml"
+      - "collector.py"
+      - "ats_mapping_jw1.json"
+      - "test_ats_coverage_batch4.py"
+      - "fineco_collector.py"
+      - "checkout_collector.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check requests==2.32.5
+      - name: Inspect first-party career page contracts without writes
+        run: python tools/ats_diagnostic_batch4.py
