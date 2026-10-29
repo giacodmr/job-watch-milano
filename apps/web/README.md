@@ -1,64 +1,71 @@
-# Job Watch Web — Fase 0
+# Job Watch Web — Fase 1 locale
 
-Fondamenta locali della futura applicazione privata. Il Job Watch Python resta indipendente. Questa fase non importa dati GitHub, non esegue analisi e non scrive comandi operativi. Nessuna risorsa Cloudflare è stata creata.
+Vacancy Explorer di sola lettura su D1 reale locale. GitHub/Python conservano regole, fingerprint, alias, decisioni e autorità operativa. Exporter e importer leggono un commit esplicito senza eseguire collector o comandi. Nessuna risorsa cloud, API LLM o dipendenza applicativa aggiuntiva.
 
 ## Avvio riproducibile
 
-Requisiti: Node.js 24 LTS e npm. Nessun account cloud o segreto richiesto. Dalla root:
+Requisiti: Node.js 24 LTS, npm, Git e Python 3.12+ (exporter: sola libreria standard). Da root:
 
 ```sh
 cd apps/web
 npm ci
 npm run check
 npm run db:migrate:local
+npm run db:migrate:local
+npm run worker:check
 npm run dev:api
 ```
 
-Aprire `http://127.0.0.1:8787`: il Worker serve la build React e `/api/health` dallo stesso host. `npm run check` include la build; dopo modifiche frontend ricostruirla. La health verifica soltanto versione schema locale, non certificazione o freschezza del Job Watch.
+Aprire `http://127.0.0.1:8787`. Il Worker serve build React e API nello stesso host. Senza import compare «Nessuno snapshot confermato»; nessuna fixture viene caricata nell'app. Dopo modifiche UI ricostruire la build. Per HMR: `npm run dev` in un secondo terminale, porta 5173 con proxy API verso 8787. Fermare il server prima di reinstallare `node_modules`, poi riavviarlo.
 
-Per HMR, in un secondo terminale da `apps/web` eseguire `npm run dev` e aprire `http://127.0.0.1:5173`. Vite inoltra `/api` al Worker locale. Fermare i processi con Ctrl-C. Per ripristinare un DB di sviluppo vuoto, fermare il Worker, rimuovere **solo** `apps/web/.wrangler/state/` e riapplicare le migrazioni.
+## Importare un commit verificato
+
+Prima leggere AGENTS, AUDIT e SYNC_CONTRACT; confrontare il codice operativo dal precedente SHA analizzato. Fare fetch è un'operazione Git esplicita separata dalla sync:
 
 ```sh
-npm run db:list:local
-npm run db:migrate:local  # seconda esecuzione: nessuna migrazione pendente
-npm run worker:check      # bundle dry-run, nessun upload
-curl -i http://127.0.0.1:8787/api/health
+git fetch origin main
+git rev-parse origin/main
 ```
 
-`.env.example` documenta le variabili senza segreti: non occorre copiarlo. `APP_ENV=local` è in Wrangler. Eventuali override server locali andranno in `.dev.vars` ignorato da Git. Non usare `VITE_` per segreti. Il database UUID nullo è un identificatore locale intenzionale; `remote: false`, assenza di route e script di deploy, `workers_dev: false` e blocco HTTP fuori da loopback impediscono di presentare questa base come applicazione remota autenticata. Il controllo hostname è esclusivamente un confine di sviluppo: Cloudflare Access con JWT è un requisito bloccante prima di qualsiasi deploy.
+Passare lo SHA completo verificato, ad esempio il commit importato durante questa fase:
 
-## Struttura
-
-```text
-apps/web/
-  src/                     React e CSS; nessun modulo server
-  worker/                  API health e blocco runtime remoto
-  shared/contracts.ts      schemi Zod per health, manifest e comandi futuri
-  migrations/              schema SQL numerato D1
-  tests/                   integrazione Worker/D1 e contratti sintetici
-  docs/
-    AUDIT.md               autorità e dipendenze osservate su main
-    ARCHITECTURE.md        responsabilità e diagramma
-    SYNC_CONTRACT.md       protocollo futuro, invarianti e conflitti
-    HANDOFF.md             passaggio Codex/ChatGPT tramite GitHub
-    VALIDATION.md          risultati effettivi e limiti
-    adr/                   scelte e limiti Free verificati
+```sh
+npm run sync:export -- --commit 84593e95d60dd4634a3d7ff5f493c13f7fdb872d
+npm run sync:import
 ```
 
-Alla root: `AGENTS.md`, `PLANS.md`; CI nuova in `.github/workflows/web-foundation.yml`. Nessun npm workspace alla root, nessuna dipendenza Node nel processo Python.
+Oppure `npm run sync:local -- --commit <SHA-completo>` per export e import insieme. Il commit deve essere antenato di `origin/main` nel repository autorizzato. L'export legge un archivio Git temporaneo: modifiche non committate nel checkout operativo non entrano nell'import. Non avviare direttamente `tools/export_snapshot.py`: il suo stdout è un pipe privato verso la CLI, che calcola gli hash delle review ed elimina le preimmagini prima di qualsiasi persistenza.
 
-## Contratto HTTP attivo
+Il bundle sanitizzato va in `.local-sync/snapshot.json` (directory 0700, file 0600, ignorato da Git); `--file` sceglie un percorso locale alternativo. Non copiarlo in `public/`, build, PR o log. La CLI stampa soltanto codici e metriche. D1 persiste in `.wrangler/state/v3/`, condiviso con `dev:api`. `remoteBindings:false`, binding locale e `APP_ENV=local` sono verificati; nessuna credenziale necessaria.
 
-- `GET /api/health`: 200 con schema pronto; 503 se D1 non disponibile o schema da migrare. Parametri query non previsti: 400; altri metodi: 405. Risposta `no-store`, UTC, `productionAccess: false`, `synchronization: disabled`.
-- `POST /api/commands`: 501 `commands_disabled`. Non legge né persiste il body; non restituisce un'accettazione fittizia. Altri metodi: 405.
-- Altri `/api/*`: 404 JSON. Richiesta fuori da loopback o ambiente diverso da local: 403, inclusi asset.
+Il budget predefinito è 70.000 righe scritte **per invocazione**, con margine di 1.000 prima di ogni chunk. `LOCAL_WRITE_BUDGET_REACHED` lascia staging riprendibile e checkpoint precedente visibile. Il bootstrap reale misurato richiede 113.175 scritture e quindi più di un budget. Una successiva esecuzione riprende i chunk identici. Per il solo sviluppo locale è disponibile:
 
-## Test e CI
+```sh
+npm run sync:import -- --max-writes 500000
+```
 
-`npm test` crea Worker e D1 effimeri tramite Miniflare/workerd, applica gli stessi SQL tracciati e verifica vincoli, health, errori, confini e contratti. Tutte le fixture sono sintetiche, senza accessi GitHub/cloud. `npm run build` include TypeScript strict UI/API/test. `npm run worker:check` valida bundle e binding con deploy dry-run. Lockfile committato; Miniflare è allineato alla versione richiesta da Wrangler, incluso il suffisso prerelease del runtime corrente.
+`npm run sync:measure` ripete bootstrap e replay su un D1 effimero separato, senza toccare il DB persistente. Per misurare CPU aggregate locali: `/usr/bin/time -l npm run sync:measure`; non equivale al budget CPU Worker remoto.
 
-La CI dedicata è read-only, limitata ai path della nuova app e della propria configurazione, senza secret, deploy, schedule, artifact o cache aggiuntivi. Il workflow Python preesistente su tutte le PR può comunque avviarsi: non è stato modificato.
+Questo override non è una configurazione cloud: il bootstrap supera le 100.000 scritture giornaliere D1 Free. Ripetere il comando nello stesso giorno non costituisce gestione di una quota remota. Prima della Fase 2 servono budget aggregato dell'account, pianificazione su più giorni o ottimizzazione delle versioni. Replay dello snapshot già confermato: zero scritture. Un nuovo commit crea nuove versioni, anche quando molti record non cambiano; nessuna retention automatica.
 
-## Documentazione
+Conservare il DB per storico/replay; non rimuoverlo come procedura ordinaria. Migrazioni numerate 0001–0004: schema 4, nessuna riscrittura di 0001/0002. Un DB locale di sviluppo intermedio creato durante questa fase è stato conservato in `.local-sync/bootstrap-before-alias-membership`, escluso da Git.
 
-Iniziare da [audit](docs/AUDIT.md), [architettura](docs/ARCHITECTURE.md), [ADR](docs/adr/0001-stack-costs-security.md), [contratto sync](docs/SYNC_CONTRACT.md) e [handoff](docs/HANDOFF.md). Piano e prossimo incarico in `../../PLANS.md`.
+## Servizi e API
+
+- `GET /api/health`: schema 4, `synchronization: local-read-only`, `productionAccess:false`. Non certifica la pipeline Python.
+- `GET /api/snapshot`: checkpoint confermato, SHA, date fonti/import, flag Python e numero import incompleti; `snapshot:null` prima del primo import.
+- `GET /api/jobs`: filtri `q`, `company`, `batch`, `lifecycle` (`OPEN` aggrega NEW/STILL_OPEN/UPDATED, `ALL` include storico), `assessment`, `decision`; `limit` 1–100, default 25. Paginazione keyset con cursore legato a snapshot e filtri.
+- `GET /api/jobs/<job:id>?snapshot=<snapshot:id>`: metadati, alias osservati, ultime 50 review e decisioni confermate, provenienza. Nessuna JD o motivazione libera.
+- `POST /api/commands`: sempre 501. Nessun endpoint ingestion o mutation pubblico.
+
+Parametri sconosciuti/duplicati/invalidi: 400; cursore o dettaglio di un checkpoint superato: 409; DB non leggibile: 503 con codice redatto; metodo errato: 405. Tutte le API sono `no-store`. Ambiente diverso da local o host non loopback: 403, inclusi asset. Il controllo host è un confine di sviluppo; JWT Cloudflare Access e autorizzazioni restano bloccanti per qualsiasi deploy.
+
+`worker/data/queries.ts` espone `getSnapshot`, `listJobs`, `getJob` senza Request/Response o UI. Un futuro adapter MCP potrà chiamare gli stessi servizi validati; nessun server MCP è attivo. L'import massivo gira nella CLI Node su D1 locale, non in una richiesta Worker soggetta al budget CPU Free.
+
+## Struttura e verifiche
+
+`src/`: UI; `shared/`: contratti/hash/DTO; `worker/data/`: import e query; `worker/index.ts`: HTTP; `tools/`: adapter Git/Python; `migrations/`: SQL numerato; `tests/`: fixture sintetiche D1/workerd. Il browser non importa moduli server o file operativi.
+
+`npm run check` esegue Vitest, i test Python sintetici dell'exporter, TypeScript strict e build. La CI web esistente esegue anche doppia migrazione locale e dry-run Worker, senza secret o deploy. Test Python produttivi: soltanto in copia temporanea isolata.
+
+Leggere [audit](docs/AUDIT.md), [architettura](docs/ARCHITECTURE.md), [contratto](docs/SYNC_CONTRACT.md), [verifiche Fase 1](docs/PHASE1_VALIDATION.md), [handoff](docs/HANDOFF.md) e [piano](../../PLANS.md). La verifica visiva segue le tre skill frontend versionate; non sostituisce i test sui dati.
