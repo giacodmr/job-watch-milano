@@ -67,6 +67,33 @@ def worker_snapshot_ready(root, at):
     return all(state.get(key) == current.get(key) for key in SNAPSHOT_KEYS)
 
 
+
+def manual_collection_requested(event_name, event):
+    """Recognize explicit workflow dispatch or a changed manual-run sentinel.
+
+    A routine .job_watch_run push remains subject to the Rome workday
+    freshness guard. Only the dedicated .job_watch_manual_run push should
+    demand a same-day recovery re-collection.
+    """
+    if event_name == 'workflow_dispatch':
+        return True
+    if event_name != 'push' or not isinstance(event, dict):
+        return False
+    commits = event.get('commits') or []
+    if not isinstance(commits,list):
+        commits=[]
+    head = event.get('head_commit')
+    if isinstance(head,dict):
+        commits = [*commits, head]
+    for commit in commits:
+        if not isinstance(commit,dict):
+            continue
+        for kind in ('modified','added'):
+            changed=commit.get(kind) or []
+            if isinstance(changed,list) and '.job_watch_manual_run' in changed:
+                return True
+    return False
+
 def recovery_needed(root, at):
     """Return True when the Collector should retry the current Rome workday.
 
