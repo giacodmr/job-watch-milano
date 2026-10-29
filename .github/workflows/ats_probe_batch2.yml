@@ -42,3 +42,23 @@ jobs:
                        "url":j.get("canonical_url")} for j in (result.get("jobs") or [])[:15]],
           },ensure_ascii=False,indent=2))
           PY
+      - name: Live Revolut official Next.js UUID cross-check, read only
+        run: |
+          python - <<'PY'
+          import json
+          import collector
+          from pathlib import Path
+          row = next(r for r in json.loads(Path("ats_mapping_jw1.json").read_text())["companies"] if r["company"] == "Revolut")
+          result,attempted = collector.collect_company(row)
+          print("REVOLUT_SMOKE "+json.dumps({
+            "attempted": attempted, "coverage":result.get("coverage"),
+            "collector":result.get("collector"),"total":result.get("inventory_count"),
+            "target_jobs_validated":len(result.get("jobs") or []),
+            "reason":result.get("reason"),"reconciliation":result.get("reconciliation"),
+            "sample":[{"id":j.get("source_id"),"title":j.get("title"),
+                       "location":j.get("location")[:180] if j.get("location") else None,
+                       "url":j.get("canonical_url")} for j in (result.get("jobs") or [])[:20]],
+          },ensure_ascii=False))
+          if not result.get("jobs"):
+              raise SystemExit("Revolut adapter did not validate any target roles")
+          PY
