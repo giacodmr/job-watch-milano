@@ -132,7 +132,7 @@
       },
       "verification": {
         "level": "STRONG",
-        "method": "oracle_public_requisition_inventory_count_parity",
+        "method": "oracle_public_85_unique_global_ids_and_official_external_job_description_role_city_positive_only",
         "location_filter_supported": true,
         "locations": [
           "Italy",
@@ -144,12 +144,14 @@
         "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Enumerate the Nexi official Oracle Candidate Experience CX_1 requisition list via public Oracle CE endpoint; verify total/unique IDs; preserve official requisition URLs and filter target locations after enumeration.",
-        "fallback": "If the public Oracle endpoint is inaccessible, preserve PARTIAL and use the corporate country selector to reconfirm the official CX_1 board; do not infer board completeness from a country-filtered page."
+        "primary": "Enumerate all Oracle CX_1 public requisitions with exact unique-ID parity; for Italy-only cards verify first-party Oracle CE JobDetail Id/title and explicit role-specific city sentence before retaining Milan/Rome openings; preserve PARTIAL for unresolved Italy locations.",
+        "fallback": "If city is not explicitly proven for any country-only Italian posting, retain no location-inferred job for that ID and keep company PARTIAL; never infer geography from company headquarters or generic description mentions."
       },
       "limitations": [
-        "Nexi's official corporate country selector exposes the Oracle Candidate Experience CX_1 board; enumeration scope is this board, not every subsidiary's independent ATS.",
-        "Promote VERIFIED only after live Oracle API total, stable IDs, and valid geographic metadata reconcile for this run."
+        "Nexi global Oracle CX_1 inventory can be enumerated with 85 distinct requisition IDs, but Italian job cards and detail metadata still expose only country Italy for four postings.",
+        "Official 3847 Product Manager ECR externally published job description explicitly says 'In this role based in Milan'; only this location-positive requisition is retained while others remain ambiguous.",
+        "Graduate Program IT & Technology (3174) and Legge 68/99 talent-pool (4027) have no independently evidenced target-city membership; 4065 explicitly describes Verona/Vicenza/Padova, which is outside target scope.",
+        "Do not mark VERIFIED until all Italian requisitions have independently certified city scope, including geographically broad talent pools."
       ],
       "last_mapped": "2026-10-29"
     },
