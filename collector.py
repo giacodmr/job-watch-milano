@@ -3998,6 +3998,9 @@ def collect_mollie_verified(company):
 
 
 def choose(company):
+    if company.get("company") == "Checkout.com":
+        from checkout_collector import collect_checkout
+        return collect_checkout
     if company.get("company") == "Dojo":
         from dojo_collector import collect_dojo
         return collect_dojo
