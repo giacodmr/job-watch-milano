@@ -115,7 +115,14 @@ async function v1Ledger(db:D1Database) {
   }
   return {companies:d.companies!,sources:d.sources!,aliasResolutions:Object.fromEntries(d.job_aliases!.map(a=>[String(a.alias_key),String(a.resolution)])),sourceDigest:await digestRows(d),captures,events,commit:String(snapshot.commit_sha),ledger:{identities,mappings:[...mappings].map(([key,jobId])=>({key,jobId})).sort((a,b)=>a.key<b.key?-1:1)}};
 }
-function references(data:Record<string,Row[]>) {
+function requireSingleOwner(data:Record<string,Row[]>, owner:string) {
+  // CATALOG is shared and has no owner scope: do not silently project another
+  // owner's choices into it. Multi-owner publication is not supported locally.
+  if (data.personal_owners!.some(r=>r.owner_id!==owner) ||
+    Object.values(data).some(rows=>rows.some(r=>'owner_id' in r && r.owner_id!==owner))) throw Error('MULTI_OWNER_PERSONAL_UNSUPPORTED');
+}
+function references(data:Record<string,Row[]>, owner:string) {
+  requireSingleOwner(data,owner);
   for (const ref of data.personal_job_refs!) if (!data.personal_heads!.some(h=>h.owner_id===ref.owner_id)) throw Error('PERSONAL_HEAD_REQUIRED');
   return data.personal_reference_state!.filter(r=>r.active===1).map(r=>({jobId:String(r.job_id),kind:r.kind as 'SAVED'|'APPLICATION'|'DISMISSED'}))
     .filter((r,i,rows)=>rows.findIndex(x=>x.jobId===r.jobId&&x.kind===r.kind)===i).sort((a,b)=>canonical(a)<canonical(b)?-1:1);
@@ -168,18 +175,16 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   let legacy:Awaited<ReturnType<typeof v1Ledger>>|undefined;
   if (!old.head && options.v1) { legacy=await v1Ledger(options.v1); startingLedger=legacy.ledger; previousCommit=legacy.commit; }
   if (!old.head && !options.v1 && options.bootstrap!=='empty-target') throw Error('EXPLICIT_BOOTSTRAP_REQUIRED');
-  const activeRefs=references(privateData);
-  const context:SelectionContext={identities:old.head||options.v1 ? {mode:'confirmed-ledger',ledger:startingLedger,expectedDigest:await sha256(canonical(startingLedger))} : {mode:'first-v1-bootstrap'},personalReferences:activeRefs};
+  const activeRefs=references(privateData,options.owner);
+  const personalDecisionJobIds=[...new Set([...privateData.personal_decision_events!.map(e=>String(e.job_id)),
+    ...(legacy?.events.filter(e=>e.table==='personal_decision_events').map(e=>String(e.row.job_id))??[])])].sort();
+  const context:SelectionContext={identities:old.head||options.v1 ? {mode:'confirmed-ledger',ledger:startingLedger,expectedDigest:await sha256(canonical(startingLedger))} : {mode:'first-v1-bootstrap'},personalReferences:activeRefs,personalDecisionJobIds};
   const verified=await verifyGitProjection(options.source,context,previousCommit), {bundle}=verified;
   const proof=await verifyProjectionProof(bundle,verified.proof,context), selected=await selectModelC(bundle,context);
   // Check ALL personal references against permanent identities, including inactive
   // refs and historical decisions, not just currently selected vacancies.
   if (privateData.personal_job_refs!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id)) ||
     privateData.personal_assessment_events!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id))) throw Error('UNRESOLVED_PERSONAL_REFERENCE');
-  for (const e of privateData.personal_decision_events!) {
-    const projected=bundle.chunks.flat().find(r=>r.kind==='job'&&selected.ledger.mappings.some(m=>m.key===r.jobKey&&m.jobId===e.job_id));
-    if(projected?.kind==='job'&&projected.effectiveDecision===null&&selected.catalog.some(c=>c.jobId===e.job_id))throw Error('UNRESOLVED_PERSONAL_DECISION');
-  }
   const observation=catalogObservation(proof,selected.catalogContentDigest,old.previous);
   const environmentDigest=await sha256(canonical({...proof.inputs,selectionContextDigest:'0'.repeat(64)})), referenceDigest=await sha256(canonical(activeRefs));
   const savedProof=old.data.catalog_run_proofs!.find(p=>p.run_id===old.head?.run_id);
@@ -231,7 +236,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   metrics.publication=await execute(catalog,publication);
   metrics.publicationMs=performance.now()-start;
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
-  if (pendingReconciliation) metrics.reconciliation=await reconcile(catalog,personal,receipt,selected);
+  if (pendingReconciliation) metrics.reconciliation=await reconcile(catalog,personal,receipt,selected,options.owner);
   metrics.cleanup=await execute(catalog,cleanup);
   metrics.total=metrics.reservation+metrics.personal+metrics.publication+metrics.reconciliation+metrics.cleanup;
   if (metrics.total>metrics.reservedBound) throw Error('WRITE_BOUND_EXCEEDED');
@@ -353,10 +358,11 @@ async function planPersonal(data:Record<string,Row[]>, selected:Selected, rows:A
   }
   return steps;
 }
-async function reconcile(catalog:D1Database, personal:D1Database, receipt:Row, selected:Selected) {
+async function reconcile(catalog:D1Database, personal:D1Database, receipt:Row, selected:Selected, owner:string) {
   const current=await trustedCatalog(catalog);
   if (current.head?.run_id!==String(receipt.id).slice('receipt:'.length)||current.head.sync_revision!==receipt.catalog_sync_revision) throw Error('RECONCILIATION_HEAD_CHANGED');
   const data=await read(personal,personalTables), steps:Step[]=[];
+  requireSingleOwner(data,owner);
   if (!data.personal_catalog_receipts!.some(r=>r.id===receipt.id)) steps.push(insert('personal_catalog_receipts',receipt));
   for (const ref of data.personal_job_refs!) {
     const head=data.personal_heads!.find(h=>h.owner_id===ref.owner_id);

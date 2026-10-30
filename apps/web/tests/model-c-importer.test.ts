@@ -5,14 +5,15 @@ import { resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { applySchema, captureSynthetic } from '../tools/model-c-schema';
-import { importModelC } from '../tools/model-c-importer';
+import { importModelC, ModelCImportError } from '../tools/model-c-importer';
 import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
 import { importSnapshot } from '../worker/data/importer';
+import { selectModelC } from '../shared/model-c-selection';
 import { canonical } from '../shared/canonical';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
-const dirs:string[]=[], measurements:Record<string,unknown>={};
+const dirs:string[]=[], measurements:Record<string,unknown>={}, preflights:Record<string,unknown>={};
 const bootstrap={identities:{mode:'first-v1-bootstrap' as const},personalReferences:[]};
 const python=process.env.JOB_WATCH_PYTHON||'python3';
 const git=(repo:string,...args:string[])=>execFileSync('git',['-C',repo,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
@@ -21,9 +22,9 @@ function commit(repo:string) {
   git(repo,'add','.');git(repo,'-c','user.name=Synthetic','-c','user.email=synthetic@example.test','commit','--allow-empty','-qm','Synthetic importer fixture '+(++commitSequence));
   const sha=git(repo,'rev-parse','HEAD');git(repo,'update-ref','refs/remotes/origin/main',sha);return sha;
 }
-async function fixture(count=2) {
+async function fixture(count=2, profile?:'baseline') {
   const repo=await mkdtemp(resolve(tmpdir(),'model-c-test-'));dirs.push(repo);
-  execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'seed',String(count)],{stdio:'pipe',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
+  execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'seed',String(count),...(profile?[profile]:[])],{stdio:'pipe',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
   git(repo,'init','-q','-b','main');git(repo,'remote','add','origin','https://github.com/giacodmr/job-watch-milano.git');
   const sha=commit(repo), c=await runtime.getD1Database('DB'+seq++), p=await runtime.getD1Database('DB'+seq++);
   await applySchema(c,'catalog');await applySchema(p,'personal');
@@ -46,7 +47,7 @@ function intercept(db:D1Database, handler:(sql:string[],actual:()=>Promise<D1Res
 const count=async(db:D1Database,t:string)=>Number(await db.prepare('SELECT count(*) AS n FROM '+t).first('n'));
 beforeAll(async()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("synthetic")}}',cf:false,compatibilityDate:'2026-10-29',d1Databases:Object.fromEntries(Array.from({length:90},(_,i)=>['DB'+i,'importer-'+i]))}));});
 afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recursive:true,force:true});
-  if(process.env.MODEL_C_METRICS_FILE)await writeFile(process.env.MODEL_C_METRICS_FILE,JSON.stringify({syntheticOnly:true,measurement:'actual D1 meta.rows_written; schema setup and fixture seed excluded',scenarios:measurements},null,2)+'\n');});
+  if(process.env.MODEL_C_METRICS_FILE)await writeFile(process.env.MODEL_C_METRICS_FILE,JSON.stringify({syntheticOnly:true,measurement:'actual D1 meta.rows_written; schema setup and fixture seed excluded',scenarios:measurements,preflights},null,2)+'\n');});
 
 describe('verified incremental importer on ephemeral D1',()=>{
   it('bootstraps, replays with zero writes, and observes a new identical commit without a content revision',async()=>{
@@ -194,6 +195,68 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect((await captureSynthetic(v1,'v1')).sha256).toBe(before);
     expect((await importModelC(f.c,f.p,{...f.options,v1})).status).toBe('REPLAY');
   });
+  it('keeps historical V1 decisions UNRESOLVED_PERSONAL on first import, persisted state and replay',async()=>{
+    const f=await fixture(1), path=resolve(f.repo,'job_memory_jw2.json');
+    const job=JSON.parse(await readFile(resolve(f.repo,'current_jobs_jw2.json'),'utf8')).companies[0].jobs[0];
+    await writeFile(path,JSON.stringify({batch:'JW2',records:{'Amazon::123456':{identity:job,user:{decision:'NOT_INTERESTED',decided_at:'2026-10-29T10:00:00Z'}}}}));
+    f.options.source.commit=commit(f.repo);
+    const v1=await runtime.getD1Database('DB'+seq++);await applySchema(v1,'v1');
+    await importSnapshot(v1,(await verifyGitProjection(f.options.source,bootstrap)).bundle,{expectedRevision:0,verifyAdvance:async()=>true});
+    const v1Before=(await captureSynthetic(v1,'v1')).sha256;
+    const semantic={fingerprint:job.fingerprint,analysis_status:'ANALYZED',analysis_method:'chatgpt_semantic_full_jd',fit_score:90,
+      experience_required:null,mandatory_years_experience:null,preferred_years_experience:null,mandatory_vs_preferred_requirements:null,
+      people_management_required:false,individual_contributor_possible:true,decision_scope_and_ownership:null,role_level_assessment:'ENTRY_JUNIOR',
+      seniority_evidence:'Synthetic junior role',final_experience_status:'TARGET_0_5',salary:null,salary_source:null,reportable:true,
+      rationale:'Synthetic bounded assessment',analyzed_at:'2026-10-29T11:00:00Z'};
+    await writeFile(path,JSON.stringify({batch:'JW2',records:{'Amazon::123456':{identity:job,semantic}}}));
+    f.options.source.commit=commit(f.repo);
+    const next=await verifyGitProjection(f.options.source,bootstrap), projected=next.bundle.chunks.flat().find(r=>r.kind==='job')!;
+    expect(projected).toMatchObject({lifecycle:'STILL_OPEN',reportable:true,effectiveDecision:null});
+    expect(next.bundle.chunks.flat().some(r=>r.kind==='user')).toBe(false);
+    const id=String(await v1.prepare('SELECT id FROM jobs').first('id'));
+    const selected=await selectModelC(next.bundle,{...bootstrap,personalDecisionJobIds:[id]});
+    expect(selected.subjects).toMatchObject([{personal:true,exclusion:'UNRESOLVED_PERSONAL',catalog:false,aiQueue:false}]);
+    const result=await importModelC(f.c,f.p,{...f.options,v1});
+    expect(result.status).toBe('PUBLISHED');expect(await count(f.c,'catalog_vacancy_current')).toBe(0);
+    expect(await f.p.prepare('SELECT decision FROM personal_decision_events').first('decision')).toBe('NOT_INTERESTED');
+    expect(await count(f.p,'personal_reference_state')).toBe(0);expect(await count(f.p,'personal_decision_current')).toBe(0);
+    expect(await count(f.p,'personal_job_refs')).toBe(1);
+    const state=(await captureSynthetic(f.p,'personal')).sha256;
+    const replay=await importModelC(f.c,f.p,{...f.options,v1});
+    expect(replay.status).toBe('REPLAY');expect(replay.metrics.total).toBe(0);expect(replay.observation).toEqual(result.observation);
+    expect((await captureSynthetic(f.p,'personal')).sha256).toBe(state);expect((await captureSynthetic(v1,'v1')).sha256).toBe(v1Before);
+    expect((await selectModelC(next.bundle,{...bootstrap,personalDecisionJobIds:[id]})).subjects[0]!.exclusion).toBe('UNRESOLVED_PERSONAL');
+  });
+  it('rejects two PERSONAL owners with divergent active choices before projection or writes',async()=>{
+    const f=await fixture(1);await importModelC(f.c,f.p,f.options);
+    const id=await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id');
+    for(const [owner,kind] of [[f.options.owner,'SAVED'],['other-synthetic-owner','DISMISSED']] as const) {
+      if(owner!==f.options.owner)await f.p.prepare('INSERT INTO personal_owners VALUES (?)').bind(owner).run();
+      await f.p.prepare("INSERT INTO personal_job_refs VALUES (?,?,NULL,NULL,'STILL_OPEN',?,'job_memory_jw2.json',?,1)").bind(owner,id,f.options.source.commit,'a'.repeat(64)).run();
+      await f.p.prepare('INSERT INTO personal_reference_state VALUES (?,?,?,1,1)').bind(owner,id,kind).run();
+      if(owner!==f.options.owner)await f.p.prepare('INSERT INTO personal_heads VALUES (?,1,?,NULL)').bind(owner,'a'.repeat(64)).run();
+    }
+    const beforeC=(await captureSynthetic(f.c,'catalog')).sha256, beforeP=(await captureSynthetic(f.p,'personal')).sha256;
+    for(const owner of [f.options.owner,'other-synthetic-owner'])await expect(importModelC(f.c,f.p,{...f.options,owner})).rejects.toThrow('MULTI_OWNER_PERSONAL_UNSUPPORTED');
+    expect((await captureSynthetic(f.c,'catalog')).sha256).toBe(beforeC);expect((await captureSynthetic(f.p,'personal')).sha256).toBe(beforeP);
+    expect(await count(f.c,'catalog_vacancy_current')).toBe(1);
+  });
+  it('preflights the 5454-identity / 5474-mapping baseline without publishing any fragment',async()=>{
+    const f=await fixture(5454,'baseline'), verified=await verifyGitProjection(f.options.source,bootstrap);
+    const selected=await selectModelC(verified.bundle,bootstrap);
+    expect(selected.ledger.identities).toHaveLength(5454);expect(selected.ledger.mappings).toHaveLength(5474);expect(selected.catalog).toHaveLength(151);
+    let failure:ModelCImportError|undefined;
+    try {await importModelC(f.c,f.p,{...f.options,source:{...f.options.source,bundle:verified.bundle},budget:{...f.options.budget,availableRows:60000,extendedAuthorized:true}});}
+    catch(error) {if(!(error instanceof ModelCImportError))throw error;failure=error;}
+    expect(failure?.message).toBe('ATOMIC_PUBLICATION_LIMIT');
+    expect(failure!.metrics.publicationStatements).toBe(22025);expect(failure!.metrics.publicationStatements).toBeGreaterThan(8000);
+    expect(failure!.metrics.total).toBe(0);expect(failure!.metrics.reservedBound).toBe(0);
+    for(const t of ['catalog_head','catalog_runs','catalog_write_reservations','catalog_vacancy_identity','catalog_stage_vacancies'])expect(await count(f.c,t)).toBe(0);
+    expect(await count(f.p,'personal_owners')).toBe(0);
+    preflights.baseline={syntheticOnly:true,identities:5454,mappings:5474,currentVacancies:151,publicationStatements:failure!.metrics.publicationStatements,
+      serializedPlanBytes:failure!.metrics.publicationBytes,limits:{statements:8000,serializedPlanBytes:8*1024*1024},reason:failure!.message,d1Writes:0,
+      scope:'One synthetic company/source; structural capacity preflight, not production cardinalities or write-cost measurement'};
+  },60000);
   it('refuses unconfirmed identities from a v1 staging import',async()=>{
     const f=await fixture(1), v1=await runtime.getD1Database('DB'+seq++);await applySchema(v1,'v1');
     const original=await verifyGitProjection(f.options.source,bootstrap);

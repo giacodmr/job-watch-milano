@@ -72,6 +72,19 @@ describe('model C selection contract (synthetic data only)',()=>{
     const absent=await selectModelC(await fixture([]),{identities:{mode:'confirmed-ledger',ledger:second.ledger,expectedDigest:second.ledgerDigest},personalReferences:[{jobId:first.ledger.identities[0]!.jobId,kind:'DISMISSED'}]});
     expect(absent.ledger).toEqual(second.ledger);expect(absent.subjects[0]!.lifecycle).toBeNull();expect(absent.catalog).toHaveLength(0);
   });
+  it('applies UNRESOLVED_PERSONAL to retained decision presence without inventing an effective choice',async()=>{
+    const b=await fixture(), first=await selectModelC(b,bootstrap), jobId=first.ledger.identities[0]!.jobId;
+    const context={...bootstrap,personalDecisionJobIds:[jobId]};
+    const unresolved=await selectModelC(b,context);
+    expect(unresolved.catalog).toHaveLength(0);expect(unresolved.subjects[0]).toMatchObject({personal:true,exclusion:'UNRESOLVED_PERSONAL',lifecycle:'STILL_OPEN'});
+    expect(unresolved.decisions).toHaveLength(0);
+    const effective=await selectModelC(await fixture([{...job,effectiveDecision:'INTERESTED'}]),context);
+    expect(effective.catalog).toHaveLength(1);expect(effective.subjects[0]!.exclusion).toBeNull();
+    expect(await selectionContextDigest(context)).not.toBe(await selectionContextDigest(bootstrap));
+    await expect(selectModelC(b,{...bootstrap,personalDecisionJobIds:['job:'+'f'.repeat(64)]})).rejects.toThrow('UNRESOLVED_PERSONAL_REFERENCE');
+    const absent=await selectModelC(await fixture([]),{identities:{mode:'confirmed-ledger',ledger:first.ledger,expectedDigest:first.ledgerDigest},personalReferences:[],personalDecisionJobIds:[jobId]});
+    expect(absent.subjects[0]).toMatchObject({personal:true,exclusion:'UNRESOLVED_PERSONAL',lifecycle:null});
+  });
   it('rejects an incomplete ledger against its trusted checkpoint digest',async()=>{
     const first=await selectModelC(await fixture(),bootstrap);
     await expect(selectModelC(await fixture(),{identities:{mode:'confirmed-ledger',ledger:{identities:[],mappings:[]},expectedDigest:first.ledgerDigest},personalReferences:[]})).rejects.toThrow('LEDGER_DIGEST_MISMATCH');

@@ -12,6 +12,12 @@ if sys.argv[2]=='seed':
     fixture.setUp()
     try:
         jobs=[{**fixture.job,'source_id':str(123456+i),'canonical_url':f'https://www.amazon.jobs/en/jobs/{123456+i}/role'} for i in range(int(sys.argv[3]))]
+        if len(sys.argv)>4 and sys.argv[4]=='baseline':
+            records={f"Amazon::{j['source_id']}":{'identity':j} for j in jobs[151:]}
+            for i,j in enumerate(jobs[:20]):
+                records[f'Amazon::synthetic-alias-{i}']={'identity':{**j,'source_id':f'synthetic-alias-{i}'}}
+            fixture.put('job_memory_jw2.json',{'batch':'JW2','records':records})
+            jobs=jobs[:151]
         fixture.put('current_jobs_jw2.json',{'generated_at':STAMP,'companies':[{'company':'Amazon','coverage':'PARTIAL','jobs':jobs}]})
         fixture.coherent()
         shutil.copytree(fixture.root,root,dirs_exist_ok=True,ignore=shutil.ignore_patterns('__pycache__'))

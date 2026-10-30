@@ -16,6 +16,8 @@ const contextSchema = z.strictObject({
     z.strictObject({ mode: z.literal('first-v1-bootstrap') }),
     z.strictObject({ mode: z.literal('confirmed-ledger'), ledger: identityLedgerSchema, expectedDigest: z.string().regex(/^[a-f0-9]{64}$/) }),
   ]),
+  // Presence of trusted retained decisions, without an inferred effective choice.
+  personalDecisionJobIds: z.array(id).optional(),
   // These are already reconciled ACTIVE references, not a history to reorder here.
   personalReferences: z.array(z.strictObject({ jobId: id, kind: z.enum(['SAVED', 'APPLICATION', 'DISMISSED']) })),
 });
@@ -31,6 +33,7 @@ export async function selectionContextDigest(input: SelectionContext) {
     context.identities.ledger.identities.sort(by(r => r.jobId));
     context.identities.ledger.mappings.sort(by(r => r.key));
   }
+  context.personalDecisionJobIds?.sort();
   context.personalReferences.sort(by(r => r.jobId + '\0' + r.kind));
   return sha256(canonical(context));
 }
@@ -72,6 +75,9 @@ export async function selectModelC(input: unknown, rawContext: SelectionContext)
   for (const ref of context.personalReferences) {
     if (!identities.has(ref.jobId)) throw new SelectionError('UNRESOLVED_PERSONAL_REFERENCE');
   }
+  for (const jobId of context.personalDecisionJobIds ?? []) {
+    if (!identities.has(jobId)) throw new SelectionError('UNRESOLVED_PERSONAL_REFERENCE');
+  }
   function events<K extends 'user' | 'semantic'>(kind: K) {
     const result = new Map<string, { eventId: string; jobId: string; observations: Extract<SnapshotRow, { kind: K }>[] }>();
     for (const row of rows) if (row.kind === kind) {
@@ -89,7 +95,7 @@ export async function selectModelC(input: unknown, rawContext: SelectionContext)
   const user = events('user'), semantic = events('semantic');
   for (const [key, event] of user) event.eventId = 'decision:' + await sha256(key);
   for (const [key, event] of semantic) event.eventId = 'review:' + await sha256(key);
-  const userJobs = new Set([...user.values()].map(e => e.jobId));
+  const userJobs = new Set([...user.values()].map(e => e.jobId).concat(context.personalDecisionJobIds ?? []));
   const refs = (jobId: string) => context.personalReferences.filter(ref => ref.jobId === jobId);
   const subjects = new Map<string, { jobId: string; catalog: boolean; personal: boolean; aiQueue: boolean; lifecycle: Job['lifecycle'] | null; exclusion: 'MANUAL' | 'AUTOMATIC' | 'UNRESOLVED_PERSONAL' | null }>();
   const catalog: { jobId: string; kind: 'OPPORTUNITY' | 'AI_QUEUE' }[] = [];
@@ -109,6 +115,9 @@ export async function selectModelC(input: unknown, rawContext: SelectionContext)
     if (useful) catalog.push({ jobId, kind: job.reportable === true || positive(job) || activeRefs.some(r => r.kind !== 'DISMISSED') ? 'OPPORTUNITY' : 'AI_QUEUE' });
     if (queued) aiQueue.push({ jobId, batch: job.batch, fingerprint: job.fingerprint, applyUrl: job.applyUrl, canonicalUrl: job.canonicalUrl, workerEligible: job.workerEligible, technicalStatus: job.technicalStatus });
     if (useful || personal) subjects.set(jobId, { jobId, catalog: useful, personal, aiQueue: queued, lifecycle: job.lifecycle, exclusion: manual ? 'MANUAL' : unresolved ? 'UNRESOLVED_PERSONAL' : automatic ? 'AUTOMATIC' : null });
+  }
+  for (const jobId of userJobs) if (!subjects.has(jobId)) {
+    subjects.set(jobId, { jobId, catalog: false, personal: true, aiQueue: false, lifecycle: null, exclusion: refs(jobId).some(r => r.kind === 'DISMISSED') ? 'MANUAL' : 'UNRESOLVED_PERSONAL' });
   }
   for (const ref of context.personalReferences) if (!subjects.has(ref.jobId)) {
     subjects.set(ref.jobId, { jobId: ref.jobId, catalog: false, personal: true, aiQueue: false, lifecycle: null, exclusion: refs(ref.jobId).some(r => r.kind === 'DISMISSED') ? 'MANUAL' : null });
