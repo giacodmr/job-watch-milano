@@ -4,7 +4,7 @@ Baseline: PR #31 MERGED tramite squash `5abbdf67cea4d4004b0cdfa066ef292b7e499682
 
 ## Separazione fisica e compatibilità
 
-- `model-c/catalog/migrations/0001_catalog.sql`: database **CATALOG** autonomo, schema 1.
+- `model-c/catalog/migrations/0001_catalog.sql` + `0002_v1_contract_compatibility.sql`: database **CATALOG** autonomo, schema 2; 0001 resta immutata.
 - `model-c/personal/migrations/0001_personal.sql`: database **PERSONAL** autonomo, schema 1.
 - `migrations/0001…0005`: fondazione **v1**, schema 5, immutata e ancora attiva. Nessun nuovo SQL viene aggiunto a questa directory.
 
@@ -14,9 +14,16 @@ Non ci sono nuovi binding/configurazioni Wrangler, route, feature flag, UI o com
 
 Le identità permanenti sono in `catalog_company_identity`, `catalog_source_identity`, `catalog_vacancy_identity`; `catalog_aliases` conserva tutte le chiavi autorevoli. Nessun algoritmo SQL ricalcola ID, alias o fingerprint. UPDATE/DELETE delle identità/mapping confermati sono bloccati; le chiusure non autorizzano cancellazioni. Le FK composite impongono ownership aziendale di source e vacancy.
 
-`catalog_company_current`, `catalog_source_current`, `catalog_vacancy_current` hanno una riga per ID. Il catalogo vacancy contiene solo i lifecycle aperti NEW/STILL_OPEN/UPDATED e kind OPPORTUNITY/AI_QUEUE. Le fonti hanno coverage separata VERIFIED/PARTIAL/FAILED/NOT_CHECKED. I riferimenti personali CLOSED/UNKNOWN stanno in PERSONAL, mentre la loro identità rimane nel ledger CATALOG. Il payload corrente può essere rimosso tramite un delta esplicito senza rimuovere l'identità.
+`catalog_company_current`, `catalog_source_current`, `catalog_vacancy_current` hanno una riga per ID. Il catalogo vacancy contiene solo i lifecycle aperti NEW/STILL_OPEN/UPDATED e kind OPPORTUNITY/AI_QUEUE. Il flag `needs_analysis` (0/1/NULL, come needsAnalysis V1) rappresenta indipendentemente l’appartenenza alla coda: `WHERE needs_analysis=1` include anche le OPPORTUNITY. `kind` mantiene il significato del selettore #31. worker_eligible=false e technical_status NULL/JD_UNAVAILABLE non vengono convertiti o scambiati per rigetti. Le fonti hanno coverage separata VERIFIED/PARTIAL/FAILED/NOT_CHECKED. I riferimenti personali CLOSED/UNKNOWN stanno in PERSONAL, mentre la loro identità rimane nel ledger CATALOG. Il payload corrente può essere rimosso tramite un delta esplicito senza rimuovere l'identità.
 
 Nessuna colonna owner, decisione personale, motivazione, fit score, reportable o sintesi AI è nel catalogo o nello staging. Non ci sono payload JSON arbitrari, JD o descrizioni. Titoli/URL sono campi strutturati, non un rilevatore di PII: l'importer dovrà applicare le allowlist e i validatori del contratto. Il catalogo selettivo rimane comunque privato.
+
+Compatibilità V1 aggiunta in 0002 (solo CATALOG):
+
+- `catalog_company_current` e `catalog_stage_companies` conservano `config_id`, `tier`, `priority` come TEXT nullable (massimo 1.000 caratteri), e membership ACTIVE/CANDIDATE/HISTORICAL. Nessuna enum nuova per tier/priority, frequenza o default inventato. Le nuove righe richiedono membership tramite trigger.
+- `catalog_source_current.origin_id` identifica sourcePath/sourceSha256; `coverage_origin_id` identifica coveragePath/coverageSha256. Entrambi riferiscono catalog_origins; nello staging entrambe le prove appartengono allo stesso run. Possono condividere un’origine solo se la prova sorgente è realmente la stessa; il caso normale ATS/inventario resta distinguibile per path/hash.
+- `needs_analysis` esiste anche nello staging. Per IDENTIFY_ONLY/REMOVE resta NULL come gli altri campi payload; non introduce regole di matching o cambi al selettore.
+- L’upgrade di righe 0001 conserva ID e valori esistenti; i campi prima assenti restano NULL, senza ricostruzioni arbitrarie. Va verificato anche il ruolo dell’origin_id legacy: non va copiato automaticamente nella coverage. Membership e coverage origin ignote devono essere idratate da input verificato prima di una nuova pubblicazione: i trigger dell’head bloccano metadati incompleti. Per needs_analysis il NULL è anche un valore V1 ammesso, non equivale a false. Nessuna migrazione tocca database persistenti in questo incarico.
 
 Provenienza e revisioni:
 
@@ -92,9 +99,9 @@ Il backup v1 sintetico conserva ID, alias, NOT_INTERESTED e checkpoint confermat
 
 ## Verifiche eseguite
 
-`npm ci`: PASS, zero vulnerabilità; `npm run check`: **80 test Vitest in 7 file PASS**, TypeScript strict/build PASS (include gli 11 unittest exporter sintetici legacy); `npm run worker:check`: PASS, solo dry-run. I 17 nuovi casi coprono struttura, isolamento, CAS, ownership, eventi, replay e backup/restore. Nessun dataset privato è stato aperto per questa PR.
+`npm ci`: PASS, zero vulnerabilità; `npm run check`: **88 test Vitest in 8 file PASS**, TypeScript strict/build PASS (include gli 11 unittest exporter sintetici legacy); `npm run worker:check`: PASS, solo dry-run. I 17 casi iniziali coprono struttura, isolamento, CAS, ownership, eventi, replay e backup/restore. Gli 8 casi di compatibilità aggiunti verificano OPPORTUNITY+coda sul selettore #31 e su D1, flag nullable/false e stati tecnici, tre membership e metadati V1, le due prove ATS e l’upgrade 0001 senza valori inventati. I test precedenti restano presenti. Nessun dataset privato è stato aperto per questa PR.
 
-`node tools/model-c-lab.mjs`: PASS sui tre scope, file realmente scritti/riletti con permessi verificati, restore verificato e rimozione finale. Replay migrazioni: zero scritture. `git diff --check`: PASS; immutabilità dei file v1/binding/importer/reader/UI/dependency verificata nel diff. CI GitHub da verificare sullo head della nuova PR; non dedotta dai test locali.
+`node tools/model-c-lab.mjs`: PASS sui tre scope, file realmente scritti/riletti con permessi verificati, restore verificato e rimozione finale. Schema CATALOG vuoto e journal: 152 scritture (prima 128, **+24** per 0002); PERSONAL invariato a 74. Replay migrazioni: zero scritture. Restore sintetico CATALOG: 152 schema + 122 batch, 25 righe di backup (prima 128 + 104, 22 righe); la fixture aggiunge le prove distinte e il journal 0002. Questi sono costi di schema/restore sintetico, non di bootstrap. `git diff --check`: PASS; immutabilità dei file v1/binding/importer/reader/UI/dependency verificata nel diff. CI GitHub da verificare sullo head della nuova PR; non dedotta dai test locali.
 
 ## Rollback e gate PR 3
 

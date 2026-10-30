@@ -8,12 +8,12 @@
   "fixtureSeedIncluded": false,
   "readsIncluded": false,
   "schemaSetup": {
-    "catalog": { "migrations": 1, "rowsWritten": 128, "replayRowsWritten": 0 },
+    "catalog": { "migrations": 2, "rowsWritten": 152, "replayRowsWritten": 0 },
     "personal": { "migrations": 1, "rowsWritten": 74, "replayRowsWritten": 0 },
     "v1SyntheticControl": { "migrations": 5, "rowsWritten": 154, "replayRowsWritten": 0 }
   },
   "restore": {
-    "catalog": { "backupRows": 22, "schemaRowsWritten": 128, "restoreBatchRowsWritten": 104 },
+    "catalog": { "backupRows": 25, "schemaRowsWritten": 152, "restoreBatchRowsWritten": 122 },
     "personal": { "backupRows": 12, "schemaRowsWritten": 74, "restoreBatchRowsWritten": 56 },
     "v1SyntheticControl": { "backupRows": 14, "schemaRowsWritten": 154, "restoreBatchRowsWritten": 53 }
   },
@@ -22,5 +22,6 @@
   "backupFileMode": "0600",
   "backupsRemoved": true,
   "modelCBootstrapMeasured": false,
-  "modelCDailySyncMeasured": false
+  "modelCDailySyncMeasured": false,
+  "catalogCompatibilityChange": { "previousHead": "a24df6009501f19277c8db09c85f28213d23da4b", "previousSchemaRowsWritten": 128, "schemaRowsWrittenDelta": 24, "migration": "0002_v1_contract_compatibility.sql" }
 }
