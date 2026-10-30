@@ -5,6 +5,10 @@ on:
       - "tools/ats_paypal_probe.py"
       - "tools/ats_paypal_inventory_probe.py"
       - "tools/ats_paypal_geo_parity.py"
+      - "paypal_collector.py"
+      - "test_paypal_collector.py"
+      - "collector.py"
+      - "ats_mapping_jw1.json"
       - ".github/workflows/ats_paypal_probe.yml"
 permissions:
   contents: read
@@ -20,7 +24,28 @@ jobs:
       - run: python -m pip install requests==2.32.5
       - name: Inspect PayPal official Eightfold public listing and robots
         run: python tools/ats_paypal_probe.py
+      - name: PayPal first-party target-scope regression tests
+        run: python -m unittest -q test_paypal_collector
       - name: Check PayPal Milan/Rome official search and sitemap structure
         run: python tools/ats_paypal_inventory_probe.py
       - name: Check target-scope city parity and all first-party details
         run: python tools/ats_paypal_geo_parity.py
+      - name: Validate PayPal canonical collector live: Milan/Rome only
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import collector
+          company=next(x for x in json.loads(Path("ats_mapping_jw1.json").read_text())["companies"] if x["company"]=="PayPal")
+          r,_=collector.collect_company(company)
+          print("PAYPAL_LIVE "+json.dumps({
+            "coverage":r.get("coverage"),"collector":r.get("collector"),"count":r.get("inventory_count"),
+            "reason":r.get("reason"),"reconciliation":r.get("reconciliation"),
+            "jobs":[{"id":x["source_id"],"title":x["title"],"location":x["location"],
+              "url":x["canonical_url"]} for x in (r.get("jobs") or [])],
+          },ensure_ascii=False))
+          if r.get("coverage")!="VERIFIED" or not r.get("jobs"):
+            raise SystemExit("PayPal target-scope source not fully certified")
+          if not all("Italy" in x["location"] for x in r["jobs"]):
+            raise SystemExit("PayPal location scope not Italian")
+          PY
