@@ -73,3 +73,7 @@ Parametri sconosciuti/duplicati/invalidi: 400; cursore o dettaglio di un checkpo
 `npm run check` esegue Vitest, i test Python sintetici dell'exporter, TypeScript strict e build. La CI web esistente esegue anche doppia migrazione locale e dry-run Worker, senza secret o deploy. Test Python produttivi: soltanto in copia temporanea isolata.
 
 Leggere [audit](docs/AUDIT.md), [architettura](docs/ARCHITECTURE.md), [contratto](docs/SYNC_CONTRACT.md), [verifiche Fase 1](docs/PHASE1_VALIDATION.md), [handoff](docs/HANDOFF.md) e [piano](../../PLANS.md). La verifica visiva segue le tre skill frontend versionate; non sostituisce i test sui dati.
+
+## Modello C — contratti, senza attivazione
+
+La selezione current-state è definita e verificabile separatamente dalla sync v1. Contratto, criteri, digest e verifica privata in [MODEL_C_SELECTION_CONTRACT.md](docs/MODEL_C_SELECTION_CONTRACT.md). Importer, reader, schema e UI attuali non cambiano.

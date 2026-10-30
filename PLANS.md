@@ -48,3 +48,7 @@ Gestione aziende/tier/fonti solo mediante comandi validati e autorità attuali. 
 ## Consolidamento tecnico della base D1
 
 PR #25 aggiornata sul proprio branch, riallineata a main 0b2984a. Schema 5 additivo, fix di cursor Unicode/ricerca lunga/nome azienda versionato e misure separate reali. Esiti e gate: `apps/web/docs/PHASE1_CONSOLIDATION.md`. GO solo locale/read-only dopo CI sul relativo head; nessun cloud o merge automatico. Non integrare #29; preservare dalla #30 soltanto servizi e comportamenti dati, tramite hunk dopo #25. V7 resta una PR successiva. Prossimo intervento consigliato: fast path locale per commit con file allowlist identici, senza duplicare versioni/appartenenze né perdere provenance/history.
+
+## Modello C / PR 1 — contratti e prove
+
+#25 integrata tramite squash 004782c1d5b53c9c6abb0399c8368f28831104c7. Branch dedicata da main: contratti puri di selezione/ledger, protezione decisioni e digest dati+codice, checker read-only e prove sintetiche/private aggregate. Nessuno schema/importer/reader nuovo. Criteri, limiti e gate PR 2 in apps/web/docs/MODEL_C_SELECTION_CONTRACT.md.

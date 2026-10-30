@@ -104,3 +104,7 @@ Audit append-only: event_code, actor_ref opaco, entity/command/snapshot ID, hash
 Decisioni e identità chiuse non si cancellano automaticamente. History D1 inizia dalla prima osservazione; import passato da Git history separato. Policy retention per versioni e limiti storage da misurare prima di sync remota; nessuna eliminazione cieca per rientrare in quota.
 
 Interattivo: Cloudflare Access + JWT validato + allowlist utente. Servizio: Access Service Auth separato, sola ingestion; secret custoditi lato server/CI. In futuro `/api/sync/*` non accetta cookie utente come ruolo servizio né viceversa. Nessun secret VITE_, accesso diretto GitHub browser, query URL con JD o LLM API. Requisiti dettagliati in ADR 0001.
+
+## Contratto selettivo affiancato (Modello C / PR 1)
+
+[MODEL_C_SELECTION_CONTRACT.md](MODEL_C_SELECTION_CONTRACT.md) definisce selezione, ledger completo, eventi personali append-only, digest dati/codice e osservazione/origine/revisione. È un contratto separato, non un cambio del manifest v1 o una sync attiva. Nessuna migrazione o modifica al reader è introdotta.
