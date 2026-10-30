@@ -155,6 +155,47 @@ class ExporterTests(unittest.TestCase):
         self.assertEqual(rejected.returncode,1)
         self.assertIn('SOURCE_HASH_MISMATCH',rejected.stderr)
 
+    def test_model_c_report_contains_only_aggregates_and_redacted_failures(self):
+        marker = 'PRIVATE_SYNTHETIC_MARKER_NEVER_PRINT'
+        self.job['title'] = marker
+        self.put('current_jobs_jw2.json', {'generated_at':STAMP,'companies':[{'company':'Amazon','coverage':'PARTIAL','jobs':[self.job]}]})
+        self.coherent()
+        def git(*args):
+            return subprocess.check_output(['git','-C',str(self.root),*args],stderr=subprocess.DEVNULL,text=True).strip()
+        git('init','-q','-b','main');git('remote','add','origin','https://github.com/giacodmr/job-watch-milano.git')
+        git('add','.');git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','Synthetic model C fixture')
+        sha=git('rev-parse','HEAD');git('update-ref','refs/remotes/origin/main',sha)
+        output=self.root/'private-bundle.json'
+        exported=subprocess.run(['node',str(HERE/'local-sync.mjs'),'export','--repo',str(self.root),'--commit',sha,'--file',str(output)],capture_output=True,text=True)
+        self.assertEqual(exported.returncode,0)
+        command=['node',str(HERE/'check-model-c.mjs'),'--repo',str(self.root),'--file',str(output)]
+        checked=subprocess.run(command,capture_output=True,text=True)
+        self.assertEqual(checked.returncode,0)
+        summary=json.loads(checked.stdout)
+        self.assertTrue(summary['replayVerified']);self.assertEqual(summary['d1Writes'],0)
+        self.assertNotIn(marker,checked.stdout+checked.stderr)
+        self.assertNotIn('Amazon::',checked.stdout+checked.stderr)
+        old_data=json.loads(output.read_text())
+        code=self.root/'sync_analysis_state.py'
+        code.write_text(code.read_text()+'\n# Synthetic code-only change.\n')
+        git('add','sync_analysis_state.py')
+        git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','Synthetic code change')
+        next_sha=git('rev-parse','HEAD');git('update-ref','refs/remotes/origin/main',next_sha)
+        exported=subprocess.run(['node',str(HERE/'local-sync.mjs'),'export','--repo',str(self.root),'--commit',next_sha,'--file',str(output)],capture_output=True,text=True)
+        self.assertEqual(exported.returncode,0)
+        changed=subprocess.run(command,capture_output=True,text=True)
+        self.assertEqual(changed.returncode,0)
+        new_summary=json.loads(changed.stdout)
+        self.assertEqual(old_data['manifest']['files'],json.loads(output.read_text())['manifest']['files'])
+        self.assertNotEqual(summary['observation']['projectionInputDigest'],new_summary['observation']['projectionInputDigest'])
+        self.assertEqual(summary['observation']['catalogContentDigest'],new_summary['observation']['catalogContentDigest'])
+        data=json.loads(output.read_text());data['manifest']['files'][0]['bytes']+=1
+        output.write_text(json.dumps(data))
+        failed=subprocess.run(command,capture_output=True,text=True)
+        self.assertNotEqual(failed.returncode,0)
+        self.assertNotIn(marker,failed.stdout+failed.stderr)
+        self.assertEqual(json.loads(failed.stderr)['error'],'SOURCE_HASH_MISMATCH')
+
     def test_export_does_not_write_source_or_recompute_fingerprint(self):
         before = {p.name:p.read_bytes() for p in self.root.glob('*.json')}
         result = self.extract()

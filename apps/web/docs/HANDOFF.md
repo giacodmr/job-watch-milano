@@ -1,3 +1,7 @@
+# Stato corrente — Modello C / PR 1
+
+#25 verificata MERGED tramite squash `004782c1d5b53c9c6abb0399c8368f28831104c7`, baseline del branch `codex/model-c-selection-contracts`. Contratti e prove in [MODEL_C_SELECTION_CONTRACT.md](MODEL_C_SELECTION_CONTRACT.md). Schema 5, protocollo v1, importer, reader e UI invariati; nessun D1 persistente/cloud toccato. Il prossimo passo consentito, dopo CI verde, è lo schema locale separato della PR 2. Seguono i resoconti storici, i cui SHA non sono la baseline attuale.
+
 # Stato corrente — consolidamento tecnico #25
 
 Main 0b2984a recepito nel branch `codex/web-phase-one`; baseline PR b84d778. Correzioni backend per cursori Unicode, ricerca lunga D1 e nome azienda per snapshot; schema 5 additivo, 46 test Vitest e strict/build/dry-run verificati. Misure reali e procedura di ripresa in [PHASE1_CONSOLIDATION.md](PHASE1_CONSOLIDATION.md), numeri aggregati in [PHASE1_COSTS.json](PHASE1_COSTS.json). Nessuna UI V7 o funzionalità anticipata.

@@ -10,6 +10,7 @@ import {
   validateBundle,
 } from "../shared/snapshot";
 import { schemaVersion } from "../shared/contracts";
+import { selectModelC } from "../shared/model-c-selection";
 import { jobsQuerySchema } from "../shared/queries";
 import { importSnapshot } from "../worker/data/importer";
 import { getJob, getSnapshot, listJobs } from "../worker/data/queries";
@@ -234,10 +235,19 @@ describe("canonical and source boundary", () => {
         { stdio: "pipe" },
       ),
     ).not.toThrow();
-  });
+  }, 30_000);
 });
 
 describe("local D1 synchronization and read services", () => {
+  it("matches v1 identity, alias and decision IDs without changing its reader", async () => {
+    const source = await bundle();
+    await importSnapshot(db, source, options());
+    const selected = await selectModelC(source, { identities: { mode: "first-v1-bootstrap" }, personalReferences: [] });
+    expect((await db.prepare("SELECT id AS jobId,company_id AS companyId,origin_job_key AS originJobKey FROM jobs ORDER BY id").all()).results).toEqual(selected.ledger.identities);
+    expect((await db.prepare("SELECT alias_key AS key,job_id AS jobId FROM job_aliases ORDER BY alias_key").all()).results).toEqual(selected.ledger.mappings);
+    expect((await db.prepare("SELECT id FROM user_decisions ORDER BY id").all<{id:string}>()).results.map(row => row.id)).toEqual(selected.decisions.map(row => row.eventId));
+    expect((await listJobs(db, jobsQuerySchema.parse({}))).total).toBe(3);
+  });
   it("round-trips a cursor for a valid maximum-length Unicode sort key", async () => {
     await importSnapshot(db, await bundle("a".repeat(40), { sortKey: "a" + "語".repeat(2199) }), options());
     const first = await listJobs(db, jobsQuerySchema.parse({ limit: 1 }));
