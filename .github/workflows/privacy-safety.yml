@@ -1,0 +1,40 @@
+name: Privacy cutover safety
+on:
+  pull_request:
+    paths:
+      - 'privacy_safety/**'
+      - 'tools/privacy_cutover.py'
+      - 'test_privacy_safety.py'
+      - 'requirements-privacy-safety.txt'
+      - '.github/workflows/privacy-safety.yml'
+permissions:
+  contents: read
+concurrency:
+  group: privacy-safety-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  synthetic-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install safety tooling
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements-privacy-safety.txt
+          sudo apt-get update -qq
+          sudo apt-get install -y age
+      - name: Require crypto integration coverage
+        run: |
+          command -v age
+          command -v age-keygen
+          PRIVACY_SAFETY_REQUIRE_AGE=1 python -m unittest -q test_privacy_safety
+      - name: Check redacted publication scope
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python tools/privacy_cutover.py publish-check --base "$BASE_SHA"
