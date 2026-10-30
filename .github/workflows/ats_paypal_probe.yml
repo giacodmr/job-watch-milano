@@ -4,6 +4,7 @@ on:
     paths:
       - "tools/ats_paypal_probe.py"
       - "tools/ats_paypal_inventory_probe.py"
+      - "tools/ats_paypal_geo_parity.py"
       - ".github/workflows/ats_paypal_probe.yml"
 permissions:
   contents: read
@@ -21,3 +22,5 @@ jobs:
         run: python tools/ats_paypal_probe.py
       - name: Check PayPal Milan/Rome official search and sitemap structure
         run: python tools/ats_paypal_inventory_probe.py
+      - name: Check target-scope city parity and all first-party details
+        run: python tools/ats_paypal_geo_parity.py
