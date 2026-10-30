@@ -2,8 +2,10 @@ import { healthSchema, schemaVersion } from '../shared/contracts';
 import { z } from 'zod';
 import { jobsQuerySchema } from '../shared/queries';
 import { getSnapshot, listJobs, getJob, QueryError } from './data/queries';
+import { handleModelCLocalApi } from './model-c-local-api';
+import type { ModelCLocalEnv } from './model-c-local-api';
 
-export interface Env {
+export interface Env extends ModelCLocalEnv {
   APP_ENV?: string;
   DB?: D1Database;
   ASSETS?: Fetcher;
@@ -32,6 +34,8 @@ export default {
     ) {
       return json({ error: 'remote_runtime_disabled' }, 403);
     }
+    if (url.pathname === '/api/model-c' || url.pathname.startsWith('/api/model-c/'))
+      return handleModelCLocalApi(request,url,env);
     if (url.pathname === '/api/health') {
       if (request.method !== 'GET')
         return json({ error: 'method_not_allowed' }, 405, { Allow: 'GET' });
