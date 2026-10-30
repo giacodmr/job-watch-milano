@@ -1,5 +1,5 @@
-// Inactive Model C PERSONAL reader. NOT wired to worker/index.ts or the browser.
-// IMPORTANT: a trusted server adapter must authenticate and supply ownerId.
+// Owner-scoped Model C PERSONAL reader, accessible only through the synthetic local HTTP adapter.
+// IMPORTANT: a future production adapter must authenticate and supply ownerId.
 // This module enforces owner-scoped SQL, not authentication or authorization.
 import { z } from 'zod';
 import { canonical, sha256 } from '../../shared/canonical';
