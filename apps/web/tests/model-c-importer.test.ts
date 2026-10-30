@@ -10,6 +10,7 @@ import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
 import { importSnapshot } from '../worker/data/importer';
 import { selectModelC } from '../shared/model-c-selection';
+import { assessFreeBootstrapRemoteQuota } from '../tools/model-c-free-bootstrap';
 import { canonical, sha256 } from '../shared/canonical';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
@@ -27,9 +28,9 @@ async function fixture(count=2, profile?:'baseline') {
   execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'seed',String(count),...(profile?[profile]:[])],{stdio:'pipe',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
   git(repo,'init','-q','-b','main');git(repo,'remote','add','origin','https://github.com/giacodmr/job-watch-milano.git');
   const sha=commit(repo), c=await runtime.getD1Database('DB'+seq++), p=await runtime.getD1Database('DB'+seq++);
-  await applySchema(c,'catalog');await applySchema(p,'personal');
+  const schemaCosts={catalog:await applySchema(c,'catalog'),personal:await applySchema(p,'personal')};
   const options:ImportOptions={source:{repo,commit:sha},bootstrap:'empty-target',owner:'synthetic-owner',budget:{day:new Date().toISOString().slice(0,10),availableRows:30000}};
-  return {repo,c,p,options};
+  return {repo,c,p,options,schemaCosts};
 }
 async function inventory(repo:string,mutate:(jobs:Record<string,unknown>[])=>void) {
   const path=resolve(repo,'current_jobs_jw2.json'), data=JSON.parse(await readFile(path,'utf8'));
@@ -216,7 +217,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const id=String(await v1.prepare('SELECT id FROM jobs').first('id'));
     const selected=await selectModelC(next.bundle,{...bootstrap,personalDecisionJobIds:[id]});
     expect(selected.subjects).toMatchObject([{personal:true,exclusion:'UNRESOLVED_PERSONAL',catalog:false,aiQueue:false}]);
-    const result=await importModelC(f.c,f.p,{...f.options,v1});
+    const result=await importModelC(f.c,f.p,{...f.options,v1,oneTimeFreeBootstrap:true,executionTarget:'local-ephemeral',budget:{...f.options.budget,availableRows:95000}});
     expect(result.status).toBe('PUBLISHED');expect(await count(f.c,'catalog_vacancy_current')).toBe(0);
     expect(await f.p.prepare('SELECT decision FROM personal_decision_events').first('decision')).toBe('NOT_INTERESTED');
     expect(await count(f.p,'personal_reference_state')).toBe(0);expect(await count(f.p,'personal_decision_current')).toBe(0);
@@ -265,6 +266,72 @@ describe('verified incremental importer on ephemeral D1',()=>{
       reason:failure!.message,requiredWriteBound:failure!.metrics.requiredBound,budgetReserved:0,d1Writes:0,
       scope:'Complete verified baseline plan; one synthetic company/source. No real bootstrap cost claim: write admission refused before mutation'};
   },60000);
+  it('publishes the full baseline only with oneTimeFreeBootstrap, preserves the ledger and replays without the exception',async()=>{
+    const f=await fixture(5454,'baseline'), options:ImportOptions={...f.options,oneTimeFreeBootstrap:true,executionTarget:'local-ephemeral',budget:{...f.options.budget,availableRows:95000}};
+    const verified=await verifyGitProjection(f.options.source,bootstrap), selected=await selectModelC(verified.bundle,bootstrap);
+    expect(selected.ledger.identities).toHaveLength(5454);expect(selected.ledger.mappings).toHaveLength(5474);expect(selected.catalog).toHaveLength(151);
+    const plan=await importModelC(f.c,f.p,{...options,preflightOnly:true,executionTarget:'remote'});
+    expect(plan.status).toBe('PREFLIGHT');expect(plan.metrics.requiredBound).toBe(94173);expect(plan.metrics.total).toBe(0);
+    expect(assessFreeBootstrapRemoteQuota({preflight:plan}).status).toBe('QUOTA_VERIFICATION_REQUIRED');
+    expect(await count(f.c,'catalog_initial_bootstrap_reservations')).toBe(0);expect(await count(f.p,'personal_owners')).toBe(0);
+    await expect(importModelC(f.c,f.p,{...options,budget:{...options.budget,availableRows:plan.metrics.requiredBound-1}})).rejects.toThrow('WRITE_BUDGET_INSUFFICIENT');
+    const result=await importModelC(f.c,f.p,options);measurements.freeBootstrapFull=result.metrics;
+    expect(result.status).toBe('PUBLISHED');expect(result.metrics.requiredBound).toBeLessThanOrEqual(95000);
+    expect(result.metrics.total).toBeLessThanOrEqual(result.metrics.reservedBound);expect(result.metrics.reservedBound).toBe(94173);
+    const ids=(await f.c.prepare('SELECT id AS jobId,company_id AS companyId,origin_job_key AS originJobKey FROM catalog_vacancy_identity ORDER BY id').all()).results;
+    const mappings=(await f.c.prepare('SELECT alias_key AS key,job_id AS jobId FROM catalog_aliases ORDER BY alias_key').all()).results;
+    expect(ids).toHaveLength(5454);expect(mappings).toHaveLength(5474);expect(await sha256(canonical({identities:ids,mappings}))).toBe(selected.ledgerDigest);
+    expect((await f.c.prepare('SELECT job_id AS jobId,kind FROM catalog_vacancy_current ORDER BY job_id').all()).results).toEqual(selected.catalog);
+    expect(await f.c.prepare('SELECT state FROM catalog_runs').first('state')).toBe('PUBLISHED');
+    expect(await f.c.prepare('SELECT sync_revision,content_revision,ledger_revision FROM catalog_head').first()).toEqual({sync_revision:1,content_revision:1,ledger_revision:1});
+    expect(await f.c.prepare('SELECT ledger_digest,identity_count,mapping_count FROM catalog_ledger_checkpoints').first()).toEqual({ledger_digest:selected.ledgerDigest,identity_count:5454,mapping_count:5474});
+    expect(await count(f.c,'catalog_audit')).toBe(1);expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);expect(await count(f.c,'catalog_stage_aliases')).toBe(0);
+    expect(await f.c.prepare('SELECT charged FROM catalog_write_totals').first('charged')).toBe(94173);
+    expect(await count(f.c,'catalog_write_reservations')).toBe(0);expect(await count(f.c,'catalog_initial_bootstrap_reservations')).toBe(1);
+    expect(await f.c.prepare('SELECT observed_commit,manifest_digest,projection_digest FROM catalog_initial_bootstrap_reservations').first()).toEqual({observed_commit:plan.provenance?.observedCommit,manifest_digest:plan.provenance?.manifestDigest,projection_digest:plan.provenance?.projectionDigest});
+    expect((await f.c.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+    const replay=await importModelC(f.c,f.p,{...f.options});measurements.freeBootstrapReplay=replay.metrics;
+    expect(replay.status).toBe('REPLAY');expect(replay.metrics.total).toBe(0);
+    expect(replay.observation.catalogContentDigest).toBe(result.observation.catalogContentDigest);expect(replay.observation.contentOrigin).toEqual(result.observation.contentOrigin);
+    expect(replay.observation.catalogRevision).toBe(1);expect(await count(f.c,'catalog_runs')).toBe(1);
+    await expect(importModelC(f.c,f.p,options)).rejects.toThrow('ONE_TIME_BOOTSTRAP_NOT_INITIAL');
+    f.options.source.commit=commit(f.repo);
+    await expect(importModelC(f.c,f.p,{...options,source:f.options.source})).rejects.toThrow('ONE_TIME_BOOTSTRAP_NOT_INITIAL');
+    await expect(importModelC(f.c,f.p,f.options)).rejects.toThrow('WRITE_BUDGET_INSUFFICIENT');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+    preflights.freeBootstrap={status:'PUBLISHED',identities:5454,mappings:5474,currentVacancies:151,requiredBound:result.metrics.requiredBound,
+      actualRowsWritten:result.metrics.total,budgetReserved:result.metrics.reservedBound,schemaCosts:f.schemaCosts,remoteQuotaStatus:'QUOTA_VERIFICATION_REQUIRED',
+      scope:'Actual complete synthetic bootstrap; schema setup is measured separately and is not part of importer rows or account-wide evidence'};
+  },90000);
+  it('requires explicit bootstrap authorization and local target; preflight remains read-only',async()=>{
+    const f=await fixture(1);
+    const options:ImportOptions={...f.options,oneTimeFreeBootstrap:true,executionTarget:'local-ephemeral',budget:{...f.options.budget,availableRows:95000}};
+    await expect(importModelC(f.c,f.p,{...options,oneTimeFreeBootstrap:false})).rejects.toThrow('INVALID_WRITE_BUDGET');
+    await expect(importModelC(f.c,f.p,{...options,executionTarget:'remote'})).rejects.toThrow('QUOTA_VERIFICATION_REQUIRED');
+    const {executionTarget:omitted,...noTarget}=options;expect(omitted).toBe('local-ephemeral');
+    await expect(importModelC(f.c,f.p,noTarget)).rejects.toThrow('QUOTA_VERIFICATION_REQUIRED');
+    await expect(importModelC(f.c,f.p,{...options,budget:{...options.budget,availableRows:95001}})).rejects.toThrow('INVALID_WRITE_BUDGET');
+    await expect(importModelC(f.c,f.p,{...options,source:{...options.source,commit:'main'}})).rejects.toThrow('EXPLICIT_COMMIT_SHA_REQUIRED');
+    expect(await count(f.c,'catalog_initial_bootstrap_reservations')).toBe(0);expect(await count(f.c,'catalog_head')).toBe(0);expect(await count(f.p,'personal_owners')).toBe(0);
+  });
+  it('keeps failed initial reservations charged, rolls back publication and does not give retries a fresh ceiling',async()=>{
+    const f=await fixture(2), options:ImportOptions={...f.options,oneTimeFreeBootstrap:true,executionTarget:'local-ephemeral',budget:{...f.options.budget,availableRows:200}};
+    const plan=await importModelC(f.c,f.p,{...options,preflightOnly:true});expect(plan.metrics.requiredBound).toBeLessThanOrEqual(200);
+    await f.c.prepare("CREATE TRIGGER synthetic_initial_failure BEFORE INSERT ON catalog_head BEGIN SELECT RAISE(ABORT,'synthetic_initial_failure'); END").run();
+    await expect(importModelC(f.c,f.p,options)).rejects.toThrow('MODEL_C_IMPORT_FAILED');
+    for(const t of ['catalog_head','catalog_runs','catalog_vacancy_identity','catalog_aliases','catalog_audit','catalog_stage_vacancies','catalog_content_revisions'])expect(await count(f.c,t)).toBe(0);
+    expect(await count(f.c,'catalog_initial_bootstrap_reservations')).toBe(1);
+    expect(await f.c.prepare('SELECT charged FROM catalog_write_totals').first('charged')).toBe(plan.metrics.requiredBound);
+    await f.c.prepare('DROP TRIGGER synthetic_initial_failure').run();
+    await expect(importModelC(f.c,f.p,options)).rejects.toThrow('WRITE_BUDGET_INSUFFICIENT');
+    expect(await count(f.c,'catalog_initial_bootstrap_reservations')).toBe(1);
+    const recovered=await importModelC(f.c,f.p,{...options,budget:{...options.budget,availableRows:95000}});
+    expect(recovered.status).toBe('PUBLISHED');expect(await count(f.c,'catalog_audit')).toBe(1);
+    expect(await f.c.prepare('SELECT charged FROM catalog_write_totals').first('charged')).toBe(plan.metrics.requiredBound+recovered.metrics.reservedBound);
+    await expect(f.c.prepare('DELETE FROM catalog_initial_bootstrap_reservations').run()).rejects.toThrow('permanent_write_reservation');
+    await expect(f.c.prepare('UPDATE catalog_initial_bootstrap_reservations SET rows_bound=1').run()).rejects.toThrow('immutable_write_reservation');
+    await expect(f.c.prepare('INSERT INTO catalog_initial_bootstrap_reservations SELECT ?,day,1,95000,observed_commit,manifest_digest,projection_digest FROM catalog_initial_bootstrap_reservations LIMIT 1').bind('after-head').run()).rejects.toThrow('initial_bootstrap_already_published');
+  });
   it('publishes a 3000-identity bootstrap within the authorized budget and verifies replay, delta and full rollback',async()=>{
     const f=await fixture(3000,'baseline');
     const options={...f.options,budget:{...f.options.budget,availableRows:60000,extendedAuthorized:true}};

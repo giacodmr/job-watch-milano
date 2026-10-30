@@ -19,6 +19,9 @@ export interface ImportOptions {
   bootstrap?: 'empty-target';
   v1?: D1Database;
   owner: string;
+  oneTimeFreeBootstrap?: boolean;
+  executionTarget?: 'local-ephemeral' | 'remote';
+  preflightOnly?: boolean;
   budget: { day:string; availableRows:number; extendedAuthorized?:boolean };
 }
 export interface ImportMetrics {
@@ -173,10 +176,17 @@ async function estimateWrites(db:D1Database, steps:Step[]) {
   return {total,byPhase,byTable};
 }
 async function bound(db:D1Database, steps:Step[]) {return (await estimateWrites(db,steps)).total;}
-async function reserve(db:D1Database, budget:ImportOptions['budget'], rows:number) {
-  const limit=budget.extendedAuthorized?60000:30000;
+async function reserve(db:D1Database, budget:ImportOptions['budget'], rows:number, initial?:Awaited<ReturnType<typeof verifyProjectionProof>>) {
+  const limit=initial?95000:budget.extendedAuthorized?60000:30000;
   if (budget.day!==new Date().toISOString().slice(0,10) || !/^\d{4}-\d{2}-\d{2}$/.test(budget.day) || !Number.isSafeInteger(budget.availableRows) || budget.availableRows<0 || budget.availableRows>limit) throw Error('INVALID_WRITE_BUDGET');
   if (rows>budget.availableRows) throw Error('WRITE_BUDGET_INSUFFICIENT');
+  const charged=Number(await db.prepare('SELECT charged FROM catalog_write_totals WHERE day=?').bind(budget.day).first('charged')??0);
+  if(charged+rows>budget.availableRows)throw Error('WRITE_BUDGET_INSUFFICIENT'); // SQL trigger repeats this atomically
+  if(initial)return execute(db,[
+    statement('INSERT INTO catalog_cas_guard VALUES (0)',[],{catalog_cas_guard:2}),
+    statement('INSERT INTO catalog_write_days VALUES (?,0) ON CONFLICT DO NOTHING',[budget.day],{catalog_write_days:1}),
+    statement('INSERT INTO catalog_initial_bootstrap_reservations VALUES (?,?,?,?,?,?,?)',[randomUUID(),budget.day,rows,budget.availableRows,initial.observedGitCommit,initial.sourceManifestDigest,initial.projectionInputDigest],{catalog_initial_bootstrap_reservations:1}),
+  ]);
   return execute(db,[statement('INSERT INTO catalog_write_days VALUES (?,0) ON CONFLICT DO NOTHING',[budget.day],{catalog_write_days:1}),
     statement('INSERT INTO catalog_write_reservations VALUES (?,?,?,?)',[randomUUID(),budget.day,rows,budget.availableRows],{catalog_write_reservations:1,catalog_write_days:2})]);
 }
@@ -213,10 +223,13 @@ export async function importModelC(catalog:D1Database, personal:D1Database, opti
   }
 }
 async function importAttempt(catalog:D1Database, personal:D1Database, options:ImportOptions,metrics:ImportMetrics) {
-  if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==3 ||
+  if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==4 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==2) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
   const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
+  if(options.oneTimeFreeBootstrap!==undefined && typeof options.oneTimeFreeBootstrap!=='boolean')throw Error('INVALID_BOOTSTRAP_AUTHORIZATION');
+  if(options.oneTimeFreeBootstrap && old.head)throw Error('ONE_TIME_BOOTSTRAP_NOT_INITIAL');
+  if(options.preflightOnly && !options.oneTimeFreeBootstrap)throw Error('FREE_BOOTSTRAP_PREFLIGHT_REQUIRES_MODE');
   let startingLedger=old.ledger, previousCommit=old.previous?.observedGitCommit;
   let legacy:Awaited<ReturnType<typeof v1Ledger>>|undefined;
   if (!old.head && options.v1) { legacy=await v1Ledger(options.v1); startingLedger=legacy.ledger; previousCommit=legacy.commit; }
@@ -269,7 +282,14 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   metrics.writeBounds={...catalogEstimate.byPhase,personal:privateBound,reconciliation:pendingReconciliation?reconBound:0,reservation:20};
   metrics.writeUnits=catalogEstimate.byTable;
   metrics.requiredBound=estimated+20; // all aggregated rows, indexes, known trigger effects and reservation itself
-  metrics.reservation=await reserve(catalog,options.budget,metrics.requiredBound);
+  if(options.preflightOnly)return {status:'PREFLIGHT' as const,run,observation,syncRevision,metrics,
+    provenance:{observedCommit:proof.observedGitCommit,manifestDigest:proof.sourceManifestDigest,projectionDigest:proof.projectionInputDigest},
+    budgetDay:options.budget.day,priorLocalReservations:Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?').bind(options.budget.day).first('charged')??0),
+    remoteQuotaStatus:'QUOTA_VERIFICATION_REQUIRED' as const,remoteExecutionAuthorized:false as const};
+  // No remote transport/account meter is enabled. Explicit local-only attestation
+  // is required; a separate read-only quota assessment never authorizes execution.
+  if(options.oneTimeFreeBootstrap && options.executionTarget!=='local-ephemeral')throw Error('QUOTA_VERIFICATION_REQUIRED');
+  metrics.reservation=await reserve(catalog,options.budget,metrics.requiredBound,options.oneTimeFreeBootstrap?proof:undefined);
   metrics.reservedBound=metrics.requiredBound; // only after the daily reservation really committed
   // Detect modifications between proof construction and the first private batch.
   if (await digestRows(await read(personal,personalTables))!==privateDigest) throw Error('PERSONAL_CONTEXT_CHANGED');
