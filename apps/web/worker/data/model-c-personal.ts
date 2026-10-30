@@ -19,6 +19,7 @@ const cursorSchema = z.strictObject({
   personalRevision: z.number().int().positive(),
   catalogRevision: z.number().int().positive(),
   catalogRun: z.string().min(1),
+  personalDigest: z.string().regex(/^[a-f0-9]{64}$/),
   lastId: jobIdSchema,
 });
 type Cursor = z.infer<typeof cursorSchema>;
@@ -74,7 +75,8 @@ async function assertUnchanged(catalog: D1Database, personal: D1Database, c: Con
   const [p,h] = await Promise.all([personalHead(personal,c.ownerId),catalogHead(catalog)]);
   if (p.revision !== c.personal.revision || p.contextDigest !== c.personal.contextDigest ||
     h.syncRevision !== c.catalog.syncRevision || h.run !== c.catalog.run ||
-    h.ledgerDigest !== c.catalog.ledgerDigest) throw new ModelCPersonalReadError('CONTEXT_CHANGED', 409);
+    h.contentRevision !== c.catalog.contentRevision || h.ledgerRevision !== c.catalog.ledgerRevision ||
+    h.observedCommit !== c.catalog.observedCommit || h.ledgerDigest !== c.catalog.ledgerDigest) throw new ModelCPersonalReadError('CONTEXT_CHANGED', 409);
 }
 type RefRow = {
   jobId:string; capturedTitle:string|null; officialUrl:string|null;
@@ -108,7 +110,7 @@ const selectRef = `SELECT ref.job_id AS jobId,ref.captured_title AS capturedTitl
   LEFT JOIN personal_assessment_events a ON a.owner_id=ac.owner_id AND a.id=ac.event_id AND a.job_id=ac.job_id
   LEFT JOIN personal_reconciliation rec ON rec.owner_id=ref.owner_id AND rec.job_id=ref.job_id
   LEFT JOIN personal_catalog_receipts receipt ON receipt.id=rec.receipt_id`;
-type Flags = { knownIdentity:boolean; currentlyVisible:boolean; activeReferences:string[] };
+type Flags = { knownIdentity:boolean; currentlyVisible:boolean; currentFingerprint:string|null; activeReferences:string[] };
 function reconciliation(row: RefRow, c: Context, known: boolean) {
   if (!known) return 'UNRESOLVED_REFERENCE' as const;
   if (row.reconciliationState === 'CONFLICT') return 'CONFLICT' as const;
@@ -127,13 +129,15 @@ async function flags(catalog:D1Database,personal:D1Database,ownerId:string,ids:s
   const placeholders=ids.map(()=>'?').join(',');
   const [known,visible,refs] = await Promise.all([
     catalog.prepare(`SELECT id FROM catalog_vacancy_identity WHERE id IN (${placeholders})`).bind(...ids).all<{id:string}>(),
-    catalog.prepare(`SELECT job_id AS id FROM catalog_visible_vacancies WHERE job_id IN (${placeholders})`).bind(...ids).all<{id:string}>(),
+    catalog.prepare(`SELECT job_id AS id,fingerprint FROM catalog_visible_vacancies WHERE job_id IN (${placeholders})`).bind(...ids).all<{id:string;fingerprint:string|null}>(),
     personal.prepare(`SELECT job_id AS jobId,kind FROM personal_reference_state
       WHERE owner_id=? AND active=1 AND job_id IN (${placeholders}) ORDER BY kind`)
       .bind(ownerId,...ids).all<{jobId:string;kind:string}>(),
   ]);
-  const knownSet = new Set(known.results.map(x=>x.id)), visibleSet = new Set(visible.results.map(x=>x.id));
-  for (const id of ids) result.set(id,{knownIdentity:knownSet.has(id),currentlyVisible:visibleSet.has(id),activeReferences:[]});
+  const knownSet = new Set(known.results.map(x=>x.id));
+  const visibleMap = new Map(visible.results.map(x=>[x.id,x.fingerprint]));
+  for (const id of ids) result.set(id,{knownIdentity:knownSet.has(id),currentlyVisible:visibleMap.has(id),
+    currentFingerprint:visibleMap.get(id)??null,activeReferences:[]});
   for (const r of refs.results) result.get(r.jobId)?.activeReferences.push(r.kind);
   return result;
 }
@@ -146,7 +150,10 @@ function record(row:RefRow,c:Context,f:Flags) {
     reasonSummary:row.reasonSummary,
     assessment:row.assessmentMethod ? {method:row.assessmentMethod,fingerprint:row.assessmentFingerprint,
       fitScore:row.fitScore,reportable:row.reportable===null?null:row.reportable===1,
-      summary:row.assessmentSummary} : null,
+      summary:row.assessmentSummary,
+      freshness: !f.currentlyVisible || !f.currentFingerprint || !row.assessmentFingerprint
+        ? 'UNVERIFIED' as const
+        : row.assessmentFingerprint===f.currentFingerprint ? 'CURRENT' as const : 'STALE' as const} : null,
     activeReferences:f.activeReferences,knownIdentity:f.knownIdentity,
     currentlyVisible:f.currentlyVisible,reconciliation:reconciliation(row,c,f.knownIdentity),
   };
@@ -174,7 +181,8 @@ export async function listModelCPersonalJobs(catalog:D1Database,personal:D1Datab
   const cursor = query.cursor ? decodeCursor(query.cursor) : null;
   if(cursor && cursor.ownerDigest !== c.ownerDigest)
     throw new ModelCPersonalReadError('CURSOR_OWNER_MISMATCH',403);
-  if(cursor && (cursor.personalRevision !== c.personal.revision || cursor.catalogRevision !== c.catalog.syncRevision || cursor.catalogRun !== c.catalog.run))
+  if(cursor && (cursor.personalRevision !== c.personal.revision || cursor.personalDigest !== c.personal.contextDigest ||
+    cursor.catalogRevision !== c.catalog.syncRevision || cursor.catalogRun !== c.catalog.run))
     throw new ModelCPersonalReadError('CONTEXT_CHANGED',409);
   const total=await personal.prepare('SELECT count(*) AS n FROM personal_job_refs WHERE owner_id=?')
     .bind(c.ownerId).first<number>('n');
@@ -184,10 +192,15 @@ export async function listModelCPersonalJobs(catalog:D1Database,personal:D1Datab
   const enriched=await flags(catalog,personal,c.ownerId,visible.map(r=>r.jobId));
   await assertUnchanged(catalog,personal,c);
   const last=visible.at(-1);
+  const items=visible.map(r=>{
+    const state=enriched.get(r.jobId);
+    if (!state) throw new ModelCPersonalReadError('REFERENCE_STATE_UNAVAILABLE',503);
+    return record(r,c,state);
+  });
   return {...publicContext(c),total:total??0,
-    items:visible.map(r=>record(r,c,enriched.get(r.jobId)!)),
+    items,
     nextCursor:rows.results.length>query.limit&&last?encodeCursor({
-      ownerDigest:c.ownerDigest,personalRevision:c.personal.revision,
+      ownerDigest:c.ownerDigest,personalRevision:c.personal.revision,personalDigest:c.personal.contextDigest,
       catalogRevision:c.catalog.syncRevision,catalogRun:c.catalog.run,lastId:last.jobId}):null,
   };
 }
@@ -202,17 +215,19 @@ export async function getModelCPersonalJob(catalog:D1Database,personal:D1Databas
   }
   const enriched=await flags(catalog,personal,c.ownerId,[id]);
   const events=await personal.prepare(`SELECT id,decision,rejection_reason AS rejectionReason,
-    reason_summary AS reasonSummary,decided_at AS decidedAt,
-    source_commit AS sourceCommit,source_path AS sourcePath,source_sha256 AS sourceSha256
+    reason_summary AS reasonSummary,fingerprint,decided_at AS decidedAt,
+    result_sha256 AS resultSha256,source_commit AS sourceCommit,source_path AS sourcePath,source_sha256 AS sourceSha256
     FROM personal_decision_events WHERE owner_id=? AND job_id=?
     ORDER BY decided_at DESC,id DESC LIMIT 51`).bind(c.ownerId,id).all();
   const assessments=await personal.prepare(`SELECT id,method,fingerprint,decision,fit_score AS fitScore,
     reportable,summary,evidence_state AS evidenceState,analyzed_at AS analyzedAt,
-    source_commit AS sourceCommit,source_path AS sourcePath,source_sha256 AS sourceSha256
+    result_sha256 AS resultSha256,source_commit AS sourceCommit,source_path AS sourcePath,source_sha256 AS sourceSha256
     FROM personal_assessment_events WHERE owner_id=? AND job_id=?
     ORDER BY analyzed_at DESC,id DESC LIMIT 51`).bind(c.ownerId,id).all<Record<string,unknown>>();
   await assertUnchanged(catalog,personal,c);
-  return {...publicContext(c),job:record(row,c,enriched.get(id)!),
+  const state=enriched.get(id);
+  if (!state) throw new ModelCPersonalReadError('REFERENCE_STATE_UNAVAILABLE',503);
+  return {...publicContext(c),job:record(row,c,state),
     decisionEvents:events.results.slice(0,50),
     decisionEventsTruncated:events.results.length>50,
     assessmentEvents:assessments.results.slice(0,50).map(r=>({
