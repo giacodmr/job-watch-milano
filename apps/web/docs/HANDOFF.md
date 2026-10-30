@@ -1,3 +1,7 @@
+# Stato corrente — Model C / PR 2
+
+Baseline main `5abbdf67cea4d4004b0cdfa066ef292b7e499682`, squash della #31 verificata MERGED. Schemi CATALOG/PERSONAL separati e inattivi; test e backup/restore soltanto sintetici/effimeri. V1 schema 5 e binding/reader/importer invariati. [Garanzie, limiti PR 3 e rollback](MODEL_C_SCHEMA.md), [misure di schema](MODEL_C_SCHEMA_METRICS.json). Nessun bootstrap dati reale o costo sync Model C misurato. Seguono gli handoff storici.
+
 # Stato corrente — Modello C / PR 1
 
 #25 verificata MERGED tramite squash `004782c1d5b53c9c6abb0399c8368f28831104c7`, baseline del branch `codex/model-c-selection-contracts`. Contratti e prove in [MODEL_C_SELECTION_CONTRACT.md](MODEL_C_SELECTION_CONTRACT.md). Schema 5, protocollo v1, importer, reader e UI invariati; nessun D1 persistente/cloud toccato. Il prossimo passo consentito, dopo CI verde, è lo schema locale separato della PR 2. Seguono i resoconti storici, i cui SHA non sono la baseline attuale.

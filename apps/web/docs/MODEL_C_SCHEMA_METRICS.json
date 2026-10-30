@@ -1,0 +1,27 @@
+{
+  "recordedOn": "2026-10-30",
+  "baseline": "5abbdf67cea4d4004b0cdfa066ef292b7e499682",
+  "runtime": "Miniflare 5.20261023.3-beta / Wrangler 4.156.0 / Node 24",
+  "scope": "Only empty-schema setup and synthetic restore; D1 meta.rows_written",
+  "ephemeralOnly": true,
+  "productionDataUsed": false,
+  "fixtureSeedIncluded": false,
+  "readsIncluded": false,
+  "schemaSetup": {
+    "catalog": { "migrations": 2, "rowsWritten": 152, "replayRowsWritten": 0 },
+    "personal": { "migrations": 1, "rowsWritten": 74, "replayRowsWritten": 0 },
+    "v1SyntheticControl": { "migrations": 5, "rowsWritten": 154, "replayRowsWritten": 0 }
+  },
+  "restore": {
+    "catalog": { "backupRows": 25, "schemaRowsWritten": 152, "restoreBatchRowsWritten": 122 },
+    "personal": { "backupRows": 12, "schemaRowsWritten": 74, "restoreBatchRowsWritten": 56 },
+    "v1SyntheticControl": { "backupRows": 14, "schemaRowsWritten": 154, "restoreBatchRowsWritten": 53 }
+  },
+  "restoreBatchIncludes": "Trigger DDL, removal of initial schema marker/journal seed, bound row restoration; verified FK, integrity and content checks",
+  "backupDirectoryMode": "0700",
+  "backupFileMode": "0600",
+  "backupsRemoved": true,
+  "modelCBootstrapMeasured": false,
+  "modelCDailySyncMeasured": false,
+  "catalogCompatibilityChange": { "previousHead": "a24df6009501f19277c8db09c85f28213d23da4b", "previousSchemaRowsWritten": 128, "schemaRowsWrittenDelta": 24, "migration": "0002_v1_contract_compatibility.sql" }
+}

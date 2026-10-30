@@ -108,3 +108,7 @@ Interattivo: Cloudflare Access + JWT validato + allowlist utente. Servizio: Acce
 ## Contratto selettivo affiancato (Modello C / PR 1)
 
 [MODEL_C_SELECTION_CONTRACT.md](MODEL_C_SELECTION_CONTRACT.md) definisce selezione, ledger completo, eventi personali append-only, digest dati/codice e osservazione/origine/revisione. È un contratto separato, non un cambio del manifest v1 o una sync attiva. Nessuna migrazione o modifica al reader è introdotta.
+
+## Model C / PR 2 — strutture, senza attivazione
+
+[MODEL_C_SCHEMA.md](MODEL_C_SCHEMA.md) definisce due schemi fisici autonomi, ledger e riferimenti personali separati, CAS e limiti della riconciliazione. Nessuna FK cross-DB o transazione distribuita presunta. Il protocollo/reader/importer v1 rimane invariato; schema e binding attivi restano quelli v1.
