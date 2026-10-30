@@ -5,12 +5,12 @@ import { resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { applySchema, captureSynthetic } from '../tools/model-c-schema';
-import { importModelC, ModelCImportError } from '../tools/model-c-importer';
+import { importModelC, ModelCImportError, inspectCatalogPlan } from '../tools/model-c-importer';
 import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
 import { importSnapshot } from '../worker/data/importer';
 import { selectModelC } from '../shared/model-c-selection';
-import { canonical } from '../shared/canonical';
+import { canonical, sha256 } from '../shared/canonical';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
 const dirs:string[]=[], measurements:Record<string,unknown>={}, preflights:Record<string,unknown>={};
@@ -52,7 +52,7 @@ afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recu
 describe('verified incremental importer on ephemeral D1',()=>{
   it('bootstraps, replays with zero writes, and observes a new identical commit without a content revision',async()=>{
     const f=await fixture();const a=await importModelC(f.c,f.p,f.options);measurements.bootstrap=a.metrics;
-    expect(a.status).toBe('PUBLISHED');expect(await count(f.c,'catalog_vacancy_identity')).toBe(2);expect(await count(f.c,'catalog_vacancy_current')).toBe(2);
+    expect(a.status).toBe('PUBLISHED');expect(a.metrics.staging+a.metrics.promotion+a.metrics.checkpoint).toBe(a.metrics.publication);expect(await count(f.c,'catalog_vacancy_identity')).toBe(2);expect(await count(f.c,'catalog_vacancy_current')).toBe(2);
     const replay=await importModelC(f.c,f.p,f.options);measurements.replay=replay.metrics;expect(replay.metrics.total).toBe(0);expect(replay.status).toBe('REPLAY');
     const current=(await f.c.prepare('SELECT * FROM catalog_vacancy_current').all()).results;
     f.options.source.commit=commit(f.repo);const b=await importModelC(f.c,f.p,f.options);measurements.unchangedObservation=b.metrics;
@@ -241,21 +241,62 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect((await captureSynthetic(f.c,'catalog')).sha256).toBe(beforeC);expect((await captureSynthetic(f.p,'personal')).sha256).toBe(beforeP);
     expect(await count(f.c,'catalog_vacancy_current')).toBe(1);
   });
-  it('preflights the 5454-identity / 5474-mapping baseline without publishing any fragment',async()=>{
+  it('attempts the complete baseline bootstrap and refuses its verified write bound without partial publication',async()=>{
     const f=await fixture(5454,'baseline'), verified=await verifyGitProjection(f.options.source,bootstrap);
     const selected=await selectModelC(verified.bundle,bootstrap);
     expect(selected.ledger.identities).toHaveLength(5454);expect(selected.ledger.mappings).toHaveLength(5474);expect(selected.catalog).toHaveLength(151);
     let failure:ModelCImportError|undefined;
     try {await importModelC(f.c,f.p,{...f.options,source:{...f.options.source,bundle:verified.bundle},budget:{...f.options.budget,availableRows:60000,extendedAuthorized:true}});}
     catch(error) {if(!(error instanceof ModelCImportError))throw error;failure=error;}
-    expect(failure?.message).toBe('ATOMIC_PUBLICATION_LIMIT');
-    expect(failure!.metrics.publicationStatements).toBe(22025);expect(failure!.metrics.publicationStatements).toBeGreaterThan(8000);
+    expect(failure?.message).toBe('WRITE_BUDGET_INSUFFICIENT');
+    expect(failure!.metrics.publicationStatements).toBeLessThan(8000);expect(failure!.metrics.publicationBytes).toBeLessThan(8*1024*1024);
+    expect(failure!.metrics.maxStatementParameters).toBeLessThanOrEqual(80);expect(failure!.metrics.maxStatementSqlBytes).toBeLessThanOrEqual(64*1024);
+    expect(failure!.metrics.requiredBound).toBeGreaterThan(60000);
     expect(failure!.metrics.total).toBe(0);expect(failure!.metrics.reservedBound).toBe(0);
-    for(const t of ['catalog_head','catalog_runs','catalog_write_reservations','catalog_vacancy_identity','catalog_stage_vacancies'])expect(await count(f.c,t)).toBe(0);
+    expect(failure!.metrics.writeUnits.catalog_vacancy_identity!.rows).toBe(5454);
+    expect(failure!.metrics.writeUnits.catalog_aliases!.rows).toBe(5474);
+    expect(failure!.metrics.writeUnits.catalog_stage_vacancies!.rows).toBe(5454*2); // stage plus cleanup
+    expect(failure!.metrics.writeUnits.catalog_stage_aliases!.rows).toBe(5474*2);
+    expect(Object.values(failure!.metrics.writeBounds).reduce((n,r)=>n+r,0)).toBe(failure!.metrics.requiredBound);
+    for(const t of ['catalog_head','catalog_runs','catalog_write_reservations','catalog_vacancy_identity','catalog_aliases','catalog_stage_vacancies','catalog_ledger_checkpoints','catalog_audit'])expect(await count(f.c,t)).toBe(0);
     expect(await count(f.p,'personal_owners')).toBe(0);
-    preflights.baseline={syntheticOnly:true,identities:5454,mappings:5474,currentVacancies:151,publicationStatements:failure!.metrics.publicationStatements,
-      serializedPlanBytes:failure!.metrics.publicationBytes,limits:{statements:8000,serializedPlanBytes:8*1024*1024},reason:failure!.message,d1Writes:0,
-      scope:'One synthetic company/source; structural capacity preflight, not production cardinalities or write-cost measurement'};
+    preflights.baseline={syntheticOnly:true,identities:5454,mappings:5474,currentVacancies:151,before:{statements:22025,serializedPlanBytes:6986391},
+      metrics:failure!.metrics,limits:{statements:8000,serializedPlanBytes:8*1024*1024,parametersPerStatement:80,sqlBytesPerStatement:64*1024,ordinaryWrites:30000,extendedWrites:60000},
+      reason:failure!.message,requiredWriteBound:failure!.metrics.requiredBound,budgetReserved:0,d1Writes:0,
+      scope:'Complete verified baseline plan; one synthetic company/source. No real bootstrap cost claim: write admission refused before mutation'};
+  },60000);
+  it('publishes a 3000-identity bootstrap within the authorized budget and verifies replay, delta and full rollback',async()=>{
+    const f=await fixture(3000,'baseline');
+    const options={...f.options,budget:{...f.options.budget,availableRows:60000,extendedAuthorized:true}};
+    const verified=await verifyGitProjection(f.options.source,bootstrap), selected=await selectModelC(verified.bundle,bootstrap);
+    const first=await importModelC(f.c,f.p,options);measurements.bootstrap3000=first.metrics;
+    expect(first.status).toBe('PUBLISHED');expect(first.metrics.reservedBound).toBeLessThanOrEqual(60000);
+    expect(first.metrics.total).toBeLessThanOrEqual(first.metrics.reservedBound);
+    expect(first.metrics.staging+first.metrics.promotion+first.metrics.checkpoint).toBe(first.metrics.publication);
+    const ids=(await f.c.prepare('SELECT id AS jobId,company_id AS companyId,origin_job_key AS originJobKey FROM catalog_vacancy_identity ORDER BY id').all()).results;
+    const mappings=(await f.c.prepare('SELECT alias_key AS key,job_id AS jobId FROM catalog_aliases ORDER BY alias_key').all()).results;
+    expect(await sha256(canonical({identities:ids,mappings}))).toBe(selected.ledgerDigest);
+    expect(ids).toHaveLength(3000);expect(mappings).toHaveLength(3020);
+    expect((await f.c.prepare('SELECT job_id AS jobId,kind FROM catalog_vacancy_current ORDER BY job_id').all()).results).toEqual(selected.catalog);
+    expect(await count(f.c,'catalog_vacancy_current')).toBe(151);
+    expect(await f.c.prepare('SELECT state FROM catalog_runs').first('state')).toBe('PUBLISHED');
+    expect(await f.c.prepare('SELECT sync_revision,content_revision,ledger_revision FROM catalog_head').first()).toEqual({sync_revision:1,content_revision:1,ledger_revision:1});
+    expect(await f.c.prepare('SELECT ledger_digest,identity_count,mapping_count FROM catalog_ledger_checkpoints').first()).toEqual({ledger_digest:selected.ledgerDigest,identity_count:3000,mapping_count:3020});
+    expect(await count(f.c,'catalog_audit')).toBe(1);expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);expect(await count(f.c,'catalog_stage_aliases')).toBe(0);
+    expect((await f.c.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+    const replay=await importModelC(f.c,f.p,options);measurements.replay3000=replay.metrics;
+    expect(replay.status).toBe('REPLAY');expect(replay.metrics.total).toBe(0);
+    f.options.source.commit=await inventory(f.repo,jobs=>{jobs[0]!.title='Strategy Associate';});options.source=f.options.source;
+    const tables=['catalog_head','catalog_runs','catalog_origins','catalog_run_proofs','catalog_content_revisions','catalog_ledger_checkpoints','catalog_vacancy_identity','catalog_aliases','catalog_vacancy_current','catalog_audit'];
+    const state=async()=>sha256(canonical((await f.c.batch(tables.map(t=>f.c.prepare('SELECT * FROM '+t)))).map(r=>r.results)));
+    const before=await state();
+    await f.c.prepare("CREATE TRIGGER synthetic_bulk_failure BEFORE UPDATE ON catalog_head BEGIN SELECT RAISE(ABORT,'synthetic_bulk_failure'); END").run();
+    await expect(importModelC(f.c,f.p,options)).rejects.toThrow('MODEL_C_IMPORT_FAILED');
+    expect(await state()).toBe(before);expect(await count(f.c,'catalog_audit')).toBe(1);expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);
+    await f.c.prepare('DROP TRIGGER synthetic_bulk_failure').run();
+    const delta=await importModelC(f.c,f.p,options);measurements.delta3000=delta.metrics;
+    expect(delta.syncRevision).toBe(2);expect(await count(f.c,'catalog_vacancy_identity')).toBe(3000);expect(await count(f.c,'catalog_aliases')).toBe(3020);
+    expect(await f.c.prepare('SELECT charged FROM catalog_write_days').first('charged')).toBeLessThanOrEqual(60000);
   },60000);
   it('refuses unconfirmed identities from a v1 staging import',async()=>{
     const f=await fixture(1), v1=await runtime.getD1Database('DB'+seq++);await applySchema(v1,'v1');
@@ -308,10 +349,20 @@ describe('verified incremental importer on ephemeral D1',()=>{
     await expect(importModelC(g.c,g.p,g.options)).rejects.toThrow('UNSUPPORTED_SOURCE_MODE');
     expect(await count(g.c,'catalog_write_reservations')).toBe(0);
   });
-  it('rejects an oversized atomic publication before staging rather than splitting the current delta',async()=>{
-    const f=await fixture(1600);
-    await expect(importModelC(f.c,f.p,{...f.options,budget:{...f.options.budget,availableRows:60000,extendedAuthorized:true}})).rejects.toThrow('ATOMIC_PUBLICATION_LIMIT');
-    expect(await count(f.c,'catalog_head')).toBe(0);expect(await count(f.c,'catalog_runs')).toBe(0);expect(await count(f.c,'catalog_write_reservations')).toBe(0);
+  it('retains approved statement, parameter and 8 MiB admission limits after compaction',()=>{
+    const small={sql:'SELECT ?',values:['x'.repeat(18000)],writes:{}};
+    expect(()=>inspectCatalogPlan(Array.from({length:512},()=>small))).toThrow('ATOMIC_PUBLICATION_LIMIT');
+    expect(()=>inspectCatalogPlan(Array.from({length:8001},()=>({sql:'SELECT 1',values:[],writes:{}})))).toThrow('ATOMIC_PUBLICATION_LIMIT');
+    expect(()=>inspectCatalogPlan([{sql:'SELECT 1 /*'+'x'.repeat(65536)+'*/',values:[],writes:{}}])).toThrow('STATEMENT_LIMIT');
+    expect(()=>inspectCatalogPlan([{sql:'SELECT '+Array(81).fill('?').join('+'),values:Array(81).fill(1),writes:{}}])).toThrow('STATEMENT_LIMIT');
+  });
+  it('rolls back missing rows from a multi-row stage insert, not just missing chunk markers',async()=>{
+    const f=await fixture(5);
+    await f.c.prepare("CREATE TRIGGER synthetic_missing_alias BEFORE INSERT ON catalog_stage_aliases WHEN NEW.alias_key='Amazon::123457' BEGIN SELECT RAISE(IGNORE); END").run();
+    await expect(importModelC(f.c,f.p,f.options)).rejects.toThrow('IMPORT_ASSERTION_FAILED');
+    for(const t of ['catalog_head','catalog_runs','catalog_vacancy_identity','catalog_aliases','catalog_audit','catalog_stage_aliases'])expect(await count(f.c,t)).toBe(0);
+    await f.c.prepare('DROP TRIGGER synthetic_missing_alias').run();
+    await importModelC(f.c,f.p,f.options);expect(await count(f.c,'catalog_vacancy_identity')).toBe(5);expect(await count(f.c,'catalog_aliases')).toBe(5);
   });
   it('invalidates projection input on a code-only commit without manufacturing content changes',async()=>{
     const f=await fixture(1);const first=await importModelC(f.c,f.p,f.options);
