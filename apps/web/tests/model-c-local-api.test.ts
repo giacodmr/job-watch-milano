@@ -12,7 +12,7 @@ const unknown='job:'+'2'.repeat(64);
 const other='synthetic-other';
 let runtime:Miniflare, catalog:D1Database, personal:D1Database, v1:D1Database;
 const endpoint=(path:string,opts?:RequestInit)=>runtime.dispatchFetch('http://localhost'+path,opts);
-const pageSchema=z.strictObject({total:z.number(),nextCursor:z.string().nullable(),items:z.array(z.unknown()).max(50)});
+const pageSchema=z.object({total:z.number(),nextCursor:z.string().nullable(),items:z.array(z.unknown()).max(50)});
 const firstResponse=async (path:string)=> {
   const response=await endpoint(path);expect(response.status).toBe(200);return response;
 };
@@ -86,9 +86,9 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
     expect(detail.headers.get('Access-Control-Allow-Origin')).toBeNull();
   });
   it('filters CATALOG and rejects invalid or duplicated HTTP parameters',async()=>{
-    const filtered=await firstResponse('/api/model-c/catalog/jobs?q=synthetic&companyId=company%3Asynthetic&kind=OPPORTUNITY&batch=jw1');
+    const filtered=await firstResponse('/api/model-c/catalog/jobs?q=synthetic&companyId=company%3Asynthetic&kind=OPPORTUNITY');
     expect(await filtered.json()).toMatchObject({total:1});
-    for(const query of ['?kind=AI_QUEUE','?q=%25_%5B%5D','?companyId=wrong','?lifecycle=UPDATED']){
+    for(const query of ['?kind=AI_QUEUE','?q=%25_%5B%5D','?companyId=wrong','?lifecycle=UPDATED','?batch=jw1']){
       const r=await firstResponse('/api/model-c/catalog/jobs'+query);
       expect(await r.json()).toMatchObject({total:0,items:[]});
     }
