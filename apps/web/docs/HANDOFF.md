@@ -46,3 +46,9 @@ Questa PR non modifica né avvia il bridge. `request_semantic_review` è soltant
 ## Resoconto da lasciare a ogni passaggio
 
 Repo, branch, SHA base e head verificati, URL PR, scope eseguito, file cambiati, comandi test con risultato, stato migrazioni, assenza/presenza di dati importati, eventuali operazioni remote autorizzate ed eseguite, rischi e prossimo incarico concreto. Nessun segreto o contenuto sensibile. Non dichiarare test non eseguiti, CI verde senza verificarla o azioni complete prima dell'ACK.
+
+## Model C PR 3 — inactive incremental importer
+
+Base `254c22965ce83da17d0d8565796a3b757fbc3861`, branch `codex/model-c-incremental-importer`. Node-only trusted Git replay/proof adapter and incremental importer, single atomic staging/publication batch with CAS, permanent ledger, minimal PERSONAL append/reconciliation, conservative shared daily reservations including cleanup and failure/retry costs. Only additive separate Model C migrations; active V1, UI, engine and workflows unchanged.
+
+Implementation, recovery semantics, exact measurement scope and remaining capacity/cloud gates: [MODEL_C_IMPORTER.md](MODEL_C_IMPORTER.md). Reproducible synthetic-only harness: `node tools/model-c-import-lab.mjs` from `apps/web`; no database/input arguments accepted. Do not infer production readiness or authorize cutover from local test results. Final PR records the reviewed head and actual CI outcome.

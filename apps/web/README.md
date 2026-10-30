@@ -81,3 +81,5 @@ La selezione current-state è definita e verificabile separatamente dalla sync v
 ## Modello C — schema locale inattivo (PR 2)
 
 Migrazioni fisicamente separate in `model-c/catalog/migrations/` e `model-c/personal/migrations/`; nessun nuovo binding o cambiamento a v1. `node tools/model-c-lab.mjs` verifica schemi e backup/restore usando soltanto D1 effimeri sintetici. [Schema, misure e rollback](docs/MODEL_C_SCHEMA.md).
+
+Model C PR 3 remains inactive: [incremental importer, atomic publication, budget and recovery](docs/MODEL_C_IMPORTER.md). `node tools/model-c-import-lab.mjs` runs only synthetic imports on disposable D1; it does not target the V1 workspace database or the cloud.

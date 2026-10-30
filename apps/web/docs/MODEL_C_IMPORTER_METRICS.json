@@ -1,0 +1,159 @@
+{
+  "syntheticOnly": true,
+  "measurement": "actual D1 meta.rows_written; schema setup and fixture seed excluded",
+  "scenarios": {
+    "bootstrap": {
+      "reservation": 5,
+      "personal": 8,
+      "publication": 76,
+      "reconciliation": 4,
+      "cleanup": 7,
+      "total": 100,
+      "reservedBound": 157,
+      "publicationStatements": 28,
+      "publicationBytes": 12804,
+      "publicationMs": 111.22775000000001
+    },
+    "replay": {
+      "reservation": 0,
+      "personal": 0,
+      "publication": 0,
+      "reconciliation": 0,
+      "cleanup": 0,
+      "total": 0,
+      "reservedBound": 0,
+      "publicationStatements": 0,
+      "publicationBytes": 2,
+      "publicationMs": 0
+    },
+    "unchangedObservation": {
+      "reservation": 3,
+      "personal": 0,
+      "publication": 17,
+      "reconciliation": 4,
+      "cleanup": 1,
+      "total": 25,
+      "reservedBound": 63,
+      "publicationStatements": 7,
+      "publicationBytes": 2390,
+      "publicationMs": 17.613124999999854
+    },
+    "minimalDelta": {
+      "reservation": 3,
+      "personal": 0,
+      "publication": 27,
+      "reconciliation": 4,
+      "cleanup": 2,
+      "total": 36,
+      "reservedBound": 81,
+      "publicationStatements": 11,
+      "publicationBytes": 5269,
+      "publicationMs": 28.756917000000612
+    },
+    "bootstrap120": {
+      "reservation": 5,
+      "personal": 8,
+      "publication": 1964,
+      "reconciliation": 4,
+      "cleanup": 243,
+      "total": 2224,
+      "reservedBound": 3107,
+      "publicationStatements": 618,
+      "publicationBytes": 352302,
+      "publicationMs": 1306.3771669999987
+    },
+    "broadDelta120": {
+      "reservation": 3,
+      "personal": 0,
+      "publication": 741,
+      "reconciliation": 4,
+      "cleanup": 121,
+      "total": 869,
+      "reservedBound": 1747,
+      "publicationStatements": 249,
+      "publicationBytes": 253985,
+      "publicationMs": 490.7360829999998
+    },
+    "newAlias": {
+      "reservation": 3,
+      "personal": 0,
+      "publication": 30,
+      "reconciliation": 4,
+      "cleanup": 3,
+      "total": 40,
+      "reservedBound": 81,
+      "publicationStatements": 13,
+      "publicationBytes": 4435,
+      "publicationMs": 36.67516700000124
+    },
+    "removal": {
+      "reservation": 3,
+      "personal": 0,
+      "publication": 25,
+      "reconciliation": 4,
+      "cleanup": 2,
+      "total": 34,
+      "reservedBound": 77,
+      "publicationStatements": 11,
+      "publicationBytes": 4049,
+      "publicationMs": 23.69829199999731
+    },
+    "personalReference": {
+      "reservation": 3,
+      "personal": 4,
+      "publication": 27,
+      "reconciliation": 5,
+      "cleanup": 2,
+      "total": 41,
+      "reservedBound": 93,
+      "publicationStatements": 11,
+      "publicationBytes": 5270,
+      "publicationMs": 40.80437499999971
+    },
+    "cleanupRecovery": {
+      "reservation": 3,
+      "personal": 0,
+      "publication": 0,
+      "reconciliation": 0,
+      "cleanup": 5,
+      "total": 8,
+      "reservedBound": 31,
+      "publicationStatements": 0,
+      "publicationBytes": 2,
+      "publicationMs": 0.005125000003317837
+    },
+    "v1Migration": {
+      "reservation": 5,
+      "personal": 16,
+      "publication": 56,
+      "reconciliation": 5,
+      "cleanup": 5,
+      "total": 87,
+      "reservedBound": 144,
+      "publicationStatements": 22,
+      "publicationBytes": 8282,
+      "publicationMs": 36.93149999999878
+    }
+  },
+  "baselineCommit": "254c22965ce83da17d0d8565796a3b757fbc3861",
+  "node": "24.15.0",
+  "python": "3.14.2",
+  "lockfileSha256": "83334cab634ed586078b639ebb5fa779b0298ad51c353e84f856437199d3e7e1",
+  "vitestTests": 21,
+  "schemaAndFixtureSeedExcluded": true,
+  "actualFailedBatchWrites": "Unavailable: conservative reservation remains fully charged",
+  "dailyLimits": {
+    "ordinary": 30000,
+    "extendedOnlyWhenAuthorized": 60000
+  },
+  "atomicLocalLimits": {
+    "statements": 8000,
+    "serializedPlanBytes": 8388608
+  },
+  "cardinalities": {
+    "bootstrap": 2,
+    "bootstrap120": 120,
+    "minimalDelta": "1 of 2 vacancies changed",
+    "broadDelta120": "120 of 120 vacancies changed"
+  }
+}
