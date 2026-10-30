@@ -1,4 +1,8 @@
 import {readFile,readdir} from 'node:fs/promises';
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {CandidatureTable} from '../src/Candidature';
+import {personalPageSchema} from '../src/model-c-personal-client';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {beforeAll,afterAll,describe,expect,it} from 'vitest';
@@ -130,6 +134,24 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
     expect(await detail.json()).toMatchObject({job:{jobId,decision:'NOT_INTERESTED'},
       decisionEvents:[{decision:'NOT_INTERESTED',resultSha256:hash}],
       assessmentEvents:[{method:'chatgpt_semantic_full_jd',resultSha256:hash}]});
+  });
+  it('passes real HTTP PERSONAL payloads through browser Zod contracts into the actual React table',async()=>{
+    const response=await endpoint('/api/model-c/personal/jobs?view=dismissed&q=archived&reference=DISMISSED');
+    expect(response.status).toBe(200);
+    const page=personalPageSchema.parse(await response.json());
+    expect(page).toMatchObject({total:1,items:[{jobId,decision:'NOT_INTERESTED',
+      catalog:{company:'Synthetic Company',title:'Synthetic Analyst'}}]});
+    const markup=renderToStaticMarkup(createElement(CandidatureTable,{items:page.items}));
+    expect(markup).toContain('Synthetic Analyst');
+    expect(markup).toContain('Synthetic Company');
+    expect(markup).toContain('Non interessato');
+    expect(markup).not.toContain('Owner B private title');
+    for(const view of ['applied','to_apply']){
+      const result=personalPageSchema.parse(await (await endpoint('/api/model-c/personal/jobs?view='+view)).json());
+      expect(result.total).toBe(0);
+    }
+    const invalid=await endpoint('/api/model-c/personal/jobs?view=arbitrary');
+    expect(invalid.status).toBe(400);
   });
   it('does not allow clients to choose an owner and refuses unauthorized runtime access',async()=>{
     for(const header of ['x-owner-id','x-user-id','x-job-watch-owner','x-actor-ref']){
