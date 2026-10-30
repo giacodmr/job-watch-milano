@@ -7,7 +7,6 @@ import {
 } from './model-c-personal-client';
 import type {PersonalRow,PersonalPage,PersonalSummary,PersonalDetail,PersonalView,Decision,PersonalFilters} from './model-c-personal-client';
 import {WorkspaceShell,CompanyAvatar,FitValue,JWIcon} from './components/CandidaturePrimitives';
-import './candidature.css';
 
 const views:{key:PersonalView;title:string;description:string}[]=[
   {key:'all',title:'Tutte',description:'Tutti i riferimenti personali'},
