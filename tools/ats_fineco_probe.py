@@ -46,6 +46,10 @@ def get_js(s,src):
  matches=snippets(r.text,["jobOffer","jobOpen","vacanc","career","recruit","jobPosition","posizioniAperte","opportunit","/api/","graphql","/wp-json/","application","annunc","Lavora con noi","jobList","searchPositions","jobIds","getJobs","jobs?","career/","position/"],limit=27)
  urls=set(re.findall(r'https?://[a-z0-9.\-_/?:&=%]+',r.text,re.I))
  candidates=[v for v in urls if any(t in v.lower() for t in ["api","job","career","recruit","position","fineco"])]
+ config_matches=[]
+ for m in list(re.finditer(r"(?<![A-Za-z0-9])3473\s*[,=:]",r.text))[:6]:
+  config_matches.append(re.sub(r"\\s+"," ",r.text[max(0,m.start()-220):m.end()+1250])[:1450])
+ if config_matches:print("FINECO_CONFIG "+json.dumps({"src":src,"matches":config_matches},ensure_ascii=False)[:9500])
  print("FINECO_JS "+json.dumps({"src":src,"status":r.status_code,"len":len(r.content),
      "snips":matches,"urls":sorted(candidates)[:25]},ensure_ascii=False)[:10000])
 def main():
