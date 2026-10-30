@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const schemaVersion = 2;
+export const schemaVersion = 5;
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const utc = z.iso.datetime({ precision: 0 });
 const identifier = z
@@ -60,7 +60,7 @@ export const healthSchema = z.strictObject({
   schemaVersion: z.number().int().nonnegative().nullable(),
   expectedSchemaVersion: z.literal(schemaVersion),
   productionAccess: z.literal(false),
-  synchronization: z.literal('disabled'),
+  synchronization: z.literal('local-read-only'),
   checkedAt: utc,
 });
 export type Health = z.infer<typeof healthSchema>;

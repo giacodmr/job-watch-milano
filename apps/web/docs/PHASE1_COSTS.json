@@ -1,0 +1,131 @@
+{
+  "recordedOn": "2026-10-30",
+  "main": "0b2984a669c4d0dae0b3b666945855c6cda86627",
+  "pr25Baseline": "b84d7786e977602830f0c88b7afe5b47dc2da16d",
+  "schemaVersion": 5,
+  "runtime": {
+    "node": "24.15.0",
+    "miniflare": "5.20261023.3-beta",
+    "wrangler": "4.156.0"
+  },
+  "scope": {
+    "localOnly": true,
+    "ephemeralDatabase": true,
+    "migrationsIncluded": false,
+    "applicationReadsIncluded": false,
+    "indexesIncludedInWrittenRows": true,
+    "cpu": "Node process only, excludes workerd child CPU; not remote Worker CPU",
+    "phaseTimings": "Indicative local timings; not capacity guarantees"
+  },
+  "scenarios": [
+    {
+      "phase": "initial",
+      "commit": "84593e95d60dd4634a3d7ff5f493c13f7fdb872d",
+      "revision": 1,
+      "replayed": false,
+      "rowsRead": 39555,
+      "rowsWritten": 113175,
+      "databaseBytes": 20783104,
+      "chunksApplied": 1761,
+      "chunksReplayed": 0,
+      "elapsedIncludingValidationMs": 87712,
+      "processCpuMs": 37254.599,
+      "exactUnchangedVersionWrites": 0,
+      "provenanceOnlyVersionWrites": 0
+    },
+    {
+      "phase": "replay-initial",
+      "commit": "84593e95d60dd4634a3d7ff5f493c13f7fdb872d",
+      "revision": 1,
+      "replayed": true,
+      "rowsRead": 2,
+      "rowsWritten": 0,
+      "databaseBytes": 20783104,
+      "chunksApplied": 0,
+      "chunksReplayed": 0,
+      "elapsedIncludingValidationMs": 223,
+      "processCpuMs": 254.693,
+      "exactUnchangedVersionWrites": 0,
+      "provenanceOnlyVersionWrites": 0
+    },
+    {
+      "phase": "new-commit",
+      "commit": "b3540152d55b455dd485b167978e92a914a85fc7",
+      "revision": 2,
+      "replayed": false,
+      "rowsRead": 46946,
+      "rowsWritten": 62728,
+      "databaseBytes": 34947072,
+      "chunksApplied": 1765,
+      "chunksReplayed": 0,
+      "elapsedIncludingValidationMs": 107234,
+      "processCpuMs": 41456.995,
+      "exactUnchangedVersionWrites": 4090,
+      "provenanceOnlyVersionWrites": 18264,
+      "jobObservationComparison": {
+        "before": 5454,
+        "after": 5470,
+        "added": 16,
+        "removed": 0,
+        "exactUnchanged": 587,
+        "provenanceOnlyChanged": 3044,
+        "payloadChanged": 1823
+      }
+    },
+    {
+      "phase": "replay-new-commit",
+      "commit": "b3540152d55b455dd485b167978e92a914a85fc7",
+      "revision": 2,
+      "replayed": true,
+      "rowsRead": 2,
+      "rowsWritten": 0,
+      "databaseBytes": 34947072,
+      "chunksApplied": 0,
+      "chunksReplayed": 0,
+      "elapsedIncludingValidationMs": 307,
+      "processCpuMs": 367.245,
+      "exactUnchangedVersionWrites": 0,
+      "provenanceOnlyVersionWrites": 0
+    },
+    {
+      "phase": "new-commit-same-files",
+      "commit": "0b2984a669c4d0dae0b3b666945855c6cda86627",
+      "revision": 3,
+      "replayed": false,
+      "rowsRead": 46963,
+      "rowsWritten": 62608,
+      "databaseBytes": 49229824,
+      "chunksApplied": 1765,
+      "chunksReplayed": 0,
+      "elapsedIncludingValidationMs": 79393,
+      "processCpuMs": 32172.612,
+      "exactUnchangedVersionWrites": 33802,
+      "provenanceOnlyVersionWrites": 0,
+      "jobObservationComparison": {
+        "before": 5470,
+        "after": 5470,
+        "added": 0,
+        "removed": 0,
+        "exactUnchanged": 5470,
+        "provenanceOnlyChanged": 0,
+        "payloadChanged": 0
+      }
+    },
+    {
+      "phase": "replay-same-files-commit",
+      "commit": "0b2984a669c4d0dae0b3b666945855c6cda86627",
+      "revision": 3,
+      "replayed": true,
+      "rowsRead": 2,
+      "rowsWritten": 0,
+      "databaseBytes": 49229824,
+      "chunksApplied": 0,
+      "chunksReplayed": 0,
+      "elapsedIncludingValidationMs": 197,
+      "processCpuMs": 208.919,
+      "exactUnchangedVersionWrites": 0,
+      "provenanceOnlyVersionWrites": 0
+    }
+  ],
+  "sameFilesVerified": true
+}
