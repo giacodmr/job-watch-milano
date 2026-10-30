@@ -4013,6 +4013,9 @@ def collect_mollie_verified(company):
 
 
 def choose(company):
+    if company.get("company") == "PayPal":
+        from paypal_collector import collect_paypal
+        return collect_paypal
     if company.get("company") == "FinecoBank":
         from fineco_collector import collect_fineco
         return collect_fineco
