@@ -70,3 +70,8 @@ Input B (`b3540152…`) e C (`0b2984a…`): confronto locale aggiuntivo dei cont
 GO allo schema **locale** soltanto dopo test e CI verdi di questa PR. PR 2 deve definire: checkpoint fidato del ledger completo e contesto PERSONAL completo; FK/riconciliazione tra due DB; provenienza duale; promozione atomica e reader current-state; budget condiviso comprensivo di staging/apply/cleanup; backup/restore prima di qualsiasi rimozione. Non ricostruire un DB esistente da un bootstrap sull'ultimo commit ignorando gli ID precedenti.
 
 Nessun trasporto mutativo, autenticazione, nuovi eventi Python, schema, importer nuovo o UI è attivato. Non integrare #29 o l'intera #30. Il solo schema futuro non autorizza cloud o nuovi costi.
+
+
+## PR #33 post-review: retained decision presence
+
+The importer may supply optional `personalDecisionJobIds` from confirmed V1 / PERSONAL history. These are identity-checked and bound in `selectionContextDigest`, carrying only the existence of original personal events. The existing rule 6 applies when a current Python effective choice is absent: `UNRESOLVED_PERSONAL`, no catalog or AI queue, personal subject retained (lifecycle null if unobserved). This does not synthesize a NOT_INTERESTED/DISMISSED choice or reorder events. Omission preserves the original context format/digest; no V1 envelope or database schema changes. The current importer rejects multi-owner PERSONAL rather than combine owners' references.
