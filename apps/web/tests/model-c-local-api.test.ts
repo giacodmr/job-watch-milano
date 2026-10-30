@@ -11,7 +11,8 @@ import {canonical,sha256} from '../shared/canonical';
 const unknown='job:'+'2'.repeat(64);
 const other='synthetic-other';
 let runtime:Miniflare, catalog:D1Database, personal:D1Database, v1:D1Database;
-const endpoint=(path:string,opts?:RequestInit)=>runtime.dispatchFetch('http://localhost'+path,opts);
+const endpoint=(path:string,opts?:Parameters<Miniflare['dispatchFetch']>[1])=>
+  runtime.dispatchFetch('http://localhost'+path,opts);
 const pageSchema=z.object({total:z.number(),nextCursor:z.string().nullable(),items:z.array(z.unknown()).max(50)});
 const firstResponse=async (path:string)=> {
   const response=await endpoint(path);expect(response.status).toBe(200);return response;
