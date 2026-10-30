@@ -8,7 +8,7 @@ import {getModelCPersonalSummary,listModelCPersonalJobs,getModelCPersonalJob} fr
 let runtime:Miniflare,seq=0;
 beforeAll(()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,
  script:'export default {fetch(){return new Response("synthetic")}}',cf:false,compatibilityDate:'2026-10-29',
- d1Databases:Object.fromEntries(Array.from({length:15},(_,i)=>['DB'+i,'personal-reader-'+i]))}));});
+ d1Databases:Object.fromEntries(Array.from({length:24},(_,i)=>['DB'+i,'personal-reader-'+i]))}));});
 afterAll(async()=>{await runtime?.dispose();});
 async function fixture() {
  const c=await runtime.getD1Database('DB'+seq++), p=await runtime.getD1Database('DB'+seq++);
