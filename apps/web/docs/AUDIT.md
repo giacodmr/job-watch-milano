@@ -72,3 +72,24 @@ Questi divieti basati sui nomi non garantiscono da soli che un testo libero non 
 - `validate.yml`: validazione PR e push main selezionati. `ats_coverage_recovery.yml`, `ats_probe_batch2/3/4.yml`, `ats_unicredit_probe.yml`: strumenti operativi diagnostici, non un'integrazione per la web app.
 
 La Fase 0 cambia soltanto nuovi file `apps/web/**`, `AGENTS.md`, `PLANS.md` e il nuovo workflow web. Le criticità sono documentate, non corrette modificando produzione.
+
+## Addendum Fase 1 — confronto con main vivo
+
+Inizio implementazione dal merge delle fondazioni/skill, `84593e95d60dd4634a3d7ff5f493c13f7fdb872d`. Il checkout era pulito; branch distinto `codex/web-phase-one`. PR #23 risulta già integrata dall'utente. Non è stata ricostruita la Fase 0.
+
+Confronto dal primo audit `0f6287a461de3951ba6dc4d2a00235a5fde494fd` e dal riallineamento `6725fefa45e5bab0494ceb05b9edb2fe999a1e1f`:
+
+- Worldline e relativa copertura PARTIAL erano già nell'addendum della Fase 0.
+- Tra 6725fef e 84593e9 sono entrati `nexi_collector.py`, modifica del ramo Oracle in `collector.py`, test/probe Nexi e workflow diagnostico. L'enumerazione Nexi resta PARTIAL in presenza di risultati ambigui. Questa copertura non autorizza chiusure per assenza.
+- I moduli `pipeline_state.py`, `job_memory.py`, `sync_analysis_state.py`, `daily_worklist.py`, `location_policy.py`, retry e bridge non sono cambiati in questo intervallo. L'export usa comunque il codice del commit importato, senza una copia divergente delle regole.
+- Nuovo fetch prima della consegna: `main=3661d7afc324af1fc51d5a6d7effa4fccf82c0b9`, commit «Update Job Watch collect state». Rispetto a 84593e9 cambia 15 file operativi (inventari, memorie, health/run, pipeline e viste); nessun Python, workflow, regola o contratto. Lo snapshot locale rimane intenzionalmente fissato a 84593e9: l'app mostra SHA e date di quel commit, non dichiara di seguire main in tempo reale.
+
+Verifica regressione su 3661d7a: 215 unittest Python invariati, OK, eseguiti in archivio Git temporaneo con requests 2.32.5 in un venv temporaneo. Nessuna scrittura nel checkout operativo, nessuna raccolta/sync produttiva o dispatch. I nuovi test exporter usano soltanto fixture sintetiche e moduli Python copiati come codice.
+
+La Fase 1 replica solo metadati strutturati delle identità/review/scelte; anche le motivazioni libere sono escluse. Health/Daily concorrono alla proiezione e alla provenienza, senza sostituire inventari, memorie o archivio. Dettagli e misure in PHASE1_VALIDATION.
+
+## Riallineamento integrazione UI
+
+Main `b3540152d55b455dd485b167978e92a914a85fc7` confrontato con `3661d7a`: nuovi collector Fineco/PayPal e aggiornamenti operativi upstream; nessun cambio a codec memoria, identità/alias, proiezione, worker, bridge o autorità delle configurazioni. Ricevuti nel branch senza modificarli. Import locale reale al nuovo main confermato alla revisione 2; dettagli e limiti in [JET_INTEGRATION.md](JET_INTEGRATION.md). Nessuna nuova discovery generale o modifica produttiva.
+
+Prima della consegna main è avanzato a `0b2984a669c4d0dae0b3b666945855c6cda86627`: merge safety PR #28 effettuato dall’utente. Delta di soli strumenti/test/documentazione/CI e ignore, senza cambi alle fonti operative importate. Integrato nel branch; nessun replay ridondante a nuovo SHA o modifica ai relativi strumenti.
