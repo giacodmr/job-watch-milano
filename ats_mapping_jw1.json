@@ -486,32 +486,35 @@
       "company": "FinecoBank",
       "batch": "JW1",
       "ats": {
-        "family": "Custom corporate careers page; ATS unresolved",
-        "tenant": null,
+        "family": "Fineco first-party public employee vacancies API with official Intervieweb application board",
+        "tenant": "finecobank",
         "career_site": "https://about.finecobank.com/it/careers/",
         "inventory_url": "https://about.finecobank.com/it/careers/diventa-un-dipendente/",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://public-api.finecobank.com/v1/public/career/work-with-us/jobs"
       },
       "verification": {
         "level": "STRONG",
-        "method": "official_list_inventory",
+        "method": "official_nextjs_jobs_fetch_and_two_stable_full_json_snapshots_plus_intervieweb_id_url_parity",
         "location_filter_supported": true,
         "locations": [
           "Italy",
           "Milan"
         ],
-        "pagination": "single official listing page / no formal paging contract observed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Unpaginated first-party GET /v1/public/career/work-with-us/jobs returns jobs array consumed directly by frontend PositionAccordion; validate all unique IDs, title, city, and company-owned Intervieweb links.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Enumerate every employee vacancy rendered on the official Fineco careers page and filter by the location shown on each opening.",
-        "fallback": "Use official-domain search on about.finecobank.com for current vacancy detail pages and reconcile to the list."
+        "primary": "Fetch Fineco official first-party API referenced by its own employee careers Next.js page; compare two complete snapshots, validate unique stable IDs and first-party Intervieweb application URLs; filter explicit Milan/Rome cities.",
+        "fallback": "If the public API changes, company Intervieweb detail identity fails, or the frontend listing contract drifts, leave PARTIAL rather than pretending zero jobs."
       },
       "limitations": [
-        "No total count or stable pagination/API contract was found, so completeness cannot be proven mathematically."
+        "Coverage is strictly the first-party FinecoBank 'Diventa un dipendente' jobs array, not financial advisers or external aggregator-only postings.",
+        "Official Next.js page is SSR-empty because its PositionAccordion loads the first-party API in the browser; HTML-only scraping shows zero jobs.",
+        "Intervieweb is the application ATS, with job ID and application URL provided by the first-party Fineco public API.",
+        "Complete publisher scope is supported by a single unpaginated jobs array consumed directly by the page; future API/URL schema drift must fail closed."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-30"
     },
     {
       "company": "Banca Ifis",
