@@ -11,14 +11,14 @@ import { verifyGitProjection } from '../tools/model-c-git';
 import { importSnapshot } from '../worker/data/importer';
 import { canonical } from '../shared/canonical';
 
-let runtime:Miniflare, seq=0;
+let runtime:Miniflare, seq=0, commitSequence=0;
 const dirs:string[]=[], measurements:Record<string,unknown>={};
 const bootstrap={identities:{mode:'first-v1-bootstrap' as const},personalReferences:[]};
 const python=process.env.JOB_WATCH_PYTHON||'python3';
 const git=(repo:string,...args:string[])=>execFileSync('git',['-C',repo,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
 function cohere(repo:string) {execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'cohere'],{stdio:'pipe',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});}
 function commit(repo:string) {
-  git(repo,'add','.');git(repo,'-c','user.name=Synthetic','-c','user.email=synthetic@example.test','commit','--allow-empty','-qm','Synthetic importer fixture');
+  git(repo,'add','.');git(repo,'-c','user.name=Synthetic','-c','user.email=synthetic@example.test','commit','--allow-empty','-qm','Synthetic importer fixture '+(++commitSequence));
   const sha=git(repo,'rev-parse','HEAD');git(repo,'update-ref','refs/remotes/origin/main',sha);return sha;
 }
 async function fixture(count=2) {
@@ -231,7 +231,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(await count(f.c,'catalog_head')).toBe(0);expect(await count(f.p,'personal_heads')).toBe(1);
     await importModelC(f.c,f.p,f.options);expect(await count(f.c,'catalog_audit')).toBe(1);
   });
-  it('rejects divergent history, omitted archive scope, symlinks and changed runtime proof without leaking payloads',async()=>{
+  it('rejects divergent history, mismatched commits, symlinks and changed runtime proof without leaking payloads',async()=>{
     const f=await fixture(1), a=f.options.source.commit;await importModelC(f.c,f.p,f.options);
     f.options.source.commit=commit(f.repo);await importModelC(f.c,f.p,f.options);
     git(f.repo,'checkout','-q','-b','synthetic-fork',a);f.options.source.commit=commit(f.repo);
