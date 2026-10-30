@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-10-30T01:05:17Z",
+  "generated_at": "2026-10-30T07:02:38Z",
   "run_id": "294ce88c1d2661346a71a2b9",
   "snapshot": {
     "run_id": "294ce88c1d2661346a71a2b9",
@@ -25,9 +25,9 @@
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
     }
   },
-  "status": "NEEDS_REVIEW",
+  "status": "COMPLETE_WITH_WARNINGS",
   "collection_status": "COMPLETE_WITH_WARNINGS",
-  "DAILY_COMPLETE": false,
+  "DAILY_COMPLETE": true,
   "FULL_SEMANTIC_COMPLETE": false,
   "priority_checks": {
     "Amazon": "VERIFIED",
@@ -35,94 +35,64 @@
   },
   "batches": {
     "JW1": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 62,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
-      "reporting_pending": 1,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 62,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW1",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 1,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW2": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 13,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 13,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW3": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 0,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
-      "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "daily_complete": true,
+      "full_semantic_complete": true,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 0,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW4": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 2,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 2,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     }
   },
   "coverage": {
@@ -151,7 +121,7 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 1,
+  "daily_actionable_remaining": 0,
   "processable_semantic_pending": 77,
   "jd_retry_deferred": 0,
   "jd_unavailable": 0,
@@ -1322,6 +1292,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1356,34 +1329,7 @@
       "status": "COMPLETE"
     }
   },
-  "remaining_work": [
-    {
-      "batch": "JW1",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 1,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    }
-  ],
+  "remaining_work": [],
   "unresolved_user_decisions": [
     "Mastercard::/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1",
     "Mastercard::R-275678",
