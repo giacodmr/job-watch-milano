@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { healthSchema } from '../shared/contracts';
 import type { Health } from '../shared/contracts';
 
@@ -55,18 +55,15 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   );
 }
 
-function NavigationItem({ icon, label, active, onClick, unavailable = false }: {
-  icon: IconName; label: string; active?: boolean; onClick?: () => void; unavailable?: boolean;
+function NavigationItem({ icon, label, active, onClick, unavailable = false, href = '#' }: {
+  icon: IconName; label: string; active?: boolean; onClick?: () => void; unavailable?: boolean; href?: string;
 }) {
-  return (
-    <button type="button" className={`nav-item${active ? ' is-active' : ''}`} onClick={onClick} disabled={unavailable} aria-current={active ? 'page' : undefined}>
-      <Icon name={icon}/><span>{label}</span>
-      {unavailable && <span className="soon">Presto</span>}
-    </button>
-  );
+  const children = <><Icon name={icon}/><span>{label}</span>{unavailable && <span className="soon">Presto</span>}</>;
+  if (unavailable) return <span className="nav-item nav-item-disabled" aria-disabled="true">{children}</span>;
+  return <a className={`nav-item${active ? ' is-active' : ''}`} href={href} onClick={onClick} aria-current={active ? 'page' : undefined}>{children}</a>;
 }
 
-function SectionHeading({ title, description, trailing }: { title: string; description?: string; trailing?: React.ReactNode }) {
+function SectionHeading({ title, description, trailing }: { title: string; description?: string; trailing?: ReactNode }) {
   return <div className="section-heading"><div><h2>{title}</h2>{description && <p>{description}</p>}</div>{trailing}</div>;
 }
 
@@ -92,7 +89,7 @@ function HealthPanel({ health, loading, error, refresh }: {
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>('dashboard');
+  const [page, setPage] = useState<Page>(() => window.location.hash === '#opportunities' ? 'opportunities' : 'dashboard');
   const [mobileMenu, setMobileMenu] = useState(false);
   const [health, setHealth] = useState<Health | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -127,6 +124,12 @@ export default function App() {
     return () => pending.current?.abort();
   }, [refresh]);
 
+  useEffect(() => {
+    const syncFromHash = () => setPage(window.location.hash === '#opportunities' ? 'opportunities' : 'dashboard');
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
+
   const shownJobs = useMemo(() => demoJobs.filter((job) => {
     const term = query.trim().toLocaleLowerCase('it-IT');
     return (!term || `${job.company} ${job.role} ${job.team}`.toLocaleLowerCase('it-IT').includes(term)) &&
@@ -135,18 +138,24 @@ export default function App() {
   }), [query, decision, location]);
 
   const selectedJob = selectedId ? demoJobs.find((job) => job.id === selectedId) : undefined;
-  const goTo = (next: Page) => { setPage(next); setMobileMenu(false); setSelectedId(null); };
+  const goTo = (next: Page) => {
+    window.location.hash = next === 'opportunities' ? '#opportunities' : '#dashboard';
+    setPage(next);
+    setMobileMenu(false);
+    setSelectedId(null);
+  };
 
   return (
     <div className="app-shell">
+      <a href="#main-content" className="skip-link">Vai al contenuto principale</a>
       {mobileMenu && <button type="button" className="nav-backdrop" aria-label="Chiudi menu" onClick={() => setMobileMenu(false)}/>}
       <aside className={`sidebar ${mobileMenu ? 'sidebar-open' : ''}`} aria-label="Navigazione principale">
         <div className="brand"><div className="brand-symbol" aria-hidden="true"><span className="mark-corner"/><span className="mark-block"/></div><span>job<span className="brand-light">watch</span></span></div>
         <div className="workspace"><span className="workspace-avatar">JW</span><div><strong>Il mio workspace</strong><small>Ambiente locale</small></div><Icon name="chevron" size={15}/></div>
         <nav className="nav-links" aria-label="Sezioni">
           <span className="nav-group-title">Il tuo spazio</span>
-          <NavigationItem icon="grid" label="Dashboard" active={page === 'dashboard'} onClick={() => goTo('dashboard')}/>
-          <NavigationItem icon="search" label="Opportunità" active={page === 'opportunities'} onClick={() => goTo('opportunities')}/>
+          <NavigationItem icon="grid" label="Dashboard" href="#dashboard" active={page === 'dashboard'} onClick={() => goTo('dashboard')}/>
+          <NavigationItem icon="search" label="Opportunità" href="#opportunities" active={page === 'opportunities'} onClick={() => goTo('opportunities')}/>
           <NavigationItem icon="layers" label="Aziende" unavailable/>
           <NavigationItem icon="briefcase" label="Candidature" unavailable/>
           <span className="nav-group-title nav-group-gap">Operatività</span>
@@ -165,7 +174,7 @@ export default function App() {
           </div>
           <div className="header-right"><span className="demo-indicator"><span/>Modalità demo</span><span className="profile-icon" aria-label="Workspace personale">JW</span></div>
         </header>
-        <main className="main-content">
+        <main id="main-content" className="main-content" tabIndex={-1}>
           {page === 'dashboard' ? (
             <>
               <div className="page-heading"><div><p className="page-kicker">Panoramica</p><h1>La tua ricerca, sotto controllo.</h1><p className="page-description">Un solo spazio per seguire opportunità, candidature e qualità delle fonti.</p></div><span className="phase-label">Design preview · Fase 0</span></div>
@@ -189,9 +198,9 @@ export default function App() {
               <div className="explorer-panel">
                 <SectionHeading title="Elenco opportunità" description="Ricerca e filtri operano solo sugli esempi locali." trailing={<span className="inline-tag">{shownJobs.length} esempi</span>}/>
                 <div className="toolbar">
-                  <label className="search-field"><Icon name="search" size={18}/><span className="sr-only">Cerca azienda o ruolo</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cerca azienda o ruolo…"/></label>
-                  <label className="filter-select"><span className="sr-only">Filtra per decisione</span><Icon name="filter" size={16}/><select value={decision} onChange={(event) => setDecision(event.target.value as 'ALL' | Decision)}><option value="ALL">Tutte le decisioni</option><option value="TO_REVIEW">Da valutare</option><option value="INTERESTED">Interessante</option><option value="APPLIED">Candidatura inviata</option></select></label>
-                  <label className="filter-select"><span className="sr-only">Filtra per località</span><select value={location} onChange={(event) => setLocation(event.target.value)}><option value="ALL">Tutte le località</option><option value="Milano">Milano</option><option value="Roma">Roma</option><option value="Remoto">Remoto</option></select></label>
+                  <label className="search-field"><Icon name="search" size={18}/><span className="sr-only">Cerca azienda o ruolo</span><input name="demo-search" autoComplete="off" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cerca azienda o ruolo…"/></label>
+                  <label className="filter-select"><span className="sr-only">Filtra per decisione</span><Icon name="filter" size={16}/><select name="demo-decision" autoComplete="off" value={decision} onChange={(event) => setDecision(event.target.value as 'ALL' | Decision)}><option value="ALL">Tutte le decisioni</option><option value="TO_REVIEW">Da valutare</option><option value="INTERESTED">Interessante</option><option value="APPLIED">Candidatura inviata</option></select></label>
+                  <label className="filter-select"><span className="sr-only">Filtra per località</span><select name="demo-location" autoComplete="off" value={location} onChange={(event) => setLocation(event.target.value)}><option value="ALL">Tutte le località</option><option value="Milano">Milano</option><option value="Roma">Roma</option><option value="Remoto">Remoto</option></select></label>
                   {(query || decision !== 'ALL' || location !== 'ALL') && <button type="button" className="reset-button" onClick={() => { setQuery(''); setDecision('ALL'); setLocation('ALL'); }}>Azzera filtri</button>}
                 </div>
                 <div className="table-scroll"><table className="jobs-table"><thead><tr><th scope="col">Azienda e ruolo</th><th scope="col">Località</th><th scope="col">Priorità</th><th scope="col">Decisione</th><th scope="col"><span className="sr-only">Dettaglio</span></th></tr></thead><tbody>{shownJobs.map((job) => <tr key={job.id} className={selectedId === job.id ? 'selected-row' : ''}><td><div className="company-cell"><span className="company-mark">{job.initials}</span><div><strong>{job.role}</strong><small>{job.company} · {job.team}</small></div></div></td><td>{job.location}</td><td><span className={`priority ${job.priority === 'Alta' ? 'priority-high' : ''}`}><span/>{job.priority}</span></td><td><span className={`decision decision-${job.decision.toLowerCase()}`}>{decisionLabels[job.decision]}</span></td><td><button type="button" className="row-action" onClick={() => setSelectedId(selectedId === job.id ? null : job.id)} aria-label={`Apri dettaglio di ${job.role}`} aria-expanded={selectedId === job.id}><Icon name="chevron" size={18}/></button></td></tr>)}</tbody></table></div>
