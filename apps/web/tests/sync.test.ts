@@ -9,6 +9,7 @@ import {
   requiredFiles,
   validateBundle,
 } from "../shared/snapshot";
+import { schemaVersion } from "../shared/contracts";
 import { jobsQuerySchema } from "../shared/queries";
 import { importSnapshot } from "../worker/data/importer";
 import { getJob, getSnapshot, listJobs } from "../worker/data/queries";
@@ -237,7 +238,44 @@ describe("canonical and source boundary", () => {
 });
 
 describe("local D1 synchronization and read services", () => {
-  it("preserves existing observations while upgrading schema 2 to 4", async () => {
+  it("round-trips a cursor for a valid maximum-length Unicode sort key", async () => {
+    await importSnapshot(db, await bundle("a".repeat(40), { sortKey: "a" + "語".repeat(2199) }), options());
+    const first = await listJobs(db, jobsQuerySchema.parse({ limit: 1 }));
+    const second = await listJobs(db, jobsQuerySchema.parse({ limit: 1, cursor: first.nextCursor }));
+    const third = await listJobs(db, jobsQuerySchema.parse({ limit: 1, cursor: second.nextCursor }));
+    expect(new Set([...first.items, ...second.items, ...third.items].map(row => row.id)).size).toBe(3);
+    expect(third.nextCursor).toBeNull();
+  });
+  it("accepts legacy cursors but rejects a missing checkpoint anchor", async () => {
+    await importSnapshot(db, await bundle(), options());
+    const first = await listJobs(db, jobsQuerySchema.parse({ limit: 1 }));
+    const decoded = JSON.parse(Buffer.from(first.nextCursor!, "base64url").toString());
+    const legacy = Buffer.from(JSON.stringify({ ...decoded, sortKey: "synthetic\0alpha" })).toString("base64url");
+    const expected = await listJobs(db, jobsQuerySchema.parse({ limit: 1, cursor: first.nextCursor }));
+    expect((await listJobs(db, jobsQuerySchema.parse({ limit: 1, cursor: legacy }))).items).toEqual(expected.items);
+    const missing = Buffer.from(JSON.stringify({ ...decoded, id: "job:" + "f".repeat(64) })).toString("base64url");
+    await expect(listJobs(db, jobsQuerySchema.parse({ limit: 1, cursor: missing }))).rejects.toThrow("INVALID_CURSOR");
+  });
+  it("keeps company names snapshot-scoped through staging and confirmation", async () => {
+    await importSnapshot(db, await bundle(), options());
+    const next = await bundle("b".repeat(40));
+    for (const rows of next.chunks) for (const row of rows) {
+      if (row.kind === "company") row.name = "Synthetic Renamed";
+      if ("jobKey" in row) row.jobKey = row.jobKey.replace("Synthetic Company::", "Synthetic Renamed::");
+    }
+    for (const [index,rows] of next.chunks.entries()) next.manifest.chunks[index]!.sha256 = await sha256(canonical(rows));
+    await expect(importSnapshot(db, next, { ...options(1), stopAfterChunks: 1 })).rejects.toThrow("IMPORT_INTERRUPTED");
+    expect((await getSnapshot(db)).snapshot?.companies[0]?.name).toBe("Synthetic Company");
+    // A pre-0005 completed staging chunk has a NULL name after additive upgrade.
+    await db.prepare("UPDATE company_versions SET canonical_name=NULL WHERE snapshot_id<>?").bind((await getSnapshot(db)).snapshot!.id).run();
+    await importSnapshot(db, next, options(1));
+    const page = await listJobs(db, jobsQuerySchema.parse({ q: "Renamed" }));
+    expect(page.total).toBe(3);
+    expect(page.items.every(row => row.companyId === "company:1" && row.company === "Synthetic Renamed")).toBe(true);
+    expect((await getSnapshot(db)).snapshot?.companies[0]?.name).toBe("Synthetic Renamed");
+    expect(await db.prepare("SELECT count(*) AS n FROM companies").first("n")).toBe(1);
+  });
+  it("preserves existing observations while upgrading schema 2 to the current version", async () => {
     const legacy = await runtime.getD1Database("UPGRADE");
     for (const file of (await readdir("migrations"))
       .filter((f) => f.endsWith(".sql"))
@@ -269,8 +307,11 @@ describe("local D1 synchronization and read services", () => {
           )
           .bind(hash, stamp)
           .run();
+        await legacy.prepare("INSERT INTO company_versions(company_id,snapshot_id,membership,source_path,source_sha256,observed_at) VALUES ('c','legacy','ACTIVE','companies_job_watch_v2.json',?,?)").bind(hash,stamp).run();
       }
     }
+    expect(await legacy.prepare("SELECT canonical_name FROM company_versions WHERE company_id='c'").first("canonical_name")).toBeNull();
+    expect(await legacy.prepare("SELECT coalesce(v.canonical_name,c.canonical_name) AS name FROM company_versions v JOIN companies c ON c.id=v.company_id WHERE c.id='c'").first("name")).toBe("Synthetic Legacy");
     expect(
       await legacy.prepare("SELECT title FROM job_versions").first("title"),
     ).toBe("Preserved role");
@@ -278,7 +319,7 @@ describe("local D1 synchronization and read services", () => {
       await legacy
         .prepare("SELECT version FROM schema_metadata")
         .first("version"),
-    ).toBe(4);
+    ).toBe(schemaVersion);
     expect(
       (await legacy.prepare("PRAGMA foreign_key_check").all()).results,
     ).toHaveLength(0);
@@ -495,6 +536,14 @@ describe("local D1 synchronization and read services", () => {
     await expect(importSnapshot(db, value, options())).rejects.toThrow(
       "CHUNK_REPLAY_CONFLICT",
     );
+  });
+  it("supports the full accepted search length under D1 pattern limits", async () => {
+    await importSnapshot(db, await bundle(), options());
+    for (const q of ['x'.repeat(120), '語'.repeat(120), '%_'.repeat(60)]) {
+      const response = await runtime.dispatchFetch('http://localhost/api/jobs?q='+encodeURIComponent(q));
+      expect(response.status).toBe(200);
+      expect(((await response.json()) as { total: number }).total).toBe(0);
+    }
   });
   it("serves validated read-only API responses and never echoes invalid input", async () => {
     await importSnapshot(db, await bundle(), options());

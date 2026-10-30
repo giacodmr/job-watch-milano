@@ -1,3 +1,11 @@
+# Stato corrente — consolidamento tecnico #25
+
+Main 0b2984a recepito nel branch `codex/web-phase-one`; baseline PR b84d778. Correzioni backend per cursori Unicode, ricerca lunga D1 e nome azienda per snapshot; schema 5 additivo, 46 test Vitest e strict/build/dry-run verificati. Misure reali e procedura di ripresa in [PHASE1_CONSOLIDATION.md](PHASE1_CONSOLIDATION.md), numeri aggregati in [PHASE1_COSTS.json](PHASE1_COSTS.json). Nessuna UI V7 o funzionalità anticipata.
+
+Prima di integrare: verificare head/CI della #25, leggere i gate residui e la sequenza #25/#30. La #30 rimane una Draft da cui estrarre selettivamente il read model Dashboard e comportamenti dati, non l'intero backend o il design #29. Nessun merge/deploy/cloud eseguito da questo consolidamento.
+
+Segue l'handoff storico della Fase 1, con misure e schema dell'epoca.
+
 # Handoff Codex ↔ ChatGPT tramite GitHub
 
 ## Stato consegnato dopo Fase 1

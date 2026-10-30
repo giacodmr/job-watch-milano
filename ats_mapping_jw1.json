@@ -486,32 +486,35 @@
       "company": "FinecoBank",
       "batch": "JW1",
       "ats": {
-        "family": "Custom corporate careers page; ATS unresolved",
-        "tenant": null,
+        "family": "Fineco first-party public employee vacancies API with official Intervieweb application board",
+        "tenant": "finecobank",
         "career_site": "https://about.finecobank.com/it/careers/",
         "inventory_url": "https://about.finecobank.com/it/careers/diventa-un-dipendente/",
-        "public_api_or_feed": null
+        "public_api_or_feed": "https://public-api.finecobank.com/v1/public/career/work-with-us/jobs"
       },
       "verification": {
         "level": "STRONG",
-        "method": "official_list_inventory",
+        "method": "official_nextjs_jobs_fetch_and_two_stable_full_json_snapshots_plus_intervieweb_id_url_parity",
         "location_filter_supported": true,
         "locations": [
           "Italy",
           "Milan"
         ],
-        "pagination": "single official listing page / no formal paging contract observed",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "Unpaginated first-party GET /v1/public/career/work-with-us/jobs returns jobs array consumed directly by frontend PositionAccordion; validate all unique IDs, title, city, and company-owned Intervieweb links.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Enumerate every employee vacancy rendered on the official Fineco careers page and filter by the location shown on each opening.",
-        "fallback": "Use official-domain search on about.finecobank.com for current vacancy detail pages and reconcile to the list."
+        "primary": "Fetch Fineco official first-party API referenced by its own employee careers Next.js page; compare two complete snapshots, validate unique stable IDs and first-party Intervieweb application URLs; filter explicit Milan/Rome cities.",
+        "fallback": "If the public API changes, company Intervieweb detail identity fails, or the frontend listing contract drifts, leave PARTIAL rather than pretending zero jobs."
       },
       "limitations": [
-        "No total count or stable pagination/API contract was found, so completeness cannot be proven mathematically."
+        "Coverage is strictly the first-party FinecoBank 'Diventa un dipendente' jobs array, not financial advisers or external aggregator-only postings.",
+        "Official Next.js page is SSR-empty because its PositionAccordion loads the first-party API in the browser; HTML-only scraping shows zero jobs.",
+        "Intervieweb is the application ATS, with job ID and application URL provided by the first-party Fineco public API.",
+        "Complete publisher scope is supported by a single unpaginated jobs array consumed directly by the page; future API/URL schema drift must fail closed."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-30"
     },
     {
       "company": "Banca Ifis",
@@ -1172,35 +1175,36 @@
       "company": "PayPal",
       "batch": "JW1",
       "ats": {
-        "family": "Custom dynamic PayPal careers platform; ATS backend unresolved",
-        "tenant": null,
-        "career_site": "https://careers.pypl.com/",
-        "inventory_url": "https://careers.pypl.com/search-results/",
-        "public_api_or_feed": null
+        "family": "Eightfold AI PayPal branded public PCS-X career platform",
+        "tenant": "paypal",
+        "career_site": "https://paypal.eightfold.ai/careers?domain=paypal.com",
+        "inventory_url": "https://paypal.eightfold.ai/careers?domain=paypal.com",
+        "public_api_or_feed": "https://paypal.eightfold.ai/api/pcsx/search?domain=paypal.com"
       },
       "verification": {
-        "level": "PARTIAL",
-        "method": "official_dynamic_search",
+        "level": "STRONG",
+        "method": "eightfold_pcsx_first_party_country_city_counts_double_snapshot_sitemap_detail_id_parity",
         "location_filter_supported": true,
         "locations": [
-          "Italy",
           "Milan",
-          "Rome",
-          "London"
+          "Rome"
         ],
-        "pagination": "dynamic; paging/count not reliably exposed to available tools",
-        "total_count_available": false,
-        "full_inventory_possible": false
+        "pagination": "All Italy and Milan/Rome search results exhaust each official PCS-X count; two stable snapshots; official Italy sitemap ID parity and matching job detail IDs. No claim of global count reconciliation.",
+        "total_count_available": true,
+        "full_inventory_possible": true
       },
       "job_watch_method": {
-        "primary": "Use the official PayPal search-results UI with target location queries and collect all official job-detail URLs rendered.",
-        "fallback": "Use web discovery restricted to careers.pypl.com and reconcile each discovered opening back to the official search."
+        "primary": "Use PayPal-hosted Eightfold PCS-X public search (robots explicitly allows /api/pcsx) to exhaust Italy, Milan and Rome counts with two stable snapshots; verify all Italian IDs against official sitemap and first-party detail name/location/publicUrl; certify Milan/Rome only.",
+        "fallback": "If any location count is incomplete, sitemap has Italy-ID drift, PCS-X is blocked or detail identity fails, preserve only validated observations as PARTIAL; do not infer worldwide inventory completeness."
       },
       "limitations": [
-        "Search results are JavaScript-heavy and did not expose a dependable complete row set/count.",
-        "Underlying ATS and structured inventory endpoint remain unresolved."
+        "PayPal worldwide PCS-X search reported 312 open postings while its sitemap contained 317 global job links at investigation time; worldwide scope is NOT certified.",
+        "PayPal's configured allowed_locations for Job Watch are Milan and Rome only (not London).",
+        "Official PCS-X Italy filter returned exactly four jobs, all in Milan and none in Rome; both city queries and official sitemap agreed on IDs.",
+        "Global sitemap discrepancies are out-of-scope but must not be mistaken for all 312 API jobs being individually verified; source completeness claim is geographic target only.",
+        "Eightfold public API and sitemap routes are explicitly permitted in tenant robots.txt; avoid login, credentialed endpoints, aggressive rate or block bypass."
       ],
-      "last_mapped": "2026-09-14"
+      "last_mapped": "2026-10-30"
     },
     {
       "company": "Dojo",

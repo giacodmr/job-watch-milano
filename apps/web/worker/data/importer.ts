@@ -137,6 +137,12 @@ export async function importSnapshot(
     stored.manifest_json !== manifest
   )
     throw new SyncError("SNAPSHOT_CONFLICT");
+  function checkBudget() {
+    if (stats.rowsWritten + 1000 >= (options.maxRowsWritten ?? 70_000) || stats.databaseBytes >= 350_000_000) {
+      stats.durationMs = Math.round(performance.now() - start);
+      throw new SyncError("LOCAL_WRITE_BUDGET_REACHED", stats);
+    }
+  }
   const identities = new Map<string, string>();
   for (const [index, rows] of bundle.chunks.entries()) {
     const metadata = bundle.manifest.chunks[index];
@@ -160,6 +166,23 @@ export async function importSnapshot(
     // Re-resolve identifiers even for replayed chunks, so later event chunks can resume independently.
     const statements: D1PreparedStatement[] = [];
     for (const row of rows) {
+      // Schema-4 chunks can already be marked complete when migration 0005 runs.
+      // Fill only their missing versioned name from this validated bundle; never
+      // mutate the global identity or a confirmed observation during replay.
+      if (previous && row.kind === "company") {
+        const legacy = await readOne<{ canonical_name: string | null }>(prepare(
+          "SELECT canonical_name FROM company_versions WHERE company_id=? AND snapshot_id=?", row.id, snapshotId,
+        ));
+        if (legacy?.canonical_name === null) {
+          checkBudget();
+          const repaired = await db.batch([
+            assert(`${revCondition} AND EXISTS(SELECT 1 FROM sync_snapshots WHERE id=? AND state='STAGING')`, options.expectedRevision, snapshotId),
+            clear(),
+            prepare("UPDATE company_versions SET canonical_name=? WHERE company_id=? AND snapshot_id=? AND canonical_name IS NULL", row.name, row.id, snapshotId),
+          ]);
+          repaired.forEach(track);
+        }
+      }
       if (row.kind === "job") {
         const keys = [row.jobKey, ...row.aliases];
         const existing = await prepare(
@@ -184,13 +207,7 @@ export async function importSnapshot(
       stats.chunksReplayed++;
       continue;
     }
-    if (
-      stats.rowsWritten + 1000 >= (options.maxRowsWritten ?? 70_000) ||
-      stats.databaseBytes >= 350_000_000
-    ) {
-      stats.durationMs = Math.round(performance.now() - start);
-      throw new SyncError("LOCAL_WRITE_BUDGET_REACHED", stats);
-    }
+    checkBudget();
     const results = await db.batch([
       assert(
         `${revCondition} AND EXISTS(SELECT 1 FROM sync_snapshots WHERE id=? AND state='STAGING')`,
@@ -273,9 +290,10 @@ export async function importSnapshot(
           row.name,
         ),
         prepare(
-          "INSERT INTO company_versions(company_id,snapshot_id,tier,monitoring_priority,career_url,membership,source_path,source_sha256,observed_at) VALUES (?,?,?,?,?,?,?,?,?)",
+          "INSERT INTO company_versions(company_id,snapshot_id,canonical_name,tier,monitoring_priority,career_url,membership,source_path,source_sha256,observed_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
           row.id,
           snapshotId,
+          row.name,
           row.tier,
           row.priority,
           row.careerUrl,

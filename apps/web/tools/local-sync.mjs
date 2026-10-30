@@ -171,10 +171,11 @@ try {
       if (proxy.env.APP_ENV !== 'local')
         throw new Error('LOCAL_ENVIRONMENT_REQUIRED');
       const db = proxy.env.DB;
+      const { schemaVersion } = await loadModule("shared/contracts.ts");
       if (
         (await db
           .prepare('SELECT version FROM schema_metadata WHERE id=1')
-          .first('version')) !== 4
+          .first('version')) !== schemaVersion
       )
         throw new Error('LOCAL_MIGRATIONS_REQUIRED');
       const checkpoint = await db

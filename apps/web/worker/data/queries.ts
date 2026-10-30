@@ -18,13 +18,15 @@ export class QueryError extends Error {
 }
 const toBool = (value: unknown): boolean | null =>
   value === null || value === undefined ? null : Boolean(value);
-const columns = `v.job_id AS id,coalesce(v.job_key,j.origin_job_key) AS jobKey,v.company_id AS companyId,c.canonical_name AS company,
+const companyName = "coalesce(cv.canonical_name,c.canonical_name)";
+const columns = `v.job_id AS id,coalesce(v.job_key,j.origin_job_key) AS jobKey,v.company_id AS companyId,${companyName} AS company,
   v.title,v.location,v.batch,v.lifecycle,v.fingerprint,v.canonical_url AS canonicalUrl,v.apply_url AS applyUrl,
   v.first_seen_at AS firstSeenAt,v.last_seen_at AS lastSeenAt,v.analysis_status AS analysisStatus,v.analysis_method AS analysisMethod,
   v.needs_analysis AS needsAnalysis,v.worker_eligible AS workerEligible,v.hard_exclusion_reason AS hardExclusionReason,
   v.fit_score AS fitScore,v.reportable,v.effective_user_decision AS decision,v.technical_status AS technicalStatus,
   sv.coverage,v.source_path AS sourcePath,v.source_sha256 AS sourceSha256`;
 const joins = `FROM job_versions v JOIN jobs j ON j.id=v.job_id JOIN companies c ON c.id=v.company_id
+  LEFT JOIN company_versions cv ON cv.company_id=v.company_id AND cv.snapshot_id=v.snapshot_id
   LEFT JOIN source_versions sv ON sv.source_id=v.source_id AND sv.snapshot_id=v.snapshot_id`;
 function job(row: Record<string, unknown>): JobView {
   return jobViewSchema.parse({
@@ -36,7 +38,7 @@ function job(row: Record<string, unknown>): JobView {
 }
 const cursorSchema = z.strictObject({
   snapshotId: z.string(),
-  sortKey: z.string().max(2200),
+  sortKey: z.string().max(2200).optional(), // Accept legacy cursors; use the checkpoint row as the anchor.
   id: z.string(),
   filters: z.string(),
 });
@@ -94,8 +96,10 @@ export async function getSnapshot(db: D1Database) {
     .first();
   const companies = await db
     .prepare(
-      `SELECT DISTINCT c.id,c.canonical_name AS name FROM companies c
-    JOIN job_versions v ON v.company_id=c.id WHERE v.snapshot_id=? ORDER BY c.canonical_name`,
+      `SELECT DISTINCT c.id,${companyName} AS name FROM companies c
+    JOIN job_versions v ON v.company_id=c.id
+    LEFT JOIN company_versions cv ON cv.company_id=v.company_id AND cv.snapshot_id=v.snapshot_id
+    WHERE v.snapshot_id=? ORDER BY name`,
     )
     .bind(String(row.id))
     .all<{ id: string; name: string }>();
@@ -146,11 +150,11 @@ export async function listJobs(db: D1Database, input: JobsQuery) {
   const where = ["v.snapshot_id=?"];
   const values: (string | number)[] = [checkpoint.snapshot_id];
   if (query.q) {
-    where.push(
-      "(v.title LIKE ? ESCAPE '\\' OR c.canonical_name LIKE ? ESCAPE '\\' OR v.location LIKE ? ESCAPE '\\')",
-    );
-    const value = "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%";
-    values.push(value, value, value);
+    // D1 limits LIKE/GLOB patterns to 50 bytes, while the API accepts 120
+    // Unicode characters. INSTR preserves literal substring search without
+    // wildcard expansion or that pattern limit; parameters remain bound.
+    where.push(`(instr(lower(v.title),lower(?))>0 OR instr(lower(${companyName}),lower(?))>0 OR instr(lower(v.location),lower(?))>0)`);
+    values.push(query.q, query.q, query.q);
   }
   if (query.company) {
     where.push("v.company_id=?");
@@ -187,8 +191,14 @@ export async function listJobs(db: D1Database, input: JobsQuery) {
     .all<{ n: number }>();
   rowsRead += counts.meta.rows_read ?? 0;
   if (after) {
+    // Keep cursors bounded even for Unicode/control characters in valid sort keys.
+    // Resolve the immutable anchor through the (job_id,snapshot_id) primary key.
+    const anchor = await db.prepare("SELECT sort_key AS sortKey FROM job_versions WHERE job_id=? AND snapshot_id=?")
+      .bind(after.id, checkpoint.snapshot_id).all<{ sortKey: string }>();
+    rowsRead += anchor.meta.rows_read ?? 0;
+    if (!anchor.results[0]) throw new QueryError("INVALID_CURSOR", 400);
     where.push("(v.sort_key,v.job_id)>(?,?)");
-    values.push(after.sortKey, after.id);
+    values.push(anchor.results[0].sortKey, after.id);
   }
   const page = await db
     .prepare(
@@ -208,7 +218,6 @@ export async function listJobs(db: D1Database, input: JobsQuery) {
       page.results.length > query.limit && last
         ? encodeCursor({
             snapshotId: checkpoint.snapshot_id,
-            sortKey: String(last.sortKey),
             id: String(last.id),
             filters: signature,
           })

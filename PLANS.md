@@ -44,3 +44,7 @@ Separare «richiesta analisi registrata», «packet pronto», «review applicata
 ## Fasi successive, fuori ambito
 
 Gestione aziende/tier/fonti solo mediante comandi validati e autorità attuali. Application tracker e MCP dedicato richiedono ADR e incarico distinti. Nessun nuovo broker, cron o database finché il caso d'uso non lo giustifica.
+
+## Consolidamento tecnico della base D1
+
+PR #25 aggiornata sul proprio branch, riallineata a main 0b2984a. Schema 5 additivo, fix di cursor Unicode/ricerca lunga/nome azienda versionato e misure separate reali. Esiti e gate: `apps/web/docs/PHASE1_CONSOLIDATION.md`. GO solo locale/read-only dopo CI sul relativo head; nessun cloud o merge automatico. Non integrare #29; preservare dalla #30 soltanto servizi e comportamenti dati, tramite hunk dopo #25. V7 resta una PR successiva. Prossimo intervento consigliato: fast path locale per commit con file allowlist identici, senza duplicare versioni/appartenenze né perdere provenance/history.

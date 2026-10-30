@@ -44,15 +44,19 @@ Il budget predefinito è 70.000 righe scritte **per invocazione**, con margine d
 npm run sync:import -- --max-writes 500000
 ```
 
-`npm run sync:measure` ripete bootstrap e replay su un D1 effimero separato, senza toccare il DB persistente. Per misurare CPU aggregate locali: `/usr/bin/time -l npm run sync:measure`; non equivale al budget CPU Worker remoto.
+`npm run sync:measure` misura bootstrap e replay; `--next FILE --same-files FILE` aggiunge un nuovo commit e un commit a fonti identiche, con confronto dei payload/provenance e scritture per statement. Il comando opera su un D1 effimero separato, senza toccare il DB persistente. Per misurare CPU aggregate locali: `/usr/bin/time -l npm run sync:measure`; non equivale al budget CPU Worker remoto.
 
 Questo override non è una configurazione cloud: il bootstrap supera le 100.000 scritture giornaliere D1 Free. Ripetere il comando nello stesso giorno non costituisce gestione di una quota remota. Prima della Fase 2 servono budget aggregato dell'account, pianificazione su più giorni o ottimizzazione delle versioni. Replay dello snapshot già confermato: zero scritture. Un nuovo commit crea nuove versioni, anche quando molti record non cambiano; nessuna retention automatica.
 
-Conservare il DB per storico/replay; non rimuoverlo come procedura ordinaria. Migrazioni numerate 0001–0004: schema 4, nessuna riscrittura di 0001/0002. Un DB locale di sviluppo intermedio creato durante questa fase è stato conservato in `.local-sync/bootstrap-before-alias-membership`, escluso da Git.
+Conservare il DB per storico/replay; non rimuoverlo come procedura ordinaria. Migrazioni numerate 0001–0005: schema 5, nessuna riscrittura di 0001/0002. Un DB locale di sviluppo intermedio creato durante questa fase è stato conservato in `.local-sync/bootstrap-before-alias-membership`, escluso da Git.
+
+## Consolidamento tecnico
+
+La base read-only è stabilizzata senza dipendenze dalle UI #29/#30 o dalla futura V7. Correzioni di paginazione Unicode, ricerca lunga e nomi azienda versionati, misure bootstrap/replay/nuovo commit, gate e sequenza di integrazione in [PHASE1_CONSOLIDATION.md](docs/PHASE1_CONSOLIDATION.md). Schema 5 additivo; nessun cloud o mutation abilitati.
 
 ## Servizi e API
 
-- `GET /api/health`: schema 4, `synchronization: local-read-only`, `productionAccess:false`. Non certifica la pipeline Python.
+- `GET /api/health`: schema 5, `synchronization: local-read-only`, `productionAccess:false`. Non certifica la pipeline Python.
 - `GET /api/snapshot`: checkpoint confermato, SHA, date fonti/import, flag Python e numero import incompleti; `snapshot:null` prima del primo import.
 - `GET /api/jobs`: filtri `q`, `company`, `batch`, `lifecycle` (`OPEN` aggrega NEW/STILL_OPEN/UPDATED, `ALL` include storico), `assessment`, `decision`; `limit` 1–100, default 25. Paginazione keyset con cursore legato a snapshot e filtri.
 - `GET /api/jobs/<job:id>?snapshot=<snapshot:id>`: metadati, alias osservati, ultime 50 review e decisioni confermate, provenienza. Nessuna JD o motivazione libera.

@@ -2,7 +2,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { convertV4MiniflareOptions, Miniflare } from 'miniflare';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { healthSchema } from '../shared/contracts';
+import { healthSchema, schemaVersion } from '../shared/contracts';
 import worker from '../worker/index';
 
 // Synthetic identities only. No repository data files, network or credentials.
@@ -102,7 +102,7 @@ describe('Worker HTTP on real local D1', () => {
     const body = healthSchema.parse(await response.json());
     expect(body).toMatchObject({
       database: 'ready',
-      schemaVersion: 4,
+      schemaVersion,
       synchronization: 'local-read-only',
       productionAccess: false,
     });
@@ -120,7 +120,7 @@ describe('Worker HTTP on real local D1', () => {
         schemaVersion: 1,
       });
     } finally {
-      await sql('UPDATE schema_metadata SET version=4');
+      await sql('UPDATE schema_metadata SET version=?', schemaVersion);
     }
   });
   it('returns redacted errors for a missing database table', async () => {

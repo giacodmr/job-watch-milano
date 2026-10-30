@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const schemaVersion = 4;
+export const schemaVersion = 5;
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const utc = z.iso.datetime({ precision: 0 });
 const identifier = z

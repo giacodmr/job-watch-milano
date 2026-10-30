@@ -10,7 +10,7 @@ flowchart LR
   C --> P[Exporter Python: codec e proiezione esistenti]
   P --> N[CLI Node: hash, allowlist, manifest]
   N --> I[Importer: staging, chunk e CAS]
-  I --> D[(D1 locale, schema 4)]
+  I --> D[(D1 locale, schema 5)]
   B[Browser React locale] --> W[Worker: sole GET]
   W --> Q[Servizi getSnapshot / listJobs / getJob]
   Q -->|checkpoint confermato| D
@@ -55,7 +55,7 @@ Le frecce future non dichiarano capacità già disponibili: l'adapter mutativo e
 
 ## Schema e consistenza
 
-`companies`, `sources`, `jobs` sono identità durevoli. `company_versions`, `source_versions`, `job_versions` portano metadati e provenienza per snapshot: un import parziale non sovrascrive i dati visibili. I riferimenti alle identità non vengono cancellati quando le vacancy chiudono. `job_aliases` conserva chiavi legacy confermate senza fondere aziende diverse.
+`companies`, `sources`, `jobs` sono identità durevoli. Il nome visualizzato è ora in `company_versions.canonical_name` (migrazione 0005); per osservazioni legacy il reader conserva il fallback al nome identità. Non aggiornare il nome globale durante staging. `company_versions`, `source_versions`, `job_versions` portano metadati e provenienza per snapshot: un import parziale non sovrascrive i dati visibili. I riferimenti alle identità non vengono cancellati quando le vacancy chiudono. `job_aliases` conserva chiavi legacy confermate senza fondere aziende diverse.
 
 `sync_snapshots` e `sync_chunks` registrano staging, integrità e completamento dei chunk. `sync_checkpoints` contiene la revisione attiva: solo snapshot confermati. Le letture partono dal checkpoint e filtrano tutte le versioni per quell'ID; mai `max(timestamp)` su dati in staging. I dati identità da staging non sono consultabili senza join al checkpoint.
 
