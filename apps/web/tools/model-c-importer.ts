@@ -9,7 +9,9 @@ import { verifyGitProjection } from './model-c-git';
 import type { GitSource } from './model-c-git';
 
 type Row = Record<string, string | number | null>;
-type Step = { sql:string; values:(string | number | null)[]; writes:Record<string,number> };
+type Phase = 'staging' | 'promotion' | 'checkpoint' | 'cleanup';
+type Step = { sql:string; values:(string | number | null)[]; writes:Record<string,number>; phase?:Phase };
+const maxParameters=80, maxStatementSqlBytes=64*1024;
 type Selected = Awaited<ReturnType<typeof selectModelC>>;
 export interface ImportOptions {
   source: GitSource;
@@ -21,7 +23,11 @@ export interface ImportOptions {
 }
 export interface ImportMetrics {
   reservation:number; personal:number; publication:number; reconciliation:number; cleanup:number;
-  total:number; reservedBound:number; publicationStatements:number; publicationBytes:number; publicationMs:number;
+  total:number; requiredBound:number; reservedBound:number; publicationStatements:number; publicationBytes:number; publicationMs:number;
+  staging:number; promotion:number; checkpoint:number;
+  maxStatementParameters:number; maxStatementSqlBytes:number; totalParameters:number;
+  nodeHeapUsedBytes:number; nodeRssBytes:number;
+  writeBounds:Record<string,number>; writeUnits:Record<string,{rows:number;indexes:number;bound:number}>;
 }
 const catalogTables = ['catalog_head','catalog_runs','catalog_content_revisions','catalog_ledger_checkpoints','catalog_run_proofs',
   'catalog_company_identity','catalog_source_identity','catalog_vacancy_identity','catalog_aliases',
@@ -56,6 +62,27 @@ function insert(table:string, row:Row, update=false):Step {
   const cols=Object.keys(row);
   const suffix = update ? ' ON CONFLICT('+cols[0]+') DO UPDATE SET '+cols.slice(1).map(c=>c+'=excluded.'+c).join(',') : '';
   return statement('INSERT INTO '+table+' ('+cols.join(',')+') VALUES ('+cols.map(()=>'?').join(',')+')'+suffix,Object.values(row),{[table]:update?2:1});
+}
+/** Group only identical column shapes. Every bound row and index/trigger effect
+ * stays in writes, independent of the number of SQL statements emitted. */
+function insertMany(table:string, rows:Row[], phase:Phase):Step[] {
+  const shapes=new Map<string,Row[]>();
+  for(const row of rows) {
+    const shape=Object.keys(row).join(',');
+    const group=shapes.get(shape)??[];group.push(row);shapes.set(shape,group);
+  }
+  const steps:Step[]=[];
+  for(const [shape,records] of shapes) {
+    const columns=shape.split(','), size=Math.floor(maxParameters/columns.length);
+    if(!size)throw Error('STATEMENT_LIMIT');
+    for(let offset=0;offset<records.length;offset+=size) {
+      const part=records.slice(offset,offset+size);
+      const sql='INSERT INTO '+table+' ('+shape+') VALUES '+part.map(()=> '('+columns.map(()=>'?').join(',')+')').join(',');
+      if(Buffer.byteLength(sql)>maxStatementSqlBytes)throw Error('STATEMENT_LIMIT');
+      steps.push({...statement(sql,part.flatMap(r=>columns.map(c=>r[c]!)),{[table]:part.length}),phase});
+    }
+  }
+  return steps;
 }
 const prepared = (db:D1Database, steps:Step[]) => steps.map(s=>db.prepare(s.sql).bind(...s.values));
 async function execute(db:D1Database, steps:Step[]) {
@@ -133,11 +160,19 @@ const bool = (v:boolean|null) => v===null?null:Number(v);
  * explicit trigger effects. Schema-role/version checks pin the trigger set.
  * Bounds are admission estimates; actual meta.rows_written is reported separately.
  */
-async function bound(db:D1Database, steps:Step[]) {
+async function estimateWrites(db:D1Database, steps:Step[]) {
   const tables=[...new Set(steps.flatMap(s=>Object.keys(s.writes)))], weights=new Map<string,number>();
-  for (const t of tables) weights.set(t,1+(await db.prepare('PRAGMA index_list('+t+')').all()).results.length);
-  return steps.reduce((n,s)=>n+Object.entries(s.writes).reduce((v,[t,count])=>v+count*weights.get(t)!,0),0);
+  for (const t of tables) weights.set(t,(await db.prepare('PRAGMA index_list('+t+')').all()).results.length);
+  const byPhase:Record<string,number>={}, byTable:ImportMetrics['writeUnits']={};
+  let total=0;
+  for(const step of steps)for(const [table,rows] of Object.entries(step.writes)) {
+    const indexes=weights.get(table)!, cost=rows*(1+indexes), phase=step.phase??'checkpoint';
+    total+=cost;byPhase[phase]=(byPhase[phase]??0)+cost;
+    const entry=byTable[table]??{rows:0,indexes,bound:0};entry.rows+=rows;entry.bound+=cost;byTable[table]=entry;
+  }
+  return {total,byPhase,byTable};
 }
+async function bound(db:D1Database, steps:Step[]) {return (await estimateWrites(db,steps)).total;}
 async function reserve(db:D1Database, budget:ImportOptions['budget'], rows:number) {
   const limit=budget.extendedAuthorized?60000:30000;
   if (budget.day!==new Date().toISOString().slice(0,10) || !/^\d{4}-\d{2}-\d{2}$/.test(budget.day) || !Number.isSafeInteger(budget.availableRows) || budget.availableRows<0 || budget.availableRows>limit) throw Error('INVALID_WRITE_BUDGET');
@@ -153,7 +188,18 @@ async function reserve(db:D1Database, budget:ImportOptions['budget'], rows:numbe
 export class ModelCImportError extends Error {
   constructor(code:string, readonly metrics:ImportMetrics) {super(code);}
 }
-const emptyMetrics=():ImportMetrics=>({reservation:0,personal:0,publication:0,reconciliation:0,cleanup:0,total:0,reservedBound:0,publicationStatements:0,publicationBytes:0,publicationMs:0});
+const emptyMetrics=():ImportMetrics=>({reservation:0,personal:0,publication:0,reconciliation:0,cleanup:0,total:0,requiredBound:0,reservedBound:0,publicationStatements:0,publicationBytes:0,publicationMs:0,staging:0,promotion:0,checkpoint:0,maxStatementParameters:0,maxStatementSqlBytes:0,totalParameters:0,nodeHeapUsedBytes:0,nodeRssBytes:0,writeBounds:{},writeUnits:{}});
+/** Read-only preflight used by the importer and boundary probes; never executes SQL. */
+export function inspectCatalogPlan(steps:readonly Step[], metrics:ImportMetrics=emptyMetrics()) {
+  metrics.publicationStatements=steps.length;metrics.publicationBytes=Buffer.byteLength(canonical(steps));
+  metrics.maxStatementParameters=Math.max(0,...steps.map(s=>s.values.length));
+  metrics.totalParameters=steps.reduce((n,s)=>n+s.values.length,0);
+  metrics.maxStatementSqlBytes=Math.max(0,...steps.map(s=>Buffer.byteLength(s.sql)));
+  const memory=process.memoryUsage();metrics.nodeHeapUsedBytes=memory.heapUsed;metrics.nodeRssBytes=memory.rss;
+  if(metrics.maxStatementParameters>maxParameters || metrics.maxStatementSqlBytes>maxStatementSqlBytes)throw Error('STATEMENT_LIMIT');
+  if (steps.length>8000 || metrics.publicationBytes>8*1024*1024) throw Error('ATOMIC_PUBLICATION_LIMIT');
+  return metrics;
+}
 export async function importModelC(catalog:D1Database, personal:D1Database, options:ImportOptions) {
   const metrics=emptyMetrics();
   try {return await importAttempt(catalog,personal,options,metrics);}
@@ -207,19 +253,24 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const cleanup=await cleanupPlan(catalog,same?run:undefined);
   // New run's staged rows will also be cleaned after publication.
   if (!same) cleanup.push(...cleanupFor(run,publication));
+  for(const step of cleanup)step.phase='cleanup';
   const receipt={id:'receipt:'+run,catalog_sync_revision:syncRevision,catalog_content_revision:contentRevision,observed_commit:bundle.manifest.commitSha,
     ledger_digest:selected.ledgerDigest,head_digest:await sha256(canonical({syncRevision,run,contentRevision,ledgerRevision,ledgerDigest:selected.ledgerDigest}))};
   // Reconciliation runs after PERSONAL append + catalog commit, using a new read.
   const newPrivateRows=personalSteps.filter(s=>personalTables.some(t=>s.sql.startsWith('INSERT INTO '+t+' '))).length;
   const newRefs=personalSteps.filter(s=>s.sql.startsWith('INSERT INTO personal_job_refs ')).length;
   const reconBound=await bound(personal,personalGuard(privateData))+newPrivateRows*2+(privateData.personal_job_refs!.length+newRefs)*4+12;
-  metrics.publicationStatements=publication.length;metrics.publicationBytes=Buffer.byteLength(canonical(publication));
-  if (publication.length>8000 || metrics.publicationBytes>8*1024*1024) throw Error('ATOMIC_PUBLICATION_LIMIT');
+  inspectCatalogPlan(publication,metrics);
   const pendingReconciliation=!same || personalSteps.length>0 || privateData.personal_job_refs!.some(r=>!privateData.personal_reconciliation!.some(v=>v.owner_id===r.owner_id&&v.job_id===r.job_id&&v.state==='VERIFIED'&&v.receipt_id===receipt.id&&v.personal_revision===privateData.personal_heads!.find(h=>h.owner_id===r.owner_id)?.revision));
-  const estimated=await bound(catalog,[...publication,...cleanup])+await bound(personal,personalSteps.length?[...personalGuard(privateData),...personalSteps]:[])+(pendingReconciliation?reconBound:0);
+  const catalogEstimate=await estimateWrites(catalog,[...publication,...cleanup]);
+  const privateBound=await bound(personal,personalSteps.length?[...personalGuard(privateData),...personalSteps]:[]);
+  const estimated=catalogEstimate.total+privateBound+(pendingReconciliation?reconBound:0);
   if (estimated===0) return {status:'REPLAY' as const,run,observation,syncRevision,metrics};
-  metrics.reservedBound=estimated+20; // includes all reservation table/index/trigger writes
-  metrics.reservation=await reserve(catalog,options.budget,metrics.reservedBound);
+  metrics.writeBounds={...catalogEstimate.byPhase,personal:privateBound,reconciliation:pendingReconciliation?reconBound:0,reservation:20};
+  metrics.writeUnits=catalogEstimate.byTable;
+  metrics.requiredBound=estimated+20; // all aggregated rows, indexes, known trigger effects and reservation itself
+  metrics.reservation=await reserve(catalog,options.budget,metrics.requiredBound);
+  metrics.reservedBound=metrics.requiredBound; // only after the daily reservation really committed
   // Detect modifications between proof construction and the first private batch.
   if (await digestRows(await read(personal,personalTables))!==privateDigest) throw Error('PERSONAL_CONTEXT_CHANGED');
   let afterPersonal=privateDigest;
@@ -233,7 +284,14 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   }
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
   const start=performance.now();
-  metrics.publication=await execute(catalog,publication);
+  if(publication.length) {
+    const result=await catalog.batch(prepared(catalog,publication));
+    for(const [i,r] of result.entries()) {
+      const written=r.meta.rows_written??0;metrics.publication+=written;
+      const phase=publication[i]!.phase??'checkpoint';
+      if(phase!=='cleanup')metrics[phase]+=written;
+    }
+  }
   metrics.publicationMs=performance.now()-start;
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
   if (pendingReconciliation) metrics.reconciliation=await reconcile(catalog,personal,receipt,selected,options.owner);
@@ -251,11 +309,11 @@ async function planCatalog(old:Awaited<ReturnType<typeof trustedCatalog>>, selec
   const companies=rows.filter(r=>r.kind==='company'), sources=rows.filter(r=>r.kind==='source'), jobs=rows.filter(r=>r.kind==='job');
   steps.push(insert('catalog_runs',{id:run,observed_commit:proof.observedGitCommit,projection_digest:proof.projectionInputDigest,expected_revision:Number(old.head?.sync_revision??0),content_revision:contentRevision,ledger_revision:ledgerRevision,expected_chunks:1,expected_companies:companies.length,expected_sources:sources.length,expected_vacancies:selected.catalog.length}));
   steps.push(insert('catalog_run_proofs',{run_id:run,manifest_digest:proof.sourceManifestDigest,environment_digest:environmentDigest,reference_digest:referenceDigest}));
-  const origins=new Map<string,string>();
+  const origins=new Map<string,string>(), originRows:Row[]=[];
   async function origin(path:string,hash:string) {
     const key=path+'\0'+hash;
     let id=origins.get(key);
-    if (!id) { id='origin:'+await sha256(run+'\0'+key); origins.set(key,id); steps.push(insert('catalog_origins',{id,run_id:run,commit_sha:proof.observedGitCommit,source_path:path,source_sha256:hash})); }
+    if (!id) { id='origin:'+await sha256(run+'\0'+key); origins.set(key,id); originRows.push({id,run_id:run,commit_sha:proof.observedGitCommit,source_path:path,source_sha256:hash}); }
     return id;
   }
   const fallback=proof.inputs.sourceFiles.find(f=>f.path==='companies_job_watch_v2.json')!;
@@ -286,30 +344,40 @@ async function planCatalog(old:Awaited<ReturnType<typeof trustedCatalog>>, selec
     stages.catalog_stage_vacancies!.push({run_id:run,job_id:id,company_id:i.companyId,origin_job_key:i.originJobKey,operation:removed.some(r=>r.job_id===id)?'REMOVE':'IDENTIFY_ONLY',origin_id:await origin(fallback.path,fallback.sha256)});
   }
   for (const a of newAliases) stages.catalog_stage_aliases!.push({run_id:run,alias_key:a.key,job_id:a.jobId,resolution:legacy?.aliasResolutions[a.key]??(selected.ledger.identities.some(i=>i.originJobKey===a.key)?'EXACT_KEY':'PYTHON_RESOLVED')});
-  for (const [table,records] of Object.entries(stages)) for (const row of records) steps.push(insert(table,row));
+  steps.push(...insertMany('catalog_origins',originRows,'staging'));
+  for (const [table,records] of Object.entries(stages)) steps.push(...insertMany(table,records,'staging'));
   const stageCount=Object.values(stages).reduce((n,r)=>n+r.length,0);
-  steps.push(insert('catalog_chunks',{run_id:run,chunk_index:0,chunk_digest:await sha256(canonical(stages)),row_count:stageCount}));
+  steps.push({...insert('catalog_chunks',{run_id:run,chunk_index:0,chunk_digest:await sha256(canonical(stages)),row_count:stageCount}),phase:'staging'});
   // These assertions are in the same transaction; zero-row UPDATE is never a CAS.
   steps.push(statement('INSERT INTO catalog_import_assert VALUES (('+Object.entries(stages).map(([t,r])=>'(SELECT count(*) FROM '+t+' WHERE run_id=?)='+r.length).join(' AND ')+'))',Object.keys(stages).map(()=>run),{catalog_import_assert:2}));
   steps.push(statement("UPDATE catalog_runs SET state='READY' WHERE id=?",[run],{catalog_runs:2}));
-  for (const id of new Set([...companies.map(c=>c.id),...(legacy?.companies.map(c=>String(c.id))??[]),...selected.ledger.identities.map(i=>i.companyId)])) if (!old.data.catalog_company_identity!.some(r=>r.id===id)) steps.push(insert('catalog_company_identity',{id}));
-  for (const s of sources) if (!old.data.catalog_source_identity!.some(r=>r.id===s.id)) steps.push(insert('catalog_source_identity',{id:s.id,company_id:s.companyId,source_key:s.sourceKey}));
-  for (const s of legacy?.sources??[]) if (!sources.some(r=>r.id===s.id)&&!old.data.catalog_source_identity!.some(r=>r.id===s.id)) steps.push(insert('catalog_source_identity',{id:s.id!,company_id:s.company_id!,source_key:s.source_key!}));
-  for (const i of newIdentities) steps.push(insert('catalog_vacancy_identity',{id:i.jobId,company_id:i.companyId,origin_job_key:i.originJobKey}));
-  for (const a of stages.catalog_stage_aliases!) { const {run_id:_run,...value}=a; steps.push(insert('catalog_aliases',value)); }
+  const companyIds=[...new Set([...companies.map(c=>c.id),...(legacy?.companies.map(c=>String(c.id))??[]),...selected.ledger.identities.map(i=>i.companyId)])]
+    .filter(id=>!old.data.catalog_company_identity!.some(r=>r.id===id));
+  steps.push(...insertMany('catalog_company_identity',companyIds.map(id=>({id})),'promotion'));
+  const newSourceCount=sources.filter(s=>!old.data.catalog_source_identity!.some(r=>r.id===s.id)).length;
+  if(newSourceCount)steps.push({...statement('INSERT INTO catalog_source_identity(id,company_id,source_key) SELECT source_id,company_id,source_key FROM catalog_stage_sources s WHERE run_id=? AND NOT EXISTS(SELECT 1 FROM catalog_source_identity i WHERE i.id=s.source_id)',[run],{catalog_source_identity:newSourceCount}),phase:'promotion'});
+  const historicalSources=(legacy?.sources??[]).filter(s=>!sources.some(r=>r.id===s.id)&&!old.data.catalog_source_identity!.some(r=>r.id===s.id));
+  steps.push(...insertMany('catalog_source_identity',historicalSources.map(s=>({id:s.id!,company_id:s.company_id!,source_key:s.source_key!})),'promotion'));
+  if(newIdentities.length)steps.push({...statement('INSERT INTO catalog_vacancy_identity(id,company_id,origin_job_key) SELECT job_id,company_id,origin_job_key FROM catalog_stage_vacancies s WHERE run_id=? AND NOT EXISTS(SELECT 1 FROM catalog_vacancy_identity i WHERE i.id=s.job_id)',[run],{catalog_vacancy_identity:newIdentities.length}),phase:'promotion'});
+  if(newAliases.length)steps.push({...statement('INSERT INTO catalog_aliases(alias_key,job_id,resolution) SELECT alias_key,job_id,resolution FROM catalog_stage_aliases WHERE run_id=?',[run],{catalog_aliases:newAliases.length}),phase:'promotion'});
   const applyStage=(stage:string,current:string,exclude:string[]) => {
-    const records=stages[stage]!;
-    for (const row of records) {
-      if (row.operation&&row.operation!=='UPSERT') continue;
-      const cols=Object.keys(row).filter(c=>c!=='run_id'&&!exclude.includes(c)), key=cols[0]!;
-      steps.push(statement('INSERT INTO '+current+' ('+cols.join(',')+') SELECT '+cols.join(',')+' FROM '+stage+' WHERE run_id=? AND '+key+'=? ON CONFLICT('+key+') DO UPDATE SET '+cols.slice(1).map(c=>c+'=excluded.'+c).join(','),[run,row[key]!],{[current]:2}));
-    }
+    const records=stages[stage]!.filter(r=>!r.operation||r.operation==='UPSERT');
+    if(!records.length)return;
+    const cols=Object.keys(records[0]!).filter(c=>c!=='run_id'&&!exclude.includes(c)), key=cols[0]!;
+    // Stage contains only changed payloads; IDENTIFY_ONLY and REMOVE never UPSERT.
+    steps.push({...statement('INSERT INTO '+current+' ('+cols.join(',')+') SELECT '+cols.join(',')+' FROM '+stage+" WHERE run_id=?"+(stage==='catalog_stage_vacancies'?" AND operation='UPSERT'":'')+' ON CONFLICT('+key+') DO UPDATE SET '+cols.slice(1).map(c=>c+'=excluded.'+c).join(','),[run],{[current]:records.length*2}),phase:'promotion'});
   };
   applyStage('catalog_stage_companies','catalog_company_current',[]);
   applyStage('catalog_stage_sources','catalog_source_current',['source_key']);
   applyStage('catalog_stage_vacancies','catalog_vacancy_current',['operation','origin_job_key']);
-  for (const row of removed) steps.push(statement('DELETE FROM catalog_vacancy_current WHERE job_id=? AND EXISTS(SELECT 1 FROM catalog_stage_vacancies WHERE run_id=? AND job_id=? AND operation=\'REMOVE\')',[row.job_id!,run,row.job_id!],{catalog_vacancy_current:1}));
-  for (const [table,key,ids] of [['catalog_source_current','source_id',sources.map(s=>s.id)],['catalog_company_current','company_id',companies.map(c=>c.id)]] as const) for (const row of old.data[table]!) if (!ids.includes(String(row[key]))) steps.push(statement('DELETE FROM '+table+' WHERE '+key+'=?',[row[key]!],{[table]:1}));
+  if(removed.length)steps.push({...statement("DELETE FROM catalog_vacancy_current WHERE job_id IN (SELECT job_id FROM catalog_stage_vacancies WHERE run_id=? AND operation='REMOVE')",[run],{catalog_vacancy_current:removed.length}),phase:'promotion'});
+  for (const [table,key,ids] of [['catalog_source_current','source_id',sources.map(s=>s.id)],['catalog_company_current','company_id',companies.map(c=>c.id)]] as const) {
+    const deleted=old.data[table]!.filter(r=>!ids.includes(String(r[key])));
+    for(let offset=0;offset<deleted.length;offset+=maxParameters) {
+      const part=deleted.slice(offset,offset+maxParameters);
+      steps.push({...statement('DELETE FROM '+table+' WHERE '+key+' IN ('+part.map(()=>'?').join(',')+')',part.map(r=>r[key]!),{[table]:part.length}),phase:'promotion'});
+    }
+  }
   if (old.head) steps.push(statement("UPDATE catalog_head SET sync_revision=?,run_id=?,content_revision=?,ledger_revision=? WHERE scope='catalog'",[Number(old.head.sync_revision)+1,run,contentRevision,ledgerRevision],{catalog_head:2,catalog_runs:2,catalog_audit:1}));
   else steps.push(statement("INSERT INTO catalog_head VALUES ('catalog',1,?,?,?)",[run,contentRevision,ledgerRevision],{catalog_head:1,catalog_runs:2,catalog_audit:1}));
   return steps;
@@ -375,7 +443,7 @@ async function reconcile(catalog:D1Database, personal:D1Database, receipt:Row, s
 }
 const cleanupTables=['catalog_stage_aliases','catalog_stage_vacancies','catalog_stage_sources','catalog_stage_companies','catalog_chunks'];
 function cleanupFor(run:string,publication:Step[]) {
-  return cleanupTables.map(t=>statement('DELETE FROM '+t+' WHERE run_id=?',[run],{[t]:publication.filter(s=>s.sql.startsWith('INSERT INTO '+t+' ')).length}));
+  return cleanupTables.map(t=>statement('DELETE FROM '+t+' WHERE run_id=?',[run],{[t]:publication.reduce((n,s)=>n+(s.sql.startsWith('INSERT INTO '+t+' ')?s.writes[t]??0:0),0)}));
 }
 async function cleanupPlan(db:D1Database, run?:string) {
   const steps:Step[]=[];
