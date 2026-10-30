@@ -97,6 +97,8 @@ def create_backup(remote, output, recipient, *, age='age', repository=REPOSITORY
             entry = tarfile.TarInfo('repository.bundle'); entry.size = bundle.stat().st_size; entry.mode = 0o600
             with bundle.open('rb') as handle: tar.addfile(entry,handle)
         os.chmod(archive, 0o600)
+        if archive.stat().st_size > MAX_ARCHIVE:
+            raise SafetyError('BACKUP_SIZE_LIMIT')
         if census(remote) != before:
             raise SafetyError('REMOTE_CHANGED_RETRY')
         fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0), 0o600)
@@ -104,6 +106,7 @@ def create_backup(remote, output, recipient, *, age='age', repository=REPOSITORY
             with os.fdopen(fd, 'wb') as handle:
                 run([age, '--encrypt', '--recipient', recipient, archive], stdout=handle, code='BACKUP_ENCRYPTION_FAILED')
                 handle.flush(); os.fsync(handle.fileno())
+                if handle.tell() > MAX_ARCHIVE: raise SafetyError('BACKUP_SIZE_LIMIT')
         except BaseException:
             output.unlink(missing_ok=True)
             raise
@@ -114,13 +117,13 @@ def create_backup(remote, output, recipient, *, age='age', repository=REPOSITORY
 def _unseal(capsule, identity, expected_sha256, root, age, repository):
     _crypto(age)
     capsule, identity = Path(capsule), Path(identity)
-    if not SHA256.fullmatch(expected_sha256) or file_digest(capsule) != expected_sha256:
-        raise SafetyError('CAPSULE_HASH_MISMATCH')
     for path in (capsule, identity):
         if path.is_symlink() or not path.is_file() or path.stat().st_mode & 0o077:
             raise SafetyError('PRIVATE_FILE_REQUIRED')
     if capsule.stat().st_size > MAX_ARCHIVE:
         raise SafetyError('BACKUP_SIZE_LIMIT')
+    if not SHA256.fullmatch(expected_sha256) or file_digest(capsule) != expected_sha256:
+        raise SafetyError('CAPSULE_HASH_MISMATCH')
     archive = root/'decrypted.tar'
     run([age, '--decrypt', '--identity', identity, '--output', archive, capsule], code='BACKUP_DECRYPTION_FAILED')
     os.chmod(archive, 0o600)

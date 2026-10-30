@@ -117,6 +117,13 @@ class EncryptedBackup(unittest.TestCase):
         with patch('privacy_safety.git_backup.census',side_effect=[real,changed]):
             with self.assertRaisesRegex(SafetyError,'REMOTE_CHANGED_RETRY'):self.backup()
         self.assertFalse(self.capsule.exists())
+    def test_capsule_symlink_and_open_permissions_rejected_before_read(self):
+        summary=self.backup();link=self.root/'symlink.age';link.symlink_to(self.capsule)
+        with patch('privacy_safety.git_backup.file_digest',side_effect=AssertionError('must not read')):
+            with self.assertRaisesRegex(SafetyError,'PRIVATE_FILE_REQUIRED'):
+                restore_backup(link,self.key,summary['capsule_sha256'],age=AGE,repository='synthetic/repository')
+            self.capsule.chmod(0o644)
+            with self.assertRaisesRegex(SafetyError,'PRIVATE_FILE_REQUIRED'):self.restore(summary)
     def test_all_history_submodule_payload_is_not_silently_lost(self):
         (self.fixture.root/'.gitmodules').write_text('[submodule "synthetic"]\npath=vendor\nurl=https://example.test/fixture\n')
         self.fixture.commit('submodule metadata')
