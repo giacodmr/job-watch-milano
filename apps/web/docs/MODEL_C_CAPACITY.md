@@ -2,7 +2,11 @@
 
 Base: main `1133c6aed1f94de6fec38f541b9869dac4543367`, squash merge of PR #33. Branch `codex/model-c-bootstrap-capacity`. Only the inactive Node importer, synthetic tests/laboratory and documentation change. No schema migrations, Python engine, UI, active API/reader/V1 importer, bindings, workflows, cloud or persistent databases change.
 
-## Result and readiness
+## PR #35 update
+
+This page records #34 behavior under ordinary 30,000/60,000 ceilings. [MODEL_C_FREE_BOOTSTRAP.md](MODEL_C_FREE_BOOTSTRAP.md) documents the explicit initial-only 95,000 exception: the exact baseline is now actually published locally (94,173 reserved / 77,145 actual), with a zero-write ordinary replay. No SQL/staging optimization or paid quota is introduced. Remote account quota and activation remain unverified/disabled.
+
+## Historical #34 result and readiness
 
 The complete 5,454-identity / 5,474-mapping / 151-current-vacancy Git/selection/bootstrap plan now contains **739 statements and 2,704,855 serialized bytes**, down from **22,025 and 6,986,391** in PR #33. It fits the unchanged 8,000-statement / 8 MiB application limits. The baseline is constructed solely from synthetic data, with one company/source; its source cardinalities are asserted by the real selector before admission.
 
