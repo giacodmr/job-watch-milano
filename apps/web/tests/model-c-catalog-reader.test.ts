@@ -72,6 +72,38 @@ describe('inactive, read-only Model C catalog service', () => {
     await expect(getModelCCatalogJob(db,jobId,1)).rejects.toMatchObject({code:'CATALOG_CHANGED'});
     expect((await getModelCCatalogJob(db,jobId,2)).snapshot?.syncRevision).toBe(2);
   });
+  it('only marks companies as truncated when a 501st company exists', async () => {
+    const readAt = async (count: number) => {
+      const records = Array.from({length: count}, (_, i) => ({
+        id: 'company:' + i, name: 'Synthetic ' + i, membership: 'ACTIVE',
+      }));
+      const head = {
+        syncRevision: 1, contentRevision: 1, ledgerRevision: 1,
+        runId: 'run-one', observedCommit: 'b'.repeat(40), state: 'PUBLISHED',
+        contentDigest: hash, ledgerDigest: hash, contentOriginCommit: 'b'.repeat(40),
+        identityCount: 1, mappingCount: 2,
+      };
+      const queryDb = {
+        prepare(sql: string) {
+          if (sql.includes('FROM catalog_visible_companies')) {
+            expect(sql).toContain('LIMIT 501');
+            return {all: async () => ({results: records})};
+          }
+          if (sql.includes('FROM model_c_schema')) return {first: async () => 4};
+          if (sql.includes('FROM catalog_head h')) return {first: async () => head};
+          if (sql.includes('count(*) AS total')) return {first: async () => 1};
+          throw new Error('UNEXPECTED_READ');
+        },
+      } as unknown as D1Database;
+      return getModelCCatalogSnapshot(queryDb);
+    };
+    const exact = await readAt(500);
+    expect(exact.snapshot?.companies).toHaveLength(500);
+    expect(exact.snapshot?.companiesTruncated).toBe(false);
+    const extra = await readAt(501);
+    expect(extra.snapshot?.companies).toHaveLength(500);
+    expect(extra.snapshot?.companiesTruncated).toBe(true);
+  });
   it('requires the CATALOG schema, strict inputs and current ID without silently exposing history', async () => {
     const personal = await fresh('personal');
     await expect(getModelCCatalogSnapshot(personal)).rejects.toMatchObject({code:'CATALOG_SCHEMA_MISMATCH'});
