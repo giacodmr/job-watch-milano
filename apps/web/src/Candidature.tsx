@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import type {FormEvent} from 'react';
+import type {FormEvent,ReactNode} from 'react';
 import {ApiError,dateLabel} from './api';
 import {
   readPersonalPage,readPersonalSummary,readPersonalDetail,personalReadError,
@@ -19,7 +19,7 @@ type Section='Riepilogo'|'Selezione'|'Retribuzione'|'Documenti';
 const sections:Section[]=['Riepilogo','Selezione','Retribuzione','Documenti'];
 const absent='Non registrato';
 function displayDate(date:string|null){return date?dateLabel(date):'—';}
-function Fact({name,children}:{name:string;children:React.ReactNode}){
+function Fact({name,children}:{name:string;children:ReactNode}){
   return <div className="c-fact"><dt>{name}</dt><dd>{children}</dd></div>;
 }
 function Provenance({commit,path}:{commit:string;path:string}){
@@ -219,11 +219,11 @@ export default function Candidature(){
       <button type="button" className="c-btn" onClick={reload} disabled={loading}><JWIcon name="refresh" size={14}/> Aggiorna</button>
     </header>
     <section className="c-content" aria-label="Elenco candidature">
-      <nav className="c-tabs" aria-label="Viste personali">
+      <div className="c-tabs" role="tablist" aria-label="Viste personali">
         {views.map(item=><button key={item.key} type="button" role="tab"
           aria-selected={view===item.key} title={item.description}
           onClick={()=>changeView(item.key)}>{item.title}</button>)}
-      </nav>
+      </div>
       <form className="c-tools" role="search" onSubmit={submit}>
         <label className="c-search-field"><JWIcon name="search" size={15}/>
           <span className="c-sr-only">Cerca nel titolo catturato</span>
