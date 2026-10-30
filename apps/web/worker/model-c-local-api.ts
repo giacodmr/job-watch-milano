@@ -26,6 +26,10 @@ const detailRevision = z.strictObject({
 const personalPage = z.strictObject({
   limit: z.coerce.number().int().min(1).max(50).default(25),
   cursor: z.string().max(5000).optional(),
+  q: z.string().trim().max(120).default(''),
+  view: z.enum(['all','to_apply','applied','dismissed']).default('all'),
+  decision: z.enum(['TO_REVIEW','INTERESTED','APPLIED','NOT_INTERESTED']).optional(),
+  reference: z.enum(['SAVED','APPLICATION','DISMISSED']).optional(),
 });
 const syntheticOwner = /^synthetic-[a-z][a-z0-9-]{0,63}$/;
 
