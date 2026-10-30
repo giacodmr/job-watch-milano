@@ -32,8 +32,8 @@ def _search(city):
         o = c.get_json(ENDPOINT, params=params)
     except Exception as exc:
         raise c.NotCheckable(f"PayPal official public PCS-X {city} search unavailable") from exc
-    if not isinstance(o,dict) or o.get("error"):
-        raise c.NotCheckable(f"PayPal PCS-X {city} returned a publisher error")
+    if not isinstance(o,dict):
+        raise c.NotCheckable(f"PayPal PCS-X {city} did not return an object")
     data=o.get("data")
     if not isinstance(data,dict) or not isinstance(data.get("positions"),list) or not isinstance(data.get("count"),int):
         raise c.NotCheckable(f"PayPal PCS-X {city} lacks published total or positions array")
