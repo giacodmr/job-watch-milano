@@ -80,14 +80,14 @@ export async function getModelCCatalogSnapshot(db: D1Database) {
   const head = await publishedHead(db);
   if (!head) return { snapshot: null, productionAccess: false as const };
   const companyRows = await db.prepare(`SELECT company_id AS id,display_name AS name,
-    membership FROM catalog_visible_companies ORDER BY display_name,company_id LIMIT 500`)
+    membership FROM catalog_visible_companies ORDER BY display_name,company_id LIMIT 501`)
     .all<{id:string;name:string;membership:string}>();
   const count = await db.prepare('SELECT count(*) AS total FROM catalog_visible_vacancies')
     .first<number>('total');
   await unchanged(db, head);
   return {
-    snapshot: { ...publicHead(head), currentJobs: count ?? 0, companies: companyRows.results,
-      companiesTruncated: companyRows.results.length === 500 },
+    snapshot: { ...publicHead(head), currentJobs: count ?? 0, companies: companyRows.results.slice(0, 500),
+      companiesTruncated: companyRows.results.length > 500 },
     productionAccess: false as const,
   };
 }
