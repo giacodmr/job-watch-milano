@@ -4,3 +4,12 @@ __pycache__/
 .job_watch.lock
 .job_watch.transaction.json
 .pending_daily_updates.json
+
+# Privacy safety artifacts are never repository content, even encrypted.
+.privacy-safety/
+*.bundle
+*.age
+*.agekey
+*.privacy-evidence.json
+*.privacy-checkpoint.json
+apps/web/.local-sync/
