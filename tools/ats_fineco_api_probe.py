@@ -13,12 +13,12 @@ def extract(o):
  print("FINECO_API_SCHEMA "+json.dumps({"type":type(o).__name__,"top_keys":list(o)[:30] if isinstance(o,dict) else [],"payload_sample":dump(o,2400)},ensure_ascii=False))
  if isinstance(o,dict):
   d=o.get("data") or {}
-  jobs=d.get("jobs") if isinstance(d,dict) else o.get("jobs")
+  jobs=d.get("jobs") if isinstance(d,dict) and isinstance(d.get("jobs"),list) else o.get("jobs")
   print("FINECO_API_DATA "+json.dumps({"data_keys":list(d)[:30] if isinstance(d,dict) else None,
     "total_field":d.get("total") if isinstance(d,dict) else None,
     "count":len(jobs) if isinstance(jobs,list) else None,
-    "jobs_first":[{k:(str(v)[:300] if isinstance(v,str) else v) for k,v in item.items() if not isinstance(v,(dict,list))}
-      for item in jobs[:8]] if isinstance(jobs,list) else None},ensure_ascii=False)[:10000])
+    "jobs_first":[{k:(str(v)[:160] if isinstance(v,str) else v) for k,v in item.items() if k not in {"description","jobDescription","descriptionHtml"} and not isinstance(v,(dict,list))}
+      for item in jobs[:25]] if isinstance(jobs,list) else None},ensure_ascii=False)[:10000])
   if isinstance(jobs,list):
    ids=[str(j.get("id") or j.get("jobId") or j.get("uuid") or "") for j in jobs]
    print("FINECO_API_PARITY "+json.dumps({"list_len":len(jobs),"unique_nonempty_ids":len(set(x for x in ids if x)),
