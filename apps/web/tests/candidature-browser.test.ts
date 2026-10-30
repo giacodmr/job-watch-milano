@@ -73,7 +73,7 @@ let url='';
 beforeAll(async()=>{
   const [browser,workerBundle]=await Promise.all([
     build({entryPoints:['src/main.tsx'],bundle:true,write:false,format:'iife',platform:'browser',
-      target:'es2022',outdir:'/tmp/jw39-visual',loader:{'.css':'css'}}),
+      target:'es2022',jsx:'automatic',outdir:'/tmp/jw39-visual',loader:{'.css':'css'}}),
     build({entryPoints:['worker/index.ts'],bundle:true,write:false,format:'esm',platform:'browser',target:'es2023'}),
   ]);
   const js=browser.outputFiles.find(f=>f.path.endsWith('.js'))?.text;
