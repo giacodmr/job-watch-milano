@@ -1,142 +1,72 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { healthSchema } from '../shared/contracts';
-import type { Health } from '../shared/contracts';
+import { useEffect, useRef, useState } from 'react';
+import { Icon, NavigationItem } from './components';
+import Dashboard from './Dashboard';
+import Opportunities from './Opportunities';
+
+type Page = 'dashboard' | 'opportunities';
+const currentPage = (): Page => window.location.hash === '#opportunities' || (!window.location.hash && window.location.search) ? 'opportunities' : 'dashboard';
 
 export default function App() {
-  const [health, setHealth] = useState<Health | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const pending = useRef<AbortController | null>(null);
-  const refresh = useCallback(async () => {
-    pending.current?.abort();
-    const controller = new AbortController();
-    pending.current = controller;
-    setLoading(true);
-    setError(null);
-    setHealth(null);
-    try {
-      const response = await fetch('/api/health', {
-        signal: controller.signal,
-        cache: 'no-store',
-      });
-      const body = healthSchema.safeParse(await response.json());
-      if (!body.success || ![200, 503].includes(response.status))
-        throw new Error('invalid_health');
-      if (!controller.signal.aborted) setHealth(body.data);
-    } catch {
-      if (!controller.signal.aborted)
-        setError(
-          'API locale non raggiungibile. Avvia npm run dev:api e riprova.',
-        );
-    } finally {
-      if (!controller.signal.aborted) setLoading(false);
-    }
-  }, []);
+  const [page, setPage] = useState<Page>(currentPage);
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 720px)').matches);
+  const sidebar = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    void refresh();
-    return () => pending.current?.abort();
-  }, [refresh]);
-
+    const sync = () => { setPage(currentPage()); setMobileMenu(false); };
+    const media = window.matchMedia('(max-width: 720px)');
+    const resize = () => { setCompact(media.matches); setMobileMenu(false); };
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
+    media.addEventListener('change', resize);
+    return () => { window.removeEventListener('hashchange', sync); window.removeEventListener('popstate', sync); media.removeEventListener('change', resize); };
+  }, []);
+  useEffect(() => { document.title = `Job Watch · ${page === 'dashboard' ? 'Dashboard' : 'Opportunità'}`; }, [page]);
+  useEffect(() => {
+    if (!mobileMenu || !compact) return;
+    const previous = document.activeElement;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const controls = () => sidebar.current?.querySelectorAll<HTMLElement>('a[href], button:not(:disabled)');
+    controls()?.[0]?.focus();
+    const trap = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); setMobileMenu(false); }
+      if (event.key !== 'Tab') return;
+      const nodes = controls(); if (!nodes?.length) return;
+      const first = nodes[0], last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', trap);
+    return () => { document.body.style.overflow = overflow; document.removeEventListener('keydown', trap); if (previous instanceof HTMLElement) previous.focus(); };
+  }, [compact, mobileMenu]);
+  const goToOpportunities = () => { window.location.hash = 'opportunities'; };
   return (
-    <div className="shell">
-      <header className="topbar">
-        <a className="brand" href="/">
-          JW<span>Job Watch</span>
-        </a>
-        <span className="local-label">AMBIENTE LOCALE</span>
-      </header>
-      <main>
-        <div className="eyebrow">PIATTAFORMA PERSONALE / FASE 0</div>
-        <h1>
-          Una base solida.
-          <br />
-          <span>Il prossimo passo è la connessione.</span>
-        </h1>
-        <p className="intro">
-          Uno spazio per consultare aziende, opportunità e analisi del tuo Job
-          Watch. Le fondamenta sono pronte per essere verificate in locale.
-        </p>
-        <section className="status-panel" aria-labelledby="status-title">
-          <div className="panel-heading">
-            <div>
-              <div className="eyebrow">VERIFICA TECNICA</div>
-              <h2 id="status-title">Stato dell’applicazione</h2>
-            </div>
-            <button onClick={() => void refresh()} disabled={loading}>
-              {loading ? 'Verifica in corso…' : 'Verifica di nuovo'}
-            </button>
-          </div>
-          <div role="status" aria-live="polite" aria-busy={loading}>
-            {loading && <p>Controllo dell’API e del database locale…</p>}
-            {error && <p className="error">{error}</p>}
-            {health && (
-              <>
-                <dl className="health-grid">
-                  <div>
-                    <dt>API locale</dt>
-                    <dd>
-                      <span className="dot" />
-                      Raggiungibile
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Database locale</dt>
-                    <dd>
-                      {health.database === 'ready'
-                        ? 'Schema pronto'
-                        : health.database === 'migration_required'
-                          ? 'Migrazione richiesta'
-                          : 'Da inizializzare'}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Sincronizzazione</dt>
-                    <dd>Non attiva</dd>
-                  </div>
-                  <div>
-                    <dt>Accesso alla produzione</dt>
-                    <dd>Disabilitato</dd>
-                  </div>
-                </dl>
-                <p className="check-time">
-                  Verifica:{' '}
-                  {new Date(health.checkedAt).toLocaleString('it-IT', {
-                    timeZone: 'Europe/Rome',
-                  })}{' '}
-                  · Europe/Rome
-                </p>
-                {health.database !== 'ready' && (
-                  <p className="error">
-                    Esegui <code>npm run db:migrate:local</code> nella cartella
-                    apps/web.
-                  </p>
-                )}
-              </>
-            )}
-          </div>
-        </section>
-        <section className="foundation" aria-labelledby="foundation-title">
-          <div>
-            <div className="eyebrow">CONFINI CHIARI</div>
-            <h2 id="foundation-title">Il Job Watch continua a lavorare.</h2>
-          </div>
-          <p>
-            Collector, workflow e analisi ChatGPT restano indipendenti. Questa
-            applicazione non legge ancora i dati GitHub e non invia comandi ai
-            processi operativi.
-          </p>
-        </section>
-        <aside className="data-note">
-          <strong>Nessun dato operativo importato.</strong>
-          <span>
-            I KPI e l’inventario saranno disponibili dopo l’implementazione
-            della sincronizzazione di sola lettura.
-          </span>
-        </aside>
-      </main>
-      <footer>
-        Job Watch · Architecture & Foundation<span>React / Workers / D1</span>
-      </footer>
+    <div className="app-shell">
+      <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); const main = document.getElementById("main-content"); main?.focus(); main?.scrollIntoView(); }}>Vai al contenuto principale</a>
+      {mobileMenu && compact && <button type="button" className="nav-backdrop" aria-label="Chiudi menu" onClick={() => setMobileMenu(false)}/>}
+      <aside id="workspace-navigation" ref={sidebar} inert={compact && !mobileMenu} className={`sidebar ${mobileMenu ? 'sidebar-open' : ''}`} aria-label="Navigazione principale">
+        <div className="brand" translate="no"><div className="brand-symbol" aria-hidden="true"><span className="mark-corner"/><span className="mark-block"/></div><span>job<span className="brand-light">watch</span></span><button type="button" className="mobile-sidebar-close icon-button" aria-label="Chiudi navigazione" onClick={() => setMobileMenu(false)}><Icon name="close"/></button></div>
+        <div className="workspace"><span className="workspace-avatar" aria-hidden="true">JW</span><div><strong>Il mio workspace</strong><small>Ambiente locale</small></div><Icon name="chevron" size={15}/></div>
+        <nav className="nav-links" aria-label="Sezioni">
+          <span className="nav-group-title">Il tuo spazio</span>
+          <NavigationItem icon="grid" label="Dashboard" href="#dashboard" active={page === 'dashboard'}/>
+          <NavigationItem icon="search" label="Opportunità" href="#opportunities" active={page === 'opportunities'}/>
+          <NavigationItem icon="layers" label="Aziende" unavailable/>
+          <NavigationItem icon="briefcase" label="Candidature" unavailable/>
+          <span className="nav-group-title nav-group-gap">Operatività</span>
+          <NavigationItem icon="check" label="Coda semantica" unavailable/>
+          <NavigationItem icon="activity" label="Monitor" unavailable/>
+          <div className="nav-bottom"><NavigationItem icon="settings" label="Impostazioni" unavailable/></div>
+        </nav>
+        <div className="sidebar-footer"><span className="side-footer-indicator"/>Consultazione locale <span>v0.2</span></div>
+      </aside>
+      <div className="main-area" inert={compact && mobileMenu}>
+        <header className="app-topbar"><div className="header-left"><button ref={menuButton} type="button" className="mobile-menu-button" onClick={() => setMobileMenu(true)} aria-label="Apri navigazione" aria-expanded={mobileMenu} aria-controls="workspace-navigation"><Icon name="menu" size={21}/></button><span className="breadcrumb-root">Workspace</span><span className="breadcrumb-divider">/</span><strong>{page === 'dashboard' ? 'Dashboard' : 'Opportunità'}</strong></div><div className="header-right"><span className="demo-indicator"><span/>Sola lettura</span><span className="profile-icon" aria-label="Workspace personale">JW</span></div></header>
+        <main id="main-content" className="main-content" tabIndex={-1}>
+          {page === 'dashboard' ? <Dashboard onExplore={goToOpportunities}/> : <Opportunities/>}
+        </main>
+      </div>
     </div>
   );
 }

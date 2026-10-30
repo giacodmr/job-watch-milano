@@ -1,25 +1,31 @@
+# Integrazione corrente — UI approvata e D1 locale
+
+Branch `codex/jet-real-data-integration`, basato sulla PR #25 e riallineato al main finale `0b2984a669c4d0dae0b3b666945855c6cda86627` (solo merge safety #28 dopo b3540152, SHA operativo importato). Dashboard e Opportunità leggono snapshot reali con la grafica della PR #29, senza demo o azioni simulate. Stato corrente, test, import/replay, confronto visivo e capacità mancanti in [JET_INTEGRATION.md](JET_INTEGRATION.md). Le PR #25/#29 restano aperte e invariate; la #28 è stata integrata dall’utente nel frattempo; la consegna è una Draft distinta, senza merge o cloud.
+
+Il seguito conserva l’handoff storico della Fase 1.
+
 # Handoff Codex ↔ ChatGPT tramite GitHub
 
-## Punto di partenza
+## Stato consegnato dopo Fase 1
 
-Base audit: main `0f6287a461de3951ba6dc4d2a00235a5fde494fd`, 2026-10-29. Branch fondazioni `codex/web-phase-zero`, PR verso main senza merge automatico. Stato implementato: app locale, schema SQL, health, test, CI e contratti. Stato non implementato: importer, dati operativi nel DB, auth remota, dispatcher comandi, analisi diretta arbitraria, deploy. Leggere l'esito verifiche in `VALIDATION.md` e il prossimo incarico in `../../../PLANS.md`.
+Repository `giacodmr/job-watch-milano`, branch `codex/web-phase-one`. Base implementazione e import `84593e95d60dd4634a3d7ff5f493c13f7fdb872d`; main ricontrollato `3661d7afc324af1fc51d5a6d7effa4fccf82c0b9`, solo delta operativi di raccolta. Le fondazioni/skill della PR #23 sono già state integrate dall'utente. Questa fase non fa merge su main.
 
-PR: https://github.com/giacodmr/job-watch-milano/pull/23. Main successivo `6725fefa45e5bab0494ceb05b9edb2fe999a1e1f` integrato nel branch web, con audit addendum per Worldline. Nessuna scrittura o merge su main effettuati da questo incarico.
+Implementato: exporter da archivio Git isolato, validazione manifest e byte hash, bundle sanitizzato, import D1 locale riprendibile con pubblicazione atomica CAS/audit, query senza dipendenza HTTP e Explorer paginato con provenienza/history. Schema 4; migrazioni precedenti preservate. Import locale reale di 5.454 identità a SHA esplicito; nessun dato operativo è nella build o nei file della PR.
 
-## Riprendere in Codex
+Non implementato: auth remota/JWT, endpoint ingestion, MCP server, dispatcher comandi, selezione arbitraria di analisi, cron/polling o deploy. Nessuna API LLM o risorsa cloud. Leggere README e PHASE1_VALIDATION per comandi, metriche, screenshot e limiti.
 
-1. Leggere AGENTS e piano; verificare PR e branch correnti con strumenti GitHub autorizzati. Fetch e confrontare main con lo SHA audit: nuovi cambi alle fonti richiedono aggiornamento dell'audit prima di una sync.
-2. Preservare modifiche utente, usare branch dedicato. Leggere AUDIT, ADR, SYNC_CONTRACT e controllare il diff per confermare che non vi siano modifiche produttive involontarie.
-3. Da `apps/web`: `npm ci`, `npm run check`, `npm run db:migrate:local`, `npm run worker:check`, `npm run dev:api`. Nessun token richiesto. Il DB è vuoto di dati operativi per scelta.
-4. Eseguire solo l'incarico esplicito della fase successiva; aggiornare test, audit se necessario e resoconto con commit verificato. Non invocare scheduler/bridge per «provare» questa base.
+PR di consegna: https://github.com/giacodmr/job-watch-milano/pull/25. Commit implementazione verificato su GitHub: `016594232473c459cc9a7bcb9a8cb6abb6a14908` (albero identico al commit locale). Eventuali aggiornamenti documentali successivi non cambiano lo snapshot dati importato.
 
-## Riprendere in ChatGPT Chat
+## Riprendere il lavoro
 
-Aprire il repo e la PR con gli strumenti GitHub autorizzati, leggere `AGENTS.md`, `PLANS.md`, `apps/web/docs/HANDOFF.md`, poi audit/contratto/ADR. Lavorare su branch dedicato, verificare SHA e file reali prima di proporre modifiche. Non affidarsi allo stato di questa conversazione come fonte autorevole; non confondere scaffold e funzionalità attive.
+1. Leggere AGENTS, PLANS, AUDIT, SYNC_CONTRACT, ARCHITECTURE, questo handoff e le tre skill frontend per task UI. Usare il repository, non la sola conversazione.
+2. Verificare branch/PR, preservare modifiche locali. Fare fetch e confrontare main con 3661d7a; se cambiano codec, identità, proiezioni o schema operativo, aggiornare audit/test prima di importare il nuovo SHA.
+3. Da apps/web: npm ci (server fermo), npm run check, doppia db:migrate:local, worker:check dry-run. Avvio/import soltanto secondo README, con commit completo verificato. DB già presente: non cancellarlo per un normale aggiornamento.
+4. Per Fase 2 chiedere un incarico esplicito: sicurezza Access/JWT/ruoli e budget sono gate. Il bootstrap misurato supera 100.000 scritture/giorno Free e l'override 500.000 è soltanto locale; servono contabilità aggregata, versioni invariate/retention e misure Worker reali prima di sync remota continuativa.
 
-Prompt suggerito:
+Servizi futuri MCP: chiamare getSnapshot/listJobs/getJob in worker/data/queries.ts con DTO condivisi. Non duplicare la policy Python nel frontend o nel trasporto MCP. Import Node bulk e letture Worker hanno budget/runtime distinti.
 
-> Lavora su giacodmr/job-watch-milano dalla PR delle fondazioni web. Leggi AGENTS.md, PLANS.md, apps/web/docs/AUDIT.md e SYNC_CONTRACT.md allo SHA corrente. Implementa soltanto la Fase 1 locale e di sola lettura descritta in PLANS.md. Preserva Python, dati e workflow produttivi. Non usare API LLM, non creare risorse cloud, non deployare, non fare merge. Prima confronta l'audit con main e comunica eventuali divergenze. Consegna test, provenienza dei dati, limiti e una PR.
+Verifiche: 39 test Vitest (incluso wrapper di 10 test exporter Python), strict/build, migrazioni locali, dry-run e 215 unittest produttivi in copia isolata a 3661d7a. CI PR da verificare separatamente sullo SHA head corrente. Nessun comando produttivo, merge o deploy eseguito.
 
 ## Trasferire lavoro semantico esistente
 

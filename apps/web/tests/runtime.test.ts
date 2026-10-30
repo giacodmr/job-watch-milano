@@ -102,8 +102,8 @@ describe('Worker HTTP on real local D1', () => {
     const body = healthSchema.parse(await response.json());
     expect(body).toMatchObject({
       database: 'ready',
-      schemaVersion: 2,
-      synchronization: 'disabled',
+      schemaVersion: 4,
+      synchronization: 'local-read-only',
       productionAccess: false,
     });
     expect(body).not.toHaveProperty('DAILY_COMPLETE');
@@ -120,7 +120,7 @@ describe('Worker HTTP on real local D1', () => {
         schemaVersion: 1,
       });
     } finally {
-      await sql('UPDATE schema_metadata SET version=2');
+      await sql('UPDATE schema_metadata SET version=4');
     }
   });
   it('returns redacted errors for a missing database table', async () => {

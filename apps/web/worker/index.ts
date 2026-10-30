@@ -1,4 +1,7 @@
 import { healthSchema, schemaVersion } from '../shared/contracts';
+import { z } from 'zod';
+import { jobsQuerySchema } from '../shared/queries';
+import { getSnapshot, listJobs, getJob, getDashboard, QueryError } from './data/queries';
 
 export interface Env {
   APP_ENV?: string;
@@ -59,7 +62,7 @@ export default {
         schemaVersion: actualVersion,
         expectedSchemaVersion: schemaVersion,
         productionAccess: false,
-        synchronization: 'disabled',
+        synchronization: 'local-read-only',
         checkedAt: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
       });
       return json(body, database === 'ready' ? 200 : 503);
@@ -67,7 +70,49 @@ export default {
     if (url.pathname === '/api/commands') {
       if (request.method !== 'POST')
         return json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
-      return json({ error: 'commands_disabled', phase: 0 }, 501);
+      return json({ error: 'commands_disabled', phase: 1 }, 501);
+    }
+    if (
+      url.pathname === '/api/snapshot' ||
+      url.pathname === '/api/dashboard' ||
+      url.pathname === '/api/jobs' ||
+      url.pathname.startsWith('/api/jobs/')
+    ) {
+      if (request.method !== 'GET')
+        return json({ error: 'method_not_allowed' }, 405, { Allow: 'GET' });
+      if (!env.DB) return json({ error: 'database_unavailable' }, 503);
+      try {
+        const entries = Array.from(url.searchParams.entries());
+        if (new Set(entries.map(([key]) => key)).size !== entries.length)
+          return json({ error: 'duplicate_query_parameter' }, 400);
+        const input = Object.fromEntries(entries);
+        if (url.pathname === '/api/snapshot') {
+          z.strictObject({}).parse(input);
+          return json(await getSnapshot(env.DB));
+        }
+        if (url.pathname === '/api/dashboard') {
+          z.strictObject({}).parse(input);
+          return json(await getDashboard(env.DB));
+        }
+        if (url.pathname === '/api/jobs')
+          return json(await listJobs(env.DB, jobsQuerySchema.parse(input)));
+        const params = z
+          .strictObject({
+            snapshot: z.string().regex(/^snapshot:[a-f0-9]{64}$/),
+          })
+          .parse(input);
+        const id = z
+          .string()
+          .regex(/^job:[a-f0-9]{64}$/)
+          .parse(url.pathname.slice('/api/jobs/'.length));
+        return json(await getJob(env.DB, id, params.snapshot));
+      } catch (error) {
+        if (error instanceof z.ZodError)
+          return json({ error: 'invalid_query' }, 400);
+        if (error instanceof QueryError)
+          return json({ error: error.code }, error.status);
+        return json({ error: 'database_unavailable' }, 503);
+      }
     }
     if (url.pathname === '/api' || url.pathname.startsWith('/api/'))
       return json({ error: 'not_found' }, 404);

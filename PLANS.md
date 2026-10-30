@@ -8,9 +8,9 @@ Addendum audit e riallineamento al main `6725fefa45e5bab0494ceb05b9edb2fe999a1e1
 
 Criteri: build strict, test API e SQL su D1 locale, doppia applicazione migrazioni, bundle Worker verificato senza upload; nessuna modifica ai file produttivi preesistenti. Consultare `apps/web/docs/VALIDATION.md` per l'esito effettivo.
 
-## Fase 1: sincronizzazione di sola lettura, ancora locale
+## Fase 1: sincronizzazione di sola lettura, locale — implementata
 
-Incarico proposto: «Implementa in `apps/web/` un exporter/importer di sola lettura da un checkout Git fissato a uno SHA esplicito verso D1 locale, secondo SYNC_CONTRACT v1. Usa allowlist, decodifica verificata delle evidenze, archivio e alias Python esistenti. Non accedere al cloud, non modificare il Job Watch e non abilitare comandi. Aggiungi un Vacancy Explorer minimo, paginato e una vista provenienza/freschezza».
+Incarico eseguito: «Implementa in `apps/web/` un exporter/importer di sola lettura da un checkout Git fissato a uno SHA esplicito verso D1 locale, secondo SYNC_CONTRACT v1. Usa allowlist, decodifica verificata delle evidenze, archivio e alias Python esistenti. Non accedere al cloud, non modificare il Job Watch e non abilitare comandi. Aggiungi un Vacancy Explorer minimo, paginato e una vista provenienza/freschezza».
 
 Criteri di completamento:
 
@@ -20,6 +20,10 @@ Criteri di completamento:
 - Fixture per Amazon ID alias, decisioni cross-fingerprint, memory evidence pool, chiusure, sorgenti parziali, snapshot incoerenti e revisioni precedenti.
 - UI legge esclusivamente l'ultimo checkpoint confermato; filtri paginati tramite indici. Stato di freschezza esplicito, nessun falso zero in caso di errore.
 - Misura righe lette/scritte, byte e CPU; definisce budget sotto i limiti Free. Nessun fetch JD e nessuna chiamata ChatGPT/API LLM.
+
+Esito Fase 1: exporter isolato da Git, manifest/hash verificati, D1 locale con chunk riprendibili e checkpoint CAS atomico, servizi dati indipendenti da HTTP per futuro MCP, Explorer paginato con filtri/history/provenienza. Dettagli e misure in `apps/web/docs/PHASE1_VALIDATION.md`; base 84593e9 e main ricontrollato 3661d7a. Tre skill UI applicate e browser desktop/mobile verificato. Nessun comando operativo o accesso remoto.
+
+Limiti espliciti: CPU misurata soltanto come processo/figli locali; CPU Worker remoto non verificata. Bootstrap 113.175 scritture, sopra il Free giornaliero: default 70.000 per invocazione e ripresa chunk, override solo locale. Deduplica di versioni invariate, retention e budget aggregato account/giorno sono gate obbligatori prima di sync cloud continuativa. Il bulk import attuale non gira in una richiesta Worker. Nessun MCP server è stato costruito.
 
 ## Fase 2: accesso privato e ambiente remoto, previa autorizzazione
 
@@ -40,3 +44,7 @@ Separare «richiesta analisi registrata», «packet pronto», «review applicata
 ## Fasi successive, fuori ambito
 
 Gestione aziende/tier/fonti solo mediante comandi validati e autorità attuali. Application tracker e MCP dedicato richiedono ADR e incarico distinti. Nessun nuovo broker, cron o database finché il caso d'uso non lo giustifica.
+
+## Integrazione UI approvata + letture reali locali
+
+Branch `codex/jet-real-data-integration`: base funzionale PR #25 riallineata al main finale 0b2984a, con snapshot operativo importato b3540152, shell e tokens approvati PR #29, Dashboard con read model confermato e Opportunità con filtri/history/provenienza reali. PR Draft separata; safety #28 ricevuta da main dopo merge effettuato dall’utente. Stato, screenshot verificati, test e capacità ancora indisponibili in `apps/web/docs/JET_INTEGRATION.md`. Nessun comando remoto, auth cloud, modifica Python/workflow/dati produttivi o merge autorizzato da questa integrazione.
