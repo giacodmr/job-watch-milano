@@ -13,6 +13,10 @@ const jobIdSchema = z.string().regex(/^job:[a-f0-9]{64}$/);
 const pagingSchema = z.strictObject({
   limit: z.coerce.number().int().min(1).max(50).default(25),
   cursor: z.string().max(5000).optional(),
+  q: z.string().trim().max(120).default(''),
+  view: z.enum(['all','to_apply','applied','dismissed']).default('all'),
+  decision: z.enum(['TO_REVIEW','INTERESTED','APPLIED','NOT_INTERESTED']).optional(),
+  reference: z.enum(['SAVED','APPLICATION','DISMISSED']).optional(),
 });
 const cursorSchema = z.strictObject({
   ownerDigest: z.string().regex(/^[a-f0-9]{64}$/),
@@ -21,6 +25,7 @@ const cursorSchema = z.strictObject({
   catalogRun: z.string().min(1),
   personalDigest: z.string().regex(/^[a-f0-9]{64}$/),
   lastId: jobIdSchema,
+  filters: z.string().optional(),
 });
 type Cursor = z.infer<typeof cursorSchema>;
 const encodeCursor = (value: Cursor) =>
@@ -110,7 +115,10 @@ const selectRef = `SELECT ref.job_id AS jobId,ref.captured_title AS capturedTitl
   LEFT JOIN personal_assessment_events a ON a.owner_id=ac.owner_id AND a.id=ac.event_id AND a.job_id=ac.job_id
   LEFT JOIN personal_reconciliation rec ON rec.owner_id=ref.owner_id AND rec.job_id=ref.job_id
   LEFT JOIN personal_catalog_receipts receipt ON receipt.id=rec.receipt_id`;
-type Flags = { knownIdentity:boolean; currentlyVisible:boolean; currentFingerprint:string|null; activeReferences:string[] };
+type CatalogInfo = { company:string; companyId:string; title:string|null; location:string|null;
+  lifecycle:string; canonicalUrl:string|null; applyUrl:string|null; firstSeenAt:string|null; lastSeenAt:string|null };
+type Flags = { knownIdentity:boolean; currentlyVisible:boolean; currentFingerprint:string|null;
+  activeReferences:string[]; catalog:CatalogInfo|null };
 function reconciliation(row: RefRow, c: Context, known: boolean) {
   if (!known) return 'UNRESOLVED_REFERENCE' as const;
   if (row.reconciliationState === 'CONFLICT') return 'CONFLICT' as const;
@@ -129,15 +137,25 @@ async function flags(catalog:D1Database,personal:D1Database,ownerId:string,ids:s
   const placeholders=ids.map(()=>'?').join(',');
   const [known,visible,refs] = await Promise.all([
     catalog.prepare(`SELECT id FROM catalog_vacancy_identity WHERE id IN (${placeholders})`).bind(...ids).all<{id:string}>(),
-    catalog.prepare(`SELECT job_id AS id,fingerprint FROM catalog_visible_vacancies WHERE job_id IN (${placeholders})`).bind(...ids).all<{id:string;fingerprint:string|null}>(),
+    catalog.prepare(`SELECT v.job_id AS id,v.fingerprint,c.display_name AS company,v.company_id AS companyId,
+      v.title,v.location,v.lifecycle,v.canonical_url AS canonicalUrl,v.apply_url AS applyUrl,
+      v.first_seen_at AS firstSeenAt,v.last_seen_at AS lastSeenAt
+      FROM catalog_visible_vacancies v JOIN catalog_visible_companies c ON c.company_id=v.company_id
+      WHERE v.job_id IN (${placeholders})`).bind(...ids).all<{id:string;fingerprint:string|null}&CatalogInfo>(),
     personal.prepare(`SELECT job_id AS jobId,kind FROM personal_reference_state
       WHERE owner_id=? AND active=1 AND job_id IN (${placeholders}) ORDER BY kind`)
       .bind(ownerId,...ids).all<{jobId:string;kind:string}>(),
   ]);
   const knownSet = new Set(known.results.map(x=>x.id));
-  const visibleMap = new Map(visible.results.map(x=>[x.id,x.fingerprint]));
-  for (const id of ids) result.set(id,{knownIdentity:knownSet.has(id),currentlyVisible:visibleMap.has(id),
-    currentFingerprint:visibleMap.get(id)??null,activeReferences:[]});
+  const visibleMap = new Map(visible.results.map(x=>[x.id,x]));
+  for (const id of ids) {
+    const row=visibleMap.get(id);
+    result.set(id,{knownIdentity:knownSet.has(id),currentlyVisible:!!row,
+      currentFingerprint:row?.fingerprint??null,activeReferences:[],
+      catalog:row ? {company:row.company,companyId:row.companyId,title:row.title,
+        location:row.location,lifecycle:row.lifecycle,canonicalUrl:row.canonicalUrl,
+        applyUrl:row.applyUrl,firstSeenAt:row.firstSeenAt,lastSeenAt:row.lastSeenAt}:null});
+  }
   for (const r of refs.results) result.get(r.jobId)?.activeReferences.push(r.kind);
   return result;
 }
@@ -154,7 +172,7 @@ function record(row:RefRow,c:Context,f:Flags) {
       freshness: !f.currentlyVisible || !f.currentFingerprint || !row.assessmentFingerprint
         ? 'UNVERIFIED' as const
         : row.assessmentFingerprint===f.currentFingerprint ? 'CURRENT' as const : 'STALE' as const} : null,
-    activeReferences:f.activeReferences,knownIdentity:f.knownIdentity,
+    activeReferences:f.activeReferences,catalog:f.catalog,knownIdentity:f.knownIdentity,
     currentlyVisible:f.currentlyVisible,reconciliation:reconciliation(row,c,f.knownIdentity),
   };
 }
@@ -184,10 +202,41 @@ export async function listModelCPersonalJobs(catalog:D1Database,personal:D1Datab
   if(cursor && (cursor.personalRevision !== c.personal.revision || cursor.personalDigest !== c.personal.contextDigest ||
     cursor.catalogRevision !== c.catalog.syncRevision || cursor.catalogRun !== c.catalog.run))
     throw new ModelCPersonalReadError('CONTEXT_CHANGED',409);
-  const total=await personal.prepare('SELECT count(*) AS n FROM personal_job_refs WHERE owner_id=?')
-    .bind(c.ownerId).first<number>('n');
-  const rows = await personal.prepare(`${selectRef} WHERE ref.owner_id=?${cursor?' AND ref.job_id>?':''}
-    ORDER BY ref.job_id LIMIT ?`).bind(...(cursor?[c.ownerId,cursor.lastId,query.limit+1]:[c.ownerId,query.limit+1])).all<RefRow>();
+  const signature=canonical({q:query.q,view:query.view,decision:query.decision??null,
+    reference:query.reference??null});
+  if (cursor && cursor.filters !== undefined && cursor.filters !== signature)
+    throw new ModelCPersonalReadError('CURSOR_FILTER_MISMATCH',400);
+  if (cursor && cursor.filters === undefined &&
+    (query.q || query.view!=='all' || query.decision || query.reference))
+    throw new ModelCPersonalReadError('CURSOR_FILTER_MISMATCH',400);
+  const clauses=['ref.owner_id=?'];
+  const args:string[]=[c.ownerId];
+  if(query.q) {
+    clauses.push("instr(lower(coalesce(ref.captured_title,'')),lower(?))>0");
+    args.push(query.q);
+  }
+  if(query.decision) { clauses.push('d.decision=?');args.push(query.decision); }
+  if(query.reference) {
+    clauses.push(`EXISTS (SELECT 1 FROM personal_reference_state st
+      WHERE st.owner_id=ref.owner_id AND st.job_id=ref.job_id AND st.kind=? AND st.active=1)`);
+    args.push(query.reference);
+  }
+  if(query.view==='to_apply') clauses.push(`(d.decision IN ('TO_REVIEW','INTERESTED')
+    OR EXISTS (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
+      AND st.job_id=ref.job_id AND st.kind='SAVED' AND st.active=1))
+    AND (d.decision IS NULL OR d.decision NOT IN ('APPLIED','NOT_INTERESTED'))`);
+  if(query.view==='applied') clauses.push(`(d.decision='APPLIED' OR EXISTS
+    (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
+      AND st.job_id=ref.job_id AND st.kind='APPLICATION' AND st.active=1))`);
+  if(query.view==='dismissed') clauses.push(`(d.decision='NOT_INTERESTED' OR EXISTS
+    (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
+      AND st.job_id=ref.job_id AND st.kind='DISMISSED' AND st.active=1))`);
+  const where=clauses.join(' AND ');
+  const total=await personal.prepare(`SELECT count(*) AS n ${selectRef} WHERE ${where}`)
+    .bind(...args).first<number>('n');
+  const rows = await personal.prepare(`${selectRef} WHERE ${where}
+    ${cursor?' AND ref.job_id>?':''} ORDER BY ref.job_id LIMIT ?`)
+    .bind(...args,...(cursor?[cursor.lastId]:[]),query.limit+1).all<RefRow>();
   const visible=rows.results.slice(0,query.limit);
   const enriched=await flags(catalog,personal,c.ownerId,visible.map(r=>r.jobId));
   await assertUnchanged(catalog,personal,c);
@@ -201,7 +250,7 @@ export async function listModelCPersonalJobs(catalog:D1Database,personal:D1Datab
     items,
     nextCursor:rows.results.length>query.limit&&last?encodeCursor({
       ownerDigest:c.ownerDigest,personalRevision:c.personal.revision,personalDigest:c.personal.contextDigest,
-      catalogRevision:c.catalog.syncRevision,catalogRun:c.catalog.run,lastId:last.jobId}):null,
+      catalogRevision:c.catalog.syncRevision,catalogRun:c.catalog.run,lastId:last.jobId,filters:signature}):null,
   };
 }
 export async function getModelCPersonalJob(catalog:D1Database,personal:D1Database,owner:TrustedOwner,jobId:string) {
