@@ -121,6 +121,41 @@ describe('inactive trusted-owner Model C personal read service',()=>{
   expect((await captureSynthetic(c,'catalog')).sha256).toBe(beforeCatalog);
   expect((await captureSynthetic(p,'personal')).sha256).toBe(beforePersonal);
  });
+ it('fails closed if the PERSONAL head changes between the first read and final consistency check',async()=>{
+  const {c,p}=await fixture();
+  let checks=0;
+  const racingPersonal=new Proxy(p,{
+    get(target,property) {
+      if (property!=='prepare') return Reflect.get(target,property,target);
+      return (sql:string)=>{
+        const statement=target.prepare(sql);
+        if (!sql.includes('SELECT revision,context_digest AS contextDigest FROM personal_heads'))
+          return statement;
+        return new Proxy(statement,{
+          get(inner,key) {
+            if (key!=='bind') return Reflect.get(inner,key,inner);
+            return (ownerId:string)=>{
+              const bound=inner.bind(ownerId);
+              return new Proxy(bound,{
+                get(ready,operation) {
+                  if (operation!=='first') return Reflect.get(ready,operation,ready);
+                  return async ()=>{
+                    const row=await ready.first<{revision:number;contextDigest:string}>();
+                    checks++;
+                    return checks===2 && row ? {...row,revision:row.revision+1}:row;
+                  };
+                },
+              });
+            };
+          },
+        });
+      };
+    },
+  });
+  await expect(getModelCPersonalSummary(c,racingPersonal,{ownerId:owner}))
+    .rejects.toMatchObject({code:'CONTEXT_CHANGED'});
+  expect(checks).toBe(2);
+ });
  it('rejects wrong database scope and missing owner without issuing writes',async()=>{
   const {c,p}=await fixture();
   await expect(getModelCPersonalSummary(p,c,{ownerId:owner})).rejects.toMatchObject({code:'PERSONAL_SCHEMA_MISMATCH'});
