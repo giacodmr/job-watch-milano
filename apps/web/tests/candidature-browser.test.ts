@@ -152,6 +152,11 @@ describe('Candidature actual browser layout and drawer against synthetic Model C
       const mobile=await capture(session,tab,url,390,844,true);
       expect(mobile?.length).toBeGreaterThan(1000);
       console.log('JW39_MOBILE_PNG_BASE64='+mobile);
+      for(const [width,height,mobileMode] of [[1280,900,false],[768,1024,false],[320,720,true]] as const){
+        const preview=await capture(session,tab,url,width,height,mobileMode);
+        expect(preview?.length).toBeGreaterThan(1000);
+        if(width===320)console.log('JW39_NARROW_PNG_BASE64='+preview);
+      }
       await session.send('Runtime.evaluate',{
         expression:"document.querySelector('button.c-row-open')?.click()",
         returnByValue:true,
