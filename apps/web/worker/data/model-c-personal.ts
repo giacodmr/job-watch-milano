@@ -232,7 +232,7 @@ export async function listModelCPersonalJobs(catalog:D1Database,personal:D1Datab
     (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
       AND st.job_id=ref.job_id AND st.kind='DISMISSED' AND st.active=1))`);
   const where=clauses.join(' AND ');
-  const total=await personal.prepare(`SELECT count(*) AS n ${selectRef} WHERE ${where}`)
+  const total=await personal.prepare(`SELECT count(*) AS n FROM (${selectRef} WHERE ${where})`)
     .bind(...args).first<number>('n');
   const rows = await personal.prepare(`${selectRef} WHERE ${where}
     ${cursor?' AND ref.job_id>?':''} ORDER BY ref.job_id LIMIT ?`)
