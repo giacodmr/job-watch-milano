@@ -137,7 +137,7 @@ export default function App() {
       (location === 'ALL' || job.location === location);
   }), [query, decision, location]);
 
-  const selectedJob = selectedId ? demoJobs.find((job) => job.id === selectedId) : undefined;
+  const selectedJob = selectedId ? shownJobs.find((job) => job.id === selectedId) : undefined;
   const goTo = (next: Page) => {
     window.location.hash = next === 'opportunities' ? '#opportunities' : '#dashboard';
     setPage(next);
