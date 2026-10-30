@@ -9,6 +9,7 @@ configured PayPal allowed_locations, NOT all global requisitions.
 from __future__ import annotations
 
 import re
+import time
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
 
@@ -31,8 +32,8 @@ def _search(city):
         o = c.get_json(ENDPOINT, params=params)
     except Exception as exc:
         raise c.NotCheckable(f"PayPal official public PCS-X {city} search unavailable") from exc
-    if not isinstance(o,dict) or o.get("status") not in ("ok", "OK", "success", 200, None):
-        raise c.NotCheckable(f"PayPal PCS-X {city} response status unexpected")
+    if not isinstance(o,dict) or o.get("error"):
+        raise c.NotCheckable(f"PayPal PCS-X {city} returned a publisher error")
     data=o.get("data")
     if not isinstance(data,dict) or not isinstance(data.get("positions"),list) or not isinstance(data.get("count"),int):
         raise c.NotCheckable(f"PayPal PCS-X {city} lacks published total or positions array")
@@ -63,6 +64,7 @@ def _search(city):
             "postedTs":row.get("postedTs"),
             "workLocationOption":c.clean_text(row.get("workLocationOption")),
         }
+    time.sleep(0.45)  # respect public service pacing, no retry on 429
     return out
 
 
@@ -142,6 +144,7 @@ def collect_paypal(company):
     jobs=[]
     for sid,row in italian.items():
         _detail(row)
+        time.sleep(0.45)
         jobs.append(c.compact_job(
             "PayPal",sid,title=row["title"],location=" | ".join(row["locations"]),
             department=row["department"],employment_type=row["workLocationOption"],
