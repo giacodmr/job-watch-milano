@@ -52,3 +52,7 @@ PR #25 aggiornata sul proprio branch, riallineata a main 0b2984a. Schema 5 addit
 ## Modello C / PR 1 — contratti e prove
 
 #25 integrata tramite squash 004782c1d5b53c9c6abb0399c8368f28831104c7. Branch dedicata da main: contratti puri di selezione/ledger, protezione decisioni e digest dati+codice, checker read-only e prove sintetiche/private aggregate. Nessuno schema/importer/reader nuovo. Criteri, limiti e gate PR 2 in apps/web/docs/MODEL_C_SELECTION_CONTRACT.md.
+
+## Model C / PR 2 — schema locale separato
+
+Da main 5abbdf67cea4d4004b0cdfa066ef292b7e499682, branch codex/model-c-local-schema: migrazioni additive autonome CATALOG/PERSONAL, vincoli permanenti, staging e checkpoint CAS; laboratorio effimero con backup/restore sintetico anche v1. Dettagli/gate in apps/web/docs/MODEL_C_SCHEMA.md. Nessun binding o importer/reader attivato. PR 3 deve implementare/verificare transazioni, digest, riconciliazione e costi effettivi prima del cutover.

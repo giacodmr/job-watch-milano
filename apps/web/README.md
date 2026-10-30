@@ -77,3 +77,7 @@ Leggere [audit](docs/AUDIT.md), [architettura](docs/ARCHITECTURE.md), [contratto
 ## Modello C — contratti, senza attivazione
 
 La selezione current-state è definita e verificabile separatamente dalla sync v1. Contratto, criteri, digest e verifica privata in [MODEL_C_SELECTION_CONTRACT.md](docs/MODEL_C_SELECTION_CONTRACT.md). Importer, reader, schema e UI attuali non cambiano.
+
+## Modello C — schema locale inattivo (PR 2)
+
+Migrazioni fisicamente separate in `model-c/catalog/migrations/` e `model-c/personal/migrations/`; nessun nuovo binding o cambiamento a v1. `node tools/model-c-lab.mjs` verifica schemi e backup/restore usando soltanto D1 effimeri sintetici. [Schema, misure e rollback](docs/MODEL_C_SCHEMA.md).
