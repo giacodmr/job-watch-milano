@@ -3,6 +3,7 @@ import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {applySchema} from '../tools/model-c-schema';
 import {stageCatalog,publicationFixture,seedPersonal,jobId,hash,commit,owner} from './helpers/model-c-fixtures';
 import {canonical,sha256} from '../shared/canonical';
+import {captureSynthetic} from '../tools/model-c-schema';
 import {getModelCPersonalSummary,listModelCPersonalJobs,getModelCPersonalJob} from '../worker/data/model-c-personal';
 let runtime:Miniflare,seq=0;
 beforeAll(()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,
@@ -33,7 +34,7 @@ describe('inactive trusted-owner Model C personal read service',()=>{
   const detail=await getModelCPersonalJob(c,p,{ownerId:owner},jobId);
   expect(detail.decisionEvents).toHaveLength(1);
   expect(detail.assessmentEvents).toHaveLength(1);
-  expect(detail.assessmentEvents[0].reportable).toBe(true);
+  expect(detail.assessmentEvents.at(0)?.reportable).toBe(true);
   expect(await p.prepare('SELECT count(*) AS n FROM personal_audit').first('n')).toBe(1);
  });
  it('restricts every personal read by owner and rejects cross-owner cursors',async()=>{
@@ -46,10 +47,13 @@ describe('inactive trusted-owner Model C personal read service',()=>{
   const b=await listModelCPersonalJobs(c,p,{ownerId:other});
   expect(a.items).toHaveLength(1);expect(b.items).toHaveLength(1);
   expect(b.items[0]).toMatchObject({decision:null,activeReferences:[],capturedTitle:'Other owner',reconciliation:'PENDING'});
-  expect(b.items[0].assessment).toBeNull();
+  expect(b.items.at(0)?.assessment).toBeNull();
+  const otherDetail=await getModelCPersonalJob(c,p,{ownerId:other},jobId);
+  expect(otherDetail.decisionEvents).toEqual([]);
+  expect(otherDetail.assessmentEvents).toEqual([]);
   await expect(getModelCPersonalJob(c,p,{ownerId:'missing'},jobId)).rejects.toMatchObject({code:'PERSONAL_CONTEXT_UNAVAILABLE'});
   const cursor=btoa(JSON.stringify({ownerDigest:await sha256(owner),personalRevision:1,catalogRevision:1,
-    catalogRun:'run-one',lastId:jobId})).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    catalogRun:'run-one',personalDigest:hash,lastId:jobId})).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   await expect(listModelCPersonalJobs(c,p,{ownerId:other},{cursor})).rejects.toMatchObject({code:'CURSOR_OWNER_MISMATCH'});
  });
  it('recognizes verified receipts only when anchored to CURRENT catalog head and personal revision',async()=>{
@@ -64,7 +68,7 @@ describe('inactive trusted-owner Model C personal read service',()=>{
   await c.batch(publicationFixture(c,'run-two',1,2));
   expect((await getModelCPersonalJob(c,p,{ownerId:owner},jobId)).job.reconciliation).toBe('STALE');
   await p.prepare('UPDATE personal_heads SET revision=2 WHERE owner_id=?').bind(owner).run();
-  expect((await listModelCPersonalJobs(c,p,{ownerId:owner})).items[0].reconciliation).toBe('STALE');
+  expect((await listModelCPersonalJobs(c,p,{ownerId:owner})).items.at(0)?.reconciliation).toBe('STALE');
  });
  it('keeps unknown identities visible only to their owner, never treats them as VERIFIED',async()=>{
   const {c,p}=await fixture(),missing='job:'+'2'.repeat(64);
@@ -78,6 +82,44 @@ describe('inactive trusted-owner Model C personal read service',()=>{
   expect(unresolved.job).toMatchObject({knownIdentity:false,currentlyVisible:false,reconciliation:'UNRESOLVED_REFERENCE'});
   await expect(getModelCPersonalJob(c,p,{ownerId:owner},'bad-id')).rejects.toThrow();
   await expect(listModelCPersonalJobs(c,p,{ownerId:owner},{limit:51})).rejects.toThrow();
+ });
+ it('labels an assessment CURRENT only when the published job fingerprint matches',async()=>{
+  const {c,p}=await fixture();
+  const ownerContext={ownerId:owner};
+  // A missing catalog fingerprint must not validate a historical score.
+  expect((await getModelCPersonalJob(c,p,ownerContext,jobId)).job.assessment?.freshness).toBe('UNVERIFIED');
+  await c.prepare('UPDATE catalog_vacancy_current SET fingerprint=? WHERE job_id=?')
+    .bind('opaque-fingerprint',jobId).run();
+  expect((await getModelCPersonalJob(c,p,ownerContext,jobId)).job.assessment?.freshness).toBe('CURRENT');
+  await c.prepare('UPDATE catalog_vacancy_current SET fingerprint=? WHERE job_id=?')
+    .bind('new-fingerprint',jobId).run();
+  const detail=await getModelCPersonalJob(c,p,ownerContext,jobId);
+  expect(detail.job.assessment).toMatchObject({
+    freshness:'STALE',fingerprint:'opaque-fingerprint',fitScore:75,
+  });
+  expect(detail.decisionEvents.at(0)).toMatchObject({fingerprint:'opaque-fingerprint',resultSha256:hash});
+  expect(detail.assessmentEvents.at(0)).toMatchObject({fingerprint:'opaque-fingerprint',resultSha256:hash});
+ });
+ it('reports CONFLICT and refuses a VERIFIED state linked to mismatched receipts',async()=>{
+  const {c,p}=await fixture();
+  await p.prepare("UPDATE personal_reconciliation SET state='CONFLICT',error_code='SYNTHETIC_CONFLICT' WHERE owner_id=? AND job_id=?")
+    .bind(owner,jobId).run();
+  expect((await getModelCPersonalJob(c,p,{ownerId:owner},jobId)).job.reconciliation).toBe('CONFLICT');
+  await p.prepare('INSERT INTO personal_catalog_receipts VALUES (?,1,1,?,?,?)')
+    .bind('receipt:wrong',commit,'c'.repeat(64),hash).run();
+  await p.prepare("UPDATE personal_reconciliation SET state='VERIFIED',receipt_id='receipt:wrong',error_code=NULL WHERE owner_id=? AND job_id=?")
+    .bind(owner,jobId).run();
+  expect((await getModelCPersonalJob(c,p,{ownerId:owner},jobId)).job.reconciliation).toBe('STALE');
+ });
+ it('does not modify CATALOG or PERSONAL when reading summary, pages and detail',async()=>{
+  const {c,p}=await fixture();
+  const beforeCatalog=(await captureSynthetic(c,'catalog')).sha256;
+  const beforePersonal=(await captureSynthetic(p,'personal')).sha256;
+  await getModelCPersonalSummary(c,p,{ownerId:owner});
+  await listModelCPersonalJobs(c,p,{ownerId:owner});
+  await getModelCPersonalJob(c,p,{ownerId:owner},jobId);
+  expect((await captureSynthetic(c,'catalog')).sha256).toBe(beforeCatalog);
+  expect((await captureSynthetic(p,'personal')).sha256).toBe(beforePersonal);
  });
  it('rejects wrong database scope and missing owner without issuing writes',async()=>{
   const {c,p}=await fixture();
