@@ -145,7 +145,8 @@ export function OpportunityTable({items,onSelect}:{items:Opportunity[];onSelect?
       const title=row.title||'Ruolo non disponibile';
       return <tr key={row.id}>
         <td><div className="c-job-cell"><CompanyAvatar name={row.company}/>
-          <span className="c-position"><strong>{title}</strong><small>{row.company}{row.location?' · '+row.location:''}</small></span>
+          <span className="c-position"><strong>{title}</strong><small>{row.company}{row.location?' · '+row.location:''}</small>
+          <small className="o-mobile-decision">{row.personal?.decision?decisionLabel[row.personal.decision]:row.personal?.activeReferences.length?'Riferimento '+row.personal.activeReferences.join(', '):'Nessuna decisione'}{row.personal?.assessment?.fitScore!==null&&row.personal?.assessment?.fitScore!==undefined?' · FIT '+row.personal.assessment.fitScore+(row.personal.assessment.freshness==='CURRENT'?'':' storico'):''}</small></span>
         </div></td>
         <td>{lifecycleLabels[row.lifecycle]}</td>
         <td>{analysisLabel(row)}</td>
