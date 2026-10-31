@@ -308,6 +308,12 @@ export async function getModelCPersonalJob(catalog:D1Database,personal:D1Databas
       NULL AS sourceCommit,NULL AS sourcePath,NULL AS sourceSha256,'APP' AS origin
     FROM personal_app_events WHERE owner_id=? AND job_id=? AND kind='DECISION'
   ) ORDER BY decidedAt DESC,id DESC LIMIT 51`).bind(c.ownerId,id,c.ownerId,id).all();
+  const appHistory=await personal.prepare(`SELECT event_id AS id,operation_id AS operationId,
+    kind,decision,saved_active AS savedActive,previous_decision AS previousDecision,
+    previous_saved AS previousSaved,expected_revision AS expectedRevision,revision,
+    created_at AS createdAt,reason_summary AS reasonSummary
+    FROM personal_app_events WHERE owner_id=? AND job_id=?
+    ORDER BY revision DESC LIMIT 51`).bind(c.ownerId,id).all<Record<string,unknown>>();
   const assessments=await personal.prepare(`SELECT id,method,fingerprint,decision,fit_score AS fitScore,
     reportable,summary,evidence_state AS evidenceState,analyzed_at AS analyzedAt,
     result_sha256 AS resultSha256,source_commit AS sourceCommit,source_path AS sourcePath,source_sha256 AS sourceSha256
@@ -323,6 +329,11 @@ export async function getModelCPersonalJob(catalog:D1Database,personal:D1Databas
       ...r,reportable:r.reportable===null?null:r.reportable===1,
     })),
     assessmentEventsTruncated:assessments.results.length>50,
+    appEvents:appHistory.results.slice(0,50).map(r=>({
+      ...r,savedActive:r.savedActive===null?null:r.savedActive===1,
+      previousSaved:r.previousSaved===null?null:r.previousSaved===1,
+    })),
+    appEventsTruncated:appHistory.results.length>50,
   };
 }
 
