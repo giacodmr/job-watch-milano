@@ -205,7 +205,8 @@ describe('PR #41: additive PERSONAL app writer, real D1 and Worker HTTP',()=>{
     expect(allowed.status).toBe(200);
     expect(await allowed.json()).toEqual({writeEnabled:true,productionAccess:false});
     expect(allowed.headers.get('Cache-Control')).toBe('no-store');
-    const disabled=await worker.fetch(endpoint,{...env,MODEL_C_LOCAL_WRITE:undefined});
+    const disabledEnv:Env={...env};delete disabledEnv.MODEL_C_LOCAL_WRITE;
+    const disabled=await worker.fetch(endpoint,disabledEnv);
     expect(disabled.status).toBe(200);
     expect(await disabled.json()).toEqual({writeEnabled:false,productionAccess:false});
   });
