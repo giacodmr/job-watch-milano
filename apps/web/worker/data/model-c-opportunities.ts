@@ -43,7 +43,7 @@ export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,i
       throw new ModelCReadError('CATALOG_CHANGED',409);
     const now=(await getModelCCatalogSnapshot(catalog)).snapshot;
     checkCatalog(page.snapshot,now);
-    return {...page,personalRevision:overlay.personalRevision,
+    return {...page,personalRevision:overlay.personalRevision,appRevision:overlay.appRevision,
       items:page.items.map(job=>({...job,personal:overlay.items[job.id]??null}))};
   }
   if(!suffix.startsWith('jobs/'))throw new ModelCReadError('not_found',404);
@@ -61,5 +61,6 @@ export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,i
     throw new ModelCReadError('CONTEXT_CHANGED',409);
   const now=(await getModelCCatalogSnapshot(catalog)).snapshot;
   checkCatalog(page.snapshot,now);
-  return {...page,personalRevision:overlay.personalRevision,personal:personalRow,personalDetail};
+  return {...page,personalRevision:overlay.personalRevision,appRevision:overlay.appRevision,
+    personal:personalRow,personalDetail};
 }
