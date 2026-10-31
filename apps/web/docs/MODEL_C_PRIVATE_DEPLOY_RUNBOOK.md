@@ -204,6 +204,14 @@ reservation. Do not treat the bounded synthetic backup helper as production
 backup. Quiesce writers before any potential restore, and avoid independent
 cross-D1 restores that manufacture an inconsistent catalog/personal checkpoint.
 
+The private API recognizes Cloudflare's documented Free D1 daily row
+read/write quota error and returns only `cloudflare_quota_exceeded` (HTTP 503).
+The React reader shows a specific quota-limited state rather than a false empty
+inventory or a generic database outage. This is a local contract test, **not** an
+observed Cloudflare outage. No automatic paid upgrade or retry is attempted.
+Cloudflare's [September 1, 2026 enforcement notice](https://developers.cloudflare.com/changelog/post/2026-09-01-d1-free-tier-limit-enforcement/)
+confirms query failures until midnight UTC without deleting stored records.
+
 Application rollback must disable the protected route (or return fail-closed
 503), preserve the Access application and both D1 ledgers, select a known prior
 private Worker deployment, and re-run protected smoke tests. Never expose the
