@@ -21,10 +21,10 @@ function displayDate(date:string|null){return date?dateLabel(date):'—';}
 function Fact({name,children}:{name:string;children:ReactNode}){
   return <div className="c-fact"><dt>{name}</dt><dd>{children}</dd></div>;
 }
-function Provenance({commit,path}:{commit:string;path:string}){
-  const safeCommit=/^[a-f0-9]{40}$/.test(commit);
-  const safePath=path&&!path.startsWith('/')&&!path.split('/').includes('..');
-  const url=safeCommit&&safePath?
+function Provenance({commit,path}:{commit:string|null;path:string|null}){
+  const safeCommit=!!commit&&/^[a-f0-9]{40}$/.test(commit);
+  const safePath=!!path&&!path.startsWith('/')&&!path.split('/').includes('..');
+  const url=commit&&path&&safeCommit&&safePath?
     'https://github.com/giacodmr/job-watch-milano/blob/'+commit+'/'+path.split('/').map(encodeURIComponent).join('/'):null;
   return url?<a href={url} target="_blank" rel="noopener noreferrer" className="c-text-link">Fonte GitHub</a>:<span>{absent}</span>;
 }
@@ -114,7 +114,7 @@ function CandidatureDrawer({selected,onClose}:{selected:PersonalRow;onClose:()=>
             <section className="c-panel-section"><h3>Storico delle decisioni</h3>
               {detail.decisionEvents.length?<ol className="c-history">
                 {detail.decisionEvents.map(event=><li key={event.id}>
-                  <strong>{decisionLabel[event.decision]}</strong><small>{displayDate(event.decidedAt)}</small>
+                  <strong>{event.decision?decisionLabel[event.decision]:'Decisione revocata'}</strong><small>{displayDate(event.decidedAt)}</small>
                   {event.reasonSummary&&<p>{event.reasonSummary}</p>}
                   <Provenance commit={event.sourceCommit} path={event.sourcePath}/>
                 </li>)}
