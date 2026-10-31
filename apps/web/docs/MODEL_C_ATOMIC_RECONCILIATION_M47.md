@@ -430,3 +430,61 @@ This is a *local instrumented test run*, not actual Cloudflare metering, CPU, re
 The original 19 phases are: (1) before ingestion; (2) first chunk; (3) midpoint chunks; (4) after all chunks; (5) during trusted validation; (6) after VERIFIED; (7) before PERSONAL append; (8) during PERSONAL append; (9) after PERSONAL append; (10) during CATALOG batch; (11) after commit/before response; (12) before reconciliation; (13) during reconciliation; (14) after receipt/before COMPLETED; (15) during retention; (16) during historical replay; (17) during APP update; (18) during concurrent publication; (19) during revision change/CAS.
 
 Existing importer/transport regressions and the new 19 adverse transport vectors exercise parts of these boundaries, but do **not** provide one-to-one interruption/restart proof for every original phase, especially phases 6, 14 and 17. **AC-07 stays PARTIAL**. Never relabel the new 19 fault vectors as the original 19 importer phase windows.
+
+## Final Closure Sprint — AC-05 / AC-07 / AC-10 evidence, pending final CI
+
+**Authority:** Existing PR #48 branch only. This section distinguishes the actual local proofs from checks that still require genuine cold-process recovery, assessment history completeness and/or Cloudflare account authorization.
+
+### AC-05 — PERSONAL test additions
+
+- `model-c-importer.test.ts`: new SQL-level assessment/summary provenance and APP reason-summary test; compares historical `personal_assessment_events`, `personal_app_events` and `personal_job_refs` byte-for-byte before/after multiple imports and replay. Exercises `SAVED` and `DECISION` overrides, a rejected stale APP CAS and read-model precedence.
+- Prior 30-cycle test: all four APP decision states, SAVED activation/deactivation, alias rotation, owner isolation, lost PERSONAL receipt and replay.
+- `APP_CONTEXT_REQUIRES_REVALIDATION` means a nonzero APP revision exists; it is **not proof by itself of a corrupted receipt**. Before recording `COMPLETED`, the trusted importer checks the exact unchanged APP revision, the owner-bound CATALOG/PERSONAL receipt digest, published run binding and zero unresolved references; it must fail closed if any of those change. There is **no cross-D1 distributed transaction**: later APP writes remain valid independently of completed CATALOG runs.
+- Remaining risk: external unauthorized writers bypassing trusted owner binding are outside this local-only milestone; no production owner binding or Cloudflare Access is activated.
+
+### AC-07 — Original phase-indexed fault matrix (not the transport matrix)
+
+The new `model-c-importer.test.ts` suite adds `M47 AC-07 original window` tests, distinct from the existing 19 transport/adversarial vectors. The intended one-to-one phases are:
+
+| Window | Injection / interception | Required durable observation |
+|---|---|---|
+| 01 Before staged ingestion | Stop before ingesting chunks | No CATALOG head or PERSONAL receipt |
+| 02 First chunk | Attempt verified publish after first chunk | Incomplete proof denied, then resume |
+| 03 Midpoint chunks | Receive final chunk first, leave gap | Sparse stage denied, then fill gap |
+| 04 Full staging | Stop before importer promotion | RECEIVING and no HEAD |
+| 05 Git verification | Wrong trusted-plan digest | Deny before writes; retry with verified plan |
+| 06 After VERIFIED | SQL trigger aborts PERSONAL_PREPARED journal insert | VERIFIED durable; resume without HEAD duplication |
+| 07 Before PERSONAL append | D1 PERSONAL batch interrupted before commit | No HEAD; retry via durable D1 |
+| 08 During PERSONAL append | D1 PERSONAL batch interrupted before commit | Atomic rollback; retry |
+| 09 After PERSONAL append | D1 PERSONAL batch committed but ACK lost | Inspect durable personal state and re-import |
+| 10 During CATALOG publication | Refuse transactional publication batch | No HEAD; retry only once |
+| 11 After CATALOG commit | D1 CATALOG batch commits but ACK lost | HEAD already exists; recovery cannot republish |
+| 12 Before reconciliation | Interrupt PERSONAL receipt batch | CATALOG_PUBLISHED, pending PERSONAL |
+| 13 During reconciliation | Commit PERSONAL receipt but lose ACK | Readback receipt; resume without duplicate |
+| 14 After receipt | Abort COMPLETED journal insert | PERSONAL_RECONCILED durable; resume |
+| 15 Retention | Protect active run, then archive historical terminal | Archive proof and no HEAD loss |
+| 16 Historical replay | Send archived run/chunk again | Deterministic 200 idempotency |
+| 17 APP update | Duplicate idempotency key, stale APP job revision | One durable APP event, CAS denial |
+| 18 Concurrent import | Two importers for same staged run | Single CATALOG publication |
+| 19 Revision/CAS | Attempt old CATALOG CAS after HEAD advances | Strict rejection; replay remains idempotent |
+
+**Important proof boundary:** These tests use actual local D1 state and independent importer invocation, but they do **not** universally simulate a cold Miniflare restart with a re-opened persisted filesystem. Existing 30-cycle tests also reuse a live Miniflare process. Until a complete 19/19 *cold restart* matrix and stress interleavings are observed, **AC-07 must remain PARTIAL regardless of passing 19/19 phase tests.** Do not count tests that were not executed on final SHA. Document any failed individual windows in the PR, never weaken the assertions.
+
+### AC-10 — Cloudflare Free local workload model
+
+`tools/model-c-free-local-forecast.ts` and `tests/model-c-free-local-forecast.test.ts` provide explicitly **illustrative, assumption-driven** sensitivity checks; they are not derived from a fitted regression or live account measurements. Coefficients deliberately include fixed CATALOG/PERSONAL write costs, per-vacancy write/read and transient/retained byte estimates. A local internal threshold of **30,000 write units** is applied independently from Cloudflare's **100,000 rows written/day** Free cap. Remote access is **always DENY** when actual remaining quota, CPU or storage are unknown.
+
+| Vacancies | Bootstrap assumed writes | Ordinary delta assumed writes | Worst case assumed writes | Worst case assumed peak bytes |
+|---:|---:|---:|---:|---:|
+| 30 | 1,170 | 550 | 2,150 | 0.60 MB |
+| 100 | 2,150 | 1,180 | 5,300 | 2 MB |
+| 1,000 | 14,750 | 9,280 | 45,800 | 20 MB |
+| 10,000 | 140,750 | 90,280 | 450,800 | 200 MB |
+
+**Do not interpret these as safe admission bounds.** Bootstrap and delta coefficients are assumptions, not observed marginal writes. All values exclude unknown external account traffic, Worker CPU and real D1 index-storage overhead; index/trigger effects are observed in local `meta.rows_written` but not proven bounded for all future schemas. A complete Gate A local safety claim requires calibrating upper bounds using reproducible synthetic payloads and storage growth measurements. Previously observed 30-cycle **3,090** local writes across **4,940** SQL statements include **369** migration-reported writes, but are not remote billing-grade.
+
+Official (2026-10-31): [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/), [D1 limits](https://developers.cloudflare.com/d1/platform/limits/), [Workers limits](https://developers.cloudflare.com/workers/platform/limits/) and [September 2026 quota enforcement](https://developers.cloudflare.com/changelog/post/2026-09-01-d1-free-tier-limit-enforcement/). Workers Free: 100,000 requests/day and 10 ms CPU/request; D1 Free: 100,000 rows written/day, 5 million read/day, 500 MB/database, 5 GB/account, 50 subrequests per Worker request, 100 SQL bind parameters and 100 KB statement maximum. D1 daily quota failures began being enforced on 2026-09-01. **No remote quota was accessed or reserved.**
+
+### Certification rule
+
+The new tests are additional local proof, not automatic certification. **GATE_A_PARTIAL / GATE_B_CLOSED** until final GitHub SHA CI is green and AC-05, AC-07, AC-10 local requirements are genuinely demonstrated. No remote provisioning, production CPU probes, remote migrations, merge or M48.
