@@ -2,7 +2,6 @@
 import {z} from 'zod';
 import {canonical,sha256} from '../../shared/canonical';
 import {getModelCCatalogJob,ModelCReadError} from './model-c-catalog';
-import {ModelCPersonalReadError} from './model-c-personal';
 import type {TrustedOwner} from './model-c-personal';
 
 const jobId=z.string().regex(/^job:[a-f0-9]{64}$/);
