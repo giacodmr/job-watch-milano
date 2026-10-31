@@ -151,10 +151,10 @@
   .c-heading h1{font-size:24px}
   .c-heading p{font-size:11px;max-width:290px}
   .c-heading>.c-btn{font-size:10px!important;padding:7px 9px}
-  .c-tools{padding:14px 14px 12px;gap:8px}
-  .c-search-field{width:100%;flex:1 1 100%}
-  .c-btn-search{flex:none}
-  .c-filter-actions{flex:1;width:100%;display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+  .c-tools{padding:14px 14px 12px;gap:8px;display:grid;grid-template-columns:minmax(0,1fr) auto}
+  .c-search-field{width:auto;min-width:0;grid-column:1;grid-row:1}
+  .c-btn-search{grid-column:2;grid-row:1}
+  .c-filter-actions{grid-column:1/-1;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;margin-left:0}
   .c-filter-actions select{width:100%;min-width:0}
   .c-tabs{padding:0 14px;gap:20px}
   .c-filter-hint{padding:0 14px 12px}
