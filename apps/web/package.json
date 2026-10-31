@@ -13,7 +13,7 @@
     "db:list:local": "wrangler d1 migrations list job-watch-local --local",
     "typecheck": "tsc --noEmit",
     "build": "npm run typecheck && vite build",
-    "test": "vitest run",
+    "test": "vitest run --exclude tests/candidature-browser.test.ts && vitest run tests/candidature-browser.test.ts",
     "check": "npm run test && npm run build",
     "worker:check": "wrangler deploy --dry-run --outdir .worker-build",
     "sync:export": "node tools/local-sync.mjs export",
