@@ -413,7 +413,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     if(inspected.status!=='PUBLISHED_RECEIPTS_RECONCILED'||
       inspected.catalogRunId!==run)throw Error('JOURNAL_PERSONAL_NOT_VERIFIED');
     const before=await observeIngestJournal(catalog,run);
-    const reconciled=await advanceIngestJournal(catalog,run,'PERSONAL_RECONCILED',receipt.head_digest);
+    await advanceIngestJournal(catalog,run,'PERSONAL_RECONCILED',receipt.head_digest);
     const final=await advanceIngestJournal(catalog,run,'COMPLETED',
       await sha256(canonical({run,phase:'COMPLETED',head:receipt.head_digest})));
     metrics.reconciliation+=final.sequence-before.sequence;
