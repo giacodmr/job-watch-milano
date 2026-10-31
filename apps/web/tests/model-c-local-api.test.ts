@@ -170,7 +170,7 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
         decision:'NOT_INTERESTED',activeReferences:['DISMISSED'],
         assessment:{fitScore:75,freshness:'UNVERIFIED'},reconciliation:'PENDING',
       }}]});
-    const html=renderToStaticMarkup(createElement(OpportunityTable,{items:page.items}));
+    const html=renderToStaticMarkup(createElement(OpportunityTable,{items:page.items,personalAvailable:page.personalRevision!==null}));
     expect(html).toContain('Synthetic Analyst');
     expect(html).toContain('Non interessato');
     expect(html).not.toContain('Owner B private title');
