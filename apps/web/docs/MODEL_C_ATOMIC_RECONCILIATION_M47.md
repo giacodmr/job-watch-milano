@@ -1,135 +1,200 @@
-# JOB WATCH — M47 atomic publication and cross-D1 recovery
+# M47 — Durable local publication, cross-D1 recovery and bounded retention
 
-**Branch status: PARTIAL IMPLEMENTATION / Gate A NOT YET COMPLETED.**
-**CLOUD_VERIFIED: NO / DEPLOYED: NO / ACTIVATED: NO / Gate B CLOSED.**
+**State: IMPLEMENTED LOCALLY IN PART — DO NOT MERGE AS COMPLETED M47.**
+**TESTED LOCALLY:** subject to the latest PR #48 CI result (record SHA below).
+**CLOUD_VERIFIED: NO; DEPLOYED: NO; ACTIVATED: NO; Gate B CLOSED.**
 
-## Architecture and concrete implementation
+## Scope and architecture
 
-This iteration extends M46's isolated local D1 staging without exposing any
-new deployable Worker route. The new modules live under `apps/web/tools/`:
+The existing Node-only `importModelC` remains the sole trusted author of
+CATALOG and PERSONAL SQL. The M46 service JWT continues to grant only
+`catalog:stage`. It can never initiate publication, PERSONAL writes or GC.
+None of these offline modules is imported into either deployable Worker.
 
-- `model-c-stage-attestation.ts`: read-only, durable run/chunk receipt audit.
-  Recalculates the canonical M46 run/chunk digests, checks contiguous chunk
-  coverage, record counts, idempotency keys, unique record IDs and references.
-  It never treats an M46 `complete` flag as proof of Git provenance.
-- `model-c-trusted-stage.ts`: compares the staged **reduced** inventory to
-  a complete independently replayed Git/Python snapshot, selection and
-  a digest-checked offline plan. It refuses incomplete, lossy or inconsistent
-  M46 v1 projections and verifies already-published replay using durable
-  `catalog_runs` and `catalog_run_proofs`.
-- `model-c-importer.ts`: a new *optional*, explicit `stagedPublication`
-  argument is checked after the existing `verifyGitProjection`,
-  `verifyProjectionProof` and `selectModelC` steps and **before**
-  reservation, PERSONAL append or CATALOG publication. No remote execution
-  target is enabled. Existing importer CAS/batch/guards/reconciliation remain
-  authoritative, not replaced by a second importer.
-- The M46 immutable `ingest:<digest>` run ID is reused as the
-  `catalog_runs.id` only for this trusted local staged path. The shared ID is
-  the durable binding to the published head; no new schema or migration is
-  required for this first implementation.
-- `model-c-import-recovery.ts`: independently re-reads head, owner-scoped
-  PERSONAL receipt/reconciliation, personal revision and APP revision, then
-  re-reads checkpoints to catch concurrent changes. It is a read-only
-  diagnostic, not an authorization to repair or an external API.
+Physical databases are separate: CATALOG schema v6, PERSONAL schema v3.
+No cross-database transaction is asserted. CATALOG publication retains one
+transactional D1 batch and an atomic compare-and-swap publication head.
+PERSONAL append precedes that batch, and a separate PERSONAL reconciliation
+follows it. Retry is based on durable receipts, not network response status.
 
-## Explicitly separated states
+### V6 additive migration
 
-1. **RECEIVING**: immutable M46 packets are present, possibly incomplete.
-2. **PACKET_INTEGRITY_VERIFIED_ONLY**: canonical receipt bytes/indices match.
-   This does NOT mean that Git, full snapshot or publisher has been verified.
-3. **TRUSTED_STAGE_MATCH**: offline importer has independently replayed the
-   full Git/Python source, recomputed selection/ledger and compared its
-   conservative M46 wire projection and offline plan digest.
-4. **CATALOG PUBLISHED**: preexisting `importModelC` commits all CATALOG
-   mutations and the head through one local D1 batch with a CAS guard.
-   When staged mode is used, the same immutable ingest ID is also the run ID
-   in `catalog_head`, making a committed outcome observable after failure.
-5. **PERSONAL PENDING**: CATALOG may already have committed; independent
-   PERSONAL receipt/reconciliation still must finish.
-6. **PUBLISHED_RECEIPTS_RECONCILED**: readback verifies CATALOG head and
-   current owner-scoped PERSONAL receipt/references. This is not a claim of
-   a distributed transaction or a cryptographic Git proof by the inspector.
-7. **APP_CONTEXT_REQUIRES_REVALIDATION**: APP state is independent of Git
-   import; current APP revision prevents claiming a fully fresh reconciliation.
-8. **PERSONAL_CONFLICT / CHECKPOINT_CHANGED_DURING_READ**: fail closed.
+`catalog/migrations/0006_ingest_journal.sql`:
+- Adds an append-only `catalog_ingest_journal` chain initialized by M46 run
+  creation (and backfilled for existing M46 receipts).
+- SQL triggers check prior sequence, prior digest, allowed transitions and
+  the matching published head before `CATALOG_PUBLISHED`.
+- Creates immutable `catalog_ingest_archive_runs` and
+  `catalog_ingest_archive_chunks` carrying original digests/idempotency
+  receipts without record payloads.
+- Narrows the M46 delete triggers solely for transactions with a matching
+  immutable archive, a terminal COMPLETED journal and no current head. For
+  unarchived, incomplete, pending, malformed or current runs, deletions
+  still fail. All archive/journal UPDATE/DELETE operations remain forbidden.
+- Keeps M46 run and chunk content immutable. No historical migration was
+  rewritten.
 
-Intermediate stages 2 and 3 are currently transient verified operations;
-a standalone persistent transition journal is **not yet implemented**.
-Therefore M47 is NOT complete under its full durable-state acceptance gate.
+`model-c-schema.ts` applies the additive migration atomically and is
+migration-hash-locked. Readers/preflights are upgraded to require v6. The
+v1 ingestion *wire* remains `schemaVersion:5` for compatibility; it MUST
+not be confused with the physical v6 database version.
 
-## Trust and security
+### Journal and recovery phases
 
-M46 `catalog:stage` principal has no publication or PERSONAL capability.
-The new verifier is Node-only and is invoked solely through the existing
-offline importer with `executionTarget:'local-ephemeral'` and verified
-owner context. No import of these helpers by a Worker entrypoint.
-No user/client-provided digest alone can grant publication.
+`model-c-publication-journal.ts` implements the durable event chain:
 
-The M46 `job-watch-model-c-ingestion/1` reduced schema cannot carry full
-provenance, aliases, historical PERSONAL facts, or all CATALOG fields.
-M47 never publishes that reduced payload directly. It reconstructs the
-FULL authoritative bundle using the verified Git adapter and publishes with
-the existing full importer. A selected vacancy with unrepresentable M46
-metadata (e.g. non-64-hex fingerprint or missing title) is refused, not
-coerced to fit; larger inventories and continuous operational ingestion
-remain blocked until a separately versioned transport solves this.
+`RECEIVING → COMPLETE → VERIFIED → PERSONAL_PREPARED →
+CATALOG_PUBLISHED → PERSONAL_RECONCILED → COMPLETED`
 
-## CATALOG and PERSONAL consistency
+Fail-closed terminal/problem markers are `RECOVERY_REQUIRED`,
+`CONFLICT`, `STALE` and `UNVERIFIABLE`. They never mean completed.
+The journal is read back and digest-checked before advancement; replay with
+different proof is a conflict. A failed D1 write requires readback and
+returns `JOURNAL_OUTCOME_UNKNOWN` where certainty cannot be established.
 
-CATALOG publication is atomic **within its one database**, via existing
-D1 batch and revision CAS. PERSONAL append is a separate D1 transaction
-before the CATALOG commit. PERSONAL reconciliation and receipt are a
-subsequent separate D1 transaction. No rollback of CATALOG is claimed
-on a PERSONAL failure. A retry of the same verified Git source can use
-the preexisting importer reconciliation path. The recovery inspector
-reads the durable receipt and current owner-specific checkpoints.
+`COMPLETE` is based on a full audit of actual immutable M46 chunk bytes,
+counts, digests, and referential structure — it does not imply independent
+Git provenance. `VERIFIED` follows verification by the trusted Git/Python
+adapter against the full selection, ledger and digest-checked plan.
+`PERSONAL_PREPARED` is recorded after the PERSONAL append transaction.
+`CATALOG_PUBLISHED` is inserted **inside the same D1 batch** that switches
+the CATALOG head; the SQL trigger verifies the head/run binding.
+`PERSONAL_RECONCILED` and `COMPLETED` require an owner-bound readback of
+the receipt and matching PERSONAL references, including the zero-reference
+case. A concurrent APP revision causes conservative failure rather than an
+unfounded completion claim.
 
-A Cloudflare D1 Time Travel restore is NOT an import-specific rollback;
-it overwrites the selected database's later state and is not invoked here.
-Rebuild and verified replay are preferred where safe. A real restore
-requires separate approval and an assessment of later APP edits.
+The journal records compact proof digests, not personal data, source JSON,
+tokens, file contents or secrets. It is a transition audit, not a substitute
+for signed Git provenance, and it does not imply distributed atomicity.
 
-## Quota, retention and blockers
+### Transport versions
 
-The importer continues its existing conservative 30,000 write-unit budget,
-explicit extended 60,000 path and special guarded initial bootstrap policy.
-The new audit performs reads but no extra persisted writes; prior M46 stage
-ingestion write costs must also be accounted for in any full remote budget.
-Remote account usage is UNKNOWN and therefore DENY.
+**v1** remains `job-watch-model-c-ingestion/1`, with its unchanged
+reduced schema and strict legacy limits. Only the full independently
+replayed Git/Python source may be published; a lossy v1 payload never
+becomes CATALOG SQL directly.
 
-M46 caps one request at 12 KiB, 16 records per chunk, 64 chunks per run and
-8 immutable retained runs. M47 now enforces this eight-run limit in the same
-SQLite INSERT predicate as the run creation, preventing two concurrent
-requests from bypassing an out-of-transaction count precheck. A dedicated
-Miniflare test exercises contention at the admission boundary.
-Existing immutable retain triggers are preserved.
-A safe terminal-run retention/GC policy is **not** delivered here; indefinite
-reuse of this v1 receiver would exhaust local admission capacity.
+**v2 (offline contract only)** in `shared/model-c-ingestion-v2.ts` adds
+complete owner-neutral CATALOG records: companies, ATS sources, vacancy
+metadata including nullable/closed lifecycles, confirmed identities,
+alias mappings and source/coverage provenance. It preserves deterministic
+chunk digests, idempotency keys, inventory digests and replay comparison
+against a *trusted, independently computed* projection.
 
-**Not yet completed**: persistent pre-publication transition journal;
-versioned complete transport beyond v1; production-sized publication
-splitting or Worker Free CPU validation; full failure-injection matrix;
-live quota measurement; remote auth and route testing; Cloudflare activation.
+Private user/semantic event payloads are excluded from CATALOG v2. They
+must remain inside the separately authorized, owner-bound PERSONAL
+pipeline. Do not invent a `catalog:stage` permission to read PERSONAL.
 
-## Tests
+**Important limitation:** there is NO authenticated v2 HTTP ingestion
+handler or v2 durable staging table yet. The contract is only an offline
+packet builder/verifier. It is NOT a production transport or complete
+resolution of the v1 capacity limitations. Packet limits are conservative
+laboratory constraints, not remote CPU or quota verification.
 
-The added test cases include locally signed service JWT requests to the M46
-HTTP handler, real Miniflare D1 staging, verified Git/Python reconstruction,
-a deterministic plan cross-check, tampered but digest-consistent metadata,
-missing chunks, replay, no-write rejection, published-run ID binding, and a
-failure after CATALOG commit but before PERSONAL reconciliation followed by
-recovery. The recovery path explicitly requires an immutable PERSONAL receipt
-even when there are zero personal job references.
-Final CI results must be reported against the final PR SHA; do not treat
-this list as proof that all tests passed until CI confirms it.
+### Compaction and historical replay
 
-## Handoff
+`model-c-ingest-retention.ts` performs a bounded, single-run-at-a-time
+D1 transaction to archive completed **non-current** run/chunk receipts,
+then delete only their bulky staged payloads. It verifies the terminal
+journal, published historical run, exact inventory cardinality, archive
+receipts and postcommit state. Unknown write outcome causes readback or
+fails closed; it never retries a potentially committed delete blindly.
 
-Before Gate A can be marked COMPLETE:
+The detached M46 HTTP laboratory also recognizes original archived
+signed run/chunk replay and archived status, subject to the original
+service principal digest. It NEVER re-stages archived payloads.
+The persistent journal and archive receipts remain immutable.
 
-1. Persist distinct pre-publication phase evidence and prove restart recovery
-   for every required fault window, including poisoned state and concurrency.
-2. Resolve M46 v1 completeness/size limits with a versioned protocol.
-3. Solve secure retention and full write accounting.
-4. Run the complete failure matrix and get all required CI checks green.
-5. Preserve Gate B CLOSED until independently authorized remote deployment.
+**Limits:** durable archive growth continues, and a verified 30-cycle
+end-to-end publication/GC demonstration is still required. The optional
+offline compact method is not a background GC, retention schedule or
+Cloudflare remote operation.
+
+### Security and fault model
+
+- Service JWT `catalog:stage` is unable to promote, reconcile, archive or
+  operate a PERSONAL database.
+- The importer requires `executionTarget:'local-ephemeral'`; identity
+  selection and provenance are independently reconstructed from Git.
+- PERSONAL decisions, assessments, historical references, events and APP
+  overrides remain authoritative; no delete-by-absence.
+- No owner ID, SQL, route or capability is accepted from the M46 staging
+  client to authorize publication.
+- D1 Time Travel is a whole-database restore with potential loss of later
+  writes; no automated restore is implemented.
+- Unknown delivery, stale CAS, conflicting receipts or runtime/quota
+  uncertainty are blocking states.
+- No new production route or deployable secret; deployment remains CLOSED.
+
+## Cloudflare Free limits (official documentation, checked 31 Oct 2026)
+
+- D1 Free: 100,000 rows written/day, 5 million read/day; 500 MB per DB,
+  5 GB account storage, 50 queries per Worker invocation (a `batch()`
+  counts as one D1 query toward this subrequest limit), 100 bind
+  parameters/query and 100 KB maximum statement length.
+- Workers Free: 10 ms CPU/request, 128 MB memory, 100,000 requests/day.
+- D1 batch statements run in one SQL transaction and roll back together
+  on a statement failure; a batch does NOT merge billing of row writes.
+- Since September 2026 Cloudflare enforces the D1 Free daily read/write
+  limits, returning errors until midnight UTC once exceeded.
+- References:
+  https://developers.cloudflare.com/d1/platform/limits/
+  https://developers.cloudflare.com/d1/platform/pricing/
+  https://developers.cloudflare.com/d1/observability/find-expensive-queries/
+  https://developers.cloudflare.com/workers/platform/limits/
+  https://developers.cloudflare.com/changelog/post/2026-09-01-d1-free-tier-limit-enforcement/
+
+Local conservative importer admission: 30,000 write units normally, 60,000
+only with explicit authorization, and the separately guarded one-time
+bootstrap exception. Journal events are covered by an extra conservative
+40-unit bound per incomplete staged attempt, but **real remote total quota
+including staging, future v2 writes and GC has not been measured or
+reserved**. Local D1 `meta.rows_written` is a measurement, not a remote
+quota reservation. Unknown Cloudflare account quota = DENY.
+
+## AC-01—AC-15 acceptance matrix
+
+| AC | Status | Evidence / missing requirement |
+|---|---|---|
+| AC-01 Provenance | PARTIAL | Trusted Git replay and attestation tested on v1; complete remote v2 handler absent |
+| AC-02 Completeness | PARTIAL | v1 fails closed; v2 offline inventory proof, no persistent v2 stage |
+| AC-03 Catalog atomicity | PASS locally | Existing D1 publication batch + journal head event in the same batch; test required |
+| AC-04 CAS | PASS locally | Existing importer concurrent-publisher regression, v6 recheck |
+| AC-05 Personal data | PASS locally | Existing PERSONAL append-only, APP preservation; v6 recheck |
+| AC-06 Cross-D1 consistency | PARTIAL | Owner receipt readback and durable journal, failure matrix incomplete |
+| AC-07 Full recovery | PARTIAL | D1 journal, retry and loss-of-ack regression; complete matrix not yet proven |
+| AC-08 Idempotence | PARTIAL | v1 run/chunk and archive replay; 30-cycle end-to-end pending |
+| AC-09 Security | PARTIAL | Detached service/auth, no PERSONAL grant; v2 stage handler unimplemented |
+| AC-10 Free-tier accounting | PARTIAL | Conservative local bounds; remote CPU/usage unverified |
+| AC-11 Regression | PENDING | Full checks on final PR SHA required |
+| AC-12 Cloud safety | PASS | No deployed services, secrets or remote writes |
+| AC-13 CI | PENDING | Full checks on final PR SHA required |
+| AC-14 Repo hygiene | PENDING | Review changed files and merge base |
+| AC-15 Documentation | PARTIAL | This technical runbook plus private deployment runbook |
+
+These statuses are conservative. A green CI alone does not upgrade all
+PARTIAL items to PASS. **M47 is not yet ready for merge**.
+
+## Test evidence
+
+Tests cover M46 JWT/HTTP v1 staging, loss-of-reply receipt inspection,
+M47 real D1 journal immutability/ordering/conflict, original importer
+atomic publication, postcommit PERSONAL reconciliation, v2 offline full
+CATALOG inventory verification, and the terminal archive/replay path.
+Results must be checked on the **final** SHA, not inherited from M46.
+
+## Follow-up before Gate A can be certified
+
+1. Implement authorized durable v2 chunk receiving, independently trusted
+   verification of its full projection, and bounded multi-invocation staging.
+2. Demonstrate 30 continuous end-to-end staged publications, reconciliation
+   and compaction without losing APP facts or exceeding D1 limits.
+3. Complete all specified crash/failure windows, including cross-owner,
+   APP concurrency and unknown network outcomes using actual D1 state.
+4. Reconcile full staging, journal, index, GC and migration write accounting
+   against observed `meta.rows_written`; verify Free CPU and remote limits
+   separately before Gate B.
+5. Pass complete CI and review final head SHA, permissions and Worker routes.
+
+**Decision: Gate A NOT COMPLETE; Gate B CLOSED. PR #48 must stay DRAFT.**
