@@ -77,9 +77,21 @@ export async function prepareSafeRemoteBootstrapPlan(preflight:unknown,setup:unk
 /** Unknown or incomplete account evidence must not be treated as Free quota. */
 export function evaluateRemoteQuotaForPlan(plan:Awaited<ReturnType<typeof prepareSafeRemoteBootstrapPlan>>,
   preflight:unknown,accountEvidence:unknown,now=new Date()){
-  // Keep the production-budget function as the single existing admission policy.
-  const input=accountEvidence&&typeof accountEvidence==='object'&&!Array.isArray(accountEvidence)
-    ? {...accountEvidence,preflight} : null;
+  // Bind accounting evidence to the *same* pinned source/plan; never let a
+  // different (cheaper) preflight or an unbounded migration pass admission.
+  const p=preflightSchema.safeParse(preflight);
+  const ev=accountEvidence&&typeof accountEvidence==='object'&&!Array.isArray(accountEvidence)
+    ? accountEvidence as Record<string,unknown> : null;
+  const migrations=plan.bounds.catalogSchema+plan.bounds.personalSchema;
+  const compatible=p.success &&
+    canonical(p.data.provenance)===canonical(plan.origin) &&
+    p.data.metrics.requiredBound===plan.bounds.catalogAndPersonalImport &&
+    p.data.metrics.publicationStatements===plan.bounds.publicationStatements &&
+    p.data.metrics.publicationBytes===plan.bounds.publicationBytes &&
+    ev!==null && typeof ev.setupWritesUpperBound==='number' &&
+    Number.isSafeInteger(ev.setupWritesUpperBound) &&
+    ev.setupWritesUpperBound>=migrations;
+  const input=compatible?{...ev,preflight:p.data}:null;
   const assessment=assessFreeBootstrapRemoteQuota(input,now);
   return {planDigest:plan.digest,quotaStatus:assessment.status,
     remoteExecutionAuthorized:false as const};
