@@ -71,6 +71,13 @@ async function capture(session:Session,tab:string,url:string,width:number,height
   },tab);
   expect(layout?.result?.value).toMatchObject({rows:1,heading:url.includes('/opportunita')?'Opportunità':'Candidature'});
   expect(layout?.result?.value?.bodyWidth).toBeLessThanOrEqual(width);
+  if(url.includes('/opportunita') && width>=1280) {
+    const table=await session.send('Runtime.evaluate',{
+      expression:"({scroll:document.querySelector('.c-table-scroll')?.scrollWidth,visible:document.querySelector('.c-table-scroll')?.clientWidth})",
+      returnByValue:true,
+    },tab);
+    expect(table?.result?.value?.scroll).toBeLessThanOrEqual((table?.result?.value?.visible??0)+1);
+  }
   const image=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},tab);
   return image?.data as string;
 }
