@@ -217,7 +217,7 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
     expect(d.status).toBe(200);
     expect(await d.json()).toMatchObject({personal:null,personalDetail:null});
     const forbidden=await worker.fetch(new Request('http://localhost/api/model-c/opportunities/jobs'),
-      {...env,MODEL_C_TEST_OWNER:undefined});
+      {APP_ENV:'local',MODEL_C_LOCAL_API:'synthetic-only',CATALOG:catalog,PERSONAL:personal});
     expect(forbidden.status).toBe(403);
     const remote=await runtime.dispatchFetch('https://not-local.example/api/model-c/opportunities/jobs');
     expect(remote.status).toBe(403);
