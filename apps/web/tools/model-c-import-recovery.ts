@@ -34,7 +34,7 @@ export async function inspectPublishedModelCRecovery(catalog:D1Database,personal
     catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version'),
     personal.prepare("SELECT version FROM model_c_schema WHERE scope='PERSONAL'").first<number>('version'),
   ]);
-  if(cv!==6||pv!==3)return fail('MODEL_C_SCHEMA_MISMATCH');
+  if(cv!==7||pv!==3)return fail('MODEL_C_SCHEMA_MISMATCH');
   const head=await readHead(catalog);
   if(!head)return {status:'NO_PUBLISHED_CATALOG' as const,
     crossDatabaseAtomicity:false as const,remoteExecutionAuthorized:false as const};
