@@ -111,7 +111,16 @@ async function createRun(db:D1Database,input:IngestRunInput,principal:ServicePri
         AND (SELECT count(*) FROM catalog_ingest_runs)<8`)
       .bind(input.runId,input.commitSha,input.manifestDigest,input.projectionDigest,
         input.planDigest,input.expectedRevision,input.totalChunks,pd,digest,input.expectedRevision).run();
-    if((result.meta.changes??0)!==1){
+    // The v6 AFTER INSERT journal trigger writes an additional row. D1
+    // meta.changes accounts for trigger effects: use a positive write signal
+    // AND inspect the persisted immutable run, not the former exact ==1.
+    if((result.meta.changes??0)>0){
+      const observed=await readRun(db,input.runId);
+      if(!observed)return response('WRITE_OUTCOME_UNKNOWN',503);
+      return rowMatches(observed,input,pd,digest)?
+        response('RUN_CREATED',201):response('RUN_CONFLICT',409);
+    }
+    if((result.meta.changes??0)===0){
       // The competing write may have won while our pre-read was stale.
       // Never report a quota failure as a revision conflict or retry blindly.
       const observed=await readRun(db,input.runId);
