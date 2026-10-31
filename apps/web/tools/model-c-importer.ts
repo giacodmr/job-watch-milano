@@ -1,6 +1,6 @@
 // Inactive Node-only Model C importer. No Worker/browser entrypoint or D1 binding.
 import { randomUUID } from 'node:crypto';
-import {verifyTrustedStagingAgainstSnapshot} from './model-c-trusted-stage';
+import {verifyTrustedStagingAgainstSnapshot,verifyPublishedStageReplay} from './model-c-trusted-stage';
 import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
 import { selectModelC } from '../shared/model-c-selection';
@@ -250,13 +250,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const context:SelectionContext={identities:old.head||options.v1 ? {mode:'confirmed-ledger',ledger:startingLedger,expectedDigest:await sha256(canonical(startingLedger))} : {mode:'first-v1-bootstrap'},personalReferences:activeRefs,personalDecisionJobIds};
   const verified=await verifyGitProjection(options.source,context,previousCommit), {bundle}=verified;
   const proof=await verifyProjectionProof(bundle,verified.proof,context), selected=await selectModelC(bundle,context);
-  if(options.stagedPublication){
-    // The stage claim is untrusted. Verify against the SAME canonical Git proof
-    // and selection that the existing importer will publish. Keep all original
-    // personal guards, CAS, batch and reconciliation logic intact.
-    await verifyTrustedStagingAgainstSnapshot(catalog,options.stagedPublication.runId,
-      bundle,selected,proof,options.stagedPublication.trustedPlan);
-  }
+
   // Check ALL personal references against permanent identities, including inactive
   // refs and historical decisions, not just currently selected vacancies.
   if (privateData.personal_job_refs!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id)) ||
@@ -266,7 +260,27 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const savedProof=old.data.catalog_run_proofs!.find(p=>p.run_id===old.head?.run_id);
   const same=old.previous?.observedGitCommit===bundle.manifest.commitSha && old.previous.catalogContentDigest===selected.catalogContentDigest &&
     savedProof?.manifest_digest===proof.sourceManifestDigest && savedProof.environment_digest===environmentDigest && savedProof.reference_digest===referenceDigest;
-  const run=same?String(old.head!.run_id):'import:'+await sha256(canonical({commit:bundle.manifest.commitSha,projection:proof.projectionInputDigest,expected:old.head?.sync_revision??0}));
+  const recoveryStage=options.stagedPublication && old.head?.run_id===options.stagedPublication.runId;
+  if(options.stagedPublication){
+    if(recoveryStage){
+      // An already published run must ONLY be replayed/reconciled, never
+      // promoted again with a new revision or a changed selection context.
+      if(!same)throw Error('STAGED_REPLAY_CONTEXT_CHANGED');
+      await verifyPublishedStageReplay(catalog,options.stagedPublication.runId,
+        proof,options.stagedPublication.trustedPlan);
+    }else{
+      await verifyTrustedStagingAgainstSnapshot(catalog,options.stagedPublication.runId,
+        bundle,selected,proof,options.stagedPublication.trustedPlan);
+    }
+  }
+  // Reuse the immutable M46 ingest run ID as the published CATALOG run ID.
+  // The shared key is a durable cross-phase binding without a new D1 schema
+  // or a fictitious cross-database transaction.
+  const run=same?String(old.head!.run_id):
+    options.stagedPublication?.runId??'import:'+await sha256(canonical({
+      commit:bundle.manifest.commitSha,projection:proof.projectionInputDigest,
+      expected:old.head?.sync_revision??0,
+    }));
   if (legacy&&options.v1&&(await v1Ledger(options.v1)).sourceDigest!==legacy.sourceDigest)throw Error('V1_CONTEXT_CHANGED');
   const personalSteps=await planPersonal(privateData,selected,bundle.chunks.flat(),options.owner,bundle.manifest.commitSha,legacy);
   if (!same) for (const ref of privateData.personal_job_refs!) {
