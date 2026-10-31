@@ -1,6 +1,8 @@
 // Inactive Node-only Model C importer. No Worker/browser entrypoint or D1 binding.
 import { randomUUID } from 'node:crypto';
 import {verifyTrustedStagingAgainstSnapshot,verifyPublishedStageReplay} from './model-c-trusted-stage';
+import {advanceCompleteIngestJournal,advanceIngestJournal,nextJournalStatement,observeIngestJournal} from './model-c-publication-journal';
+import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
 import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
 import { selectModelC } from '../shared/model-c-selection';
@@ -318,10 +320,15 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const catalogEstimate=await estimateWrites(catalog,[...publication,...cleanup]);
   const privateBound=await bound(personal,personalSteps.length?[...personalGuard(privateData),...personalSteps]:[]);
   const estimated=catalogEstimate.total+privateBound+(pendingReconciliation?reconBound:0);
-  if (estimated===0) return {status:'REPLAY' as const,run,observation,syncRevision,metrics};
-  metrics.writeBounds={...catalogEstimate.byPhase,personal:privateBound,reconciliation:pendingReconciliation?reconBound:0,reservation:20};
+  const journalSnapshot=options.stagedPublication?await observeIngestJournal(catalog,run):null;
+  // Every pre-/post-publication journal write is included in the conservative
+  // bound, including a replay that must finalize previously reconciled facts.
+  const journalBound=options.stagedPublication&&journalSnapshot?.phase!=='COMPLETED'?40:0;
+  if (estimated===0&&journalBound===0) return {status:'REPLAY' as const,run,observation,syncRevision,metrics};
+  metrics.writeBounds={...catalogEstimate.byPhase,personal:privateBound,
+    reconciliation:pendingReconciliation?reconBound:0,reservation:20,journal:journalBound};
   metrics.writeUnits=catalogEstimate.byTable;
-  metrics.requiredBound=estimated+20; // all aggregated rows, indexes, known trigger effects and reservation itself
+  metrics.requiredBound=estimated+20+journalBound; // all aggregated rows, indexes, known trigger effects and reservation itself
   if(options.preflightOnly)return {status:'PREFLIGHT' as const,run,observation,syncRevision,metrics,
     provenance:{observedCommit:proof.observedGitCommit,manifestDigest:proof.sourceManifestDigest,projectionDigest:proof.projectionInputDigest},
     budgetDay:options.budget.day,priorLocalReservations:Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?').bind(options.budget.day).first('charged')??0),
@@ -331,6 +338,31 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if(options.oneTimeFreeBootstrap && options.executionTarget!=='local-ephemeral')throw Error('QUOTA_VERIFICATION_REQUIRED');
   metrics.reservation=await reserve(catalog,options.budget,metrics.requiredBound,options.oneTimeFreeBootstrap?proof:undefined);
   metrics.reservedBound=metrics.requiredBound; // only after the daily reservation really committed
+  const m47=options.stagedPublication;
+  const stageVerifiedDigest=m47?await sha256(canonical({
+    run,phase:'VERIFIED',commit:proof.observedGitCommit,
+    manifest:proof.sourceManifestDigest,projection:proof.projectionInputDigest,
+    ledger:selected.ledgerDigest,content:selected.catalogContentDigest,
+    plan:m47.trustedPlan.digest,
+  })):null;
+  const personalPreparedDigest=m47?await sha256(canonical({
+    run,phase:'PERSONAL_PREPARED',source:proof.projectionInputDigest,
+    expectedRevision:expected,
+  })):null;
+  const catalogPublishedDigest=m47?await sha256(canonical({
+    run,phase:'CATALOG_PUBLISHED',syncRevision,contentRevision,ledgerRevision,
+    headDigest:receipt.head_digest,
+  })):null;
+  if(m47){
+    const current=await observeIngestJournal(catalog,run);
+    if(current.phase==='RECEIVING'){
+      await advanceCompleteIngestJournal(catalog,run);
+      metrics.publication++;
+    }
+    const before=await observeIngestJournal(catalog,run);
+    const after=await advanceIngestJournal(catalog,run,'VERIFIED',stageVerifiedDigest!);
+    if(after.sequence>before.sequence)metrics.publication++;
+  }
   // Detect modifications between proof construction and the first private batch.
   if (await digestRows(await read(personal,personalTables))!==privateDigest) throw Error('PERSONAL_CONTEXT_CHANGED');
   let afterPersonal=privateDigest;
@@ -343,6 +375,24 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     afterPersonal=await digestRows(Object.fromEntries(personalTables.map((t,i)=>[t,result[mutations.length+i]!.results])));
   }
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
+  if(m47){
+    const before=await observeIngestJournal(catalog,run);
+    const after=await advanceIngestJournal(catalog,run,'PERSONAL_PREPARED',personalPreparedDigest!);
+    if(after.sequence>before.sequence)metrics.publication++;
+    if(publication.length){
+      // The publication journal entry is committed AFTER the head switch in
+      // the same transactional D1 batch; a failure rolls back BOTH.
+      const entry=await nextJournalStatement(catalog,run,'CATALOG_PUBLISHED',catalogPublishedDigest!);
+      if(entry.status!=='READY'||!entry.statement)throw Error('JOURNAL_PUBLICATION_INVALID_STATE');
+      publication.push({...entry.statement,phase:'checkpoint'});
+      inspectCatalogPlan(publication,metrics);
+    }else {
+      const journal=await observeIngestJournal(catalog,run);
+      if(!journal.events.some(x=>x.phase==='CATALOG_PUBLISHED'&&
+        x.proofDigest===catalogPublishedDigest))
+        throw Error('JOURNAL_PUBLISHED_HEAD_MISMATCH');
+    }
+  }
   const start=performance.now();
   if(publication.length) {
     const result=await catalog.batch(prepared(catalog,publication));
@@ -355,6 +405,16 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   metrics.publicationMs=performance.now()-start;
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
   if (pendingReconciliation) metrics.reconciliation=await reconcile(catalog,personal,receipt,selected,options.owner);
+  if(m47){
+    const inspected=await inspectPublishedModelCRecovery(catalog,personal,{ownerId:options.owner});
+    if(inspected.status!=='PUBLISHED_RECEIPTS_RECONCILED'||
+      inspected.catalogRunId!==run)throw Error('JOURNAL_PERSONAL_NOT_VERIFIED');
+    const before=await observeIngestJournal(catalog,run);
+    const reconciled=await advanceIngestJournal(catalog,run,'PERSONAL_RECONCILED',receipt.head_digest);
+    const final=await advanceIngestJournal(catalog,run,'COMPLETED',
+      await sha256(canonical({run,phase:'COMPLETED',head:receipt.head_digest})));
+    metrics.reconciliation+=final.sequence-before.sequence;
+  }
   metrics.cleanup=await execute(catalog,cleanup);
   metrics.total=metrics.reservation+metrics.personal+metrics.publication+metrics.reconciliation+metrics.cleanup;
   if (metrics.total>metrics.reservedBound) throw Error('WRITE_BOUND_EXCEEDED');
