@@ -50,7 +50,7 @@ export function PersonalActions({
   const revision=row?.jobRevision??0;
   const disabled=!enabled||busy||!!pending||locked;
   const decision=(choice||null) as Decision|null;
-  const changed=decision!==row?.decision;
+  const changed=decision!==(row?.decision??null);
   const feedback=issue||status;
 
   async function refreshAfterWrite(){
