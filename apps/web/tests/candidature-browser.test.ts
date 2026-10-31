@@ -58,7 +58,13 @@ async function capture(session:Session,tab:string,url:string,width:number,height
     if(result?.result?.value===true){loaded=true;break;}
     await delay(100);
   }
-  expect(loaded).toBe(true);
+  if(!loaded){
+    const diag=await session.send('Runtime.evaluate',{
+      expression:"({route:location.pathname,body:document.body.innerText.slice(0,1500),html:document.getElementById('root')?.innerHTML.slice(0,200)})",
+      returnByValue:true,
+    },tab);
+    throw Error('BROWSER_PAGE_NOT_READY '+JSON.stringify(diag?.result?.value));
+  }
   const layout=await session.send('Runtime.evaluate',{
     expression:"({bodyWidth:document.body.scrollWidth,viewport:window.innerWidth,rows:document.querySelectorAll('.c-listing tbody tr').length,heading:document.querySelector('.c-heading h1')?.innerText})",
     returnByValue:true,
