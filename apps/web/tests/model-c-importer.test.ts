@@ -18,6 +18,8 @@ import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
 import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-client';
 import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
 import {inspectPublishedModelCRecovery} from '../tools/model-c-import-recovery';
+import {createOfflineServiceIngestionHarness} from '../worker/model-c-ingest-lab';
+import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
 const dirs:string[]=[], measurements:Record<string,unknown>={}, preflights:Record<string,unknown>={};
@@ -515,12 +517,25 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       projectionDigest:verified.proof.projectionInputDigest,
       planDigest:trustedPlan.digest,expectedRevision:0,
     },records,2);
-    await f.c.prepare(`INSERT INTO catalog_ingest_runs
-      (id,commit_sha,manifest_digest,projection_digest,plan_digest,expected_revision,
-       total_chunks,principal_digest,run_digest) VALUES (?,?,?,?,?,?,?,?,?)`)
-      .bind(packet.run.runId,packet.run.commitSha,packet.run.manifestDigest,
-        packet.run.projectionDigest,packet.run.planDigest,packet.run.expectedRevision,
-        packet.run.totalChunks,'a'.repeat(64),await sha256(canonical(packet.run))).run();
+    const pair=await generateKeyPair('RS256');
+    const jwk=await exportJWK(pair.publicKey);
+    const resolver=createLocalJWKSet({keys:[{...jwk,kid:'m47-service',alg:'RS256',use:'sig'}]});
+    const issuer='https://m47-test.cloudflareaccess.com',audience='a'.repeat(64);
+    const clientId='c'.repeat(32)+'.access',host='sync.synthetic.invalid';
+    const jwt=await new SignJWT({type:'app',sub:'',common_name:clientId})
+      .setProtectedHeader({alg:'RS256',kid:'m47-service'}).setIssuer(issuer)
+      .setAudience(audience).setIssuedAt().setExpirationTime('10m')
+      .sign(pair.privateKey);
+    const h=createOfflineServiceIngestionHarness({catalog:f.c,
+      auth:{hostname:host,issuer,audience,allowedClientId:clientId},
+      keys:resolver,quota:{syntheticVerified:true,writeUnitsRemaining:2000}});
+    const base='https://'+host+'/api/model-c/sync/runs';
+    const post=async(path:string,body:unknown)=>h(new Request(path,{
+      method:'POST',headers:{'content-type':'application/json',
+        'cf-access-jwt-assertion':jwt},body:canonical(body),
+    }));
+    expect((await post(base,packet.run)).status).toBe(201);
+    expect((await post(base+'/'+packet.run.runId+'/publish',{})).status).toBe(404);
     const append=async(index:number,alter?:{title?:string})=>{
       const original=packet.chunks[index]!;
       let chunk=original;
@@ -530,11 +545,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
         chunk={...original,records:records as typeof original.records,chunkDigest:digest,
           idempotencyKey:await sha256(canonical({runId:original.runId,chunkIndex:index,chunkDigest:digest}))};
       }
-      await f.c.prepare(`INSERT INTO catalog_ingest_chunks
-        (run_id,chunk_index,chunk_digest,idempotency_key,record_count,records_json)
-        VALUES (?,?,?,?,?,?)`).bind(
-          chunk.runId,chunk.chunkIndex,chunk.chunkDigest,chunk.idempotencyKey,
-          chunk.records.length,canonical(chunk.records)).run();
+      expect((await post(base+'/'+packet.run.runId+'/chunks',chunk)).status).toBe(201);
     };
     return {f,packet,trustedPlan,append};
   }
