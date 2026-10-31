@@ -194,6 +194,17 @@ describe('PR #41: additive PERSONAL app writer, real D1 and Worker HTTP',()=>{
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events WHERE owner_id=?')
       .bind(other).first('n')).toBe(0);
   });
+  it('reports write capabilities from the server-side gate for the future read-only UI',async()=>{
+    const {env}=await fresh();
+    const endpoint=new Request('http://localhost/api/model-c/personal/capabilities');
+    const allowed=await worker.fetch(endpoint,env);
+    expect(allowed.status).toBe(200);
+    expect(await allowed.json()).toEqual({writeEnabled:true,productionAccess:false});
+    expect(allowed.headers.get('Cache-Control')).toBe('no-store');
+    const disabled=await worker.fetch(endpoint,{...env,MODEL_C_LOCAL_WRITE:undefined});
+    expect(disabled.status).toBe(200);
+    expect(await disabled.json()).toEqual({writeEnabled:false,productionAccess:false});
+  });
   it('validates strict JSON, size, revision, IDs, command kind and method',async()=>{
     const {env,post}=await fresh();
     const cmd=command(jobId,0,'DECISION',{decision:'INTERESTED'});
