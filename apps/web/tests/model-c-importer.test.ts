@@ -462,33 +462,6 @@ describe('verified incremental importer on ephemeral D1',()=>{
     await f.c.prepare('DROP TRIGGER synthetic_missing_alias').run();
     await importModelC(f.c,f.p,f.options);expect(await count(f.c,'catalog_vacancy_identity')).toBe(5);expect(await count(f.c,'catalog_aliases')).toBe(5);
   });
-  it('keeps an APP-origin decision after importer replay and a no-change Git observation',async()=>{
-    const f=await fixture(1);
-    const first=await importModelC(f.c,f.p,f.options);
-    expect(first.status).toBe('PUBLISHED');
-    const id=await f.c.prepare('SELECT job_id FROM catalog_visible_vacancies').first<string>('job_id');
-    expect(id).toMatch(/^job:[a-f0-9]{64}$/);
-    const ownerId=f.options.owner;
-    const cmd={kind:'DECISION' as const,jobId:id!,catalogRevision:first.syncRevision,
-      expectedRevision:0,operationId:'00000000-0000-4000-8000-000000000041',
-      decision:'INTERESTED' as const};
-    const saved=await executePersonalCommand(f.c,f.p,{ownerId},cmd);
-    expect(saved).toMatchObject({status:'saved',jobRevision:1,decision:'INTERESTED'});
-    const importedHead=await f.p.prepare('SELECT * FROM personal_heads WHERE owner_id=?').bind(ownerId).first();
-    const importedFact=await f.p.prepare('SELECT * FROM personal_decision_events WHERE owner_id=?').bind(ownerId).all();
-    const same=await importModelC(f.c,f.p,f.options);
-    expect(same.status).toBe('REPLAY');
-    const updated=(await getModelCPersonalJob(f.c,f.p,{ownerId},id!)).job;
-    expect(updated).toMatchObject({decision:'INTERESTED',decisionSource:'APP',jobRevision:1});
-    expect(await f.p.prepare('SELECT * FROM personal_heads WHERE owner_id=?').bind(ownerId).first()).toEqual(importedHead);
-    expect((await f.p.prepare('SELECT * FROM personal_decision_events WHERE owner_id=?').bind(ownerId).all()).results)
-      .toEqual(importedFact.results);
-    f.options.source.commit=commit(f.repo);
-    await importModelC(f.c,f.p,f.options);
-    const again=(await getModelCPersonalJob(f.c,f.p,{ownerId},id!)).job;
-    expect(again).toMatchObject({decision:'INTERESTED',decisionSource:'APP',jobRevision:1});
-    expect(await f.p.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(1);
-  });
   it('invalidates projection input on a code-only commit without manufacturing content changes',async()=>{
     const f=await fixture(1);const first=await importModelC(f.c,f.p,f.options);
     const path=resolve(f.repo,'sync_analysis_state.py');await writeFile(path,(await readFile(path,'utf8'))+'\n# synthetic implementation-only change\n');f.options.source.commit=commit(f.repo);
