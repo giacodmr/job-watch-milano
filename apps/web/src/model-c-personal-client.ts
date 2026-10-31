@@ -122,8 +122,11 @@ export function personalReadError(error:unknown):string {
   if(['CONTEXT_CHANGED','CATALOG_CHANGED','CURSOR_FILTER_MISMATCH'].includes(code))
     return 'Il catalogo o la selezione sono cambiati. Aggiorna la consultazione.';
   if(code==='not_found')return 'Model C è disabilitato nell’ambiente corrente. È disponibile solo nel laboratorio locale sintetico.';
-  if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Non esiste un contesto PERSONAL per questa identità sintetica.';
-  return 'Impossibile leggere Candidature. Verifica che il laboratorio Model C sia attivo e i database siano inizializzati.';
+  if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Il registro personale non è ancora stato importato e verificato per questo accesso. Non significa che tu non abbia candidature.';
+  if(['NO_PUBLISHED_CATALOG','CATALOG_SCHEMA_MISMATCH','PERSONAL_SCHEMA_MISMATCH'].includes(code))return 'I dati non sono ancora inizializzati o lo snapshot non è disponibile.';
+  if(['database_unavailable','private_databases_unavailable','private_access_unavailable'].includes(code))return 'Database temporaneamente non disponibile. Riprova più tardi.';
+  if(code==='private_access_denied'||code==='private_auth_required')return 'Accesso al registro personale non autorizzato.';
+  return 'Impossibile consultare il registro personale. Riprova più tardi.';
 }
 
 // Read-only capability discovery. No mutation action is exposed to the React UI in PR #41.
