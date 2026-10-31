@@ -284,11 +284,56 @@ fully reconciled, non-current payload rows to be compacted locally. This does
 perform garbage collection or deploy. See
 [the updated M47 acceptance matrix](MODEL_C_ATOMIC_RECONCILIATION_M47.md).
 
-The new `job-watch-model-c-ingestion/2` catalog packet builder is an offline
-owner-neutral protocol definition, **not** an exposed authenticated v2 D1
-service or a cloud-ready transport. The original v1 packet contract stays
-unchanged. PERSONAL events are deliberately excluded from catalog staging.
+The new `job-watch-model-c-ingestion/2` catalog contract now has
+**persistent, JWT-verified synthetic-local D1 HTTP ingestion** backed by the
+additive physical CATALOG schema v7 migration. A trusted independent Git
+snapshot comparison is required before the existing CATALOG publication
+and PERSONAL reconciliation importer can act. A detached v2 archive receipt
+and retention path preserves idempotent historical replay. The original v1
+wire contract stays unchanged. Personal facts are excluded from service
+staging. No new module is a production Worker route.
 
-Live Free-tier capacity, account quota and 10 ms Worker CPU limits remain
-unverified and a 30-cycle end-to-end recovery/retention test is outstanding.
-**Gate A remains incomplete; Gate B CLOSED. Do not deploy or merge PR #48.**
+A 30-cycle executable end-to-end test has been added at
+`tests/model-c-m47-continuous.test.ts`. It is not counted as completed
+until a passing final-SHA CI run actually confirms all 30 publications,
+PERSONAL reconciliations, archival passes and replay. Full fault-injection
+coverage, complete Free-tier cost accounting, actual remote quota, account
+state and 10ms Worker CPU feasibility are not yet established.
+
+**Gate A is provisional until acceptance evidence; Gate B CLOSED.**
+Do not deploy, provision, merge PR #48 or enable any remote write.
+
+
+## M47 local Gate A update — boundary, recovery and remaining Gate B work
+
+- Physical schema: CATALOG v7; PERSONAL v3. Wire contracts /1 and /2
+  are independently versioned. All migrations 0001–0006 retain original hashes.
+- Only in-memory synthetic Access JWT signing keys are used by the v2
+  lab receiver. The server-side `catalog:stage` principal must not receive
+  an owner id, PERSONAL binding, publication, retention or admin capability.
+- The importer recomputes Git ancestry, full snapshot, selection context,
+  identity ledger and trusted plan. New CATALOG HEAD and journal phase share
+  one SQLite transaction. PERSONAL reconciliation occurs later and must
+  be resumed by durable runId, owner-bound receipt and APP revision checks.
+- A 503 is unknown outcome, not permission to retry blindly. Query
+  staged chunk receipts and journal, the published CATALOG HEAD,
+  immutable proofs and PERSONAL status before deciding resume/abort.
+- Retention: only historical, non-current, terminal COMPLETED runs with
+  published proof may be archived and deleted. Archive receipt counts and
+  immutable digests must survive; storage growth remains nonzero.
+- Existing ordinary 30,000 write-unit budget is a project-specific ceiling,
+  not account evidence; 60,000 requires explicit approval.
+  Cloudflare official D1 Free limits do not demonstrate the account's
+  actual remaining quota. Any unknown remote quota is DENY.
+- The new v2 handler and trusted Node helpers MUST remain detached from
+  deployable `worker/index.ts` and `worker/private-runtime.ts`.
+  Their code MUST NOT be imported in the production dependency graph.
+- Before Gate B (later, separately approved): obtain account/CPU/quota
+  evidence; verify Worker request CPU; implement bounded, multi-invocation
+  remote publication and remote recovery; obtain owner and Access
+  authorization; inspect all bypass routes; test real backups and rollback.
+  **None of those steps are authorized by this milestone.**
+
+Detailed field matrix, offline acceptance criteria AC-01–AC-16 and
+30-cycle test contract:
+`apps/web/docs/MODEL_C_ATOMIC_RECONCILIATION_M47.md`.
