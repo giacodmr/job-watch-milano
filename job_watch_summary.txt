@@ -1,24 +1,30 @@
 JOB WATCH RUN
-Run: 294ce88c1d2661346a71a2b9
-State: COMPLETE_WITH_WARNINGS
+Run: b76441880cbf072db82d92e2
+State: NEEDS_REVIEW
 Collection: COMPLETE_WITH_WARNINGS
-JW1: COMPLETE_WITH_WARNINGS
-JW2: COMPLETE_WITH_WARNINGS
-JW3: COMPLETE_WITH_WARNINGS
-JW4: COMPLETE_WITH_WARNINGS
+JW1: NEEDS_REVIEW
+JW2: NEEDS_REVIEW
+JW3: NEEDS_REVIEW
+JW4: NEEDS_REVIEW
 Amazon: VERIFIED
 Mastercard: VERIFIED
 
-Daily actionable remaining: 0
-Historical backlog: 77
-Processable semantic pending: 77
+Daily actionable remaining: 18
+Historical backlog: 108
+Processable semantic pending: 126
 JD retry deferred: 0
 JD unavailable: 0
 Source failures: 0
-Partial sources: 109
-record errors: 16
-source errors: 109
+Partial sources: 107
+record errors: 15
+source errors: 107
 batch errors: 0
 global errors: 0
-DAILY_COMPLETE: true
+DAILY_COMPLETE: false
 FULL_SEMANTIC_COMPLETE: false
+Remaining: {'batch': 'JW1', 'action': 'SEMANTIC_REVIEW', 'count': 7, 'reason': 'Review exact current fingerprints in daily worklist'}
+Remaining: {'batch': 'JW1', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW2', 'action': 'SEMANTIC_REVIEW', 'count': 11, 'reason': 'Review exact current fingerprints in daily worklist'}
+Remaining: {'batch': 'JW2', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW3', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW4', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
