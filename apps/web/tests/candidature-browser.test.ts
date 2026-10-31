@@ -312,7 +312,7 @@ describe('PR #42 browser mutations through real React, HTTP, Worker and ephemera
     const personal=await runtime.getD1Database('PERSONAL');
     if(!tempDir)throw Error('CHROME_TEMP_MISSING');
     const file=await readFile(join(tempDir,'DevToolsActivePort'),'utf8');
-    const [portString,endpoint]=file.trim().split('\\n');
+    const [portString,endpoint]=file.trim().split('\n');
     const session=await connectCDP(Number(portString),endpoint);
     try{
       const target=await session.send('Target.createTarget',{url:'about:blank'});
