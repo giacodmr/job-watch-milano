@@ -2,7 +2,6 @@
 // Only an offline HTTP harness may call this until separately authorized Gate B.
 import {createRemoteJWKSet,jwtVerify} from 'jose';
 import type {JWTVerifyGetKey} from 'jose';
-import {z} from 'zod';
 
 export type ServicePrincipal={principalType:'service';clientId:string;capabilities:readonly ['catalog:stage']};
 export type ServiceAuthConfig={
