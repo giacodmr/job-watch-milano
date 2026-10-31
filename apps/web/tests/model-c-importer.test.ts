@@ -548,6 +548,10 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     expect(await count(f.c,'catalog_vacancy_current')).toBe(1);
     expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
     expect(await count(f.c,'catalog_ingest_chunks')).toBe(packet.chunks.length);
+    const publishedRun=await f.c.prepare("SELECT run_id FROM catalog_head WHERE scope='catalog'").first<string>('run_id');
+    expect(publishedRun).toBe(packet.run.runId);
+    expect((await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}})).status).toBe('REPLAY');
     const inspected=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
     expect(inspected.status).toBe('PUBLISHED_RECEIPTS_RECONCILED');
     const again=await importModelC(f.c,f.p,f.options);
