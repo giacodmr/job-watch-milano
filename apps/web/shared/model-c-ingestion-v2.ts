@@ -2,7 +2,7 @@
 // It intentionally excludes source 'user'/'semantic' events, personal
 // assessments and decisions: service principal catalog:stage must NOT have
 // access to PERSONAL source data or apply those events to PERSONAL D1.
-// Offline only; no Worker ingress, D1 stage or cloud authorization exists.
+// The local-only D1 receiver is detached from deployable Worker entrypoints.
 import {z} from 'zod';
 import {canonical,sha256} from './canonical';
 import {bundleSchema,validateBundle} from './snapshot';
@@ -34,6 +34,9 @@ const job=z.strictObject({
  title:text.nullable(),location:text.nullable(),canonicalUrl:url,applyUrl:url,
  fingerprint:text.nullable(),lifecycle:z.enum(['NEW','STILL_OPEN','UPDATED','CLOSED','UNKNOWN']),
  firstSeenAt:text.nullable(),lastSeenAt:text.nullable(),
+ upstreamSourceId:text,analysisStatus:text.nullable(),
+ analysisMethod:text.nullable(),needsAnalysis:z.boolean().nullable(),
+ hardExclusionReason:text.nullable(),sortKey:text,
  workerEligible:z.boolean().nullable(),technicalStatus:text.nullable(),
  ...origin,
 });
@@ -51,7 +54,7 @@ const meta=z.strictObject({
  commitSha:gitSha,manifestDigest:sha,projectionDigest:sha,
  ledgerDigest:sha,catalogContentDigest:sha,planDigest:sha,
  expectedRevision:z.number().int().nonnegative(),
- schemaVersion:z.literal(6),
+ schemaVersion:z.literal(7),
 });
 const run=z.strictObject({
  contract:z.literal(CATALOG_V2_CONTRACT),scope:z.literal('CATALOG'),
@@ -96,6 +99,10 @@ export function projectCatalogV2(bundle:SnapshotBundle,selected:Selected){
         canonicalUrl:row.canonicalUrl,applyUrl:row.applyUrl,
         fingerprint:row.fingerprint,lifecycle:row.lifecycle,
         firstSeenAt:row.firstSeenAt,lastSeenAt:row.lastSeenAt,
+        upstreamSourceId:row.upstreamSourceId,
+        analysisStatus:row.analysisStatus,analysisMethod:row.analysisMethod,
+        needsAnalysis:row.needsAnalysis,hardExclusionReason:row.hardExclusionReason,
+        sortKey:row.sortKey,
         workerEligible:row.workerEligible,technicalStatus:row.technicalStatus,
         sourcePath:row.sourcePath,sourceSha256:row.sourceSha256,
       }));
@@ -145,7 +152,7 @@ export async function prepareCatalogV2Packets(
     commitSha:proof.observedGitCommit,manifestDigest:proof.sourceManifestDigest,
     projectionDigest:proof.projectionInputDigest,
     ledgerDigest:selected.ledgerDigest,catalogContentDigest:selected.catalogContentDigest,
-    planDigest,expectedRevision,schemaVersion:6 as const,
+    planDigest,expectedRevision,schemaVersion:7 as const,
     totalChunks:pieces.length,recordCount:records.length,inventoryDigest};
   const runId='ingest-v2:'+await sha256(canonical(base));
   const descriptor=run.parse({...base,runId});
@@ -196,4 +203,22 @@ export async function verifyCatalogV2AgainstTrusted(
     fullCatalogProjectionVerified:true as const,
     personalDataTransmitted:false as const,
     publicationAuthorized:false as const};
+}
+
+/** Wire validation only: never an authorization or provenance claim. */
+export async function validateCatalogV2Run(value:unknown){
+  const parsed=run.parse(value);
+  const {runId,...unsigned}=parsed;
+  if(runId!=='ingest-v2:'+await sha256(canonical(unsigned)))
+    throw Error('V2_RUN_DIGEST_INVALID');
+  return parsed;
+}
+export async function validateCatalogV2Chunk(value:unknown){
+  const parsed=chunk.parse(value);
+  if(parsed.index>=parsed.totalChunks||parsed.count!==parsed.records.length||
+     parsed.digest!==await sha256(canonical(parsed.records))||
+     parsed.idempotencyKey!==await sha256(canonical({
+       runId:parsed.runId,index:parsed.index,digest:parsed.digest})))
+    throw Error('V2_CHUNK_DIGEST_INVALID');
+  return parsed;
 }
