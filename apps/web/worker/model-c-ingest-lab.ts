@@ -3,7 +3,7 @@
 import type {JWTVerifyGetKey} from 'jose';
 import {z} from 'zod';
 import {canonical,sha256} from '../shared/canonical';
-import {runInput,validateRun,validateChunk,MAX_INGEST_REQUEST_BYTES} from '../shared/model-c-ingestion';
+import {validateRun,validateChunk,MAX_INGEST_REQUEST_BYTES} from '../shared/model-c-ingestion';
 import type {IngestRunInput,IngestChunkInput} from '../shared/model-c-ingestion';
 import {ServiceAuthError,verifyServicePrincipal} from './model-c-service-auth';
 import type {ServiceAuthConfig,ServicePrincipal} from './model-c-service-auth';
