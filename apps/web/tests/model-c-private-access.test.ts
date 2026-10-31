@@ -168,7 +168,7 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
   });
   it('reports official D1 Free daily quota failures without exposing the provider error or retrying',async()=>{
     const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
-    const quota='D1_ERROR: Your account has exceeded D1\\'s free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue.';
+    const quota="D1_ERROR: Your account has exceeded D1's free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue.";
     expect(privateD1ErrorCode(new Error(quota))).toBe('cloudflare_quota_exceeded');
     expect(privateD1ErrorCode(new Error(quota.replace('read','write')))).toBe('cloudflare_quota_exceeded');
     expect(privateD1ErrorCode(new Error('D1 storage unavailable'))).toBe('database_unavailable');
