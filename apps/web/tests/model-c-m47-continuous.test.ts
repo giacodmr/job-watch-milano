@@ -158,7 +158,16 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    });
    await expect(importModelC(c,broken,stagedOptions)).rejects.toThrow('SYNTHETIC_PERSONAL_RECEIPT_LOST');
    expect((await observeIngestJournal(c,packets.run.runId)).phase).toBe('CATALOG_PUBLISHED');
-   result=await importModelC(c,p,stagedOptions);
+   try{result=await importModelC(c,p,stagedOptions);}
+   catch(e){
+    const observed=await inspectPublishedModelCRecovery(c,p,{ownerId:opts.owner});
+    const receipts=Number(await p.prepare('SELECT count(*) AS n FROM personal_catalog_receipts').first('n'));
+    throw Error('M47_RECOVERY_DIAGNOSTIC_'+observed.status+
+      '_cycle'+i+'_receipts'+receipts+'_appRevision'+
+      ('appRevision' in observed?observed.appRevision:'none')+
+      '_run'+('catalogRunId' in observed&&observed.catalogRunId===packets.run.runId?'MATCH':'MISMATCH')+
+      '_error'+(e instanceof Error?e.message:'unknown'));
+   }
    expect(result.status).toBe('RECOVERED');
   }else result=await importModelC(c,p,stagedOptions);
   expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
