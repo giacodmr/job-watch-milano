@@ -99,7 +99,11 @@ describe('PR #41: additive PERSONAL app writer, real D1 and Worker HTTP',()=>{
   it('edits an archived owner-bound CATALOG identity, without permitting an unknown job',async()=>{
     const {catalog,personal,post}=await fresh();
     await stageCatalog(catalog,'archived-second',1,2,'d'.repeat(64),true,true);
-    await catalog.batch(publicationFixture(catalog,'archived-second',1,2));
+    await catalog.batch([
+      catalog.prepare('INSERT INTO catalog_cas_guard VALUES (1)'),
+      catalog.prepare('DELETE FROM catalog_vacancy_current'),
+      catalog.prepare("UPDATE catalog_head SET sync_revision=2,run_id='archived-second',content_revision=2 WHERE scope='catalog'"),
+    ]);
     expect(await catalog.prepare('SELECT id FROM catalog_vacancy_identity WHERE id=?').bind(jobId).first('id')).toBe(jobId);
     expect(await catalog.prepare('SELECT count(*) AS n FROM catalog_visible_vacancies').first('n')).toBe(0);
     const archived=await post({...command(jobId,0,'DECISION',{decision:'INTERESTED'}),catalogRevision:2});
