@@ -186,6 +186,7 @@ function message(error:unknown) {
   if(code==='not_found')return 'L’API Model C è disabilitata. Questa vista è disponibile solo nel laboratorio sintetico locale.';
   if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Il registro personale non è ancora stato importato e verificato per questo accesso.';
   if(['NO_PUBLISHED_CATALOG','CATALOG_SCHEMA_MISMATCH'].includes(code))return 'Il catalogo non è ancora pronto per la consultazione.';
+  if(code==='cloudflare_quota_exceeded')return 'La quota gratuita giornaliera del database è stata raggiunta. La consultazione sarà nuovamente possibile dopo il reset Cloudflare delle 00:00 UTC, senza modificare i dati.';
   if(code==='database_unavailable')return 'Il database non è temporaneamente disponibile. Riprova più tardi.';
   return 'Non è possibile consultare le opportunità al momento. Riprova più tardi.';
 }
