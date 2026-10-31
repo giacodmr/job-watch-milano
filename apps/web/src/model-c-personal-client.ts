@@ -17,7 +17,7 @@ export const personalRowSchema=z.object({
   capturedCommit:nullable,capturedPath:nullable,capturedSha256:nullable,
   appRevision:z.number().int().nonnegative(),
   decisionSource:z.enum(['APP','IMPORT']).nullable(),
-  saved:z.boolean(),
+  saved:z.boolean(),savedSource:z.enum(['APP','IMPORT']).nullable(),
   decision:decisionSchema.nullable(),decidedAt:nullable,
   rejectionReason:nullable,reasonSummary:nullable,
   assessment:assessmentSchema.nullable(),
