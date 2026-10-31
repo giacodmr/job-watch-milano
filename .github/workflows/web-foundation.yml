@@ -37,3 +37,4 @@ jobs:
       - run: npm run db:migrate:local
       - run: npm run worker:check
       - run: npm run worker:check:private
+      - run: npm run preflight:private
