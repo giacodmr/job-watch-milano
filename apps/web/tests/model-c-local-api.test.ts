@@ -2,6 +2,8 @@ import {readFile,readdir} from 'node:fs/promises';
 import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CandidatureTable} from '../src/Candidature';
+import {OpportunityTable} from '../src/Opportunita';
+import {opportunityPageSchema,opportunityDetailSchema} from '../src/model-c-opportunities-client';
 import {personalPageSchema} from '../src/model-c-personal-client';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
@@ -152,6 +154,77 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
     }
     const invalid=await endpoint('/api/model-c/personal/jobs?view=arbitrary');
     expect(invalid.status).toBe(400);
+  });
+  it('composes a real published CATALOG page with batch isolated PERSONAL overlay over HTTP',async()=>{
+    const beforeCatalog=(await captureSynthetic(catalog,'catalog')).sha256;
+    const beforePersonal=(await captureSynthetic(personal,'personal')).sha256;
+    const page=opportunityPageSchema.parse(await (await firstResponse('/api/model-c/opportunities/jobs?q=Synthetic&limit=25')).json());
+    expect(page).toMatchObject({total:1,personalRevision:1,
+      snapshot:{syncRevision:1,runId:'run-one'},
+      items:[{id:jobId,title:'Synthetic Analyst',personal:{
+        decision:'NOT_INTERESTED',activeReferences:['DISMISSED'],
+        assessment:{fitScore:75,freshness:'UNVERIFIED'},reconciliation:'PENDING',
+      }}]});
+    const html=renderToStaticMarkup(createElement(OpportunityTable,{items:page.items}));
+    expect(html).toContain('Synthetic Analyst');
+    expect(html).toContain('Non interessato');
+    expect(html).not.toContain('Owner B private title');
+    const detail=opportunityDetailSchema.parse(await (await firstResponse(
+      '/api/model-c/opportunities/jobs/'+jobId+'?revision=1')).json());
+    expect(detail).toMatchObject({job:{id:jobId},aliases:['Synthetic Company::current','Synthetic Company::old'],
+      personal:{decision:'NOT_INTERESTED'},personalDetail:{
+        decisionEvents:[{decision:'NOT_INTERESTED'}],
+        assessmentEvents:[{method:'chatgpt_semantic_full_jd'}],
+      }});
+    expect((await captureSynthetic(catalog,'catalog')).sha256).toBe(beforeCatalog);
+    expect((await captureSynthetic(personal,'personal')).sha256).toBe(beforePersonal);
+  });
+  it('applies catalog filters to the complete CATALOG dataset and preserves public/private separation',async()=>{
+    for(const q of ['?lifecycle=UPDATED','?kind=AI_QUEUE','?needsAnalysis=true',
+      '?companyId=not-a-company','?batch=jw1','?q=missing-role']){
+      const data=opportunityPageSchema.parse(await (await firstResponse('/api/model-c/opportunities/jobs'+q)).json());
+      expect(data).toMatchObject({total:0,items:[]});
+    }
+    for(const q of ['?lifecycle=STILL_OPEN','?needsAnalysis=false','?companyId=company%3Asynthetic']){
+      const data=opportunityPageSchema.parse(await (await firstResponse('/api/model-c/opportunities/jobs'+q)).json());
+      expect(data.total).toBe(1);
+    }
+    const publicPage=await firstResponse('/api/model-c/catalog/jobs');
+    expect(JSON.stringify(await publicPage.json())).not.toContain('NOT_INTERESTED');
+    for(const suffix of [
+      '/jobs?ownerId='+other,'/jobs?limit=101','/jobs?needsAnalysis=unknown',
+      '/jobs?limit=1&limit=2','/jobs/'+jobId,
+      '/jobs/'+jobId+'?revision=not-int',
+    ]) {
+      const res=await endpoint('/api/model-c/opportunities'+suffix);
+      expect(res.status,suffix).toBe(400);
+    }
+  });
+  it('resolves an owner without personal refs to null (never a fabricated decision)',async()=>{
+    const alternate='synthetic-third';
+    await personal.prepare('INSERT INTO personal_owners VALUES (?)').bind(alternate).run();
+    await personal.prepare('INSERT INTO personal_heads VALUES (?,1,?,?)').bind(alternate,hash,commit).run();
+    const env={APP_ENV:'local',MODEL_C_LOCAL_API:'synthetic-only',CATALOG:catalog,PERSONAL:personal,MODEL_C_TEST_OWNER:alternate};
+    const r=await worker.fetch(new Request('http://localhost/api/model-c/opportunities/jobs'),env);
+    expect(r.status).toBe(200);
+    expect(await r.json()).toMatchObject({items:[{id:jobId,personal:null}]});
+    const d=await worker.fetch(new Request('http://localhost/api/model-c/opportunities/jobs/'+jobId+'?revision=1'),env);
+    expect(d.status).toBe(200);
+    expect(await d.json()).toMatchObject({personal:null,personalDetail:null});
+    const forbidden=await worker.fetch(new Request('http://localhost/api/model-c/opportunities/jobs'),
+      {...env,MODEL_C_TEST_OWNER:undefined});
+    expect(forbidden.status).toBe(403);
+    const remote=await runtime.dispatchFetch('https://not-local.example/api/model-c/opportunities/jobs');
+    expect(remote.status).toBe(403);
+    const impersonate=await endpoint('/api/model-c/opportunities/jobs',{headers:{'x-owner-id':alternate}});
+    expect(impersonate.status).toBe(403);
+    const otherOwner=await worker.fetch(new Request('http://localhost/api/model-c/opportunities/jobs'),{
+      ...env,MODEL_C_TEST_OWNER:other,
+    });
+    expect(otherOwner.status).toBe(200);
+    expect(JSON.stringify(await otherOwner.json())).toContain('Owner B private title');
+    const mainOwner=await firstResponse('/api/model-c/opportunities/jobs');
+    expect(JSON.stringify(await mainOwner.json())).not.toContain('Owner B private title');
   });
   it('does not allow clients to choose an owner and refuses unauthorized runtime access',async()=>{
     for(const header of ['x-owner-id','x-user-id','x-job-watch-owner','x-actor-ref']){
