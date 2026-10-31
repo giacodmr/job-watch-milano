@@ -97,3 +97,49 @@ export async function verifyTrustedStagingAgainstSnapshot(
     projectionInputDigest:proof.projectionInputDigest,
     fullGitProjectionCompared:true as const,remoteExecutionAuthorized:false as const};
 }
+
+/** Recovery of an ALREADY published, same-run CATALOG head. This cannot
+ * authorize a new publication and cannot bypass the importer same-run guard.
+ * Current selection context may differ from the original context after PERSONAL
+ * append, so compare durable original proofs with newly verified Git origin.
+ */
+export async function verifyPublishedStageReplay(
+  catalog:D1Database,runId:string,verifiedProof:unknown,trustedPlan:Plan){
+  const proof=projectionProofSchema.parse(verifiedProof);
+  const row=await catalog.prepare(`SELECT i.commit_sha AS commitSha,
+    i.manifest_digest AS manifestDigest,i.projection_digest AS projectionDigest,
+    i.plan_digest AS planDigest,i.expected_revision AS expectedRevision,
+    i.state AS ingestState,r.observed_commit AS publishedCommit,
+    r.projection_digest AS publishedProjection,r.expected_revision AS publishedExpected,
+    r.state AS publishedState,p.manifest_digest AS publishedManifest,
+    h.sync_revision AS publishedRevision
+    FROM catalog_ingest_runs i
+    JOIN catalog_runs r ON r.id=i.id
+    JOIN catalog_run_proofs p ON p.run_id=r.id
+    JOIN catalog_head h ON h.run_id=r.id AND h.scope='catalog'
+    WHERE i.id=?`).bind(runId).first<{
+      commitSha:string;manifestDigest:string;projectionDigest:string;planDigest:string;
+      expectedRevision:number;ingestState:string;publishedCommit:string;
+      publishedProjection:string;publishedExpected:number;publishedState:string;
+      publishedManifest:string;publishedRevision:number;
+    }>();
+  if(!row)return rejected('PUBLISHED_STAGED_RUN_NOT_CURRENT');
+  const {digest:planDigest,...planBody}=trustedPlan;
+  if(row.ingestState!=='RECEIVING'||row.publishedState!=='PUBLISHED'||
+     row.publishedRevision!==row.expectedRevision+1||
+     row.publishedExpected!==row.expectedRevision||
+     row.commitSha!==row.publishedCommit||
+     row.commitSha!==proof.observedGitCommit||
+     row.projectionDigest!==row.publishedProjection||
+     row.manifestDigest!==row.publishedManifest||
+     row.manifestDigest!==proof.sourceManifestDigest||
+     row.planDigest!==planDigest||planDigest!==await sha256(canonical(planBody))||
+     trustedPlan.target!=='OFFLINE_REVIEW_ONLY'||
+     trustedPlan.remoteExecutionAuthorized!==false||
+     trustedPlan.syncRevision!==row.publishedRevision||
+     trustedPlan.origin.observedCommit!==row.commitSha||
+     trustedPlan.origin.manifestDigest!==row.manifestDigest||
+     trustedPlan.origin.projectionDigest!==row.projectionDigest)
+    return rejected('PUBLISHED_STAGE_REPLAY_CONFLICT');
+  return {status:'PUBLISHED_STAGE_REPLAY_VERIFIED' as const,runId};
+}
