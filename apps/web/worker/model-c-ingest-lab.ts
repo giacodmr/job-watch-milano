@@ -89,7 +89,7 @@ async function createRun(db:D1Database,input:IngestRunInput,principal:ServicePri
       WHERE ?=coalesce((SELECT sync_revision FROM catalog_head WHERE scope='catalog'),0)`)
       .bind(input.runId,input.commitSha,input.manifestDigest,input.projectionDigest,
         input.planDigest,input.expectedRevision,input.totalChunks,pd,digest,input.expectedRevision).run();
-    if((result.meta.rows_written??0)!==1)return response('STALE_CHECKPOINT',409);
+    if((result.meta.changes??0)!==1)return response('STALE_CHECKPOINT',409);
     return response('RUN_CREATED',201);
   }catch{
     // A lost reply can hide a committed D1 write. Inspect durable receipt.
@@ -121,7 +121,7 @@ async function addChunk(db:D1Database,input:IngestChunkInput,principal:ServicePr
         AND expected_revision=coalesce((SELECT sync_revision FROM catalog_head WHERE scope='catalog'),0)`)
       .bind(input.chunkIndex,input.chunkDigest,input.idempotencyKey,input.records.length,
         serialized,input.runId,pd,input.totalChunks).run();
-    if((result.meta.rows_written??0)!==1)return response('RUN_CONFLICT',409);
+    if((result.meta.changes??0)!==1)return response('RUN_CONFLICT',409);
     return response('CHUNK_STAGED',201);
   }catch{
     try{
