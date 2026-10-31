@@ -82,7 +82,7 @@ it('upgrades 0001 without guessing missing metadata or rewriting its migration',
   await db.prepare("INSERT INTO catalog_company_current VALUES ('legacy-company','Synthetic Legacy',NULL,'legacy-origin')").run();
   await db.prepare("INSERT INTO catalog_source_identity VALUES ('legacy-source','legacy-company','legacy-board')").run();
   await db.prepare("INSERT INTO catalog_source_current VALUES ('legacy-source','legacy-company','synthetic-ats',NULL,'PARTIAL',NULL,'legacy-origin')").run();
-  expect(await applySchema(db,'catalog')).toMatchObject({applied:4});
+  expect(await applySchema(db,'catalog')).toMatchObject({applied:6});
   expect(await db.prepare('SELECT company_id,config_id,tier,priority,membership FROM catalog_company_current').first()).toEqual({company_id:'legacy-company',config_id:null,tier:null,priority:null,membership:null});
   expect(await db.prepare('SELECT source_id,origin_id,coverage_origin_id FROM catalog_source_current').first()).toEqual({source_id:'legacy-source',origin_id:'legacy-origin',coverage_origin_id:null});
   await expect(db.prepare("INSERT INTO catalog_head VALUES ('catalog',1,'legacy',1,1)").run()).rejects.toThrow('catalog_metadata_incomplete');

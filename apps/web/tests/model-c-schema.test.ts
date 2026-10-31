@@ -59,6 +59,53 @@ describe('physically separate, inactive Model C schemas',()=>{
   });
 });
 
+describe('M47 populated v5 to v7 additive upgrade',()=>{
+  it('backfills RECEIVING into durable immutable journal and preserves all M46 chunks',async()=>{
+    const db=await runtime.getD1Database('DB'+sequence++);
+    for(const m of (await migrationSources('catalog')).slice(0,5)){
+      await db.batch([
+        db.prepare('CREATE TABLE IF NOT EXISTS model_c_migrations (name TEXT PRIMARY KEY NOT NULL,sha256 TEXT NOT NULL CHECK(length(sha256)=64))'),
+        ...m.statements.map(sql=>db.prepare(sql)),
+        db.prepare('INSERT INTO model_c_migrations VALUES (?,?)').bind(m.name,m.sha256),
+      ]);
+    }
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(5);
+    const {prepareOfflineIngestPackets}=await import('../tools/model-c-ingest-offline-client');
+    const packet=await prepareOfflineIngestPackets({
+      commitSha:'a'.repeat(40),manifestDigest:'b'.repeat(64),
+      projectionDigest:'c'.repeat(64),planDigest:'d'.repeat(64),
+      expectedRevision:0,
+    },[{kind:'company',id:'company:synthetic',name:'Synthetic',
+      careerUrl:null}],1);
+    const digest=await sha256(canonical(packet.run));
+    await db.prepare(`INSERT INTO catalog_ingest_runs
+      (id,commit_sha,manifest_digest,projection_digest,plan_digest,
+       expected_revision,total_chunks,principal_digest,run_digest)
+       VALUES(?,?,?,?,?,?,?,?,?)`).bind(
+        packet.run.runId,packet.run.commitSha,packet.run.manifestDigest,
+        packet.run.projectionDigest,packet.run.planDigest,0,1,'e'.repeat(64),digest).run();
+    const part=packet.chunks[0]!;
+    await db.prepare(`INSERT INTO catalog_ingest_chunks
+      (run_id,chunk_index,chunk_digest,idempotency_key,record_count,records_json)
+      VALUES(?,?,?,?,?,?)`).bind(packet.run.runId,0,part.chunkDigest,
+        part.idempotencyKey,1,canonical(part.records)).run();
+    const old=(await db.prepare('SELECT * FROM catalog_ingest_chunks').all()).results;
+    expect((await applySchema(db,'catalog')).applied).toBe(2);
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(7);
+    expect((await db.prepare('SELECT * FROM catalog_ingest_chunks').all()).results).toEqual(old);
+    const journal=(await db.prepare('SELECT * FROM catalog_ingest_journal').all()).results;
+    expect(journal).toHaveLength(1);
+    expect(journal[0]).toMatchObject({run_id:packet.run.runId,phase:'RECEIVING',
+      sequence:0,event_digest:digest});
+    await expect(db.prepare('DELETE FROM catalog_ingest_runs WHERE id=?')
+      .bind(packet.run.runId).run()).rejects.toThrow('retained_ingest_run');
+    await expect(db.prepare('DELETE FROM catalog_ingest_chunks WHERE run_id=?')
+      .bind(packet.run.runId).run()).rejects.toThrow('retained_ingest_chunk');
+    expect((await applySchema(db,'catalog')).applied).toBe(0);
+    expect((await db.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+  });
+});
+
 describe('catalog structure, staging and transaction contract',()=>{
   it('hides stage and bootstrap until the explicit publication batch',async()=>{
     const {db}=await fresh('catalog');await stageCatalog(db);

@@ -14,6 +14,15 @@ import { importSnapshot } from '../worker/data/importer';
 import { selectModelC } from '../shared/model-c-selection';
 import { assessFreeBootstrapRemoteQuota } from '../tools/model-c-free-bootstrap';
 import { canonical, sha256 } from '../shared/canonical';
+import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
+import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-client';
+import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
+import {inspectPublishedModelCRecovery} from '../tools/model-c-import-recovery';
+import {observeIngestJournal} from '../tools/model-c-publication-journal';
+import {prepareCatalogV2Packets,verifyCatalogV2AgainstTrusted} from '../shared/model-c-ingestion-v2';
+import {compactTerminalIngestRuns,lookupArchivedIngest} from '../tools/model-c-ingest-retention';
+import {createOfflineServiceIngestionHarness} from '../worker/model-c-ingest-lab';
+import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
 const dirs:string[]=[], measurements:Record<string,unknown>={}, preflights:Record<string,unknown>={};
@@ -48,7 +57,7 @@ function intercept(db:D1Database, handler:(sql:string[],actual:()=>Promise<D1Res
   return {prepare:(sql:string)=>wrap(db.prepare(sql),sql),batch:async(stmts:D1PreparedStatement[])=>handler(stmts.map(s=>statements.get(s)!.sql),()=>db.batch(stmts.map(s=>statements.get(s)!.real)))} as D1Database;
 }
 const count=async(db:D1Database,t:string)=>Number(await db.prepare('SELECT count(*) AS n FROM '+t).first('n'));
-beforeAll(async()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("synthetic")}}',cf:false,compatibilityDate:'2026-10-29',d1Databases:Object.fromEntries(Array.from({length:90},(_,i)=>['DB'+i,'importer-'+i]))}));});
+beforeAll(async()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("synthetic")}}',cf:false,compatibilityDate:'2026-10-29',d1Databases:Object.fromEntries(Array.from({length:160},(_,i)=>['DB'+i,'importer-'+i]))}));});
 afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recursive:true,force:true});
   if(process.env.MODEL_C_METRICS_FILE)await writeFile(process.env.MODEL_C_METRICS_FILE,JSON.stringify({syntheticOnly:true,measurement:'actual D1 meta.rows_written; schema setup and fixture seed excluded',scenarios:measurements,preflights},null,2)+'\n');});
 
@@ -65,6 +74,31 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(await count(f.c,'catalog_write_reservations')).toBe(0);
     expect(await count(f.p,'personal_catalog_receipts')).toBe(0);
   });
+  it('M47 denies foreign-owner PERSONAL reads, writes and importer reassignment',async()=>{
+    const f=await fixture(1);
+    const published=await importModelC(f.c,f.p,f.options);
+    expect(published.status).toBe('PUBLISHED');
+    const id=await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id');
+    expect(id).toBeTruthy();
+    const valid=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id!,catalogRevision:published.syncRevision,
+      expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004190',
+      decision:'INTERESTED',reasonSummary:null});
+    expect(valid).toMatchObject({status:'saved'});
+    const baseline=await f.p.prepare('SELECT * FROM personal_app_events').all();
+    await expect(getModelCPersonalJob(f.c,f.p,{ownerId:'synthetic-other'},id!))
+      .rejects.toThrow();
+    await expect(executePersonalCommand(f.c,f.p,{ownerId:'other'},{
+      kind:'DECISION',jobId:id!,catalogRevision:published.syncRevision,
+      expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004191',
+      decision:'APPLIED',reasonSummary:null})).rejects.toThrow();
+    await expect(importModelC(f.c,f.p,{...f.options,owner:'synthetic-other'}))
+      .rejects.toThrow('MULTI_OWNER_PERSONAL_UNSUPPORTED');
+    expect((await f.p.prepare('SELECT * FROM personal_app_events').all()).results)
+      .toEqual(baseline.results);
+    expect(await f.c.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'")
+      .first('sync_revision')).toBe(published.syncRevision);
+  });
   it('bootstraps, replays with zero writes, and observes a new identical commit without a content revision',async()=>{
     const f=await fixture();const a=await importModelC(f.c,f.p,f.options);measurements.bootstrap=a.metrics;
     expect(a.status).toBe('PUBLISHED');expect(a.metrics.staging+a.metrics.promotion+a.metrics.checkpoint).toBe(a.metrics.publication);expect(await count(f.c,'catalog_vacancy_identity')).toBe(2);expect(await count(f.c,'catalog_vacancy_current')).toBe(2);
@@ -75,6 +109,63 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect((await f.c.prepare('SELECT * FROM catalog_vacancy_current').all()).results).toEqual(current);
     expect(await count(f.c,'catalog_content_revisions')).toBe(1);expect(await count(f.c,'catalog_audit')).toBe(2);
     expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);expect(a.metrics.total).toBeLessThanOrEqual(a.metrics.reservedBound);
+  });
+  it('M47 AC-05 retains imported assessment/notes, APP reason history and SAVED overrides across imports',async()=>{
+    const f=await fixture(1);
+    await importModelC(f.c,f.p,f.options);
+    const id=(await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id'))!;
+    const commitSha=f.options.source.commit;
+    // Seed an independently owned synthetic historical imported assessment with
+    // an append-only provenance record. Its source remains PERSONAL, never CATALOG.
+    await f.p.batch([
+      f.p.prepare("INSERT INTO personal_job_refs VALUES (?,?,'Historical Synthetic Role','https://jobs.example.test','STILL_OPEN',?,'job_memory_jw2.json',?,1)")
+        .bind(f.options.owner,id,commitSha,'a'.repeat(64)),
+      f.p.prepare(`INSERT INTO personal_assessment_events
+        (owner_id,id,job_id,fingerprint,method,fit_score,reportable,summary,
+         evidence_state,analyzed_at,result_sha256,source_commit,source_path,source_sha256)
+        VALUES (?,?,?,'synthetic-fingerprint','chatgpt_semantic_full_jd',85,1,'Preserved assessment note',
+          'FULL','2026-10-30T10:00:00Z',?,?,'job_memory_jw2.json',?)`)
+        .bind(f.options.owner,'review:ac05',id,'b'.repeat(64),commitSha,'a'.repeat(64)),
+      f.p.prepare('INSERT INTO personal_assessment_current VALUES (?,?,?,1)')
+        .bind(f.options.owner,id,'review:ac05'),
+      f.p.prepare('UPDATE personal_heads SET revision=revision+1 WHERE owner_id=?')
+        .bind(f.options.owner),
+    ]);
+    const withAssessment=await importModelC(f.c,f.p,f.options);
+    expect(['RECOVERED','PUBLISHED']).toContain(withAssessment.status);
+    const base=(await f.p.prepare('SELECT * FROM personal_assessment_events WHERE owner_id=?').bind(f.options.owner).all()).results;
+    expect(base).toHaveLength(1);
+    const note=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id,catalogRevision:withAssessment.syncRevision,expectedRevision:0,
+      operationId:'00000000-0000-4000-8000-000000004501',
+      decision:'INTERESTED',reasonSummary:'APP decision note retained',
+    });
+    expect('status' in note?note.status:null).toBe('saved');
+    const saved=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'SAVED',jobId:id,catalogRevision:withAssessment.syncRevision,expectedRevision:1,
+      operationId:'00000000-0000-4000-8000-000000004502',active:true,
+    });
+    expect('status' in saved?saved.status:null).toBe('saved');
+    const history=(await f.p.prepare('SELECT * FROM personal_app_events WHERE owner_id=? ORDER BY revision').bind(f.options.owner).all()).results;
+    expect(history).toHaveLength(2);
+    const afterRef=(await f.p.prepare('SELECT * FROM personal_job_refs WHERE owner_id=?').bind(f.options.owner).all()).results;
+    f.options.source.commit=commit(f.repo);
+    await importModelC(f.c,f.p,f.options);
+    await importModelC(f.c,f.p,f.options);
+    expect((await f.p.prepare('SELECT * FROM personal_assessment_events WHERE owner_id=?').bind(f.options.owner).all()).results).toEqual(base);
+    expect((await f.p.prepare('SELECT * FROM personal_app_events WHERE owner_id=? ORDER BY revision').bind(f.options.owner).all()).results).toEqual(history);
+    expect((await f.p.prepare('SELECT * FROM personal_job_refs WHERE owner_id=?').bind(f.options.owner).all()).results).toEqual(afterRef);
+    const item=(await getModelCPersonalJob(f.c,f.p,{ownerId:f.options.owner},id)).job;
+    expect(item).toMatchObject({decision:'INTERESTED',decisionSource:'APP'});
+    expect(item.activeReferences).toContain('SAVED');
+    expect(item.assessment).not.toBeNull();
+    const currentCatalogRevision=await f.c.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first<number>('sync_revision');
+    await expect(executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id,catalogRevision:currentCatalogRevision!,expectedRevision:0,
+      operationId:'00000000-0000-4000-8000-000000004503',
+      decision:'APPLIED',reasonSummary:null,
+    })).rejects.toThrow('REVISION_CONFLICT');
+    expect((await f.p.prepare('SELECT * FROM personal_app_events WHERE owner_id=? ORDER BY revision').bind(f.options.owner).all()).results).toEqual(history);
   });
   it('retains APP decisions after a subsequent real GitHub synthetic import and replay',async()=>{
     const f=await fixture(1);
@@ -479,5 +570,410 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const path=resolve(f.repo,'sync_analysis_state.py');await writeFile(path,(await readFile(path,'utf8'))+'\n# synthetic implementation-only change\n');f.options.source.commit=commit(f.repo);
     const next=await importModelC(f.c,f.p,f.options);
     expect(next.observation.catalogRevision).toBe(first.observation.catalogRevision);expect(next.observation.projectionInputDigest).not.toBe(first.observation.projectionInputDigest);
+  });
+});
+
+describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
+  async function prepared(){
+    const f=await fixture(1);
+    // M46 v1 accepts only SHA-256 fingerprints: make this isolated fixture
+    // explicitly representable instead of inventing a fallback conversion.
+    f.options.source.commit=await inventory(f.repo,jobs=>{
+      for(const job of jobs)job.fingerprint='b'.repeat(64);
+    });
+    const preflight=await importModelC(f.c,f.p,{...f.options,
+      preflightOnly:true,oneTimeFreeBootstrap:true,executionTarget:'remote'});
+    if(preflight.status!=='PREFLIGHT')throw Error('SYNTHETIC_PREFLIGHT_REQUIRED');
+    const setup={
+      catalog:{migrationFiles:7,localRowsWritten:f.schemaCosts.catalog.rowsWritten,
+        remoteUpperBound:f.schemaCosts.catalog.rowsWritten+100},
+      personal:{migrationFiles:3,localRowsWritten:f.schemaCosts.personal.rowsWritten,
+        remoteUpperBound:f.schemaCosts.personal.rowsWritten+100},
+    };
+    const trustedPlan=await prepareSafeRemoteBootstrapPlan({
+      status:preflight.status,provenance:preflight.provenance,
+      budgetDay:preflight.budgetDay,
+      priorLocalReservations:preflight.priorLocalReservations,
+      remoteExecutionAuthorized:false,
+      syncRevision:preflight.syncRevision,metrics:preflight.metrics,
+    },setup);
+    const context={identities:{mode:'first-v1-bootstrap' as const},
+      personalReferences:[],personalDecisionJobIds:[]};
+    const verified=await verifyGitProjection(f.options.source,context);
+    const selected=await selectModelC(verified.bundle,context);
+    const records=projectTrustedInventoryV1(verified.bundle,selected);
+    const packet=await prepareOfflineIngestPackets({
+      commitSha:verified.proof.observedGitCommit,
+      manifestDigest:verified.proof.sourceManifestDigest,
+      projectionDigest:verified.proof.projectionInputDigest,
+      planDigest:trustedPlan.digest,expectedRevision:0,
+    },records,2);
+    const pair=await generateKeyPair('RS256');
+    const jwk=await exportJWK(pair.publicKey);
+    const resolver=createLocalJWKSet({keys:[{...jwk,kid:'m47-service',alg:'RS256',use:'sig'}]});
+    const issuer='https://m47-test.cloudflareaccess.com',audience='a'.repeat(64);
+    const clientId='c'.repeat(32)+'.access',host='sync.synthetic.invalid';
+    const jwt=await new SignJWT({type:'app',sub:'',common_name:clientId})
+      .setProtectedHeader({alg:'RS256',kid:'m47-service'}).setIssuer(issuer)
+      .setAudience(audience).setIssuedAt().setExpirationTime('10m')
+      .sign(pair.privateKey);
+    const h=createOfflineServiceIngestionHarness({catalog:f.c,
+      auth:{hostname:host,issuer,audience,allowedClientId:clientId},
+      keys:resolver,quota:{syntheticVerified:true,writeUnitsRemaining:2000}});
+    const base='https://'+host+'/api/model-c/sync/runs';
+    const post=async(path:string,body:unknown)=>h(new Request(path,{
+      method:'POST',headers:{'content-type':'application/json',
+        'cf-access-jwt-assertion':jwt},body:canonical(body),
+    }));
+    expect((await post(base,packet.run)).status).toBe(201);
+    expect((await post(base+'/'+packet.run.runId+'/publish',{})).status).toBe(404);
+    const append=async(index:number,alter?:{title?:string})=>{
+      const original=packet.chunks[index]!;
+      let chunk=original;
+      if(alter){
+        const records=original.records.map(r=>r.kind==='job'?{...r,title:alter.title??r.title}:r);
+        const digest=await sha256(canonical(records));
+        chunk={...original,records:records as typeof original.records,chunkDigest:digest,
+          idempotencyKey:await sha256(canonical({runId:original.runId,chunkIndex:index,chunkDigest:digest}))};
+      }
+      expect((await post(base+'/'+packet.run.runId+'/chunks',chunk)).status).toBe(201);
+    };
+    return {f,packet,trustedPlan,append,handler:h,jwt,base,verified,selected};
+  }
+  // Original M47 import-phase fault locations, kept separate from the 19
+  // transport-only adversarial tests. Real D1 SQL is read back after each fault.
+  const originalWindows=[
+    '01 before staged ingestion','02 first received chunk','03 midpoint received chunks',
+    '04 after complete staging','05 trusted Git/plan validation',
+    '06 verified journal before PERSONAL prepare','07 before PERSONAL append',
+    '08 during PERSONAL append batch','09 after PERSONAL append lost ACK',
+    '10 inside CATALOG publication batch','11 after CATALOG commit lost ACK',
+    '12 before PERSONAL receipt','13 during PERSONAL receipt lost ACK',
+    '14 after PERSONAL receipt before COMPLETED','15 retention crash/retry',
+    '16 historical archived replay','17 APP command CAS/replay',
+    '18 competing catalog publication','19 changed revision CAS',
+  ] as const;
+  it.each(originalWindows.map((name,index)=>({name,index})))(
+    'M47 AC-07 original window $name — SQL recovery',async({index})=>{
+    const {f,packet,trustedPlan,append,handler,jwt,base}=await prepared();
+    const options={...f.options,stagedPublication:{runId:packet.run.runId,trustedPlan}};
+    const inspect=()=>observeIngestJournal(f.c,packet.run.runId);
+    const assertNoHead=async()=>{
+      expect(await count(f.c,'catalog_head')).toBe(0);
+      expect(await count(f.p,'personal_catalog_receipts')).toBe(0);
+    };
+    if(index===0)await assertNoHead();
+    if(index===1||index===2){
+      expect(packet.chunks.length).toBeGreaterThanOrEqual(2);
+      await append(index===2?packet.chunks.length-1:0);
+      await expect(importModelC(f.c,f.p,options)).rejects.toThrow();
+      await assertNoHead();
+      for(let i=0;i<packet.chunks.length;i++)if(i!==(index===2?packet.chunks.length-1:0))await append(i);
+    }else for(let i=0;i<packet.chunks.length;i++)await append(i);
+    if(index===3){
+      expect((await inspect()).phase).toBe('RECEIVING');
+      await assertNoHead();
+    }
+    if(index===4){
+      await expect(importModelC(f.c,f.p,{...options,
+        stagedPublication:{...options.stagedPublication,
+          trustedPlan:{...trustedPlan,digest:'f'.repeat(64)}}}))
+        .rejects.toThrow('TRUSTED_PLAN_MISMATCH');
+      await assertNoHead();
+    }
+    if(index===5||index===13){
+      const phase=index===5?'PERSONAL_PREPARED':'COMPLETED';
+      await f.c.prepare(`CREATE TRIGGER m47_window_abort BEFORE INSERT
+       ON catalog_ingest_journal WHEN NEW.phase='${phase}'
+       BEGIN SELECT RAISE(ABORT,'m47_window_abort'); END`).run();
+      await expect(importModelC(f.c,f.p,options)).rejects.toThrow();
+      expect((await inspect()).phase).toBe(index===5?'VERIFIED':'PERSONAL_RECONCILED');
+      expect(await count(f.c,'catalog_audit')).toBe(index===5?0:1);
+      await f.c.prepare('DROP TRIGGER m47_window_abort').run();
+    }
+    if([6,7,8,9,10,11,12].includes(index)){
+      let fired=false;
+      const personalTarget=[6,7,8,11,12].includes(index);
+      const afterCommit=index===8||index===10||index===12;
+      const selector=(sqls:string[])=>personalTarget?
+        (index===11||index===12?
+          sqls.some(s=>s.startsWith('INSERT INTO personal_catalog_receipts')):
+          sqls.some(s=>s.startsWith('INSERT INTO personal_owners'))) :
+        sqls.some(s=>s.includes('INSERT INTO catalog_head'));
+      const handlerFault=async(sqls:string[],actual:()=>Promise<D1Result[]>)=>{
+        if(!fired&&selector(sqls)){
+          fired=true;
+          if(afterCommit){await actual();throw Error('M47_ACK_LOST_AFTER_COMMIT');}
+          throw Error('M47_CRASH_BEFORE_COMMIT');
+        }
+        return actual();
+      };
+      const brokenC=personalTarget?f.c:intercept(f.c,handlerFault);
+      const brokenP=personalTarget?intercept(f.p,handlerFault):f.p;
+      await expect(importModelC(brokenC,brokenP,options)).rejects.toThrow();
+      expect(fired).toBe(true);
+      expect(await count(f.c,'catalog_audit')).toBe(index<10?0:1);
+      expect((await f.c.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+      expect((await f.p.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+    }
+    if(index===14||index===15){
+      const first=await importModelC(f.c,f.p,options);
+      expect(first.status).toBe('PUBLISHED');
+      expect((await compactTerminalIngestRuns(f.c)).archived).toBe(0);
+      f.options.source.commit=commit(f.repo);
+      await importModelC(f.c,f.p,f.options);
+      const archive=await compactTerminalIngestRuns(f.c);
+      expect(archive.archived).toBe(1);
+      expect((await inspect()).phase).toBe('COMPLETED');
+      if(index===15){
+        const send=(method:string,path:string,body?:unknown)=>handler(new Request(path,{
+          method,headers:{'cf-access-jwt-assertion':jwt,
+           ...(body===undefined?{}:{'content-type':'application/json'})},
+          ...(body===undefined?{}:{body:canonical(body)}),
+        }));
+        expect((await send('POST',base,packet.run)).status).toBe(200);
+        expect((await send('POST',base+'/'+packet.run.runId+'/chunks',packet.chunks[0])).status).toBe(200);
+      }
+      expect(await count(f.c,'catalog_audit')).toBe(2);
+      return;
+    }
+    if(index===16){
+      const first=await importModelC(f.c,f.p,options);
+      const id=await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id');
+      const input={kind:'DECISION' as const,jobId:id!,catalogRevision:first.syncRevision,
+        expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004901',
+        decision:'INTERESTED' as const,reasonSummary:'Synthetic APP history'};
+      const accepted=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},input);
+      expect('status' in accepted?accepted.status:null).toBe('saved');
+      const again=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},input);
+      expect('replayed' in again?again.replayed:null).toBe(true);
+      await expect(executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+        ...input,operationId:'00000000-0000-4000-8000-000000004902',
+        decision:'APPLIED'})).rejects.toThrow('REVISION_CONFLICT');
+      expect(await count(f.p,'personal_app_events')).toBe(1);
+      expect((await inspect()).phase).toBe('COMPLETED');
+      return;
+    }
+    if(index===17){
+      // Two importers race with identical immutable v2/v1 staging identity.
+      const settled=await Promise.allSettled([
+        importModelC(f.c,f.p,options),importModelC(f.c,f.p,options)]);
+      expect(settled.some(x=>x.status==='fulfilled')).toBe(true);
+    }
+    if(index===18){
+      await importModelC(f.c,f.p,options);
+      await expect(f.c.prepare('INSERT INTO catalog_cas_guard VALUES (0)').run())
+        .rejects.toThrow();
+      expect(await count(f.c,'catalog_audit')).toBe(1);
+      expect((await importModelC(f.c,f.p,options)).status).toBe('REPLAY');
+      return;
+    }
+    // A second independent importer invocation reconstructs all state from D1.
+    // An in-process second call is NOT evidence of a cold Miniflare restart.
+    const recovered=await importModelC(f.c,f.p,options);
+    expect(['PUBLISHED','RECOVERED','REPLAY']).toContain(recovered.status);
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+    expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
+    expect((await inspect()).phase).toBe('COMPLETED');
+    const same=await importModelC(f.c,f.p,options);
+    expect(same.status).toBe('REPLAY');
+    expect((await f.c.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+    expect((await f.p.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+  },120000);
+  it('binds a complete staging receipt to trusted Git and reuses original CATALOG and PERSONAL importer',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    const result=await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    expect(result.status).toBe('PUBLISHED');
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    expect(await count(f.c,'catalog_vacancy_current')).toBe(1);
+    expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
+    expect(await count(f.c,'catalog_ingest_chunks')).toBe(packet.chunks.length);
+    const publishedRun=await f.c.prepare("SELECT run_id FROM catalog_head WHERE scope='catalog'").first<string>('run_id');
+    expect(publishedRun).toBe(packet.run.runId);
+    const journal=await observeIngestJournal(f.c,packet.run.runId);
+    expect(journal.phase).toBe('COMPLETED');
+    expect(journal.events.map(e=>e.phase)).toEqual([
+      'RECEIVING','COMPLETE','VERIFIED','PERSONAL_PREPARED',
+      'CATALOG_PUBLISHED','PERSONAL_RECONCILED','COMPLETED',
+    ]);
+    expect((await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}})).status).toBe('REPLAY');
+    expect((await observeIngestJournal(f.c,packet.run.runId)).events).toEqual(journal.events);
+    const inspected=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
+    expect(inspected.status).toBe('PUBLISHED_RECEIPTS_RECONCILED');
+    const again=await importModelC(f.c,f.p,f.options);
+    expect(again.status).toBe('REPLAY');
+    expect(again.metrics.total).toBe(0);
+  });
+  it('produces a complete owner-neutral v2 inventory and rejects omissions or altered chunks',async()=>{
+    const {verified,selected,trustedPlan}=await prepared();
+    const packet=await prepareCatalogV2Packets(verified.bundle,selected,
+      verified.proof,trustedPlan.digest,0);
+    expect(packet.run.contract).toBe('job-watch-model-c-ingestion/2');
+    expect(packet.run.recordCount).toBeGreaterThan(0);
+    expect(packet.chunks.flatMap(c=>c.records).some(r=>r.kind==='identity')).toBe(true);
+    expect(packet.chunks.flatMap(c=>c.records).some(r=>r.kind==='alias')).toBe(true);
+    expect(packet.chunks.flatMap(c=>c.records).some(r=>r.kind==='job')).toBe(true);
+    expect(JSON.stringify(packet)).not.toContain('personal_decision_events');
+    expect(await verifyCatalogV2AgainstTrusted(packet,packet)).toMatchObject({
+      status:'V2_TRUSTED_INVENTORY_MATCH',personalDataTransmitted:false,
+      publicationAuthorized:false,
+    });
+    await expect(verifyCatalogV2AgainstTrusted({
+      run:packet.run,chunks:packet.chunks.slice(1),
+    },packet)).rejects.toThrow('V2_INCOMPLETE_CHUNKS');
+    const bad=structuredClone(packet);
+    const first=bad.chunks.find(c=>c.records.some(r=>r.kind==='job'));
+    if(!first)throw Error('SYNTHETIC_JOB_REQUIRED');
+    const row=first.records.find(r=>r.kind==='job')!;
+    if(row.kind!=='job')throw Error('JOB_REQUIRED');
+    row.title='Forged';
+    await expect(verifyCatalogV2AgainstTrusted(bad,packet))
+      .rejects.toThrow('V2_CHUNK_PROOF_MISMATCH');
+  });
+  it('recovers a staged run after catalog commit but missing PERSONAL receipt, without republishing',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    let injected=false;
+    const failing=intercept(f.p,async(sql,actual)=>{
+      if(!injected&&sql.some(x=>x.startsWith('INSERT INTO personal_catalog_receipts'))){
+        injected=true;throw Error('INJECTED_PERSONAL_RECONCILIATION_LOSS');
+      }
+      return actual();
+    });
+    await expect(importModelC(f.c,failing,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('INJECTED_PERSONAL_RECONCILIATION_LOSS');
+    expect(injected).toBe(true);
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    const mid=await observeIngestJournal(f.c,packet.run.runId);
+    expect(mid.phase).toBe('CATALOG_PUBLISHED');
+    expect((await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner})).status)
+      .toBe('CATALOG_PUBLISHED_PERSONAL_PENDING');
+    const fixed=await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    expect(fixed.status).toBe('RECOVERED');
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase).toBe('COMPLETED');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+    expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
+  });
+  it('keeps HEAD old and preserves journal PREPARED if atomic publication phase fails',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    await f.c.prepare(`CREATE TRIGGER synthetic_m47_journal_abort
+      BEFORE INSERT ON catalog_ingest_journal WHEN NEW.phase='CATALOG_PUBLISHED'
+      BEGIN SELECT RAISE(ABORT,'synthetic_phase_failure'); END`).run();
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('MODEL_C_IMPORT_FAILED');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.c,'catalog_runs')).toBe(0);
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase)
+      .toBe('PERSONAL_PREPARED');
+    await f.c.prepare('DROP TRIGGER synthetic_m47_journal_abort').run();
+    const result=await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    expect(result.status).toBe('PUBLISHED');
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase).toBe('COMPLETED');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+  });
+  it('compacts only historical COMPLETED ingest runs and proves archived HTTP replay',async()=>{
+    const {f,packet,trustedPlan,append,handler,jwt,base}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    // A run still pointed to by the published HEAD must never be deleted.
+    expect((await compactTerminalIngestRuns(f.c)).archived).toBe(0);
+    await expect(f.c.prepare('DELETE FROM catalog_ingest_runs WHERE id=?')
+      .bind(packet.run.runId).run()).rejects.toThrow('retained_ingest_run');
+    f.options.source.commit=commit(f.repo);
+    await importModelC(f.c,f.p,f.options);
+    const compacted=await compactTerminalIngestRuns(f.c);
+    expect(compacted).toMatchObject({archived:1,payloadChunksReclaimed:packet.chunks.length});
+    expect(await lookupArchivedIngest(f.c,packet.run.runId))
+      .toMatchObject({run_digest:await sha256(canonical(packet.run))});
+    expect(await count(f.c,'catalog_ingest_runs')).toBe(0);
+    expect(await count(f.c,'catalog_ingest_chunks')).toBe(0);
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase).toBe('COMPLETED');
+    const send=async(path:string,method:string,body?:unknown)=>handler(new Request(path,{
+      method,headers:{'cf-access-jwt-assertion':jwt,
+        ...(body===undefined?{}:{'content-type':'application/json'})},
+      ...(body===undefined?{}:{body:canonical(body)}),
+    }));
+    expect((await send(base,'POST',packet.run)).status).toBe(200);
+    expect((await send(base+'/'+packet.run.runId+'/status','GET')).status).toBe(200);
+    expect((await send(base+'/'+packet.run.runId+'/chunks','POST',packet.chunks[0])).status).toBe(200);
+    const tampered={...packet.chunks[0]!,chunkDigest:'f'.repeat(64)};
+    expect((await send(base+'/'+packet.run.runId+'/chunks','POST',tampered)).status).toBe(400);
+    expect((await compactTerminalIngestRuns(f.c)).archived).toBe(0);
+    await expect(f.c.prepare('UPDATE catalog_ingest_archive_runs SET run_digest=? WHERE id=?')
+      .bind('f'.repeat(64),packet.run.runId).run()).rejects.toThrow('immutable_archive_run');
+  });
+  it('rejects a forged digest-checked plan before reservation and PERSONAL append',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,
+        trustedPlan:{...trustedPlan,digest:'f'.repeat(64)}}}))
+      .rejects.toThrow('TRUSTED_PLAN_MISMATCH');
+    expect(await count(f.c,'catalog_write_reservations')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
+  });
+  it('rejects a new Git commit that disagrees with the immutable staged run',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    f.options.source.commit=commit(f.repo);
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('SOURCE_RECEIPT_MISMATCH');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
+  });
+  it('refuses an incomplete stage BEFORE any local importer write',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    if(packet.chunks.length<2)throw Error('EXPECTED_MULTIPLE_SYNTHETIC_CHUNKS');
+    await append(0);
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('INCOMPLETE_CHUNKS');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.c,'catalog_write_reservations')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
+  });
+  it('observes post-publication PERSONAL failure and recovers without re-publishing',async()=>{
+    const f=await fixture(1);
+    expect((await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner})).status)
+      .toBe('NO_PUBLISHED_CATALOG');
+    let interrupted=false;
+    const failing=intercept(f.p,async(sql,actual)=>{
+      if(!interrupted&&sql.some(t=>t.startsWith('INSERT INTO personal_catalog_receipts'))){
+        interrupted=true;throw Error('SIMULATED_PERSONAL_ACK_LOSS');
+      }
+      return actual();
+    });
+    await expect(importModelC(f.c,failing,f.options)).rejects.toThrow('SIMULATED_PERSONAL_ACK_LOSS');
+    expect(interrupted).toBe(true);
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    const during=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
+    expect(during.status).toBe('CATALOG_PUBLISHED_PERSONAL_PENDING');
+    const completed=await importModelC(f.c,f.p,f.options);
+    expect(completed.status).toBe('RECOVERED');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+    const after=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
+    expect(after.status).toBe('PUBLISHED_RECEIPTS_RECONCILED');
+  });
+  it('refuses a digest-consistent but Git-inconsistent staged title BEFORE any publication',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++){
+      if(packet.chunks[i]!.records.some(r=>r.kind==='job'))await append(i,{title:'Forged staged title'});
+      else await append(i);
+    }
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('STAGED_PROJECTION_MISMATCH');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
   });
 });

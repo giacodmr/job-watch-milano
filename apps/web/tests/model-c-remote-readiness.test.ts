@@ -16,7 +16,7 @@ const preflight=()=>({
     writeBounds:{staging:40,promotion:40,checkpoint:10,personal:10,reconciliation:20}},
 });
 const setup=()=>({
-  catalog:{migrationFiles:5,localRowsWritten:16,remoteUpperBound:32},
+  catalog:{migrationFiles:7,localRowsWritten:16,remoteUpperBound:32},
   personal:{migrationFiles:3,localRowsWritten:8,remoteUpperBound:16},
 });
 let runtime:Miniflare,catalog:D1Database,personal:D1Database;

@@ -260,3 +260,99 @@ Production Worker ingress is not wired and all remote writes remain denied;
 the local synthetic quota fixture is not evidence of a Cloudflare account
 reservation. Gate B is closed; no new Service Token, Access policy, database
 or Worker was created.
+
+
+## Milestone #47 — local trusted staging/publication binding (INCOMPLETE)
+
+See [M47 atomic reconciliation](MODEL_C_ATOMIC_RECONCILIATION_M47.md).
+The first Gate A implementation binds the immutable M46 staged run to
+independently verified Git/Python selection and the existing atomic local
+CATALOG importer, with read-only diagnostics of PERSONAL reconciliation.
+**It is not a completed remote transport or production-ready state machine.**
+The current v1 packet contract is deliberately incomplete and fails closed
+for unrepresentable data. Persistent transition journaling, broad failure
+injection, stable retention, actual Free-tier limits and live authorization
+remain unverified. Do not deploy, provision or activate; Gate B stays CLOSED.
+
+
+### M47 completion sprint: new v6 journal and offline-only retention/v2
+
+The additive CATALOG v6 migration adds an immutable transition journal and a
+strictly guarded archive that retains run/chunk replay proofs while allowing
+fully reconciled, non-current payload rows to be compacted locally. This does
+**not** grant a service principal the ability to publish, reconcile PERSONAL,
+perform garbage collection or deploy. See
+[the updated M47 acceptance matrix](MODEL_C_ATOMIC_RECONCILIATION_M47.md).
+
+The new `job-watch-model-c-ingestion/2` catalog contract now has
+**persistent, JWT-verified synthetic-local D1 HTTP ingestion** backed by the
+additive physical CATALOG schema v7 migration. A trusted independent Git
+snapshot comparison is required before the existing CATALOG publication
+and PERSONAL reconciliation importer can act. A detached v2 archive receipt
+and retention path preserves idempotent historical replay. The original v1
+wire contract stays unchanged. Personal facts are excluded from service
+staging. No new module is a production Worker route.
+
+A 30-cycle executable end-to-end test has been added at
+`tests/model-c-m47-continuous.test.ts`. It is not counted as completed
+until a passing final-SHA CI run actually confirms all 30 publications,
+PERSONAL reconciliations, archival passes and replay. Full fault-injection
+coverage, complete Free-tier cost accounting, actual remote quota, account
+state and 10ms Worker CPU feasibility are not yet established.
+
+**Gate A is provisional until acceptance evidence; Gate B CLOSED.**
+Do not deploy, provision, merge PR #48 or enable any remote write.
+
+
+## M47 local Gate A update — boundary, recovery and remaining Gate B work
+
+- Physical schema: CATALOG v7; PERSONAL v3. Wire contracts /1 and /2
+  are independently versioned. All migrations 0001–0006 retain original hashes.
+- Only in-memory synthetic Access JWT signing keys are used by the v2
+  lab receiver. The server-side `catalog:stage` principal must not receive
+  an owner id, PERSONAL binding, publication, retention or admin capability.
+- The importer recomputes Git ancestry, full snapshot, selection context,
+  identity ledger and trusted plan. New CATALOG HEAD and journal phase share
+  one SQLite transaction. PERSONAL reconciliation occurs later and must
+  be resumed by durable runId, owner-bound receipt and APP revision checks.
+- A 503 is unknown outcome, not permission to retry blindly. Query
+  staged chunk receipts and journal, the published CATALOG HEAD,
+  immutable proofs and PERSONAL status before deciding resume/abort.
+- Retention: only historical, non-current, terminal COMPLETED runs with
+  published proof may be archived and deleted. Archive receipt counts and
+  immutable digests must survive; storage growth remains nonzero.
+- Existing ordinary 30,000 write-unit budget is a project-specific ceiling,
+  not account evidence; 60,000 requires explicit approval.
+  Cloudflare official D1 Free limits do not demonstrate the account's
+  actual remaining quota. Any unknown remote quota is DENY.
+- The new v2 handler and trusted Node helpers MUST remain detached from
+  deployable `worker/index.ts` and `worker/private-runtime.ts`.
+  Their code MUST NOT be imported in the production dependency graph.
+- Before Gate B (later, separately approved): obtain account/CPU/quota
+  evidence; verify Worker request CPU; implement bounded, multi-invocation
+  remote publication and remote recovery; obtain owner and Access
+  authorization; inspect all bypass routes; test real backups and rollback.
+  **None of those steps are authorized by this milestone.**
+
+Detailed field matrix, offline acceptance criteria AC-01–AC-16 and
+30-cycle test contract:
+`apps/web/docs/MODEL_C_ATOMIC_RECONCILIATION_M47.md`.
+
+
+## Milestone #47 final hardening — operator gate (31 October 2026)
+
+**Local-only implementation; PR #48 remains DRAFT; GATE_A_PARTIAL pending full crash/restart and PERSONAL proof; GATE_B_CLOSED.** No production service route has been added and the v2 HTTP harness is not imported by the deployable Worker graph. The new transitive graph test scans indirect TypeScript imports/reexports from both entrypoints, not merely their file text.
+
+The 30-cycle synthetic validation now emits `M47_D1_LOCAL_ACCOUNTING`, measuring successful D1 `batch()/run()` statements (including schema creation, indexes, triggers, HTTP staging, publication, journal, PERSONAL and retention) and flagging lost-ack commits separately. Those are **local diagnostic measurements, not** an account-wide D1 quota check, remote CPU observation, final storage projection, or permission to deploy. See `MODEL_C_ATOMIC_RECONCILIATION_M47.md` for the AC-01–16 matrix and 19 named fault-vector distinction.
+
+**Hard stop before Gate B:** verify the real Cloudflare account/plan and remaining shared Free daily read/write budget, Worker CPU (10 ms Free/request), actual database storage, domain/Access/owner bindings, authenticated endpoints, zero public alternate routes, backup/rollback and explicit owner approval. No remote worker action or new paid entitlement is authorized in this milestone. Unknown account usage, write budget, CPU, Access control or identity mapping => **DENY**. Under no circumstances merge PR #48 or start M48 merely because CI is green.
+
+## M47 final local closure sprint — Gate A vs Gate B contract
+
+**No deployment authority.** M47 uses real Miniflare D1 local instances only. `model-c-m47-persistent-restart.test.ts` restarts entire Miniflare runtimes against the same on-disk storage location; this verifies at least partial staging receipts and a published CATALOG head can survive a genuine cold restart, without provisioning a remote D1 database. The separate importer fault matrix tests 19 intended transition points, but a successful test-only replay inside one process does not certify an untested cold-restart interval.
+
+**Local workload calculator:** `tools/model-c-free-local-forecast.ts`, tested by `model-c-free-local-forecast.test.ts`, supports 30/100/1,000/10,000-vacancy bootstrap, daily-delta, worst-case scenarios, explicit statement/read/storage assumptions and a strict 30,000 local write-unit nominal threshold. The coefficients are illustrative and are NOT an upper bound calibrated to live production.
+
+**Gate B remains CLOSED until external verification:** Cloudflare account plan, real total rows read/written including all other services (reset UTC), actual remaining quota, Worker Free CPU <=10 ms per invocation, Worker memory <=128 MB, 50 query/subrequest ceiling, 500 MB per D1 database, 5 GB per Free account, private Access hostname/sub mapping, secure secrets, read-only alternate routes, D1 remote migrations, real storage growth, durability and backup/rollback approvals. The current lab CATALOG receiver is NOT a deployable Worker entrypoint and must not be activated by a future import merely because the unit tests pass. Account metrics/CPU/provisioning cannot be replaced by an invented local projection. UNKNOWN_REMOTE_QUOTA = DENY, no automatic paid upgrade, no remote calls, no merge.
+
+**Manual reviewer requirement:** compare final-SHA CI and the AC-01–16 proof matrix against the exact 19 original importer fault points. Keep PR #48 DRAFT if any foundational local case cannot be demonstrated; only a separately authorized Gate B can validate Cloudflare account usage or deploy the service.

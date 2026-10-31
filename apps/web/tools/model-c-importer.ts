@@ -1,5 +1,10 @@
 // Inactive Node-only Model C importer. No Worker/browser entrypoint or D1 binding.
 import { randomUUID } from 'node:crypto';
+import {verifyTrustedStagingAgainstSnapshot,verifyPublishedStageReplay} from './model-c-trusted-stage';
+import {verifyTrustedV2Stage,verifyPublishedV2StageReplay} from './model-c-v2-trusted-stage';
+import {advanceCompleteIngestJournal,advanceCompleteV2IngestJournal,advanceIngestJournal,nextJournalStatement,observeIngestJournal} from './model-c-publication-journal';
+import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
+import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
 import { selectModelC } from '../shared/model-c-selection';
 import type { IdentityLedger, SelectionContext } from '../shared/model-c-selection';
@@ -22,6 +27,9 @@ export interface ImportOptions {
   oneTimeFreeBootstrap?: boolean;
   executionTarget?: 'local-ephemeral' | 'remote';
   preflightOnly?: boolean;
+  // Optional M47 lab-only: bind an M46 staged run to the independently
+  // replayed full Git snapshot before ANY importer writes. Never a service grant.
+  stagedPublication?: {runId:string;trustedPlan:Awaited<ReturnType<typeof prepareSafeRemoteBootstrapPlan>>};
   budget: { day:string; availableRows:number; extendedAuthorized?:boolean };
 }
 export interface ImportMetrics {
@@ -228,13 +236,20 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   // Read-only bootstrap preflights may plan with executionTarget='remote'.
   if(!options.preflightOnly && options.executionTarget!=='local-ephemeral')
     throw Error('REMOTE_IMPORT_NOT_AUTHORIZED');
-  if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==5 ||
+  if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==7 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
   const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
+  const appRevisionAtStart=Number(await personal.prepare(
+    'SELECT revision FROM personal_app_heads WHERE owner_id=?').bind(options.owner).first('revision')??0);
+  const ensureStableApp=async()=>{
+    const now=Number(await personal.prepare('SELECT revision FROM personal_app_heads WHERE owner_id=?')
+      .bind(options.owner).first('revision')??0);
+    if(now!==appRevisionAtStart)throw Error('PERSONAL_APP_CONTEXT_CHANGED');
+  };
   if(options.oneTimeFreeBootstrap!==undefined && typeof options.oneTimeFreeBootstrap!=='boolean')throw Error('INVALID_BOOTSTRAP_AUTHORIZATION');
   if(options.oneTimeFreeBootstrap && old.head)throw Error('ONE_TIME_BOOTSTRAP_NOT_INITIAL');
-  if(options.preflightOnly && !options.oneTimeFreeBootstrap)throw Error('FREE_BOOTSTRAP_PREFLIGHT_REQUIRES_MODE');
+  // Incremental read-only preflight is safe without a bootstrap grant.
   let startingLedger=old.ledger, previousCommit=old.previous?.observedGitCommit;
   let legacy:Awaited<ReturnType<typeof v1Ledger>>|undefined;
   if (!old.head && options.v1) { legacy=await v1Ledger(options.v1); startingLedger=legacy.ledger; previousCommit=legacy.commit; }
@@ -245,6 +260,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const context:SelectionContext={identities:old.head||options.v1 ? {mode:'confirmed-ledger',ledger:startingLedger,expectedDigest:await sha256(canonical(startingLedger))} : {mode:'first-v1-bootstrap'},personalReferences:activeRefs,personalDecisionJobIds};
   const verified=await verifyGitProjection(options.source,context,previousCommit), {bundle}=verified;
   const proof=await verifyProjectionProof(bundle,verified.proof,context), selected=await selectModelC(bundle,context);
+
   // Check ALL personal references against permanent identities, including inactive
   // refs and historical decisions, not just currently selected vacancies.
   if (privateData.personal_job_refs!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id)) ||
@@ -254,7 +270,33 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const savedProof=old.data.catalog_run_proofs!.find(p=>p.run_id===old.head?.run_id);
   const same=old.previous?.observedGitCommit===bundle.manifest.commitSha && old.previous.catalogContentDigest===selected.catalogContentDigest &&
     savedProof?.manifest_digest===proof.sourceManifestDigest && savedProof.environment_digest===environmentDigest && savedProof.reference_digest===referenceDigest;
-  const run=same?String(old.head!.run_id):'import:'+await sha256(canonical({commit:bundle.manifest.commitSha,projection:proof.projectionInputDigest,expected:old.head?.sync_revision??0}));
+  const recoveryStage=options.stagedPublication && old.head?.run_id===options.stagedPublication.runId;
+  if(options.stagedPublication){
+    if(recoveryStage){
+      // An already published run must ONLY be replayed/reconciled, never
+      // promoted again with a new revision or a changed selection context.
+      if(!same)throw Error('STAGED_REPLAY_CONTEXT_CHANGED');
+      if(options.stagedPublication.runId.startsWith('ingest-v2:'))
+        await verifyPublishedV2StageReplay(catalog,options.stagedPublication.runId,
+          proof,options.stagedPublication.trustedPlan);
+      else await verifyPublishedStageReplay(catalog,options.stagedPublication.runId,
+        proof,options.stagedPublication.trustedPlan);
+    }else{
+      if(options.stagedPublication.runId.startsWith('ingest-v2:'))
+        await verifyTrustedV2Stage(catalog,options.stagedPublication.runId,
+          bundle,selected,proof,options.stagedPublication.trustedPlan);
+      else await verifyTrustedStagingAgainstSnapshot(catalog,options.stagedPublication.runId,
+        bundle,selected,proof,options.stagedPublication.trustedPlan);
+    }
+  }
+  // Reuse the immutable M46 ingest run ID as the published CATALOG run ID.
+  // The shared key is a durable cross-phase binding without a new D1 schema
+  // or a fictitious cross-database transaction.
+  const run=same?String(old.head!.run_id):
+    options.stagedPublication?.runId??'import:'+await sha256(canonical({
+      commit:bundle.manifest.commitSha,projection:proof.projectionInputDigest,
+      expected:old.head?.sync_revision??0,
+    }));
   if (legacy&&options.v1&&(await v1Ledger(options.v1)).sourceDigest!==legacy.sourceDigest)throw Error('V1_CONTEXT_CHANGED');
   const personalSteps=await planPersonal(privateData,selected,bundle.chunks.flat(),options.owner,bundle.manifest.commitSha,legacy);
   if (!same) for (const ref of privateData.personal_job_refs!) {
@@ -279,14 +321,28 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const newRefs=personalSteps.filter(s=>s.sql.startsWith('INSERT INTO personal_job_refs ')).length;
   const reconBound=await bound(personal,personalGuard(privateData))+newPrivateRows*2+(privateData.personal_job_refs!.length+newRefs)*4+12;
   inspectCatalogPlan(publication,metrics);
-  const pendingReconciliation=!same || personalSteps.length>0 || privateData.personal_job_refs!.some(r=>!privateData.personal_reconciliation!.some(v=>v.owner_id===r.owner_id&&v.job_id===r.job_id&&v.state==='VERIFIED'&&v.receipt_id===receipt.id&&v.personal_revision===privateData.personal_heads!.find(h=>h.owner_id===r.owner_id)?.revision));
+  // Even an owner with ZERO personal_job_refs must have a durable, exactly
+  // matching catalog receipt. Otherwise a lost acknowledgment after CATALOG
+  // commit could incorrectly return RECOVERED while PERSONAL remains unbound.
+  const receiptMatches=privateData.personal_catalog_receipts!.some(r=>
+    r.id===receipt.id&&canonical(r)===canonical(receipt));
+  const pendingReconciliation=!same || personalSteps.length>0 || !receiptMatches ||
+    privateData.personal_job_refs!.some(r=>!privateData.personal_reconciliation!.some(v=>
+      v.owner_id===r.owner_id&&v.job_id===r.job_id&&v.state==='VERIFIED'&&
+      v.receipt_id===receipt.id&&v.personal_revision===
+        privateData.personal_heads!.find(h=>h.owner_id===r.owner_id)?.revision));
   const catalogEstimate=await estimateWrites(catalog,[...publication,...cleanup]);
   const privateBound=await bound(personal,personalSteps.length?[...personalGuard(privateData),...personalSteps]:[]);
   const estimated=catalogEstimate.total+privateBound+(pendingReconciliation?reconBound:0);
-  if (estimated===0) return {status:'REPLAY' as const,run,observation,syncRevision,metrics};
-  metrics.writeBounds={...catalogEstimate.byPhase,personal:privateBound,reconciliation:pendingReconciliation?reconBound:0,reservation:20};
+  const journalSnapshot=options.stagedPublication?await observeIngestJournal(catalog,run):null;
+  // Every pre-/post-publication journal write is included in the conservative
+  // bound, including a replay that must finalize previously reconciled facts.
+  const journalBound=options.stagedPublication&&journalSnapshot?.phase!=='COMPLETED'?40:0;
+  if (estimated===0&&journalBound===0) return {status:'REPLAY' as const,run,observation,syncRevision,metrics};
+  metrics.writeBounds={...catalogEstimate.byPhase,personal:privateBound,
+    reconciliation:pendingReconciliation?reconBound:0,reservation:20,journal:journalBound};
   metrics.writeUnits=catalogEstimate.byTable;
-  metrics.requiredBound=estimated+20; // all aggregated rows, indexes, known trigger effects and reservation itself
+  metrics.requiredBound=estimated+20+journalBound; // all aggregated rows, indexes, known trigger effects and reservation itself
   if(options.preflightOnly)return {status:'PREFLIGHT' as const,run,observation,syncRevision,metrics,
     provenance:{observedCommit:proof.observedGitCommit,manifestDigest:proof.sourceManifestDigest,projectionDigest:proof.projectionInputDigest},
     budgetDay:options.budget.day,priorLocalReservations:Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?').bind(options.budget.day).first('charged')??0),
@@ -296,7 +352,38 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if(options.oneTimeFreeBootstrap && options.executionTarget!=='local-ephemeral')throw Error('QUOTA_VERIFICATION_REQUIRED');
   metrics.reservation=await reserve(catalog,options.budget,metrics.requiredBound,options.oneTimeFreeBootstrap?proof:undefined);
   metrics.reservedBound=metrics.requiredBound; // only after the daily reservation really committed
+  const m47=options.stagedPublication;
+  const stageVerifiedDigest=m47?await sha256(canonical({
+    run,phase:'VERIFIED',commit:proof.observedGitCommit,
+    manifest:m47.trustedPlan.origin.manifestDigest,
+    projection:m47.trustedPlan.origin.projectionDigest,
+    ledger:selected.ledgerDigest,content:selected.catalogContentDigest,
+    plan:m47.trustedPlan.digest,
+  })):null;
+  const personalPreparedDigest=m47?await sha256(canonical({
+    run,phase:'PERSONAL_PREPARED',source:m47.trustedPlan.origin.projectionDigest,
+    // Bind replay to the ORIGINAL immutable ingestion revision, never the
+    // already-advanced catalog HEAD observed during recovery.
+    expectedRevision:m47.trustedPlan.syncRevision-1,
+  })):null;
+  const catalogPublishedDigest=m47?await sha256(canonical({
+    run,phase:'CATALOG_PUBLISHED',syncRevision,contentRevision,ledgerRevision,
+    headDigest:receipt.head_digest,
+  })):null;
+  if(m47){
+    const current=await observeIngestJournal(catalog,run);
+    if(current.phase==='RECEIVING'){
+      if(run.startsWith('ingest-v2:'))
+        await advanceCompleteV2IngestJournal(catalog,run);
+      else await advanceCompleteIngestJournal(catalog,run);
+      metrics.publication++;
+    }
+    const before=await observeIngestJournal(catalog,run);
+    const after=await advanceIngestJournal(catalog,run,'VERIFIED',stageVerifiedDigest!);
+    if(after.sequence>before.sequence)metrics.publication++;
+  }
   // Detect modifications between proof construction and the first private batch.
+  await ensureStableApp();
   if (await digestRows(await read(personal,personalTables))!==privateDigest) throw Error('PERSONAL_CONTEXT_CHANGED');
   let afterPersonal=privateDigest;
   if(personalSteps.length) {
@@ -307,7 +394,26 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     metrics.personal=result.reduce((n,r)=>n+(r.meta.rows_written??0),0);
     afterPersonal=await digestRows(Object.fromEntries(personalTables.map((t,i)=>[t,result[mutations.length+i]!.results])));
   }
+  await ensureStableApp();
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
+  if(m47){
+    const before=await observeIngestJournal(catalog,run);
+    const after=await advanceIngestJournal(catalog,run,'PERSONAL_PREPARED',personalPreparedDigest!);
+    if(after.sequence>before.sequence)metrics.publication++;
+    if(publication.length){
+      // The publication journal entry is committed AFTER the head switch in
+      // the same transactional D1 batch; a failure rolls back BOTH.
+      const entry=await nextJournalStatement(catalog,run,'CATALOG_PUBLISHED',catalogPublishedDigest!);
+      if(entry.status!=='READY'||!entry.statement)throw Error('JOURNAL_PUBLICATION_INVALID_STATE');
+      publication.push({...entry.statement,phase:'checkpoint'});
+      inspectCatalogPlan(publication,metrics);
+    }else {
+      const journal=await observeIngestJournal(catalog,run);
+      if(!journal.events.some(x=>x.phase==='CATALOG_PUBLISHED'&&
+        x.proofDigest===catalogPublishedDigest))
+        throw Error('JOURNAL_PUBLISHED_HEAD_MISMATCH');
+    }
+  }
   const start=performance.now();
   if(publication.length) {
     const result=await catalog.batch(prepared(catalog,publication));
@@ -320,6 +426,23 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   metrics.publicationMs=performance.now()-start;
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
   if (pendingReconciliation) metrics.reconciliation=await reconcile(catalog,personal,receipt,selected,options.owner);
+  if(m47){
+    const inspected=await inspectPublishedModelCRecovery(catalog,personal,{ownerId:options.owner});
+    // APP override existence is expected in a personal database. It does not
+    // invalidate the catalog receipt when its revision was stable from the
+    // trusted Git verification through PERSONAL reconciliation.
+    if((inspected.status!=='PUBLISHED_RECEIPTS_RECONCILED'&&
+        inspected.status!=='APP_CONTEXT_REQUIRES_REVALIDATION')||
+      inspected.appRevision!==appRevisionAtStart||
+      inspected.catalogRunId!==run||!inspected.receiptMatchesPublishedHead||
+      inspected.pendingReferences!==0)
+      throw Error('JOURNAL_PERSONAL_NOT_VERIFIED');
+    const before=await observeIngestJournal(catalog,run);
+    await advanceIngestJournal(catalog,run,'PERSONAL_RECONCILED',receipt.head_digest);
+    const final=await advanceIngestJournal(catalog,run,'COMPLETED',
+      await sha256(canonical({run,phase:'COMPLETED',head:receipt.head_digest})));
+    metrics.reconciliation+=final.sequence-before.sequence;
+  }
   metrics.cleanup=await execute(catalog,cleanup);
   metrics.total=metrics.reservation+metrics.personal+metrics.publication+metrics.reconciliation+metrics.cleanup;
   if (metrics.total>metrics.reservedBound) throw Error('WRITE_BOUND_EXCEEDED');
@@ -456,7 +579,10 @@ async function reconcile(catalog:D1Database, personal:D1Database, receipt:Row, s
   if (current.head?.run_id!==String(receipt.id).slice('receipt:'.length)||current.head.sync_revision!==receipt.catalog_sync_revision) throw Error('RECONCILIATION_HEAD_CHANGED');
   const data=await read(personal,personalTables), steps:Step[]=[];
   requireSingleOwner(data,owner);
-  if (!data.personal_catalog_receipts!.some(r=>r.id===receipt.id)) steps.push(insert('personal_catalog_receipts',receipt));
+  const existingReceipt=data.personal_catalog_receipts!.find(r=>r.id===receipt.id);
+  if(existingReceipt && canonical(existingReceipt)!==canonical(receipt))
+    throw Error('RECONCILIATION_RECEIPT_CONFLICT');
+  if (!existingReceipt) steps.push(insert('personal_catalog_receipts',receipt));
   for (const ref of data.personal_job_refs!) {
     const head=data.personal_heads!.find(h=>h.owner_id===ref.owner_id);
     if (!head || !selected.ledger.identities.some(i=>i.jobId===ref.job_id)) throw Error('UNRESOLVED_PERSONAL_REFERENCE');

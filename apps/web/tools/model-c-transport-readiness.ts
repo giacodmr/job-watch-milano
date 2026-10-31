@@ -35,7 +35,7 @@ export async function executeEphemeralAtomicBatch(
 ){
   rejectRemoteTransport(target);
   inspectOfflineBatch(steps);
-  const version=scope==='CATALOG'?5:3;
+  const version=scope==='CATALOG'?7:3;
   const observed=await db.prepare('SELECT version FROM model_c_schema WHERE scope=?')
     .bind(scope).first<number>('version');
   if(observed!==version)throw Error('WRONG_DATABASE_SCOPE');
