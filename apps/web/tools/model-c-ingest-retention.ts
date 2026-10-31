@@ -20,7 +20,7 @@ export async function lookupArchivedIngest(db:D1Database,runId:string){
 export async function compactTerminalIngestRuns(db:D1Database,{limit=3}:{limit?:number}={}){
   if(!Number.isSafeInteger(limit)||limit<1||limit>5)return denied('INVALID_RETENTION_LIMIT');
   if(await db.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'")
-    .first('version')!==6)return denied('RETENTION_SCHEMA_MISMATCH');
+    .first('version')!==7)return denied('RETENTION_SCHEMA_MISMATCH');
   const candidates=(await db.prepare(`SELECT r.id FROM catalog_ingest_runs r
     JOIN catalog_runs p ON p.id=r.id AND p.state='PUBLISHED'
     WHERE EXISTS(SELECT 1 FROM catalog_ingest_journal j
