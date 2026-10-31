@@ -14,7 +14,10 @@ const assessmentSchema=z.object({
 export const personalRowSchema=z.object({
   jobId:z.string().regex(/^job:[a-f0-9]{64}$/),
   capturedTitle:nullable,officialUrl:nullable,lastKnownLifecycle:nullable,
-  capturedCommit:z.string(),capturedPath:z.string(),capturedSha256:z.string(),
+  capturedCommit:nullable,capturedPath:nullable,capturedSha256:nullable,
+  appRevision:z.number().int().nonnegative(),
+  decisionSource:z.enum(['APP','IMPORT']).nullable(),
+  saved:z.boolean(),
   decision:decisionSchema.nullable(),decidedAt:nullable,
   rejectionReason:nullable,reasonSummary:nullable,
   assessment:assessmentSchema.nullable(),
@@ -28,7 +31,7 @@ export const personalRowSchema=z.object({
   }).nullable(),
 });
 const context={
-  personalRevision:z.number().int().positive(),
+  personalRevision:z.number().int().positive(),appEpoch:z.number().int().nonnegative(),
   catalogRevision:z.number().int().positive(),
   productionAccess:z.literal(false),
 };
@@ -55,6 +58,13 @@ export const personalDetailSchema=z.object({
     rejectionReason:nullable,reasonSummary:nullable,
   })),
   decisionEventsTruncated:z.boolean(),
+  appEvents:z.array(z.object({
+    id:z.string(),operationId:z.string(),command:z.enum(['DECISION','SAVED']),
+    action:z.string(),previousValue:nullable,nextValue:nullable,reason:nullable,
+    expectedRevision:z.number().int().nonnegative(),resultRevision:z.number().int().positive(),
+    occurredAt:z.string(),origin:z.literal('APP'),
+  })),
+  appEventsTruncated:z.boolean(),
   assessmentEvents:z.array(z.object({
     ...eventFields,method:z.string(),fingerprint:z.string(),
     decision:nullable,fitScore:z.number().nullable(),
@@ -114,3 +124,16 @@ export function personalReadError(error:unknown):string {
   if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Non esiste un contesto PERSONAL per questa identità sintetica.';
   return 'Impossibile leggere Candidature. Verifica che il laboratorio Model C sia attivo e i database siano inizializzati.';
 }
+
+// PR #42 handoff: commands are only enabled behind local synthetic write gate.
+export const personalWriteCapabilitiesSchema=z.object({
+  writeEnabled:z.boolean(),productionAccess:z.literal(false),
+});
+export const personalCommandResultSchema=z.object({
+  status:z.literal('saved'),replayed:z.boolean(),eventId:z.string(),
+  appRevision:z.number().int().positive(),jobId:z.string(),
+  decision:decisionSchema.nullable(),saved:z.boolean(),
+  decisionSource:z.enum(['APP','IMPORT']).nullable(),
+  savedSource:z.enum(['APP','IMPORT']).nullable(),
+});
+export type PersonalCommandResult=z.infer<typeof personalCommandResultSchema>;
