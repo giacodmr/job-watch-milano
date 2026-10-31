@@ -273,3 +273,22 @@ The current v1 packet contract is deliberately incomplete and fails closed
 for unrepresentable data. Persistent transition journaling, broad failure
 injection, stable retention, actual Free-tier limits and live authorization
 remain unverified. Do not deploy, provision or activate; Gate B stays CLOSED.
+
+
+### M47 completion sprint: new v6 journal and offline-only retention/v2
+
+The additive CATALOG v6 migration adds an immutable transition journal and a
+strictly guarded archive that retains run/chunk replay proofs while allowing
+fully reconciled, non-current payload rows to be compacted locally. This does
+**not** grant a service principal the ability to publish, reconcile PERSONAL,
+perform garbage collection or deploy. See
+[the updated M47 acceptance matrix](MODEL_C_ATOMIC_RECONCILIATION_M47.md).
+
+The new `job-watch-model-c-ingestion/2` catalog packet builder is an offline
+owner-neutral protocol definition, **not** an exposed authenticated v2 D1
+service or a cloud-ready transport. The original v1 packet contract stays
+unchanged. PERSONAL events are deliberately excluded from catalog staging.
+
+Live Free-tier capacity, account quota and 10 ms Worker CPU limits remain
+unverified and a 30-cycle end-to-end recovery/retention test is outstanding.
+**Gate A remains incomplete; Gate B CLOSED. Do not deploy or merge PR #48.**
