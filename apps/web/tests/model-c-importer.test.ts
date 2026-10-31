@@ -18,6 +18,7 @@ import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
 import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-client';
 import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
 import {inspectPublishedModelCRecovery} from '../tools/model-c-import-recovery';
+import {observeIngestJournal} from '../tools/model-c-publication-journal';
 import {createOfflineServiceIngestionHarness} from '../worker/model-c-ingest-lab';
 import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
 
@@ -567,8 +568,15 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     expect(await count(f.c,'catalog_ingest_chunks')).toBe(packet.chunks.length);
     const publishedRun=await f.c.prepare("SELECT run_id FROM catalog_head WHERE scope='catalog'").first<string>('run_id');
     expect(publishedRun).toBe(packet.run.runId);
+    const journal=await observeIngestJournal(f.c,packet.run.runId);
+    expect(journal.phase).toBe('COMPLETED');
+    expect(journal.events.map(e=>e.phase)).toEqual([
+      'RECEIVING','COMPLETE','VERIFIED','PERSONAL_PREPARED',
+      'CATALOG_PUBLISHED','PERSONAL_RECONCILED','COMPLETED',
+    ]);
     expect((await importModelC(f.c,f.p,{...f.options,
       stagedPublication:{runId:packet.run.runId,trustedPlan}})).status).toBe('REPLAY');
+    expect((await observeIngestJournal(f.c,packet.run.runId)).events).toEqual(journal.events);
     const inspected=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
     expect(inspected.status).toBe('PUBLISHED_RECEIPTS_RECONCILED');
     const again=await importModelC(f.c,f.p,f.options);
