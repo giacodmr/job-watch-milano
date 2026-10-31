@@ -38,7 +38,7 @@ export function privateAccessConfig(env:PrivateAccessEnv):PrivateAccessConfig{
     throw new PrivateAuthError('private_config_missing',503);
   if(host.length>253||host!==host.toLowerCase()||host.includes(':')||
       !host.split('.').every(label=>asciiLabel.test(label))||host.split('.').length<2||
-      host.endsWith('.workers.dev')||host==='localhost')
+      host.endsWith('.workers.dev')||host==='localhost'||/^\\d{1,3}(?:\\.\\d{1,3}){3}$/.test(host))
     throw new PrivateAuthError('private_config_invalid',503);
   let issuer:URL;
   try{issuer=new URL(rawIssuer);}catch{throw new PrivateAuthError('private_config_invalid',503);}
