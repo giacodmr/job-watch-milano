@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // DEPLOYMENT TEMPLATE ONLY: intentionally lacks D1 bindings and Access credentials.
+  // Copy and complete in milestone #44, only after an explicit provisioning mandate.
+  // As committed, APP_ENV=private fails closed with private_config_missing/503.
+  "name": "job-watch-private-unprovisioned",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-29",
+  "workers_dev": false,
+  "preview_urls": false,
+  "send_metrics": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "vars": {
+    "APP_ENV": "private"
+  },
+  // Required before a PRIVATE deployment (not populated here):
+  // PRIVATE_HOSTNAME, PRIVATE_ACCESS_ISSUER, PRIVATE_ACCESS_AUD,
+  // PRIVATE_ALLOWED_SUB, PRIVATE_OWNER_ID (private environment bindings).
+  // Two independent physical D1 bindings: CATALOG and PERSONAL.
+  // Never use a remote DB id or a real Access principal in this public template.
+  "observability": { "enabled": false }
+}
