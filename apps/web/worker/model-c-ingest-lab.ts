@@ -77,7 +77,7 @@ async function createRun(db:D1Database,input:IngestRunInput,principal:ServicePri
   if(existing)return rowMatches(existing,input,pd,digest)?
     response('REPLAY',200):response('RUN_CONFLICT',409);
   const schema=await db.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version');
-  if(schema!==5)return response('schema_unavailable',503);
+  if(schema!==6)return response('schema_unavailable',503);
   const current=Number(await db.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision')??0);
   if(current!==input.expectedRevision)return response('STALE_CHECKPOINT',409);
   // Pre-read is not a reservation: competing runs must be admitted by the
