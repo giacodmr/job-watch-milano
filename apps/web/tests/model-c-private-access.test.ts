@@ -206,6 +206,16 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     expect(await personal.prepare("SELECT count(*) AS n FROM personal_heads WHERE owner_id=?")
       .bind('personal-unprovisioned').first('n')).toBe(0);
   });
+  it('exposes a minimal verified-session status only after private Access authentication',async()=>{
+    const protectedPath='/api/model-c/private/status';
+    expect((await worker.fetch(req(protectedPath),env())).status).toBe(401);
+    const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
+    const allowed=await handlePrivateRuntime(req(protectedPath),env(),principal);
+    expect(allowed.status).toBe(200);
+    expect(await allowed.json()).toEqual({accessVerified:true,readOnly:true,environment:'private'});
+    expect((await handlePrivateRuntime(req(protectedPath+'?unexpected=1'),env(),principal)).status).toBe(400);
+    expect((await handlePrivateRuntime(req('/api/model-c/private/other'),env(),principal)).status).toBe(404);
+  });
   it('protects every asset and SPA route in private router; no legacy, ingestion or command API',async()=>{
     const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
     let fetched=0;
