@@ -135,6 +135,23 @@ function intercept(db:D1Database,stop:(sqls:string[])=>boolean){
   }} as D1Database;
 }
 const count=async(table:string)=>Number(await c.prepare('SELECT count(*) AS n FROM '+table).first('n'));
+// Simulate a D1 batch that COMMITTED but whose acknowledgement vanished.
+function lostBatchAcknowledgement(db:D1Database,needle:string){
+ const statements=new WeakMap<object,{sql:string;real:D1PreparedStatement}>();
+ const wrap=(real:D1PreparedStatement,sql:string):D1PreparedStatement=>{
+  const s={bind:(...args:unknown[])=>wrap(real.bind(...args),sql),
+   all:real.all.bind(real),first:real.first.bind(real),run:real.run.bind(real),
+   raw:real.raw.bind(real)} as D1PreparedStatement;
+  statements.set(s,{real,sql});return s;
+ };
+ return {prepare:(sql:string)=>wrap(db.prepare(sql),sql),
+  batch:async(steps:D1PreparedStatement[])=>{
+   const mapped=steps.map(s=>statements.get(s)!);
+   const result=await db.batch(mapped.map(s=>s.real));
+   if(mapped.some(s=>s.sql.includes(needle)))throw Error('SYNTHETIC_D1_ACK_LOST_AFTER_COMMIT');
+   return result;
+  }} as D1Database;
+}
 beforeAll(async()=>{
  repo=await mkdtemp(resolve(tmpdir(),'model-c-m47-continuous-'));
  execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'seed','22'],
@@ -272,7 +289,9 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    expect((await getModelCPersonalJob(c,p,{ownerId:opts.owner},initialJobId)).job)
     .toMatchObject({decision:decisions[ix],decisionSource:'APP'});
   }
-  const retained=await compactTerminalV2Runs(c);
+  const retained=await compactTerminalV2Runs(i===17?
+   lostBatchAcknowledgement(c,'INSERT INTO catalog_ingest_v2_archive_runs'):c);
+  if(i===17)expect(retained.recoveredUnknownWriteOutcomes).toBeGreaterThanOrEqual(1);
   expect(await count('catalog_ingest_v2_runs')).toBeLessThanOrEqual(8);
   if(i>0)expect(retained.archived).toBeGreaterThanOrEqual(1);
   if(i===15&&initialPacket){
