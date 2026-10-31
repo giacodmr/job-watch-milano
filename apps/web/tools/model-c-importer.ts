@@ -226,7 +226,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   // A transport marker is NOT an authorization. Never enter the remote
   // mutation path for normal deltas or the exceptional initial bootstrap.
   // Read-only bootstrap preflights may plan with executionTarget='remote'.
-  if(options.executionTarget==='remote' && !options.preflightOnly)
+  if(!options.preflightOnly && options.executionTarget!=='local-ephemeral')
     throw Error('REMOTE_IMPORT_NOT_AUTHORIZED');
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==4 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
