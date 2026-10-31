@@ -8,8 +8,6 @@ import { applySchema, captureSynthetic } from '../tools/model-c-schema';
 import { importModelC, ModelCImportError, inspectCatalogPlan } from '../tools/model-c-importer';
 import {executePersonalCommand} from '../worker/data/model-c-personal-write';
 import {getModelCPersonalJob} from '../worker/data/model-c-personal';
-import {executePersonalCommand} from '../worker/data/model-c-personal-write';
-import {getModelCPersonalJob} from '../worker/data/model-c-personal';
 import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
 import { importSnapshot } from '../worker/data/importer';
