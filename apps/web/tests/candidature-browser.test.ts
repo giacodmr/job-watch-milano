@@ -63,7 +63,7 @@ async function capture(session:Session,tab:string,url:string,width:number,height
     expression:"({bodyWidth:document.body.scrollWidth,viewport:window.innerWidth,rows:document.querySelectorAll('.c-listing tbody tr').length,heading:document.querySelector('.c-heading h1')?.innerText})",
     returnByValue:true,
   },tab);
-  expect(layout?.result?.value).toMatchObject({rows:1,heading:'Candidature'});
+  expect(layout?.result?.value).toMatchObject({rows:1,heading:url.includes('/opportunita')?'Opportunità':'Candidature'});
   expect(layout?.result?.value?.bodyWidth).toBeLessThanOrEqual(width);
   const image=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},tab);
   return image?.data as string;
@@ -197,6 +197,57 @@ describe('Candidature actual browser layout and drawer against synthetic Model C
         expression:"document.querySelector('dialog.c-drawer[open]')===null",returnByValue:true,
       },tab);
       expect(state?.result?.value).toBe(true);
+      // PR #40: reuse the same live React/Worker/D1 fixture to validate both pages.
+      const opportunityUrl=url.replace('/candidature','/opportunita');
+      for(const [width,height,mobileMode] of [
+        [1440,900,false],[1280,900,false],[768,1024,false],[390,844,true],[320,720,true],
+      ] as const){
+        const screenshot=await capture(session,tab,opportunityUrl,width,height,mobileMode);
+        expect(screenshot?.length).toBeGreaterThan(1000);
+        if(width===1440)console.log('JW40_DESKTOP_PNG_BASE64='+screenshot);
+        if(width===390)console.log('JW40_MOBILE_PNG_BASE64='+screenshot);
+        if(width===320)console.log('JW40_NARROW_PNG_BASE64='+screenshot);
+      }
+      const navigation=await session.send('Runtime.evaluate',{
+        expression:"({active:document.querySelector('.c-nav-active')?.textContent?.trim(),breadcrumb:document.querySelector('.c-breadcrumb b')?.textContent,personal:document.body.textContent?.includes('Non interessato')})",
+        returnByValue:true,
+      },tab);
+      expect(navigation?.result?.value).toMatchObject({
+        active:'Opportunità',breadcrumb:'Opportunità',personal:true,
+      });
+      await session.send('Runtime.evaluate',{
+        expression:"document.querySelector('button.c-row-open')?.click()",
+        returnByValue:true,
+      },tab);
+      let hasDetails=false;
+      for(let i=0;i<80;i++){
+        const r=await session.send('Runtime.evaluate',{
+          expression:"Boolean(document.querySelector('dialog.c-drawer[open] .c-panel-section .c-facts') && document.querySelector('.c-drawer-body')?.textContent?.includes('Prima osservazione'))",
+          returnByValue:true,
+        },tab);
+        if(r?.result?.value){hasDetails=true;break;}
+        await delay(100);
+      }
+      expect(hasDetails).toBe(true);
+      const opportunityDrawer=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},tab);
+      console.log('JW40_DRAWER_PNG_BASE64='+opportunityDrawer?.data);
+      await session.send('Runtime.evaluate',{
+        expression:"[...document.querySelectorAll('.c-drawer-tabs button')].find(el=>el.textContent==='Provenienza')?.click()",
+        returnByValue:true,
+      },tab);
+      const sources=await session.send('Runtime.evaluate',{
+        expression:"document.querySelector('.c-drawer-body')?.textContent?.includes('Synthetic Company::old')",
+        returnByValue:true,
+      },tab);
+      expect(sources?.result?.value).toBe(true);
+      await session.send('Input.dispatchKeyEvent',{
+        type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,
+      },tab);
+      await delay(150);
+      const closed=await session.send('Runtime.evaluate',{
+        expression:"document.querySelector('dialog.c-drawer[open]')===null",returnByValue:true,
+      },tab);
+      expect(closed?.result?.value).toBe(true);
     }finally{session.close();}
-  },90000);
+  },125000);
 });
