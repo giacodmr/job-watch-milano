@@ -35,7 +35,9 @@ export async function observeIngestJournal(catalog:D1Database,runId:string){
   if(await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'")
       .first<number>('version')!==6)return deny('JOURNAL_SCHEMA_UNAVAILABLE');
   const run=await catalog.prepare('SELECT run_digest FROM catalog_ingest_runs WHERE id=?')
-    .bind(runId).first<{run_digest:string}>();
+    .bind(runId).first<{run_digest:string}>() ??
+    await catalog.prepare('SELECT run_digest FROM catalog_ingest_archive_runs WHERE id=?')
+      .bind(runId).first<{run_digest:string}>();
   if(!run)return deny('JOURNAL_UNKNOWN_RUN');
   const rows=(await catalog.prepare(
     'SELECT * FROM catalog_ingest_journal WHERE run_id=? ORDER BY sequence')
