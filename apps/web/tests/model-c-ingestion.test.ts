@@ -199,7 +199,7 @@ describe('M46 local-only HTTP → real ephemeral D1 staging',()=>{
     let dropped=false;
     const dispatcher=async (r:Request)=>{
       const real=await h(r);
-      if(!dropped&&r.url.endsWith('/chunks')===false&&r.url.includes('/chunks')&&r.method==='POST'){
+      if(!dropped&&r.url.endsWith('/chunks')&&r.method==='POST'){
         dropped=true;return new Response('not acknowledged',{status:503});
       }
       return real;
@@ -210,6 +210,15 @@ describe('M46 local-only HTTP → real ephemeral D1 staging',()=>{
     expect(await db.prepare('SELECT count(*) AS n FROM catalog_ingest_chunks WHERE run_id=?')
       .bind(p.run.runId).first('n')).toBe(1);
     expect(await count('catalog_head')).toBe(0);
+  });
+  it('keeps deployable Worker entrypoints isolated from the offline ingestion handler',async()=>{
+    const {readFile}=await import('node:fs/promises');
+    const entry=await readFile('worker/index.ts','utf8');
+    const runtime=await readFile('worker/private-runtime.ts','utf8');
+    expect(entry).not.toContain('model-c-ingest-lab');
+    expect(entry).not.toContain('model-c-service-auth');
+    expect(runtime).not.toContain('model-c-ingest-lab');
+    expect(runtime).not.toContain('/api/model-c/sync/runs');
   });
   it('rejects invalid incoming wire fields before SQL; valid signed source digest alone is not Git provenance',async()=>{
     const p=await packets(1);
