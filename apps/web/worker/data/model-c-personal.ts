@@ -89,7 +89,7 @@ async function assertUnchanged(catalog: D1Database, personal: D1Database, c: Con
 type RefRow = {
   jobId:string; capturedTitle:string|null; officialUrl:string|null;
   lastKnownLifecycle:string|null; capturedCommit:string|null; capturedPath:string|null;
-  capturedSha256:string|null; revision:number; appRevision:number|null; decisionSource:'APP'|'IMPORT'|null;
+  capturedSha256:string|null; revision:number; appRevision:number|null; savedTouched:number|null; decisionSource:'APP'|'IMPORT'|null;
   decision:string|null; decidedAt:string|null; rejectionReason:string|null; reasonSummary:string|null;
   assessmentMethod:string|null; assessmentFingerprint:string|null; fitScore:number|null;
   reportable:number|null; assessmentSummary:string|null;
@@ -110,7 +110,7 @@ const selectRef = `WITH ref AS (
   SELECT ref.job_id AS jobId,ref.captured_title AS capturedTitle,
   ref.official_url AS officialUrl,ref.last_known_lifecycle AS lastKnownLifecycle,
   ref.captured_commit AS capturedCommit,ref.captured_path AS capturedPath,
-  ref.captured_sha256 AS capturedSha256,ref.revision,ap.revision AS appRevision,
+  ref.captured_sha256 AS capturedSha256,ref.revision,ap.revision AS appRevision,ap.saved_touched AS savedTouched,
   CASE WHEN ap.decision_touched=1 THEN 'APP' WHEN d.decision IS NOT NULL THEN 'IMPORT' ELSE NULL END AS decisionSource,
   ${effectiveDecision} AS decision,
   CASE WHEN ap.decision_touched=1 THEN ap.decision_at ELSE d.decided_at END AS decidedAt,
@@ -190,7 +190,7 @@ function record(row:RefRow,c:Context,f:Flags) {
     lastKnownLifecycle:row.lastKnownLifecycle,capturedCommit:row.capturedCommit,
     capturedPath:row.capturedPath,capturedSha256:row.capturedSha256,
     appRevision:row.appRevision??0,decisionSource:row.decisionSource,
-    saved:f.activeReferences.includes('SAVED'),
+    saved:f.activeReferences.includes('SAVED'),savedSource:row.savedTouched?'APP':f.activeReferences.includes('SAVED')?'IMPORT':null,
     decision:row.decision,decidedAt:row.decidedAt,rejectionReason:row.rejectionReason,
     reasonSummary:row.reasonSummary,
     assessment:row.assessmentMethod ? {method:row.assessmentMethod,fingerprint:row.assessmentFingerprint,
