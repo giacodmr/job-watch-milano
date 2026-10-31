@@ -24,7 +24,7 @@ const req=(path='/',token?:string,options?:RequestInit)=>new Request(addr+path,{
   ...options,headers:{...(token?{'Cf-Access-Jwt-Assertion':token}:{}),...options?.headers},
 });
 async function jwt(overrides:Record<string,unknown>={},key=privateKey){
-  const payload={sub,...overrides};
+  const payload={sub,email:'synthetic-user@example.test',type:'app',...overrides};
   return new SignJWT(payload).setProtectedHeader({alg:'RS256',kid:'valid-key'})
     .setIssuer(issuer).setAudience(audience).setIssuedAt().setNotBefore('0s')
     .setExpirationTime('10m').sign(key);
