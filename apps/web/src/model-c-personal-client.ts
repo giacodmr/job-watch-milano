@@ -90,7 +90,7 @@ export const readPersonalPage=(input:PersonalFilters,signal:AbortSignal)=>
 export const readPersonalSummary=(signal:AbortSignal)=>
   readApi('/api/model-c/personal/summary',personalSummarySchema,signal);
 export const readPersonalDetail=(id:string,signal:AbortSignal)=>
-  readApi('/api/model-c/personal/jobs/'+encodeURIComponent(id),personalDetailSchema,signal);
+  readApi('/api/model-c/personal/jobs/'+z.string().regex(/^job:[a-f0-9]{64}$/).parse(id),personalDetailSchema,signal);
 
 export function safeExternalUrl(value:string|null):string|null {
   if(!value)return null;
