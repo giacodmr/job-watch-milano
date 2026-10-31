@@ -1,11 +1,9 @@
-// M47 Gate A: resolve the complete *runtime* import/export graph, not only entrypoint text.
+// M47 Gate A: traverse the entire deployable Worker static import graph.
+// Independent of Vite's TypeScript compiler shims. Fail closed for any
+// non-literal dynamic import/require rather than silently skipping modules.
 import {describe,expect,it} from 'vitest';
 import {existsSync,readFileSync} from 'node:fs';
 import {dirname,relative,resolve} from 'node:path';
-import {createRequire} from 'node:module';
-import type * as tsModule from 'typescript';
-// Resolve the real Node compiler package, not the Vite-transformed CJS shim.
-const ts=createRequire(import.meta.url)('typescript') as typeof tsModule;
 
 const root=resolve(import.meta.dirname,'..');
 const entrypoints=['worker/index.ts','worker/private-runtime.ts'];
@@ -19,25 +17,30 @@ const forbidden=[
  'tools/model-c-v2-ingest-retention.ts',
  'tools/model-c-publication-journal.ts',
 ];
+function importSpecifiers(body:string,file:string){
+ // Detect standard TS/JS static imports and re-exports, including multiline
+ // named imports, namespace imports, side-effect imports and type-only imports.
+ // This is a deliberately restricted syntax scanner, not a general JS parser:
+ // deny syntax that cannot be resolved to a literal path.
+ const found:string[]=[];
+ const staticRe=/\b(?:import|export)\s+(?:type\s+)?(?:[^;'"`]{0,4096}?\s+from\s+)?(['"])([^'"]+)\1/g;
+ for(const match of body.matchAll(staticRe))found.push(match[2]!);
+ // The explicit dynamic check prevents replacing a literal import with a
+ // computed one to evade import-graph isolation.
+ for(const match of body.matchAll(/\b(?:import|require)\s*\(([^)]*)\)/g)){
+  const arg=match[1]!.trim();
+  const literal=/^(['"])([^'"]+)\1$/.exec(arg);
+  if(!literal)throw Error('NONSTATIC_WORKER_IMPORT:'+relative(root,file));
+  found.push(literal[2]!);
+ }
+ // TS `import equals require` is denied until explicitly reviewed.
+ if(/\bimport\s+\w+\s*=\s*require\s*\(/.test(body))
+  throw Error('UNSUPPORTED_WORKER_IMPORT_SYNTAX:'+relative(root,file));
+ return found.filter(spec=>spec.startsWith('.'));
+}
 function dependencies(file:string):string[]{
- const body=readFileSync(file,'utf8');
- const tree=ts.createSourceFile(file,body,ts.ScriptTarget.Latest,true,ts.ScriptKind.TS);
- const imports:string[]=[];
- function record(value:tsModule.Expression|undefined){
-  if(value && ts.isStringLiteral(value))imports.push(value.text);
-  else throw Error('NONSTATIC_WORKER_IMPORT:'+relative(root,file));
- }
- function walk(node:tsModule.Node){
-  if(ts.isImportDeclaration(node)&&!node.importClause?.isTypeOnly)
-   record(node.moduleSpecifier as tsModule.Expression);
-  if(ts.isExportDeclaration(node)&&!node.isTypeOnly&&node.moduleSpecifier)
-   record(node.moduleSpecifier as ts.Expression);
-  if(ts.isCallExpression(node)&&node.expression.kind===ts.SyntaxKind.ImportKeyword)
-   record(node.arguments[0]);
-  ts.forEachChild(node,walk);
- }
- walk(tree);
- return imports.filter(s=>s.startsWith('.')).map(spec=>{
+ const imports=importSpecifiers(readFileSync(file,'utf8'),file);
+ return imports.map(spec=>{
   const stem=resolve(dirname(file),spec);
   const targets=[stem,stem+'.ts',stem+'.tsx',stem+'.js',
    resolve(stem,'index.ts'),resolve(stem,'index.tsx')];
@@ -72,5 +75,11 @@ describe('M47 transitive deployable-worker isolation',()=>{
   expect(graph).toContain('worker/private-runtime.ts');
   expect(graph).toContain('worker/data/model-c-catalog.ts');
   expect(graph).toContain('shared/canonical.ts');
+ });
+ it('detects literal dynamic modules and denies computed dynamic modules',()=>{
+  const path=resolve(root,'worker/index.ts');
+  expect(importSpecifiers("import('./lib'); export {x} from './other';",path))
+   .toEqual(['./other','./lib']);
+  expect(()=>importSpecifiers("import(dynamicPath)",path)).toThrow('NONSTATIC_WORKER_IMPORT');
  });
 });
