@@ -1,6 +1,6 @@
 # M47 — Durable local publication, cross-D1 recovery and bounded retention
 
-**State: IMPLEMENTED LOCALLY IN PART — DO NOT MERGE AS COMPLETED M47.**
+**State: FINAL HARDENING IN PROGRESS — GATE_A_PARTIAL / GATE_B_CLOSED.**
 **TESTED LOCALLY:** subject to the latest PR #48 CI result (record SHA below).
 **CLOUD_VERIFIED: NO; DEPLOYED: NO; ACTIVATED: NO; Gate B CLOSED.**
 
@@ -157,7 +157,7 @@ including staging, future v2 writes and GC has not been measured or
 reserved**. Local D1 `meta.rows_written` is a measurement, not a remote
 quota reservation. Unknown Cloudflare account quota = DENY.
 
-## AC-01—AC-15 acceptance matrix
+## Earlier provisional AC-01—AC-15 acceptance matrix (superseded below)
 
 | AC | Status | Evidence / missing requirement |
 |---|---|---|
@@ -370,3 +370,45 @@ does not grant recurring extended budget. See the official links above.
 **Handoff:** Do not deploy, merge or start M48. Gate B remains CLOSED.
 If complete local proofs cannot be established, Gate A stays PARTIAL
 and PR #48 stays DRAFT.
+
+## Hardening sprint addendum — local proof and residual risks (31 October 2026)
+
+This addendum supersedes earlier *provisional* AC tables and pending-item descriptions in this evolving PR. **GATE_A_PARTIAL, PR #48 OPEN/DRAFT, GATE_B_CLOSED.** Do not claim full recovery certification from 19 transport-focused vectors.
+
+### Directly executable verification
+
+- `tests/model-c-m47-continuous.test.ts`: 30 consecutive synthetic Git/Python source commits against the **same pair** of Miniflare D1 databases, real authenticated v2 multichunk staging, independent trusted projection, import, PERSONAL receipts, idempotent replays, journal completion, archival retention, and archived historical replay. This run now exercises the four APP decision values **plus SAVED activation/deactivation with six immutable APP events**, as well as a deliberately lost D1 batch acknowledgement **after** retention commit.
+- `tests/model-c-m47-adversarial.test.ts`: 19 isolated, named, executable D1 **transport/journal/retention failure vectors**. Covers invalid service JWT/hostname/quota/provenance/owner, interrupted run and chunk writes both before and after commit, duplicate and conflicting replay, sparse and reordered chunks, invalid journal transition/mutation, and refused nonterminal archive/deletion. Each checks that CATALOG HEAD and PERSONAL receipts remain untouched and SQLite FK checks hold. These are **not** the full 19 *importer-phase crash/restart* windows required for final AC-07.
+- `tests/model-c-m47-worker-graph.test.ts`: transitive static TS import/reexport/dynamic-import traversal from both deployable Worker entrypoints; rejects reachability of the detached lab receiver, Node Git/importer, journal, retention and trusted attestation modules. Runtime dynamic imports without string literals fail closed.
+- `tests/model-c-importer.test.ts`: adds explicit foreign-owner PERSONAL read and write rejection and trusted importer owner-change refusal, with SQL history unchanged.
+
+### Full local D1 write accounting methodology
+
+The 30-cycle test now wraps **every successful local D1 `batch()` and `run()` statement**, beginning before schema migrations and continuing through transport, journal, CATALOG promotion, PERSONAL reconciliation and retention. It records actual per-statement `D1Result.meta.rows_written`, groups local writes by category, checks group sums against observed totals and emits **`M47_D1_LOCAL_ACCOUNTING`** alongside `M47_CONTINUOUS_30_CYCLES`. This improves on earlier importer-only and retention-only partial measurements (previous CI baseline: 1,672 importer-reported rows and 319 retention-reported rows).
+
+Accounting limitations are deliberately explicit: `first()` and `raw()` do not surface comparable read metadata; SQLite DDL/index/trigger accounting must be judged by reported D1 metadata, not an invented index multiplier; a committed batch with lost acknowledgement has an **unknown original `meta.rows_written`** even when the archive is subsequently verified. It is separately reported as `recoveredUnknownWriteOutcomes` instead of silently represented as a zero-cost action. Use recorded local row writes **plus a conservative upper bound** for any real execution admission; never substitute the local number for Cloudflare account consumption.
+
+Official Cloudflare documentation, checked 31 October 2026: [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/), [D1 limits](https://developers.cloudflare.com/d1/platform/limits/), [Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [D1 free-tier enforcement](https://developers.cloudflare.com/changelog/product/d1/). Workers Free allows **100,000 D1 rows written/day**, 5 million rows read/day, up to 500 MB/database and 5 GB/account, and Workers **10 ms CPU/request**, **100,000 requests/day** and **50 D1 subrequests/invocation**. The JOB WATCH *internal* policy is stricter: normal **30,000** write units/day; **60,000 only on explicit authorization**, with all other account usage, staging and garbage collection included. No remote account remaining quota, Workers CPU or production storage telemetry has been verified. **Unknown remote quota = DENY; Cloudflare Free limits are ceilings, not permission to deploy.**
+
+### Acceptance register (current hardening state; final SHA CI must be rechecked)
+
+| AC | Status | Evidence / unresolved blocker |
+|---|---|---|
+| AC-01 provenance | PASS locally | Trusted independent Git/Python verification; v2 packet staging cannot self-attest provenance |
+| AC-02 completeness | PASS locally | Canonical full inventory proof, chunk count/index/digest checks; adversarial missing-chunk and conflict tests |
+| AC-03 catalog atomicity | PASS locally | Single D1 publication batch includes guarded HEAD + journal transition |
+| AC-04 publication CAS | PASS locally | Existing CAS/guard tests, strict expected-revision staging |
+| AC-05 PERSONAL | PARTIAL | Four decisions, SAVED on/off and foreign-owner isolation added; complete assessment/note/history concurrency proof still required |
+| AC-06 cross-D1 | PASS locally (scoped) | Owner-bound receipt checks, recovery readback, no false cross-D1 atomicity |
+| AC-07 full crash recovery | PARTIAL | Lost PERSONAL and retention ACK, 19 adversarial transport vectors; **full 19-window importer phase crash/restart matrix outstanding** |
+| AC-08 replay/retention | PASS locally (scoped) | Live/archive idempotency, interrupted ACK readback, 29 historical compactions in previous successful CI |
+| AC-09 security | PARTIAL until CI | Service principal/owner isolation and new transitive import-graph test; final SHA CI pending |
+| AC-10 Cloudflare Free | PARTIAL | Extended local write metering, official limits; **remote CPU/account quota/storage unverified = DENY** |
+| AC-11 full regression | PENDING | Re-run full CI after hardening commits |
+| AC-12 cloud safety | PASS | No remote provisioning, D1 remote writes, deployment, paid resources or activated endpoints |
+| AC-13 CI | PENDING | Both workflows must succeed on final commit SHA; prior 6c30a0f CI green only |
+| AC-14 repository hygiene | PASS scoped | PR #48 existing branch only, main untouched, no force push or merge |
+| AC-15 documentation | PARTIAL | This addendum and private deployment runbook; final measured metrics/CI need recording |
+| AC-16 continuity | PASS in previously verified CI | 30/30, 29 archived + 1 current, no D1 reset; enhanced version requires CI |
+
+A green test suite does **not** automatically convert these PARTIAL criteria to PASS. Review the final CI log markers and preserve Gate A as PARTIAL if full importer failure-window recovery or PERSONAL categories remain unverified. **No merge or Milestone #48.**
