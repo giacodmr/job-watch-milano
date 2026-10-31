@@ -31,7 +31,7 @@ async function fixture(count=2, profile?:'baseline') {
   git(repo,'init','-q','-b','main');git(repo,'remote','add','origin','https://github.com/giacodmr/job-watch-milano.git');
   const sha=commit(repo), c=await runtime.getD1Database('DB'+seq++), p=await runtime.getD1Database('DB'+seq++);
   const schemaCosts={catalog:await applySchema(c,'catalog'),personal:await applySchema(p,'personal')};
-  const options:ImportOptions={source:{repo,commit:sha},bootstrap:'empty-target',owner:'synthetic-owner',budget:{day:new Date().toISOString().slice(0,10),availableRows:30000}};
+  const options:ImportOptions={source:{repo,commit:sha},bootstrap:'empty-target',owner:'synthetic-owner',executionTarget:'local-ephemeral',budget:{day:new Date().toISOString().slice(0,10),availableRows:30000}};
   return {repo,c,p,options,schemaCosts};
 }
 async function inventory(repo:string,mutate:(jobs:Record<string,unknown>[])=>void) {
@@ -56,6 +56,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
   it('never interprets a remote execution target as permission to mutate D1',async()=>{
     const f=await fixture(1);
     for(const extra of [{executionTarget:'remote' as const},
+      {executionTarget:undefined},
       {executionTarget:'remote' as const,oneTimeFreeBootstrap:true,
         budget:{...f.options.budget,availableRows:95000}}]) {
       const result=importModelC(f.c,f.p,{...f.options,...extra});
