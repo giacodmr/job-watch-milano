@@ -13,7 +13,7 @@ export function inspectOfflineBatch(steps:readonly SqlStep[]){
   let totalBytes=0,maxSqlBytes=0,totalParameters=0;
   for(const step of steps){
     if(typeof step.sql!=='string'||!Array.isArray(step.values)||
-      step.values.length>MAX_PARAMS||step.values.some(v=>v!==null&&
+      step.values.length>MAX_PARAMS||step.values.some((v:SqlValue)=>v!==null&&
         (typeof v!=='string'&&typeof v!=='number'||typeof v==='number'&&!Number.isFinite(v))))
       throw Error('BATCH_CONTRACT_INVALID');
     const size=bytes(step.sql);
