@@ -35,7 +35,7 @@ export class CommandFailure extends Error {
 }
 export function newCommand(
   input:{jobId:string;catalogRevision:number;expectedRevision:number} &
-    ({kind:'DECISION';decision:PersonalCommand['decision'];reasonSummary?:string|null}|
+    ({kind:'DECISION';decision:z.infer<typeof decisionCommandSchema>['decision'];reasonSummary?:string|null}|
      {kind:'SAVED';active:boolean}),
 ):PersonalCommand{
   return commandSchema.parse({...input,operationId:crypto.randomUUID()});
