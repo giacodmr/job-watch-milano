@@ -57,7 +57,7 @@ function intercept(db:D1Database, handler:(sql:string[],actual:()=>Promise<D1Res
   return {prepare:(sql:string)=>wrap(db.prepare(sql),sql),batch:async(stmts:D1PreparedStatement[])=>handler(stmts.map(s=>statements.get(s)!.sql),()=>db.batch(stmts.map(s=>statements.get(s)!.real)))} as D1Database;
 }
 const count=async(db:D1Database,t:string)=>Number(await db.prepare('SELECT count(*) AS n FROM '+t).first('n'));
-beforeAll(async()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("synthetic")}}',cf:false,compatibilityDate:'2026-10-29',d1Databases:Object.fromEntries(Array.from({length:90},(_,i)=>['DB'+i,'importer-'+i]))}));});
+beforeAll(async()=>{runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("synthetic")}}',cf:false,compatibilityDate:'2026-10-29',d1Databases:Object.fromEntries(Array.from({length:128},(_,i)=>['DB'+i,'importer-'+i]))}));});
 afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recursive:true,force:true});
   if(process.env.MODEL_C_METRICS_FILE)await writeFile(process.env.MODEL_C_METRICS_FILE,JSON.stringify({syntheticOnly:true,measurement:'actual D1 meta.rows_written; schema setup and fixture seed excluded',scenarios:measurements,preflights},null,2)+'\n');});
 
