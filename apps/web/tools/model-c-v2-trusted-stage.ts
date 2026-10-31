@@ -11,13 +11,13 @@ type Selected=Awaited<ReturnType<typeof selectModelC>>;
 type Plan=Awaited<ReturnType<typeof prepareSafeRemoteBootstrapPlan>>;
 const deny=(s:string):never=>{throw Error(s);};
 const verifiedPlan=async(plan:Plan,proof:ReturnType<typeof projectionProofSchema.parse>,
-  expected:number)=>{
+  expected:number,checkContextProjection=true)=>{
  const {digest,...body}=plan;
  if(plan.target!=='OFFLINE_REVIEW_ONLY'||plan.remoteExecutionAuthorized!==false||
    plan.syncRevision!==expected+1||
    plan.origin.observedCommit!==proof.observedGitCommit||
    plan.origin.manifestDigest!==proof.sourceManifestDigest||
-   plan.origin.projectionDigest!==proof.projectionInputDigest||
+   (checkContextProjection&&plan.origin.projectionDigest!==proof.projectionInputDigest)||
    digest!==await sha256(canonical(body)))deny('V2_TRUSTED_PLAN_MISMATCH');
 };
 export async function verifyTrustedV2Stage(db:D1Database,runId:string,
@@ -52,12 +52,15 @@ export async function verifyPublishedV2StageReplay(db:D1Database,runId:string,
  publishedCommit:string;publishedProjection:string;publishedExpected:number;
  publishedState:string;publishedManifest:string;publishedRevision:number}>();
  if(!row)return deny('V2_PUBLISHED_RUN_NOT_CURRENT');
- await verifiedPlan(plan,proof,row.expectedRevision);
+ // During recovery PERSONAL append can change the selection-context digest.
+ // Pin replay to the original immutable staged/published plan, not a
+ // newly computed projection input digest from the post-append context.
+ await verifiedPlan(plan,proof,row.expectedRevision,false);
  if(row.publishedState!=='PUBLISHED'||row.publishedRevision!==row.expectedRevision+1||
    row.publishedExpected!==row.expectedRevision||
    row.commitSha!==row.publishedCommit||row.commitSha!==proof.observedGitCommit||
    row.projectionDigest!==row.publishedProjection||
-   row.projectionDigest!==proof.projectionInputDigest||
+   row.projectionDigest!==plan.origin.projectionDigest||
    row.manifestDigest!==row.publishedManifest||
    row.manifestDigest!==proof.sourceManifestDigest||row.planDigest!==plan.digest)
    return deny('V2_PUBLISHED_STAGE_REPLAY_CONFLICT');
