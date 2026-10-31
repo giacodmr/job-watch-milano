@@ -4,6 +4,7 @@
 // Git provenance, nor a distributed transaction across CATALOG/PERSONAL.
 import {canonical,sha256} from '../shared/canonical';
 import {auditReceivedIngestStage} from './model-c-stage-attestation';
+import {auditReceivedV2Stage} from './model-c-v2-stage-attestation';
 
 export const INGEST_PHASES=[
   'RECEIVING','COMPLETE','VERIFIED','PERSONAL_PREPARED',
@@ -19,7 +20,7 @@ export class JournalError extends Error {
 const deny=(code:string):never=>{throw new JournalError(code);};
 const zero='0'.repeat(64);
 const digest=/^[0-9a-f]{64}$/;
-const runPattern=/^ingest:[0-9a-f]{64}$/;
+const runPattern=/^ingest(?:-v2)?:[0-9a-f]{64}$/;
 const expectedNext:Record<string,string>={
   RECEIVING:'COMPLETE',COMPLETE:'VERIFIED',VERIFIED:'PERSONAL_PREPARED',
   PERSONAL_PREPARED:'CATALOG_PUBLISHED',
@@ -32,12 +33,18 @@ function guardId(runId:string){
 }
 export async function observeIngestJournal(catalog:D1Database,runId:string){
   guardId(runId);
-  if(await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'")
-      .first<number>('version')!==6)return deny('JOURNAL_SCHEMA_UNAVAILABLE');
+  const version=await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'")
+      .first<number>('version');
+  if(version!==6&&version!==7||runId.startsWith('ingest-v2:')&&version!==7)
+    return deny('JOURNAL_SCHEMA_UNAVAILABLE');
   const run=await catalog.prepare('SELECT run_digest FROM catalog_ingest_runs WHERE id=?')
     .bind(runId).first<{run_digest:string}>() ??
     await catalog.prepare('SELECT run_digest FROM catalog_ingest_archive_runs WHERE id=?')
-      .bind(runId).first<{run_digest:string}>();
+      .bind(runId).first<{run_digest:string}>() ??
+    (version===7?await catalog.prepare('SELECT run_digest FROM catalog_ingest_v2_runs WHERE id=?')
+      .bind(runId).first<{run_digest:string}>():null) ??
+    (version===7?await catalog.prepare('SELECT run_digest FROM catalog_ingest_v2_archive_runs WHERE id=?')
+      .bind(runId).first<{run_digest:string}>():null);
   if(!run)return deny('JOURNAL_UNKNOWN_RUN');
   const rows=(await catalog.prepare(
     'SELECT * FROM catalog_ingest_journal WHERE run_id=? ORDER BY sequence')
@@ -78,8 +85,10 @@ export async function nextJournalStatement(db:D1Database,runId:string,
     !(errorPhases.has(phase)&&!['COMPLETED','CONFLICT','STALE','UNVERIFIABLE'].includes(current.phase)))
     return deny('JOURNAL_INVALID_TRANSITION');
   if(phase==='COMPLETE'){
-    const audit=await auditReceivedIngestStage(db,runId);
-    if(audit.packetDigest!==proofDigest)return deny('JOURNAL_COMPLETENESS_PROOF_MISMATCH');
+    const actual=runId.startsWith('ingest-v2:')
+      ?(await auditReceivedV2Stage(db,runId)).packetDigest
+      :(await auditReceivedIngestStage(db,runId)).packetDigest;
+    if(actual!==proofDigest)return deny('JOURNAL_COMPLETENESS_PROOF_MISMATCH');
   }
   if(phase==='CATALOG_PUBLISHED'){
     // The caller MUST put this statement after the head switch, in the very
@@ -115,4 +124,11 @@ export async function advanceIngestJournal(db:D1Database,runId:string,
 export async function advanceCompleteIngestJournal(db:D1Database,runId:string){
   const audit=await auditReceivedIngestStage(db,runId);
   return advanceIngestJournal(db,runId,'COMPLETE',audit.packetDigest);
+}
+
+/** Journal COMPLETE is only a digest-integrity stage. VERIFIED must be
+ * appended separately by the trusted importer after Git provenance checks. */
+export async function advanceCompleteV2IngestJournal(db:D1Database,runId:string){
+ const receipt=await auditReceivedV2Stage(db,runId);
+ return advanceIngestJournal(db,runId,'COMPLETE',receipt.packetDigest);
 }
