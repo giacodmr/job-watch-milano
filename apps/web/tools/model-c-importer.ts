@@ -224,7 +224,7 @@ export async function importModelC(catalog:D1Database, personal:D1Database, opti
 }
 async function importAttempt(catalog:D1Database, personal:D1Database, options:ImportOptions,metrics:ImportMetrics) {
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==4 ||
-    await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==2) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
+    await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
   const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
   if(options.oneTimeFreeBootstrap!==undefined && typeof options.oneTimeFreeBootstrap!=='boolean')throw Error('INVALID_BOOTSTRAP_AUTHORIZATION');
