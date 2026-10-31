@@ -260,3 +260,16 @@ Production Worker ingress is not wired and all remote writes remain denied;
 the local synthetic quota fixture is not evidence of a Cloudflare account
 reservation. Gate B is closed; no new Service Token, Access policy, database
 or Worker was created.
+
+
+## Milestone #47 — local trusted staging/publication binding (INCOMPLETE)
+
+See [M47 atomic reconciliation](MODEL_C_ATOMIC_RECONCILIATION_M47.md).
+The first Gate A implementation binds the immutable M46 staged run to
+independently verified Git/Python selection and the existing atomic local
+CATALOG importer, with read-only diagnostics of PERSONAL reconciliation.
+**It is not a completed remote transport or production-ready state machine.**
+The current v1 packet contract is deliberately incomplete and fails closed
+for unrepresentable data. Persistent transition journaling, broad failure
+injection, stable retention, actual Free-tier limits and live authorization
+remain unverified. Do not deploy, provision or activate; Gate B stays CLOSED.
