@@ -22,8 +22,8 @@ describe('Milestone #44 no-credentials repository activation preflight',()=>{
     expect(result.cloudAccountVerified).toBe(false);
     expect(result.cloudMutationsAuthorized).toBe(false);
     expect(result.remoteImporterAuthorized).toBe(false);
-    expect(result.expectedSchemaVersions).toEqual({catalog:5,personal:3});
-    expect(result.migrations.filter(m=>m.scope==='catalog')).toHaveLength(5);
+    expect(result.expectedSchemaVersions).toEqual({catalog:6,personal:3});
+    expect(result.migrations.filter(m=>m.scope==='catalog')).toHaveLength(6);
     expect(result.migrations.filter(m=>m.scope==='personal')).toHaveLength(3);
     expect(result.migrations.every(m=>/^[a-f0-9]{64}$/.test(m.sha256))).toBe(true);
     expect(result.externalBlockers).toContain('GATE_B_APPROVAL_NOT_GRANTED');
