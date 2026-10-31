@@ -127,7 +127,7 @@ beforeAll(async()=>{
       if(path.startsWith('/api/')){
         // This browser-facing loopback proxy checks the real incoming Origin first.
         // It then maps the *trusted* same-origin request to the synthetic Worker.
-        let options:RequestInit|undefined;
+        let options:{method:'POST';headers:Record<string,string>;body:string}|undefined;
         if(request.method==='POST'){
           const address=server?.address();
           if(!address||typeof address==='string'||
@@ -323,6 +323,8 @@ describe('PR #42 browser mutations through real React, HTTP, Worker and ephemera
     if(!tempDir)throw Error('CHROME_TEMP_MISSING');
     const file=await readFile(join(tempDir,'DevToolsActivePort'),'utf8');
     const [portString,endpoint]=file.trim().split('\n');
+    if(!portString||!endpoint||!Number.isInteger(Number(portString))||Number(portString)<=0)
+      throw Error('CHROME_DEBUGGING_INVALID');
     const session=await connectCDP(Number(portString),endpoint);
     try{
       const target=await session.send('Target.createTarget',{url:'about:blank'});
