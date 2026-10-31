@@ -428,8 +428,15 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if (pendingReconciliation) metrics.reconciliation=await reconcile(catalog,personal,receipt,selected,options.owner);
   if(m47){
     const inspected=await inspectPublishedModelCRecovery(catalog,personal,{ownerId:options.owner});
-    if(inspected.status!=='PUBLISHED_RECEIPTS_RECONCILED'||
-      inspected.catalogRunId!==run)throw Error('JOURNAL_PERSONAL_NOT_VERIFIED');
+    // APP override existence is expected in a personal database. It does not
+    // invalidate the catalog receipt when its revision was stable from the
+    // trusted Git verification through PERSONAL reconciliation.
+    if((inspected.status!=='PUBLISHED_RECEIPTS_RECONCILED'&&
+        inspected.status!=='APP_CONTEXT_REQUIRES_REVALIDATION')||
+      inspected.appRevision!==appRevisionAtStart||
+      inspected.catalogRunId!==run||!inspected.receiptMatchesPublishedHead||
+      inspected.pendingReferences!==0)
+      throw Error('JOURNAL_PERSONAL_NOT_VERIFIED');
     const before=await observeIngestJournal(catalog,run);
     await advanceIngestJournal(catalog,run,'PERSONAL_RECONCILED',receipt.head_digest);
     const final=await advanceIngestJournal(catalog,run,'COMPLETED',
