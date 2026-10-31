@@ -20,6 +20,8 @@ export const personalRowSchema=z.object({
   assessment:assessmentSchema.nullable(),
   activeReferences:z.array(z.enum(['SAVED','APPLICATION','DISMISSED'])),
   knownIdentity:z.boolean(),currentlyVisible:z.boolean(),
+  jobRevision:z.number().int().nonnegative().default(0),
+  decisionSource:z.enum(['APP','GITHUB']).nullable().optional(),
   reconciliation:reconciliationSchema,
   catalog:z.object({
     company:z.string(),companyId:z.string(),title:nullable,location:nullable,
@@ -29,6 +31,7 @@ export const personalRowSchema=z.object({
 });
 const context={
   personalRevision:z.number().int().positive(),
+  appRevision:z.number().int().nonnegative().default(0),
   catalogRevision:z.number().int().positive(),
   productionAccess:z.literal(false),
 };
@@ -44,13 +47,13 @@ export const personalSummarySchema=z.object({
   }),
 });
 const eventFields={
-  id:z.string(),sourceCommit:z.string(),sourcePath:z.string(),sourceSha256:z.string(),
+  id:z.string(),sourceCommit:nullable,sourcePath:nullable,sourceSha256:nullable,
   resultSha256:z.string(),
 };
 export const personalDetailSchema=z.object({
   ...context,job:personalRowSchema,
   decisionEvents:z.array(z.object({
-    ...eventFields,decision:decisionSchema,
+    ...eventFields,decision:decisionSchema.nullable(),origin:z.enum(['APP','GITHUB']).optional(),
     fingerprint:nullable,decidedAt:z.string(),
     rejectionReason:nullable,reasonSummary:nullable,
   })),
