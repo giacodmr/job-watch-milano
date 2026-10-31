@@ -7,6 +7,7 @@ import {
 } from './model-c-personal-client';
 import type {PersonalRow,PersonalPage,PersonalSummary,PersonalDetail,PersonalView,Decision,PersonalFilters} from './model-c-personal-client';
 import {WorkspaceShell,CompanyAvatar,FitValue,JWIcon} from './components/CandidaturePrimitives';
+import {PersonalActions} from './components/PersonalActions';
 
 const views:{key:PersonalView;title:string;description:string}[]=[
   {key:'all',title:'Tutte',description:'Tutti i riferimenti personali'},
@@ -29,7 +30,9 @@ function Provenance({commit,path}:{commit:string|null;path:string|null}){
   return url?<a href={url} target="_blank" rel="noopener noreferrer" className="c-text-link">Fonte GitHub</a>:<span>{absent}</span>;
 }
 
-function CandidatureDrawer({selected,onClose}:{selected:PersonalRow;onClose:()=>void}){
+function CandidatureDrawer({selected,onClose,onConfirmed}:{
+  selected:PersonalRow;onClose:()=>void;onConfirmed:()=>void;
+}){
   const dialog=useRef<HTMLDialogElement>(null);
   const [section,setSection]=useState<Section>('Riepilogo');
   const [detail,setDetail]=useState<PersonalDetail|null>(null);
@@ -53,6 +56,10 @@ function CandidatureDrawer({selected,onClose}:{selected:PersonalRow;onClose:()=>
     }).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return ()=>controller.abort();
   },[selected.jobId]);
+  async function reloadDetail(){
+    const fresh=await readPersonalDetail(selected.jobId,AbortSignal.timeout(15000));
+    setDetail(fresh);setError(null);
+  }
   const row=detail?.job??selected;
   const title=row.catalog?.title||row.capturedTitle||'Ruolo non registrato';
   const company=row.catalog?.company||'Azienda non disponibile';
@@ -62,7 +69,7 @@ function CandidatureDrawer({selected,onClose}:{selected:PersonalRow;onClose:()=>
     onClick={event=>{if(event.target===event.currentTarget)onClose();}}>
     <div className="c-drawer-panel">
       <header className="c-drawer-head">
-        <div><small>Dettaglio personale · sola lettura</small>
+        <div><small>Dettaglio personale</small>
           <h2 id="c-drawer-title">{title}</h2>
           <p>{company}{row.catalog?.location?' · '+row.catalog.location:''}</p>
         </div>
@@ -92,6 +99,8 @@ function CandidatureDrawer({selected,onClose}:{selected:PersonalRow;onClose:()=>
                 <Fact name="Riconciliazione">{reconciliationLabel[row.reconciliation]}</Fact>
               </dl>
             </section>
+            <PersonalActions row={row} jobId={row.jobId}
+              catalogRevision={detail.catalogRevision} onReload={reloadDetail} onConfirmed={onConfirmed}/>
             <section className="c-panel-section"><h3>Provenienza</h3>
               <dl className="c-facts">
                 <Fact name="Identità"><code className="c-wrap">{row.jobId}</code></Fact>
@@ -142,7 +151,7 @@ function CandidatureDrawer({selected,onClose}:{selected:PersonalRow;onClose:()=>
           </section>}
         </>}
       </div>
-      <footer className="c-drawer-footer"><span>Sola lettura · Nessuna modifica ai dati</span>
+      <footer className="c-drawer-footer"><span>Azioni personali solo nel laboratorio locale</span>
         <button type="button" className="c-btn" onClick={onClose}>Chiudi</button>
       </footer>
     </div>
@@ -191,14 +200,14 @@ export default function Candidature(){
   const [selected,setSelected]=useState<PersonalRow|null>(null);
   useEffect(()=>{
     const controller=new AbortController();
-    setLoading(true);setError(null);setPage(null);setSelected(null);
+    setLoading(true);setError(null);setPage(null);
     const filters:PersonalFilters={view,q:search,limit:25};
     if(decision)filters.decision=decision;
     if(reference)filters.reference=reference;
     if(cursor)filters.cursor=cursor;
     Promise.all([readPersonalSummary(controller.signal),readPersonalPage(filters,controller.signal)]).then(([context,result])=>{
       if(controller.signal.aborted)return;
-      if(context.catalogRevision!==result.catalogRevision||context.personalRevision!==result.personalRevision)
+      if(context.catalogRevision!==result.catalogRevision||context.personalRevision!==result.personalRevision||context.appRevision!==result.appRevision)
         throw new ApiError('CONTEXT_CHANGED');
       setSummary(context);setPage(result);
     }).catch(err=>{if(!controller.signal.aborted)setError(personalReadError(err));})
@@ -258,7 +267,7 @@ export default function Candidature(){
         <p>{page.total===0?'Nessun riferimento personale corrisponde ai filtri selezionati.':'Nessun altro risultato disponibile.'}</p>
         <button type="button" className="c-btn" onClick={clear}>Mostra tutte</button>
       </div>}
-      <footer className="c-foot"><span>{page&&!loading?String(page.total)+' riferimenti nella vista':'Sola lettura'}{summary?' · '+summary.counts.decisionsCount+' decisioni registrate':''}</span>
+      <footer className="c-foot"><span>{page&&!loading?String(page.total)+' riferimenti nella vista':'Registro personale'}{summary?' · '+summary.counts.decisionsCount+' decisioni registrate':''}</span>
         <div className="c-pager">
           <button className="c-btn" type="button" disabled={loading||previous.length===0} onClick={back}>Precedente</button>
           <span>Pagina {previous.length+1}</span>
@@ -266,7 +275,7 @@ export default function Candidature(){
         </div>
       </footer>
     </section>
-    <p className="c-lab-note">Model C · ambiente locale sintetico · consultazione read-only. Il registro non modifica candidature o decisioni.</p>
-    {selected&&<CandidatureDrawer selected={selected} onClose={()=>setSelected(null)}/>}
+    <p className="c-lab-note">Model C · laboratorio sintetico locale · modifiche possibili solo con autorizzazione server.</p>
+    {selected&&<CandidatureDrawer selected={selected} onClose={()=>setSelected(null)} onConfirmed={reload}/>}
   </WorkspaceShell>;
 }
