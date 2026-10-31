@@ -14,6 +14,9 @@ import { importSnapshot } from '../worker/data/importer';
 import { selectModelC } from '../shared/model-c-selection';
 import { assessFreeBootstrapRemoteQuota } from '../tools/model-c-free-bootstrap';
 import { canonical, sha256 } from '../shared/canonical';
+import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
+import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-client';
+import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
 const dirs:string[]=[], measurements:Record<string,unknown>={}, preflights:Record<string,unknown>={};
@@ -479,5 +482,91 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const path=resolve(f.repo,'sync_analysis_state.py');await writeFile(path,(await readFile(path,'utf8'))+'\n# synthetic implementation-only change\n');f.options.source.commit=commit(f.repo);
     const next=await importModelC(f.c,f.p,f.options);
     expect(next.observation.catalogRevision).toBe(first.observation.catalogRevision);expect(next.observation.projectionInputDigest).not.toBe(first.observation.projectionInputDigest);
+  });
+});
+
+describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
+  async function prepared(){
+    const f=await fixture(1);
+    const preflight=await importModelC(f.c,f.p,{...f.options,
+      preflightOnly:true,oneTimeFreeBootstrap:true,executionTarget:'remote'});
+    if(preflight.status!=='PREFLIGHT')throw Error('SYNTHETIC_PREFLIGHT_REQUIRED');
+    const setup={
+      catalog:{migrationFiles:5,localRowsWritten:f.schemaCosts.catalog.rowsWritten,
+        remoteUpperBound:f.schemaCosts.catalog.rowsWritten+100},
+      personal:{migrationFiles:3,localRowsWritten:f.schemaCosts.personal.rowsWritten,
+        remoteUpperBound:f.schemaCosts.personal.rowsWritten+100},
+    };
+    const trustedPlan=await prepareSafeRemoteBootstrapPlan(preflight,setup);
+    const context={identities:{mode:'first-v1-bootstrap' as const},
+      personalReferences:[],personalDecisionJobIds:[]};
+    const verified=await verifyGitProjection(f.options.source,context);
+    const selected=await selectModelC(verified.bundle,context);
+    const records=projectTrustedInventoryV1(verified.bundle,selected);
+    const packet=await prepareOfflineIngestPackets({
+      commitSha:verified.proof.observedGitCommit,
+      manifestDigest:verified.proof.sourceManifestDigest,
+      projectionDigest:verified.proof.projectionInputDigest,
+      planDigest:trustedPlan.digest,expectedRevision:0,
+    },records,8);
+    await f.c.prepare(`INSERT INTO catalog_ingest_runs
+      (id,commit_sha,manifest_digest,projection_digest,plan_digest,expected_revision,
+       total_chunks,principal_digest,run_digest) VALUES (?,?,?,?,?,?,?,?,?)`)
+      .bind(packet.run.runId,packet.run.commitSha,packet.run.manifestDigest,
+        packet.run.projectionDigest,packet.run.planDigest,packet.run.expectedRevision,
+        packet.run.totalChunks,'a'.repeat(64),await sha256(canonical(packet.run))).run();
+    const append=async(index:number,alter?:{title?:string})=>{
+      const original=packet.chunks[index]!;
+      let chunk=original;
+      if(alter){
+        const records=original.records.map(r=>r.kind==='job'?{...r,title:alter.title??r.title}:r);
+        const digest=await sha256(canonical(records));
+        chunk={...original,records:records as typeof original.records,chunkDigest:digest,
+          idempotencyKey:await sha256(canonical({runId:original.runId,chunkIndex:index,chunkDigest:digest}))};
+      }
+      await f.c.prepare(`INSERT INTO catalog_ingest_chunks
+        (run_id,chunk_index,chunk_digest,idempotency_key,record_count,records_json)
+        VALUES (?,?,?,?,?,?)`).bind(
+          chunk.runId,chunk.chunkIndex,chunk.chunkDigest,chunk.idempotencyKey,
+          chunk.records.length,canonical(chunk.records)).run();
+    };
+    return {f,packet,trustedPlan,append};
+  }
+  it('binds a complete staging receipt to trusted Git and reuses original CATALOG and PERSONAL importer',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    const result=await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    expect(result.status).toBe('PUBLISHED');
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    expect(await count(f.c,'catalog_vacancy_current')).toBe(1);
+    expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
+    expect(await count(f.c,'catalog_ingest_chunks')).toBe(packet.chunks.length);
+    const again=await importModelC(f.c,f.p,f.options);
+    expect(again.status).toBe('REPLAY');
+    expect(again.metrics.total).toBe(0);
+  });
+  it('refuses an incomplete stage BEFORE any local importer write',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    if(packet.chunks.length<2)throw Error('EXPECTED_MULTIPLE_SYNTHETIC_CHUNKS');
+    await append(0);
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('INCOMPLETE_CHUNKS');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.c,'catalog_write_reservations')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
+  });
+  it('refuses a digest-consistent but Git-inconsistent staged title BEFORE any publication',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++){
+      if(packet.chunks[i]!.records.some(r=>r.kind==='job'))await append(i,{title:'Forged staged title'});
+      else await append(i);
+    }
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('STAGED_PROJECTION_MISMATCH');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
   });
 });
