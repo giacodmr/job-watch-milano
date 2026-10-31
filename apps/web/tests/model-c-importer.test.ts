@@ -488,6 +488,11 @@ describe('verified incremental importer on ephemeral D1',()=>{
 describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
   async function prepared(){
     const f=await fixture(1);
+    // M46 v1 accepts only SHA-256 fingerprints: make this isolated fixture
+    // explicitly representable instead of inventing a fallback conversion.
+    f.options.source.commit=await inventory(f.repo,jobs=>{
+      for(const job of jobs)job.fingerprint='b'.repeat(64);
+    });
     const preflight=await importModelC(f.c,f.p,{...f.options,
       preflightOnly:true,oneTimeFreeBootstrap:true,executionTarget:'remote'});
     if(preflight.status!=='PREFLIGHT')throw Error('SYNTHETIC_PREFLIGHT_REQUIRED');
