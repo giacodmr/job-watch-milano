@@ -30,7 +30,7 @@ export type OfflineBootstrapPreflight=z.infer<typeof preflightSchema>;
 export type OfflineSchemaCosts=z.infer<typeof setupSchema>;
 export async function prepareSafeRemoteBootstrapPlan(preflight:unknown,setup:unknown){
   const plan=preflightSchema.parse(preflight),schema=setupSchema.parse(setup);
-  if(schema.catalog.migrationFiles!==4||schema.personal.migrationFiles!==3||
+  if(schema.catalog.migrationFiles!==5||schema.personal.migrationFiles!==3||
     schema.catalog.remoteUpperBound<schema.catalog.localRowsWritten||
     schema.personal.remoteUpperBound<schema.personal.localRowsWritten)
     throw Error('REMOTE_SCHEMA_COST_NOT_BOUNDED');
