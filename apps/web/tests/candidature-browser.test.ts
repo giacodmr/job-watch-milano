@@ -238,6 +238,16 @@ describe('Candidature actual browser layout and drawer against synthetic Model C
         await delay(100);
       }
       expect(detailLoaded).toBe(true);
+      let disabled=false;
+      for(let i=0;i<60;i++){
+        const state=await session.send('Runtime.evaluate',{
+          expression:"Boolean(document.querySelector('.c-personal-actions')?.textContent?.includes('sola lettura') && !document.querySelector('.c-personal-actions select'))",
+          returnByValue:true,
+        },tab);
+        if(state?.result?.value){disabled=true;break;}
+        await delay(100);
+      }
+      expect(disabled).toBe(true);
       const drawer=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},tab);
       expect(drawer?.data?.length).toBeGreaterThan(1000);
       console.log('JW39_MOBILE_DRAWER_PNG_BASE64='+drawer.data);
