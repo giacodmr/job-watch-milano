@@ -115,7 +115,7 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
               <h3>Decisioni</h3>
               {detail.personalDetail.decisionEvents.length?<ol className="c-history">
                 {detail.personalDetail.decisionEvents.map(event=><li key={event.id}>
-                  <strong>{decisionLabel[event.decision]}</strong><small>{date(event.decidedAt)}</small>
+                  <strong>{event.decision?decisionLabel[event.decision]:'Decisione revocata'}</strong><small>{date(event.decidedAt)}</small>
                   {event.reasonSummary&&<p>{event.reasonSummary}</p>}
                 </li>)}
               </ol>:<p className="c-informative">Nessuna decisione storica disponibile.</p>}
