@@ -2,9 +2,10 @@
 import {describe,expect,it} from 'vitest';
 import {existsSync,readFileSync} from 'node:fs';
 import {dirname,relative,resolve} from 'node:path';
-import * as tsModule from 'typescript';
-// Vite's CJS interop exposes the compiler API as the default namespace.
-const ts=(tsModule as typeof tsModule & {default?:typeof tsModule}).default??tsModule;
+import {createRequire} from 'node:module';
+import type * as tsModule from 'typescript';
+// Resolve the real Node compiler package, not the Vite-transformed CJS shim.
+const ts=createRequire(import.meta.url)('typescript') as typeof tsModule;
 
 const root=resolve(import.meta.dirname,'..');
 const entrypoints=['worker/index.ts','worker/private-runtime.ts'];
