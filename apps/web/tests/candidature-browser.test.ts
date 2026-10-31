@@ -115,10 +115,16 @@ beforeAll(async()=>{
   tempDir=await mkdtemp(join(tmpdir(),'jw39-chrome-'));
 });
 afterAll(async()=>{
-  chrome?.kill('SIGKILL');
+  if(chrome && chrome.exitCode===null && chrome.signalCode===null) {
+    await new Promise<void>(resolve=>{
+      const safety=setTimeout(resolve,5000);
+      chrome?.once('exit',()=>{clearTimeout(safety);resolve();});
+      chrome?.kill('SIGKILL');
+    });
+  }
   if(server)await new Promise<void>(resolve=>server?.close(()=>resolve()));
   await runtime?.dispose();
-  if(tempDir)await rm(tempDir,{recursive:true,force:true});
+  if(tempDir)await rm(tempDir,{recursive:true,force:true,maxRetries:12,retryDelay:200});
 });
 describe('Candidature actual browser layout and drawer against synthetic Model C HTTP',()=>{
   it('renders desktop/mobile responsive layout and interactive modal without horizontal overflow',async()=>{
