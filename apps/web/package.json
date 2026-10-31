@@ -19,7 +19,8 @@
     "sync:export": "node tools/local-sync.mjs export",
     "sync:import": "node tools/local-sync.mjs import",
     "sync:local": "node tools/local-sync.mjs sync",
-    "sync:measure": "node tools/measure-local.mjs"
+    "sync:measure": "node tools/measure-local.mjs",
+    "worker:check:private": "wrangler deploy --config wrangler.private.template.jsonc --dry-run --outdir .worker-private-build"
   },
   "dependencies": {
     "react": "19.3.1",
