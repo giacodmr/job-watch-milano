@@ -20,6 +20,8 @@ export const personalRowSchema=z.object({
   assessment:assessmentSchema.nullable(),
   activeReferences:z.array(z.enum(['SAVED','APPLICATION','DISMISSED'])),
   knownIdentity:z.boolean(),currentlyVisible:z.boolean(),
+  jobRevision:z.number().int().nonnegative().default(0),
+  decisionSource:z.enum(['APP','GITHUB']).nullable().optional(),
   reconciliation:reconciliationSchema,
   catalog:z.object({
     company:z.string(),companyId:z.string(),title:nullable,location:nullable,
@@ -29,6 +31,7 @@ export const personalRowSchema=z.object({
 });
 const context={
   personalRevision:z.number().int().positive(),
+  appRevision:z.number().int().nonnegative().default(0),
   catalogRevision:z.number().int().positive(),
   productionAccess:z.literal(false),
 };
@@ -44,13 +47,13 @@ export const personalSummarySchema=z.object({
   }),
 });
 const eventFields={
-  id:z.string(),sourceCommit:z.string(),sourcePath:z.string(),sourceSha256:z.string(),
+  id:z.string(),sourceCommit:nullable,sourcePath:nullable,sourceSha256:nullable,
   resultSha256:z.string(),
 };
 export const personalDetailSchema=z.object({
   ...context,job:personalRowSchema,
   decisionEvents:z.array(z.object({
-    ...eventFields,decision:decisionSchema,
+    ...eventFields,decision:decisionSchema.nullable(),origin:z.enum(['APP','GITHUB']).optional(),
     fingerprint:nullable,decidedAt:z.string(),
     rejectionReason:nullable,reasonSummary:nullable,
   })),
@@ -62,6 +65,14 @@ export const personalDetailSchema=z.object({
     evidenceState:z.string(),analyzedAt:z.string(),
   })),
   assessmentEventsTruncated:z.boolean(),
+  appEvents:z.array(z.object({
+    id:z.string(),operationId:z.string(),kind:z.enum(['DECISION','SAVED']),
+    decision:decisionSchema.nullable(),savedActive:z.boolean().nullable(),
+    previousDecision:decisionSchema.nullable(),previousSaved:z.boolean().nullable(),
+    expectedRevision:z.number().int().nonnegative(),revision:z.number().int().positive(),
+    createdAt:z.string(),reasonSummary:nullable,
+  })).optional(),
+  appEventsTruncated:z.boolean().optional(),
 });
 export type PersonalRow=z.infer<typeof personalRowSchema>;
 export type PersonalPage=z.infer<typeof personalPageSchema>;
@@ -114,3 +125,10 @@ export function personalReadError(error:unknown):string {
   if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Non esiste un contesto PERSONAL per questa identità sintetica.';
   return 'Impossibile leggere Candidature. Verifica che il laboratorio Model C sia attivo e i database siano inizializzati.';
 }
+
+// Read-only capability discovery. No mutation action is exposed to the React UI in PR #41.
+export const personalWriteCapabilitiesSchema=z.object({
+  writeEnabled:z.boolean(),productionAccess:z.literal(false),
+});
+export const readPersonalWriteCapabilities=(signal:AbortSignal)=>
+  readApi('/api/model-c/personal/capabilities',personalWriteCapabilitiesSchema,signal);

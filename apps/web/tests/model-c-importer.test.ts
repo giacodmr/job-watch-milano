@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { applySchema, captureSynthetic } from '../tools/model-c-schema';
 import { importModelC, ModelCImportError, inspectCatalogPlan } from '../tools/model-c-importer';
+import {executePersonalCommand} from '../worker/data/model-c-personal-write';
+import {getModelCPersonalJob} from '../worker/data/model-c-personal';
 import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
 import { importSnapshot } from '../worker/data/importer';
@@ -61,6 +63,35 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect((await f.c.prepare('SELECT * FROM catalog_vacancy_current').all()).results).toEqual(current);
     expect(await count(f.c,'catalog_content_revisions')).toBe(1);expect(await count(f.c,'catalog_audit')).toBe(2);
     expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);expect(a.metrics.total).toBeLessThanOrEqual(a.metrics.reservedBound);
+  });
+  it('retains APP decisions after a subsequent real GitHub synthetic import and replay',async()=>{
+    const f=await fixture(1);
+    const initial=await importModelC(f.c,f.p,f.options);
+    expect(initial.status).toBe('PUBLISHED');
+    const id=await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id');
+    expect(id).toMatch(/^job:[a-f0-9]{64}$/);
+    const importedHead=await f.p.prepare('SELECT revision,context_digest FROM personal_heads WHERE owner_id=?')
+      .bind(f.options.owner).first();
+    const importedEvents=(await f.p.prepare('SELECT * FROM personal_decision_events').all()).results;
+    const local=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id!,catalogRevision:initial.syncRevision,expectedRevision:0,
+      operationId:'00000000-0000-4000-8000-000000004141',decision:'INTERESTED',reasonSummary:null,
+    });
+    expect(local).toMatchObject({status:'saved',decision:'INTERESTED',jobRevision:1});
+    expect(await f.p.prepare('SELECT revision,context_digest FROM personal_heads WHERE owner_id=?')
+      .bind(f.options.owner).first()).toEqual(importedHead);
+    f.options.source.commit=commit(f.repo);
+    const subsequent=await importModelC(f.c,f.p,f.options);
+    expect(subsequent.syncRevision).toBe(initial.syncRevision+1);
+    expect((await getModelCPersonalJob(f.c,f.p,{ownerId:f.options.owner},id!)).job)
+      .toMatchObject({decision:'INTERESTED',decisionSource:'APP',jobRevision:1});
+    expect(await count(f.p,'personal_app_events')).toBe(1);
+    expect(await count(f.p,'personal_app_operations')).toBe(1);
+    expect((await f.p.prepare('SELECT * FROM personal_decision_events').all()).results).toEqual(importedEvents);
+    const replay=await importModelC(f.c,f.p,f.options);
+    expect(replay.status).toBe('REPLAY');
+    expect((await getModelCPersonalJob(f.c,f.p,{ownerId:f.options.owner},id!)).job.decision).toBe('INTERESTED');
+    expect(await count(f.p,'personal_app_events')).toBe(1);
   });
   it('upserts only the changed payload and preserves distinct ATS/coverage origins and company metadata',async()=>{
     const f=await fixture();await importModelC(f.c,f.p,f.options);

@@ -1,6 +1,7 @@
 // Synthetic-only local HTTP adapter. Never enables remote access or authentication.
 import { z } from 'zod';
 import {readModelCOpportunities} from './data/model-c-opportunities';
+import {executePersonalCommand,ModelCPersonalWriteError} from './data/model-c-personal-write';
 import {
   getModelCCatalogJob, getModelCCatalogSnapshot, listModelCCatalogJobs,
   ModelCReadError, modelCCatalogQuerySchema,
@@ -13,6 +14,7 @@ import {
 export interface ModelCLocalEnv {
   APP_ENV?: string;
   MODEL_C_LOCAL_API?: string;
+  MODEL_C_LOCAL_WRITE?: string;
   MODEL_C_TEST_OWNER?: string;
   CATALOG?: D1Database;
   PERSONAL?: D1Database;
@@ -63,12 +65,61 @@ export async function handleModelCLocalApi(
     return error('remote_runtime_disabled',403);
   if (env.MODEL_C_LOCAL_API !== 'synthetic-only')
     return error('not_found',404);
-  if (request.method !== 'GET')
+  const commandPrefix='/api/model-c/personal/commands/';
+  const commandRoute=url.pathname.startsWith(commandPrefix);
+  if(commandRoute && request.method!=='POST')
+    return error('method_not_allowed',405,{'Allow':'POST'});
+  if(!commandRoute && request.method!=='GET')
     return error('method_not_allowed',405,{'Allow':'GET'});
   if (['x-owner-id','x-user-id','x-job-watch-owner','x-actor-ref'].some(k=>request.headers.has(k)))
     return error('owner_override_forbidden',403);
   const origin = request.headers.get('origin');
   if (origin && origin !== url.origin) return error('cross_origin_forbidden',403);
+  if(commandRoute){
+    if(env.MODEL_C_LOCAL_WRITE!=='synthetic-only')return error('not_found',404);
+    if(origin!==url.origin)return error('origin_required',403);
+    if(request.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase()!=='application/json')
+      return error('invalid_content_type',415);
+    if(url.search)return error('invalid_query',400);
+    if(!env.CATALOG||!env.PERSONAL)return error('database_unavailable',503);
+    if(!env.MODEL_C_TEST_OWNER||!syntheticOwner.test(env.MODEL_C_TEST_OWNER))
+      return error('synthetic_owner_unavailable',403);
+    const command=url.pathname.slice(commandPrefix.length);
+    if(!['decision','saved'].includes(command))return error('not_found',404);
+    try{
+      const declared=Number(request.headers.get('content-length')??0);
+      if(!Number.isSafeInteger(declared)||declared>2048)return error('body_too_large',413);
+      // Bound streamed and Content-Length-free requests before parsing JSON.
+      const reader=request.body?.getReader();
+      if(!reader)return error('invalid_body',400);
+      let size=0;
+      const chunks:Uint8Array[]=[];
+      while(true){
+        const part=await reader.read();
+        if(part.done)break;
+        size+=part.value.byteLength;
+        if(size>2048){await reader.cancel();return error('body_too_large',413);}
+        chunks.push(part.value);
+      }
+      const bytes=new Uint8Array(size);
+      let offset=0;
+      for(const part of chunks){bytes.set(part,offset);offset+=part.length;}
+      let payload:unknown;
+      try{payload=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
+      catch{return error('invalid_json',400);}
+      if(!payload||typeof payload!=='object'||Array.isArray(payload))return error('invalid_payload',400);
+      // Command type is taken from the route, never trusted from the request body alone.
+      const body=payload as Record<string,unknown>;
+      if(body.kind!==(command==='decision'?'DECISION':'SAVED'))return error('invalid_payload',400);
+      return response(await executePersonalCommand(env.CATALOG,env.PERSONAL,
+        {ownerId:env.MODEL_C_TEST_OWNER},body));
+    }catch(e){
+      if(e instanceof z.ZodError)return error('invalid_payload',400);
+      if(e instanceof ModelCPersonalWriteError||e instanceof ModelCReadError||
+        e instanceof ModelCPersonalReadError)return error(e.code,e.status);
+      return error('write_unavailable',503);
+    }
+  }
 
   const path = url.pathname;
   const catalogPrefix = '/api/model-c/catalog/';
@@ -82,7 +133,7 @@ export async function handleModelCLocalApi(
       return response(await readModelCOpportunities(env,path.slice(opportunitiesPrefix.length),input));
     const catalogPath = path.startsWith(catalogPrefix);
     const suffix = path.slice(catalogPath ? catalogPrefix.length : personalPrefix.length);
-    if (!catalogPath && !['summary','jobs'].includes(suffix) && !suffix.startsWith('jobs/'))
+    if (!catalogPath && !['summary','jobs','capabilities'].includes(suffix) && !suffix.startsWith('jobs/'))
       return error('not_found',404);
     if (catalogPath && !['snapshot','jobs'].includes(suffix) && !suffix.startsWith('jobs/'))
       return error('not_found',404);
@@ -106,6 +157,10 @@ export async function handleModelCLocalApi(
     if (!env.MODEL_C_TEST_OWNER || !syntheticOwner.test(env.MODEL_C_TEST_OWNER))
       return error('synthetic_owner_unavailable',403);
     const trusted = {ownerId:env.MODEL_C_TEST_OWNER};
+    if(suffix==='capabilities'){
+      empty.parse(input);
+      return response({writeEnabled:env.MODEL_C_LOCAL_WRITE==='synthetic-only',productionAccess:false});
+    }
     if (suffix === 'summary') {
       empty.parse(input);
       return response(await getModelCPersonalSummary(env.CATALOG,env.PERSONAL,trusted));

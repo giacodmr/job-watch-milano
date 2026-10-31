@@ -1,7 +1,7 @@
 import { beforeAll,afterAll,describe,it,expect } from 'vitest';
 import { Miniflare,convertV4MiniflareOptions } from 'miniflare';
 import {canonical,sha256} from '../shared/canonical';
-import { applySchema,captureSynthetic,restoreSynthetic } from '../tools/model-c-schema';
+import { applySchema,captureSynthetic,restoreSynthetic,migrationSources } from '../tools/model-c-schema';
 import { stageCatalog,publicationFixture,seedPersonal,seedV1,jobId,hash,commit } from './helpers/model-c-fixtures';
 let runtime:Miniflare, sequence=0;
 beforeAll(async()=>{
@@ -25,6 +25,29 @@ describe('physically separate, inactive Model C schemas',()=>{
     expect((await c.db.prepare("SELECT name FROM sqlite_master WHERE name GLOB 'personal_*'").all()).results).toHaveLength(0);
     const tables=(await c.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT GLOB '_*'").all<{name:string}>()).results;
     for(const t of tables){const cols=(await c.db.prepare('PRAGMA table_info('+t.name+')').all<{name:string}>()).results.map(v=>v.name);for(const forbidden of ['owner_id','decision','fit_score','reportable','summary','reason','jd','description','payload_json'])expect(cols).not.toContain(forbidden);}
+  });
+  it('upgrades an existing populated PERSONAL v2 via additive migration without altering imported facts',async()=>{
+    const db=await runtime.getD1Database('DB'+sequence++);
+    for(const migration of (await migrationSources('personal')).slice(0,2)) {
+      await db.batch([
+        db.prepare('CREATE TABLE IF NOT EXISTS model_c_migrations (name TEXT PRIMARY KEY NOT NULL,sha256 TEXT NOT NULL CHECK(length(sha256)=64))'),
+        ...migration.statements.map(sql=>db.prepare(sql)),
+        db.prepare('INSERT INTO model_c_migrations(name,sha256) VALUES (?,?)').bind(migration.name,migration.sha256),
+      ]);
+    }
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(2);
+    await seedPersonal(db);
+    const initial=await db.prepare('SELECT * FROM personal_decision_events').all();
+    const head=await db.prepare('SELECT * FROM personal_heads').all();
+    const receipts=await db.prepare('SELECT * FROM personal_catalog_receipts').all();
+    const migrated=await applySchema(db,'personal');
+    expect(migrated.applied).toBe(1);
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(3);
+    expect((await db.prepare('SELECT * FROM personal_decision_events').all()).results).toEqual(initial.results);
+    expect((await db.prepare('SELECT * FROM personal_heads').all()).results).toEqual(head.results);
+    expect((await db.prepare('SELECT * FROM personal_catalog_receipts').all()).results).toEqual(receipts.results);
+    expect(await db.prepare('PRAGMA foreign_key_check').all()).toMatchObject({results:[]});
+    expect(await applySchema(db,'personal')).toMatchObject({applied:0,rowsWritten:0});
   });
   it('refuses an altered migration hash and refuses to overlay v1',async()=>{
     const {db}=await fresh('catalog');await db.prepare("UPDATE model_c_migrations SET sha256=?").bind('f'.repeat(64)).run();
