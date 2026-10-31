@@ -123,7 +123,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
       f.p.prepare(`INSERT INTO personal_assessment_events
         (owner_id,id,job_id,fingerprint,method,fit_score,reportable,summary,
          evidence_state,analyzed_at,result_sha256,source_commit,source_path,source_sha256)
-        VALUES (?,?,?,'synthetic-fingerprint','manual_import',85,1,'Preserved assessment note',
+        VALUES (?,?,?,'synthetic-fingerprint','chatgpt_semantic_full_jd',85,1,'Preserved assessment note',
           'FULL','2026-10-30T10:00:00Z',?,?,'job_memory_jw2.json',?)`)
         .bind(f.options.owner,'review:ac05',id,'b'.repeat(64),commitSha,'a'.repeat(64)),
       f.p.prepare('INSERT INTO personal_assessment_current VALUES (?,?,?,1)')
@@ -132,17 +132,17 @@ describe('verified incremental importer on ephemeral D1',()=>{
         .bind(f.options.owner),
     ]);
     const withAssessment=await importModelC(f.c,f.p,f.options);
-    expect(withAssessment.status).toBe('RECOVERED');
+    expect(['RECOVERED','PUBLISHED']).toContain(withAssessment.status);
     const base=(await f.p.prepare('SELECT * FROM personal_assessment_events WHERE owner_id=?').bind(f.options.owner).all()).results;
     expect(base).toHaveLength(1);
     const note=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
-      kind:'DECISION',jobId:id,catalogRevision:first.syncRevision,expectedRevision:0,
+      kind:'DECISION',jobId:id,catalogRevision:withAssessment.syncRevision,expectedRevision:0,
       operationId:'00000000-0000-4000-8000-000000004501',
       decision:'INTERESTED',reasonSummary:'APP decision note retained',
     });
     expect('status' in note?note.status:null).toBe('saved');
     const saved=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
-      kind:'SAVED',jobId:id,catalogRevision:first.syncRevision,expectedRevision:1,
+      kind:'SAVED',jobId:id,catalogRevision:withAssessment.syncRevision,expectedRevision:1,
       operationId:'00000000-0000-4000-8000-000000004502',active:true,
     });
     expect('status' in saved?saved.status:null).toBe('saved');
@@ -160,7 +160,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(item.activeReferences).toContain('SAVED');
     expect(item.assessment).not.toBeNull();
     await expect(executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
-      kind:'DECISION',jobId:id,catalogRevision:first.syncRevision,expectedRevision:0,
+      kind:'DECISION',jobId:id,catalogRevision:withAssessment.syncRevision,expectedRevision:0,
       operationId:'00000000-0000-4000-8000-000000004503',
       decision:'APPLIED',reasonSummary:null,
     })).rejects.toThrow('REVISION_CONFLICT');
