@@ -125,3 +125,10 @@ export function personalReadError(error:unknown):string {
   if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Non esiste un contesto PERSONAL per questa identità sintetica.';
   return 'Impossibile leggere Candidature. Verifica che il laboratorio Model C sia attivo e i database siano inizializzati.';
 }
+
+// Read-only capability discovery. No mutation action is exposed to the React UI in PR #41.
+export const personalWriteCapabilitiesSchema=z.object({
+  writeEnabled:z.boolean(),productionAccess:z.literal(false),
+});
+export const readPersonalWriteCapabilities=(signal:AbortSignal)=>
+  readApi('/api/model-c/personal/capabilities',personalWriteCapabilitiesSchema,signal);
