@@ -20,7 +20,8 @@
     "sync:import": "node tools/local-sync.mjs import",
     "sync:local": "node tools/local-sync.mjs sync",
     "sync:measure": "node tools/measure-local.mjs",
-    "worker:check:private": "wrangler deploy --config wrangler.private.template.jsonc --dry-run --outdir .worker-private-build"
+    "worker:check:private": "wrangler deploy --config wrangler.private.template.jsonc --dry-run --outdir .worker-private-build",
+    "preflight:private": "node tools/private-gate-preflight.mjs"
   },
   "dependencies": {
     "react": "19.3.1",
