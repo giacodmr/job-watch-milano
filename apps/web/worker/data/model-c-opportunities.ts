@@ -3,9 +3,9 @@ import {z} from 'zod';
 import {
   getModelCCatalogSnapshot,getModelCCatalogJob,listModelCCatalogJobs,
   modelCCatalogQuerySchema,ModelCReadError,
-} from './data/model-c-catalog';
-import {getModelCPersonalJob,getModelCPersonalOverlays} from './data/model-c-personal';
-import type {ModelCLocalEnv} from './model-c-local-api';
+} from './model-c-catalog';
+import {getModelCPersonalJob,getModelCPersonalOverlays} from './model-c-personal';
+import type {ModelCLocalEnv} from '../model-c-local-api';
 
 const idSchema=z.string().regex(/^job:[a-f0-9]{64}$/);
 const revisionSchema=z.strictObject({revision:z.string().regex(/^[1-9][0-9]{0,9}$/).transform(Number)});
