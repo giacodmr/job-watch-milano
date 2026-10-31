@@ -4,6 +4,7 @@ import {applySchema} from '../tools/model-c-schema';
 import {canonical,sha256} from '../shared/canonical';
 import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-client';
 import {auditReceivedIngestStage,StageAuditError} from '../tools/model-c-stage-attestation';
+import {advanceCompleteIngestJournal,advanceIngestJournal,observeIngestJournal} from '../tools/model-c-publication-journal';
 
 let runtime:Miniflare,db:D1Database,sequence=0;
 const company={kind:'company' as const,id:'company:test',name:'Synthetic Company',
@@ -86,5 +87,47 @@ describe('M47 durable staging receipt integrity (still NOT publication)',()=>{
   it('does not report a nonexistent run as verified',async()=>{
     await expect(auditReceivedIngestStage(db,'ingest:'+'f'.repeat(64)))
       .rejects.toMatchObject({code:'RUN_NOT_FOUND'});
+  });
+});
+
+describe('M47 immutable D1 publication journal',()=>{
+  it('backstops each M46 run with a durable RECEIVING event, then validates complete and verified evidence',async()=>{
+    const p=await packets();
+    await stageRun(p);
+    let current=await observeIngestJournal(db,p.run.runId);
+    expect(current).toMatchObject({phase:'RECEIVING',sequence:0});
+    await expect(advanceCompleteIngestJournal(db,p.run.runId))
+      .rejects.toMatchObject({code:'INCOMPLETE_CHUNKS'});
+    await stageChunk(p,0);await stageChunk(p,1);
+    current=await advanceCompleteIngestJournal(db,p.run.runId);
+    expect(current).toMatchObject({phase:'COMPLETE',sequence:1});
+    expect((await advanceCompleteIngestJournal(db,p.run.runId)).sequence).toBe(1);
+    await expect(advanceIngestJournal(db,p.run.runId,'CATALOG_PUBLISHED','a'.repeat(64)))
+      .rejects.toMatchObject({code:'JOURNAL_INVALID_TRANSITION'});
+    current=await advanceIngestJournal(db,p.run.runId,'VERIFIED','b'.repeat(64));
+    expect(current).toMatchObject({phase:'VERIFIED',sequence:2});
+    await expect(advanceIngestJournal(db,p.run.runId,'VERIFIED','c'.repeat(64)))
+      .rejects.toMatchObject({code:'JOURNAL_REPLAY_CONFLICT'});
+    await expect(db.prepare("UPDATE catalog_ingest_journal SET phase='COMPLETED' WHERE run_id=?")
+      .bind(p.run.runId).run()).rejects.toThrow('immutable_ingest_journal');
+    await expect(db.prepare('DELETE FROM catalog_ingest_journal WHERE run_id=?')
+      .bind(p.run.runId).run()).rejects.toThrow('retained_ingest_journal');
+    expect((await observeIngestJournal(db,p.run.runId)).events.map(x=>x.phase))
+      .toEqual(['RECEIVING','COMPLETE','VERIFIED']);
+  });
+  it('rejects a fabricated event digest or a forged sequence, using real SQLite constraints',async()=>{
+    const p=await packets([company],1);
+    await stageRun(p);await stageChunk(p,0);
+    const current=await advanceCompleteIngestJournal(db,p.run.runId);
+    const bad=db.prepare(`INSERT INTO catalog_ingest_journal
+      (run_id,sequence,phase,proof_digest,previous_digest,event_digest)
+      VALUES (?,?,?,?,?,?)`);
+    await expect(bad.bind(p.run.runId,5,'VERIFIED',
+      'b'.repeat(64),current.eventDigest,'e'.repeat(64)).run())
+      .rejects.toThrow('journal_chain_conflict');
+    await bad.bind(p.run.runId,2,'VERIFIED','b'.repeat(64),
+      current.eventDigest,'e'.repeat(64)).run();
+    await expect(observeIngestJournal(db,p.run.runId))
+      .rejects.toMatchObject({code:'JOURNAL_DIGEST_MISMATCH'});
   });
 });
