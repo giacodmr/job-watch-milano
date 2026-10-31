@@ -2,6 +2,7 @@ import {useEffect,useRef,useState} from 'react';
 import type {FormEvent,ReactNode} from 'react';
 import {ApiError,dateLabel} from './api';
 import {WorkspaceShell,CompanyAvatar,FitValue,JWIcon} from './components/CandidaturePrimitives';
+import {PersonalActions} from './components/PersonalActions';
 import {decisionLabel,reconciliationLabel,safeExternalUrl} from './model-c-personal-client';
 import type {Opportunity,OpportunityPage,OpportunityDetail,OpportunitySnapshot,OpportunityFilters,OpportunityView} from './model-c-opportunities-client';
 import {readOpportunityDetail,readOpportunities,readOpportunitySnapshot} from './model-c-opportunities-client';
@@ -28,10 +29,13 @@ function SourceLink({commit,path}:{commit:string;path:string}){
   const url=valid?'https://github.com/giacodmr/job-watch-milano/blob/'+commit+'/'+path.split('/').map(encodeURIComponent).join('/'):null;
   return url?<a className="c-text-link" href={url} target="_blank" rel="noopener noreferrer">Fonte GitHub</a>:<span>Non disponibile</span>;
 }
-function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:number;onClose:()=>void}){
+function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
+  row:Opportunity;revision:number;onClose:()=>void;onConfirmed:()=>void;
+}){
   const modal=useRef<HTMLDialogElement>(null);
   const [tab,setTab]=useState<'summary'|'analysis'|'source'|'history'>('summary');
   const [detail,setDetail]=useState<OpportunityDetail|null>(null);
+  const [currentRevision,setCurrentRevision]=useState(revision);
   const [error,setError]=useState<string|null>(null);
   const [loading,setLoading]=useState(true);
   useEffect(()=>{
@@ -46,6 +50,12 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
       .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return ()=>controller.abort();
   },[row.id,revision]);
+  async function reloadDetail(){
+    const snapshot=await readOpportunitySnapshot(AbortSignal.timeout(15000));
+    if(!snapshot)throw new Error('NO_PUBLISHED_CATALOG');
+    const refreshed=await readOpportunityDetail(row.id,snapshot.syncRevision,AbortSignal.timeout(15000));
+    setCurrentRevision(snapshot.syncRevision);setDetail(refreshed);setError(null);
+  }
   const current=detail?.job??row;
   const personal=detail?.personal??row.personal;
   const link=safeExternalUrl(current.applyUrl)||safeExternalUrl(current.canonicalUrl);
@@ -55,7 +65,7 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
     onCancel={event=>{event.preventDefault();onClose();}}
     onClick={event=>{if(event.target===event.currentTarget)onClose();}}>
     <div className="c-drawer-panel">
-      <header className="c-drawer-head"><div><small>Dettaglio opportunità · sola lettura</small>
+      <header className="c-drawer-head"><div><small>Dettaglio opportunità</small>
         <h2 id="o-dialog-title">{title}</h2><p>{current.company}{current.location?' · '+current.location:''}</p></div>
         <button className="c-icon-button" type="button" aria-label="Chiudi opportunità" onClick={onClose}><JWIcon name="close"/></button>
       </header>
@@ -80,6 +90,8 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
               </dl>
               {link&&<a className="c-btn c-btn-dark" href={link} target="_blank" rel="noopener noreferrer">Apri annuncio ufficiale <JWIcon name="arrow" size={14}/></a>}
             </section>
+            <PersonalActions row={personal} jobId={current.id}
+              catalogRevision={detail.snapshot.syncRevision} onReload={reloadDetail} onConfirmed={onConfirmed}/>
           </>}
           {tab==='analysis'&&<section className="c-panel-section"><h3>Analisi e valutazione</h3>
             <dl className="c-facts">
@@ -100,7 +112,7 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
               <Fact label="Job ID"><code className="c-wrap">{current.id}</code></Fact>
               <Fact label="Identità sorgente">{current.jobKey}</Fact>
               <Fact label="Batch">{current.batch||'Non disponibile'}</Fact>
-              <Fact label="Revisione catalogo">{revision}</Fact>
+              <Fact label="Revisione catalogo">{currentRevision}</Fact>
               <Fact label="Commit"><code className="c-wrap">{current.originCommit}</code></Fact>
               <Fact label="SHA-256"><code className="c-wrap">{current.originSha256}</code></Fact>
               <Fact label="Percorso"><code className="c-wrap">{current.originPath}</code></Fact>
@@ -115,11 +127,18 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
               <h3>Decisioni</h3>
               {detail.personalDetail.decisionEvents.length?<ol className="c-history">
                 {detail.personalDetail.decisionEvents.map(event=><li key={event.id}>
-                  <strong>{event.decision?decisionLabel[event.decision]:'Decisione revocata'}</strong><small>{date(event.decidedAt)}</small>
+                  <strong>{event.decision?decisionLabel[event.decision]:'Decisione revocata'}</strong>
+                  <small>{date(event.decidedAt)} · {event.origin==='APP'?'Piattaforma':'GitHub'}</small>
                   {event.reasonSummary&&<p>{event.reasonSummary}</p>}
                 </li>)}
               </ol>:<p className="c-informative">Nessuna decisione storica disponibile.</p>}
               {detail.personalDetail.decisionEventsTruncated&&<p className="c-informative">Cronologia decisioni limitata agli ultimi 50 eventi.</p>}
+              {!!detail.personalDetail.appEvents?.some(event=>event.kind==='SAVED')&&<>
+                <h3>Salvataggi nella piattaforma</h3>
+                <ol className="c-history">{detail.personalDetail.appEvents?.filter(event=>event.kind==='SAVED').map(event=>
+                  <li key={event.id}><strong>{event.savedActive?'Posizione salvata':'Rimossa dai salvati'}</strong>
+                    <small>{date(event.createdAt)} · Piattaforma</small></li>)}</ol>
+              </>}
               <h3>Valutazioni</h3>
               {detail.personalDetail.assessmentEvents.length?<ol className="c-history">
                 {detail.personalDetail.assessmentEvents.map(event=><li key={event.id}>
@@ -132,7 +151,7 @@ function OpportunityDrawer({row,revision,onClose}:{row:Opportunity;revision:numb
           </section>}
         </>}
       </div>
-      <footer className="c-drawer-footer"><span>Lettura locale · Nessun salvataggio</span>
+      <footer className="c-drawer-footer"><span>Azioni personali nel laboratorio locale</span>
         <button className="c-btn" type="button" onClick={onClose}>Chiudi</button>
       </footer>
     </div>
@@ -185,7 +204,7 @@ export default function Opportunita(){
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState<string|null>(null);
   useEffect(()=>{
-    const abort=new AbortController();setLoading(true);setError(null);setSelected(null);setPage(null);
+    const abort=new AbortController();setLoading(true);setError(null);setPage(null);
     const filters:OpportunityFilters={view,q,limit:25};
     if(companyId)filters.companyId=companyId;
     if(kind)filters.kind=kind;
@@ -273,7 +292,7 @@ export default function Opportunita(){
         </div>
       </footer>
     </section>
-    <p className="c-lab-note">Model C · laboratorio sintetico · nessuna modifica a opportunità o candidature.</p>
-    {selected&&snapshot&&<OpportunityDrawer row={selected} revision={snapshot.syncRevision} onClose={()=>setSelected(null)}/>}
+    <p className="c-lab-note">Model C · laboratorio sintetico · modifiche alle preferenze personali solo se autorizzate dal server.</p>
+    {selected&&snapshot&&<OpportunityDrawer row={selected} revision={snapshot.syncRevision} onClose={()=>setSelected(null)} onConfirmed={reload}/>}
   </WorkspaceShell>;
 }

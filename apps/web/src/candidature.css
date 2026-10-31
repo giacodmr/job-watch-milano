@@ -188,3 +188,23 @@
   .c-drawer-tabs{gap:14px}
 }
 @media(prefers-reduced-motion:reduce){.c-sidebar{transition:none}}
+
+/* PR #42: compact action affordances, inherited from the existing Jet-inspired drawer. */
+.c-personal-actions{border:1px solid #e6e8e5;border-radius:6px;margin-bottom:17px;padding:0 16px 15px;color:#343b34}
+.c-personal-actions>h3{font-size:12px;font-weight:700;margin:0 -16px 15px;padding:13px 16px;border-bottom:1px solid #e6e8e5;background:#f6f7f5}
+.c-personal-actions .c-action-field>label,.c-action-reason{display:block;color:#414541;font-size:11px;font-weight:650;margin-bottom:8px}
+.c-action-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.c-action-controls select{min-width:0;flex:1 1 180px;border:1px solid #e0e3df;background:#fff;border-radius:5px;color:#343b34;font-size:12px;min-height:34px;padding:6px 9px}
+.c-action-controls .c-btn,.c-action-saved .c-btn,.c-action-buttons .c-btn,.c-action-retry .c-btn{font-size:11px;min-height:34px;white-space:normal}
+.c-action-reason{margin:12px 0 0}
+.c-action-reason textarea{display:block;width:100%;resize:vertical;margin-top:7px;border:1px solid #dfe4df;border-radius:5px;padding:9px;color:#414541;background:#fff;font:inherit;font-size:12px;line-height:1.5}
+.c-action-saved{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid #e8ebe7;margin-top:16px;padding-top:15px}
+.c-action-saved strong{font-size:11px;font-weight:700}
+.c-action-saved p{font-size:11px;color:#777d76;margin:5px 0 0;line-height:1.5}
+.c-action-confirm,.c-action-retry{border:1px solid #e6e8e5;background:#f9faf8;border-radius:5px;padding:12px;margin-top:12px}
+.c-action-confirm p,.c-action-retry p{font-size:11px;line-height:1.55;color:#555b54;margin:0 0 10px}
+.c-action-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.c-action-note,.c-action-feedback{font-size:11px;line-height:1.6;color:#767c76;margin:10px 0}
+.c-action-feedback.c-error{color:#ae3c36}
+.c-personal-actions button:focus-visible,.c-personal-actions select:focus-visible,.c-personal-actions textarea:focus-visible{outline:2px solid #636c63;outline-offset:2px}
+@media(max-width:700px){.c-action-controls{display:grid;grid-template-columns:minmax(0,1fr)}.c-action-saved{align-items:flex-start;flex-direction:column}.c-action-saved .c-btn{width:100%}}

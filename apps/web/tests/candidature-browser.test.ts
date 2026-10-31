@@ -4,7 +4,7 @@ import {beforeAll,afterAll,describe,it,expect} from 'vitest';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {applySchema} from '../tools/model-c-schema';
-import {stageCatalog,publicationFixture,seedPersonal,owner} from './helpers/model-c-fixtures';
+import {stageCatalog,publicationFixture,seedPersonal,owner,jobId} from './helpers/model-c-fixtures';
 import {createServer} from 'node:http';
 import type {Server} from 'node:http';
 import {spawn} from 'node:child_process';
@@ -82,7 +82,31 @@ async function capture(session:Session,tab:string,url:string,width:number,height
   return image?.data as string;
 }
 let runtime:Miniflare,server:Server|null=null,chrome:ChildProcess|null=null,tempDir:string|null=null;
+let workerScript='';
 let url='';
+async function initRuntime(write:boolean){
+  runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:workerScript,
+    compatibilityDate:'2026-10-29',cf:false,
+    bindings:{APP_ENV:'local',MODEL_C_LOCAL_API:'synthetic-only',MODEL_C_TEST_OWNER:owner,
+      ...(write?{MODEL_C_LOCAL_WRITE:'synthetic-only'}:{})},
+    d1Databases:{CATALOG:write?'visual-write-catalog':'visual-catalog',
+      PERSONAL:write?'visual-write-personal':'visual-personal'},
+  }));
+  const catalog=await runtime.getD1Database('CATALOG');
+  const personal=await runtime.getD1Database('PERSONAL');
+  await applySchema(catalog,'catalog');await applySchema(personal,'personal');
+  await stageCatalog(catalog);await catalog.batch(publicationFixture(catalog,'run-one'));
+  await seedPersonal(personal);
+  if(write){
+    const second='job:'+'2'.repeat(64);
+    await catalog.prepare("INSERT INTO catalog_vacancy_identity VALUES (?,'company:synthetic','Synthetic Company::second')")
+      .bind(second).run();
+    await catalog.prepare(`INSERT INTO catalog_vacancy_current
+      (job_id,company_id,source_id,kind,lifecycle,title,location,origin_id)
+      VALUES (?,'company:synthetic','source:synthetic','OPPORTUNITY','STILL_OPEN','Second Synthetic Analyst','Milano','origin:run-one')`)
+      .bind(second).run();
+  }
+}
 beforeAll(async()=>{
   const [browser,workerBundle]=await Promise.all([
     build({entryPoints:['src/main.tsx'],bundle:true,write:false,format:'iife',platform:'browser',
@@ -93,25 +117,39 @@ beforeAll(async()=>{
   const css=browser.outputFiles.find(f=>f.path.endsWith('.css'))?.text;
   const workerJs=workerBundle.outputFiles.at(0)?.text;
   if(!js||!css||!workerJs)throw Error('VISUAL_BUNDLE_MISSING');
-  runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:workerJs,
-    compatibilityDate:'2026-10-29',cf:false,
-    bindings:{APP_ENV:'local',MODEL_C_LOCAL_API:'synthetic-only',MODEL_C_TEST_OWNER:owner},
-    d1Databases:{CATALOG:'visual-catalog',PERSONAL:'visual-personal'},
-  }));
-  const catalog=await runtime.getD1Database('CATALOG');
-  const personal=await runtime.getD1Database('PERSONAL');
-  await applySchema(catalog,'catalog');await applySchema(personal,'personal');
-  await stageCatalog(catalog);await catalog.batch(publicationFixture(catalog,'run-one'));
-  await seedPersonal(personal);
+  workerScript=workerJs;
+  await initRuntime(false);
   server=createServer(async(request,response)=>{
     try{
       const path=request.url??'/';
       if(path==='/app.js'){response.setHeader('Content-Type','text/javascript');response.end(js);return;}
       if(path==='/app.css'){response.setHeader('Content-Type','text/css');response.end(css);return;}
       if(path.startsWith('/api/')){
-        const result=await runtime.dispatchFetch('http://localhost'+path);
+        // This browser-facing loopback proxy checks the real incoming Origin first.
+        // It then maps the *trusted* same-origin request to the synthetic Worker.
+        let options:{method:'POST';headers:Record<string,string>;body:string}|undefined;
+        if(request.method==='POST'){
+          const address=server?.address();
+          if(!address||typeof address==='string'||
+             request.headers.origin!=='http://127.0.0.1:'+address.port){
+            response.statusCode=403;response.end('Origin forbidden');return;
+          }
+          const chunks:Buffer[]=[];let size=0;
+          for await(const chunk of request){
+            const data=Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk as Uint8Array);
+            size+=data.length;
+            if(size>2048){response.statusCode=413;response.end('Body too large');return;}
+            chunks.push(data);
+          }
+          options={method:'POST',headers:{
+            Origin:'http://localhost',
+            'Content-Type':String(request.headers['content-type']??''),
+          },body:Buffer.concat(chunks).toString('utf8')};
+        }
+        const result=await runtime.dispatchFetch('http://localhost'+path,options);
         response.statusCode=result.status;
         response.setHeader('Content-Type','application/json');
+        response.setHeader('Cache-Control','no-store');
         response.end(await result.text());
         return;
       }
@@ -200,6 +238,16 @@ describe('Candidature actual browser layout and drawer against synthetic Model C
         await delay(100);
       }
       expect(detailLoaded).toBe(true);
+      let disabled=false;
+      for(let i=0;i<60;i++){
+        const state=await session.send('Runtime.evaluate',{
+          expression:"Boolean(document.querySelector('.c-personal-actions')?.textContent?.includes('sola lettura') && !document.querySelector('.c-personal-actions select'))",
+          returnByValue:true,
+        },tab);
+        if(state?.result?.value){disabled=true;break;}
+        await delay(100);
+      }
+      expect(disabled).toBe(true);
       const drawer=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},tab);
       expect(drawer?.data?.length).toBeGreaterThan(1000);
       console.log('JW39_MOBILE_DRAWER_PNG_BASE64='+drawer.data);
@@ -261,6 +309,94 @@ describe('Candidature actual browser layout and drawer against synthetic Model C
         expression:"document.querySelector('dialog.c-drawer[open]')===null",returnByValue:true,
       },tab);
       expect(closed?.result?.value).toBe(true);
+    }finally{session.close();}
+  },125000);
+});
+
+
+describe('PR #42 browser mutations through real React, HTTP, Worker and ephemeral PERSONAL D1',()=>{
+  it('persists decisions, APPLIED confirmation, filtered refresh, SAVED on APP-only job and real 409 recovery',async()=>{
+    await runtime.dispose();
+    await initRuntime(true);
+    const catalog=await runtime.getD1Database('CATALOG');
+    const personal=await runtime.getD1Database('PERSONAL');
+    if(!tempDir)throw Error('CHROME_TEMP_MISSING');
+    const file=await readFile(join(tempDir,'DevToolsActivePort'),'utf8');
+    const [portString,endpoint]=file.trim().split('\n');
+    if(!portString||!endpoint||!Number.isInteger(Number(portString))||Number(portString)<=0)
+      throw Error('CHROME_DEBUGGING_INVALID');
+    const session=await connectCDP(Number(portString),endpoint);
+    try{
+      const target=await session.send('Target.createTarget',{url:'about:blank'});
+      const attached=await session.send('Target.attachToTarget',{targetId:target.targetId,flatten:true});
+      const tab=attached.sessionId as string;
+      await session.send('Page.enable',{},tab);
+      await session.send('Runtime.enable',{},tab);
+      async function run(expression:string){
+        const result=await session.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},tab);
+        if(result.exceptionDetails)throw Error('BROWSER_JS '+JSON.stringify(result.exceptionDetails));
+        return result?.result?.value as unknown;
+      }
+      async function until(expression:string){
+        for(let i=0;i<100;i++){
+          const value=await run(expression);
+          if(value)return value;
+          await delay(120);
+        }
+        throw Error('BROWSER_CONDITION_TIMEOUT '+expression);
+      }
+      async function choose(value:string){
+        expect(await run(`(()=>{const el=document.querySelector('.c-personal-actions select');
+          if(!el||el.disabled)return false;el.value=${JSON.stringify(value)};
+          el.dispatchEvent(new Event('change',{bubbles:true}));return true})()`)).toBe(true);
+      }
+      const navigate=async(to:string)=>{
+        await session.send('Page.navigate',{url:to},tab);
+        await until("document.querySelector('.c-listing tbody tr')!==null");
+      };
+      await navigate(url);
+      await run("document.querySelector('.c-row-open')?.click()");
+      await until("!!document.querySelector('.c-personal-actions select:not([disabled])')");
+      await choose('INTERESTED');
+      await until("!![...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione')&&!b.disabled)");
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione'))?.click()");
+      await until("document.querySelector('.c-listing tbody')?.textContent?.includes('Interessante') && document.querySelector('.c-drawer[open]')!==null");
+      expect(await personal.prepare("SELECT decision FROM personal_app_current WHERE job_id=?").bind(jobId).first('decision')).toBe('INTERESTED');
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_events").first('n')).toBe(1);
+      await session.send('Page.reload',{},tab);
+      await until("document.querySelector('.c-listing tbody')?.textContent?.includes('Interessante')");
+      await run("[...document.querySelectorAll('.c-tabs button')].find(b=>b.textContent==='Da candidare')?.click()");
+      await until("document.querySelector('.c-listing tbody')?.textContent?.includes('Synthetic Analyst')");
+      await run("document.querySelector('.c-row-open')?.click()");
+      await until("!!document.querySelector('.c-personal-actions select:not([disabled])')");
+      await choose('APPLIED');
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione'))?.click()");
+      await until("!![...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma candidatura inviata'))");
+      expect(await personal.prepare("SELECT revision FROM personal_app_current WHERE job_id=?").bind(jobId).first('revision')).toBe(1);
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma candidatura inviata'))?.click()");
+      await until("document.querySelector('.c-drawer[open]')!==null && document.querySelector('.c-listing tbody tr')===null");
+      expect(await personal.prepare("SELECT decision FROM personal_app_current WHERE job_id=?").bind(jobId).first('decision')).toBe('APPLIED');
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_events").first('n')).toBe(2);
+      await navigate(url.replace('/candidature','/opportunita'));
+      const second='job:'+'2'.repeat(64);
+      await run(`[...document.querySelectorAll('.c-listing tbody tr')].find(tr=>tr.textContent?.includes('Second Synthetic Analyst'))?.querySelector('.c-row-open')?.click()`);
+      await until("document.querySelector('.c-drawer[open] .c-personal-actions button:not([disabled])')!==null");
+      await run("[...document.querySelectorAll('.c-action-saved button')].find(b=>b.textContent?.includes('Salva posizione'))?.click()");
+      await until("document.querySelector('.c-action-saved')?.textContent?.includes('Rimuovi dai salvati')");
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_current WHERE job_id=?").bind(second).first('n')).toBe(1);
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_job_refs WHERE job_id=?").bind(second).first('n')).toBe(0);
+      // An external local APP operation races with a stale browser drawer.
+      const {executePersonalCommand}=await import('../worker/data/model-c-personal-write');
+      await executePersonalCommand(catalog,personal,{ownerId:owner},{
+        kind:'DECISION',jobId:second,expectedRevision:1,catalogRevision:1,
+        operationId:'00000000-0000-4000-8000-000000004242',decision:'TO_REVIEW',reasonSummary:null,
+      });
+      await choose('INTERESTED');
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione'))?.click()");
+      await until("document.querySelector('.c-action-feedback.c-error')?.textContent?.includes('cambiata')");
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_events WHERE job_id=?").bind(second).first('n')).toBe(2);
+      expect(await personal.prepare("SELECT decision FROM personal_app_current WHERE job_id=?").bind(second).first('decision')).toBe('TO_REVIEW');
+      expect(await run("document.body.scrollWidth <= window.innerWidth")).toBe(true);
     }finally{session.close();}
   },125000);
 });
