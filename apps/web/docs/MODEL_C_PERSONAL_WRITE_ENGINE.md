@@ -68,7 +68,7 @@ Success:
 
 Retries return the committed response with `replayed:true`. Error responses: `{error:"REVISION_CONFLICT"}` 409; `IDEMPOTENCY_KEY_REUSED` 409; `CATALOG_CHANGED` 409; `JOB_NOT_CURRENT` 404; `invalid_payload` 400; `invalid_json` 400; `body_too_large` 413; `invalid_content_type` 415; gate-off `not_found` 404; remote/owner/origin blocked 403; a database error `WRITE_TRANSACTION_FAILED` 503. All command responses use `Cache-Control: no-store`.
 
-A future UI must learn if writes are enabled through a **server capability endpoint**, not by a client-side flag. **That endpoint and UI mutations belong to PR #42**, not this PR. No existing button should simulate persistence. For conflicts, refresh the target job's `jobRevision`, show the new decision to the user, and create a new operationId for an intentional retry; do not silently overwrite it.
+The read-only **GET /api/model-c/personal/capabilities** endpoint responds with `{writeEnabled:boolean,productionAccess:false}` behind the existing local read gate, reflecting the additional server-side write gate. The browser helper `readPersonalWriteCapabilities` validates this response. Only mutative UI controls and save/409 UX belong to PR #42, not this PR. Never infer the gate from a client-side flag. No existing button should simulate persistence. For conflicts, refresh the target job's `jobRevision`, show the new decision to the user, and create a new operationId for an intentional retry; do not silently overwrite it.
 
 ## Effective state and read-your-writes
 
@@ -87,3 +87,7 @@ The only enabled environment is a **synthetic local laboratory**. No remote work
 PR #42 will add a server-confirmed write capability endpoint, React command client, accessible decision/SAVED controls, APPLIED confirmation, conflict dialogs, pending state and read-your-writes browser E2E. It must preserve the #39/#40 layout, and must not weaken the server ownership boundary.
 
 Testing: `npm run check`, `npm run worker:check`, migration/backup, all importer/read-only regression tests and `model-c-personal-write.test.ts` (live Miniflare D1, real Worker, atomic failures, concurrency and owner isolation). No write gate in normal Wrangler configuration.
+
+## Archived PERSONAL captures
+
+A known permanent CATALOG identity that is no longer a current vacancy may still have an existing owner-bound imported `personal_job_refs` capture. Such a job can receive an APP decision/SAVED command using its original captured title, URL, lifecycle and immutable provenance; the writer verifies current CATALOG checkpoint and permanent identity and never fabricates a capture. An unknown job or a different owner's archived capture is rejected. The imported capture is never edited. This protects historical Candidature entries after a vacancy closes.
