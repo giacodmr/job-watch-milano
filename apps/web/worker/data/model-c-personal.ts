@@ -247,22 +247,24 @@ export async function listModelCPersonalJobs(catalog:D1Database,personal:D1Datab
     clauses.push("instr(lower(coalesce(ref.captured_title,'')),lower(?))>0");
     args.push(query.q);
   }
-  if(query.decision) { clauses.push('d.decision=?');args.push(query.decision); }
-  if(query.reference) {
-    clauses.push(`EXISTS (SELECT 1 FROM personal_reference_state st
-      WHERE st.owner_id=ref.owner_id AND st.job_id=ref.job_id AND st.kind=? AND st.active=1)`);
-    args.push(query.reference);
+  const effectiveDecision="(CASE WHEN app.decision_override=1 THEN app.decision ELSE d.decision END)";
+  const importedRef=(kind:string)=>`EXISTS (SELECT 1 FROM personal_reference_state st
+    WHERE st.owner_id=ref.owner_id AND st.job_id=ref.job_id
+    AND st.kind='${kind}' AND st.active=1)`;
+  const savedEffective=`((app.saved_override=1 AND app.saved_active=1)
+    OR (COALESCE(app.saved_override,0)=0 AND ${importedRef('SAVED')}))`;
+  if(query.decision) { clauses.push(effectiveDecision+'=?');args.push(query.decision); }
+  if(query.reference){
+    if(query.reference==='SAVED')clauses.push(savedEffective);
+    else clauses.push(importedRef(query.reference));
   }
-  if(query.view==='to_apply') clauses.push(`(d.decision IN ('TO_REVIEW','INTERESTED')
-    OR EXISTS (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
-      AND st.job_id=ref.job_id AND st.kind='SAVED' AND st.active=1))
-    AND (d.decision IS NULL OR d.decision NOT IN ('APPLIED','NOT_INTERESTED'))`);
-  if(query.view==='applied') clauses.push(`(d.decision='APPLIED' OR EXISTS
-    (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
-      AND st.job_id=ref.job_id AND st.kind='APPLICATION' AND st.active=1))`);
-  if(query.view==='dismissed') clauses.push(`(d.decision='NOT_INTERESTED' OR EXISTS
-    (SELECT 1 FROM personal_reference_state st WHERE st.owner_id=ref.owner_id
-      AND st.job_id=ref.job_id AND st.kind='DISMISSED' AND st.active=1))`);
+  if(query.view==='to_apply') clauses.push(`(${effectiveDecision} IN ('TO_REVIEW','INTERESTED')
+    OR ${savedEffective})
+    AND (${effectiveDecision} IS NULL OR ${effectiveDecision} NOT IN ('APPLIED','NOT_INTERESTED'))`);
+  if(query.view==='applied') clauses.push(`(${effectiveDecision}='APPLIED'
+    OR ${importedRef('APPLICATION')})`);
+  if(query.view==='dismissed') clauses.push(`(${effectiveDecision}='NOT_INTERESTED'
+    OR ${importedRef('DISMISSED')})`);
   const where=clauses.join(' AND ');
   const total=await personal.prepare(`SELECT count(*) AS n FROM (${selectRef} WHERE ${where})`)
     .bind(...args).first<number>('n');
