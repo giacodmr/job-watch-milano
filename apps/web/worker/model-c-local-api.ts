@@ -133,7 +133,7 @@ export async function handleModelCLocalApi(
       return response(await readModelCOpportunities(env,path.slice(opportunitiesPrefix.length),input));
     const catalogPath = path.startsWith(catalogPrefix);
     const suffix = path.slice(catalogPath ? catalogPrefix.length : personalPrefix.length);
-    if (!catalogPath && !['summary','jobs'].includes(suffix) && !suffix.startsWith('jobs/'))
+    if (!catalogPath && !['summary','jobs','capabilities'].includes(suffix) && !suffix.startsWith('jobs/'))
       return error('not_found',404);
     if (catalogPath && !['snapshot','jobs'].includes(suffix) && !suffix.startsWith('jobs/'))
       return error('not_found',404);
@@ -157,6 +157,10 @@ export async function handleModelCLocalApi(
     if (!env.MODEL_C_TEST_OWNER || !syntheticOwner.test(env.MODEL_C_TEST_OWNER))
       return error('synthetic_owner_unavailable',403);
     const trusted = {ownerId:env.MODEL_C_TEST_OWNER};
+    if(suffix==='capabilities'){
+      empty.parse(input);
+      return response({writeEnabled:env.MODEL_C_LOCAL_WRITE==='synthetic-only',productionAccess:false});
+    }
     if (suffix === 'summary') {
       empty.parse(input);
       return response(await getModelCPersonalSummary(env.CATALOG,env.PERSONAL,trusted));
