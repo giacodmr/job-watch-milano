@@ -1,6 +1,6 @@
 import {afterEach,describe,it,expect,vi} from 'vitest';
 import {
-  commandSchema,CommandFailure,forgetPending,newCommand,pendingFor,
+  commandSchema,forgetPending,newCommand,pendingFor,
   postPersonalCommand,rememberPending,
 } from '../src/model-c-personal-commands';
 
@@ -37,7 +37,7 @@ describe('PR #42 browser command contract',()=>{
       eventId:'app:'+saved.operationId,saved:true,decision:null,
     }),{status:200}));vi.stubGlobal('fetch',fetch);
     expect(await postPersonalCommand(saved)).toMatchObject({saved:true,decision:null});
-    expect(fetch.mock.calls[0]![0]).toBe('/api/model-c/personal/commands/saved');
+    expect((fetch.mock.calls[0] as unknown as [string])[0]).toBe('/api/model-c/personal/commands/saved');
     expect(commandSchema.safeParse({...saved,decision:'APPLIED'}).success).toBe(false);
     expect(commandSchema.safeParse({...command(),decision:'CUSTOM'}).success).toBe(false);
     expect(commandSchema.safeParse({...command(),expectedRevision:-1}).success).toBe(false);
