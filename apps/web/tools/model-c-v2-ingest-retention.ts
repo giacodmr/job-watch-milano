@@ -16,7 +16,8 @@ export async function compactTerminalV2Runs(db:D1Database,{limit=3}:{limit?:numb
   AND NOT EXISTS(SELECT 1 FROM catalog_head h
     WHERE h.scope='catalog' AND h.run_id=r.id)
   ORDER BY r.id LIMIT ?`).bind(limit).all<{id:string}>()).results;
- const out={archived:0,payloadChunksReclaimed:0,rowsWritten:0,ids:[] as string[]};
+ const out={archived:0,payloadChunksReclaimed:0,rowsWritten:0,
+  recoveredUnknownWriteOutcomes:0,ids:[] as string[]};
  for(const {id} of candidates){
   if((await observeIngestJournal(db,id)).phase!=='COMPLETED')
    return fail('V2_RETENTION_NOT_TERMINAL');
@@ -57,6 +58,11 @@ export async function compactTerminalV2Runs(db:D1Database,{limit=3}:{limit?:numb
     const n=Number(await db.prepare('SELECT count(*) AS n FROM catalog_ingest_v2_archive_chunks WHERE run_id=?')
      .bind(id).first('n'));
     if(n!==run.total_chunks)return fail('V2_RETENTION_ARCHIVE_INCOMPLETE');
+    // D1 committed before the network/driver lost its ACK. This is a
+    // completed archive, even though meta.rows_written cannot be recovered
+    // from the rejected call; account for it separately, never as zero cost.
+    out.archived++;out.payloadChunksReclaimed+=run.total_chunks;
+    out.recoveredUnknownWriteOutcomes++;out.ids.push(id);
     continue;
    }
    return fail('V2_RETENTION_OUTCOME_UNKNOWN');
