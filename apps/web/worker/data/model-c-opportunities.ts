@@ -6,6 +6,7 @@ import {
 } from './model-c-catalog';
 import {getModelCPersonalJob,getModelCPersonalOverlays} from './model-c-personal';
 import type {ModelCLocalEnv} from '../model-c-local-api';
+import type {TrustedOwner} from './model-c-personal';
 
 const idSchema=z.string().regex(/^job:[a-f0-9]{64}$/);
 const revisionSchema=z.strictObject({revision:z.string().regex(/^[1-9][0-9]{0,9}$/).transform(Number)});
@@ -25,14 +26,15 @@ function checkCatalog(before:PublishedCheckpoint|null,after:PublishedCheckpoint|
     before?.observedCommit!==after?.observedCommit)
     throw new ModelCReadError('CATALOG_CHANGED',409);
 }
-function verifyOwner(env:ModelCLocalEnv) {
+function verifyOwner(env:ModelCLocalEnv,authenticatedOwner?:TrustedOwner) {
   if(!env.CATALOG||!env.PERSONAL)throw new ModelCReadError('database_unavailable',503);
+  if(authenticatedOwner)return {catalog:env.CATALOG,personal:env.PERSONAL,owner:authenticatedOwner};
   if(!env.MODEL_C_TEST_OWNER || !/^synthetic-[a-z][a-z0-9-]{0,63}$/.test(env.MODEL_C_TEST_OWNER))
     throw new ModelCReadError('synthetic_owner_unavailable',403);
   return {catalog:env.CATALOG,personal:env.PERSONAL,owner:{ownerId:env.MODEL_C_TEST_OWNER}};
 }
-export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,input:Record<string,string>) {
-  const {catalog,personal,owner}=verifyOwner(env);
+export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,input:Record<string,string>,authenticatedOwner?:TrustedOwner) {
+  const {catalog,personal,owner}=verifyOwner(env,authenticatedOwner);
   if(suffix==='jobs'){
     const filters=modelCCatalogQuerySchema.parse(input);
     const page=await listModelCCatalogJobs(catalog,filters);
