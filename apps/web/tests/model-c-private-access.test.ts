@@ -272,7 +272,7 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
   it('M48 private APP writes: default denied, Access-bound owner, atomic D1, replay and stale CAS',async()=>{
     const live={...env(),PRIVATE_APP_WRITE_GATE:'gate-b-approved',
       PRIVATE_QUOTA_ATTESTED:'verified-under-budget'};
-    const partial={...live,PRIVATE_QUOTA_ATTESTED:undefined};
+    const partial={...env(),PRIVATE_APP_WRITE_GATE:'gate-b-approved'};
     const token=await jwt();
     const principal=await authenticatePrivateRequest(req('/',token),live,verifyKey);
     expect(privateWriteEnabled(env())).toBe(false);
@@ -282,7 +282,7 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     const cmd={kind:'DECISION',jobId,catalogRevision:1,expectedRevision:0,
       decision:'INTERESTED',reasonSummary:'Private synthetic case',
       operationId:'00000000-0000-4000-8000-000000004800'};
-    const post=(body:unknown,envOverride:PrivateAccessEnv=live,headers:Record<string,string>={})=>
+    const post=(body:unknown,_envOverride:PrivateAccessEnv=live,headers:Record<string,string>={})=>
       req(path,token,{method:'POST',headers:{'Origin':addr,
         'Content-Type':'application/json',...headers},body:JSON.stringify(body)});
     const denied=await handlePrivateRuntime(post(cmd,env()),env(),principal);
