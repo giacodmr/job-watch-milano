@@ -30,7 +30,7 @@ function json(value:unknown,status=200){
 // SQL, account details, or add a paid-tier/retry fallback.
 export function privateD1ErrorCode(error:unknown):'cloudflare_quota_exceeded'|'database_unavailable' {
   if(error instanceof Error &&
-    /Your account has exceeded D1's free tier daily row (read|write) limit\\./.test(error.message))
+    /Your account has exceeded D1's free tier daily row (read|write) limit\./.test(error.message))
     return 'cloudflare_quota_exceeded';
   return 'database_unavailable';
 }
