@@ -3,7 +3,7 @@ import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CandidatureTable} from '../src/Candidature';
 import {OpportunityTable} from '../src/Opportunita';
-import {opportunityPageSchema,opportunityDetailSchema} from '../src/model-c-opportunities-client';
+import {opportunityPageSchema,opportunityDetailSchema,opportunitySnapshotSchema} from '../src/model-c-opportunities-client';
 import {personalPageSchema} from '../src/model-c-personal-client';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
@@ -59,6 +59,9 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
     expect(await snap.json()).toEqual({snapshot:null,productionAccess:false});
     const list=await firstResponse('/api/model-c/catalog/jobs');
     expect(await list.json()).toMatchObject({items:[],total:0,snapshot:null});
+    const emptyComposed=await endpoint('/api/model-c/opportunities/jobs');
+    expect(emptyComposed.status).toBe(200);
+    expect(await emptyComposed.json()).toMatchObject({snapshot:null,personalRevision:null,items:[],total:0});
     const privateResp=await endpoint('/api/model-c/personal/summary');
     expect(privateResp.status).toBe(503);
     expect(await privateResp.json()).toEqual({error:'NO_PUBLISHED_CATALOG'});
@@ -158,6 +161,8 @@ describe('PR #38: real Worker HTTP / CATALOG+PERSONAL ephemeral D1',()=>{
   it('composes a real published CATALOG page with batch isolated PERSONAL overlay over HTTP',async()=>{
     const beforeCatalog=(await captureSynthetic(catalog,'catalog')).sha256;
     const beforePersonal=(await captureSynthetic(personal,'personal')).sha256;
+    const head=opportunitySnapshotSchema.parse(await (await firstResponse('/api/model-c/catalog/snapshot')).json());
+    expect(head.snapshot).toMatchObject({runId:'run-one',syncRevision:1,currentJobs:1});
     const page=opportunityPageSchema.parse(await (await firstResponse('/api/model-c/opportunities/jobs?q=Synthetic&limit=25')).json());
     expect(page).toMatchObject({total:1,personalRevision:1,
       snapshot:{syncRevision:1,runId:'run-one'},
