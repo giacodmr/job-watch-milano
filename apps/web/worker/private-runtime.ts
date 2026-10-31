@@ -41,7 +41,9 @@ export function privateD1ErrorCode(error:unknown):'cloudflare_quota_exceeded'|'d
  * settings and an atomic D1 write are ALL required for a successful response. */
 async function privateCommand(request:Request,env:PrivateAccessEnv,
  principal:AuthenticatedPrincipal,kind:'decision'|'saved'):Promise<Response>{
-  if(!privateWriteEnabled(env))return json({error:'method_not_allowed'},405);
+  // Preserve legacy read-only API surface: hidden command GETs return 404.
+  if(!privateWriteEnabled(env))return request.method==='GET'||request.method==='HEAD'?
+    json({error:'not_found'},404):json({error:'method_not_allowed'},405);
   if(request.method!=='POST')return json({error:'method_not_allowed'},405);
   const url=new URL(request.url);
   if(url.search)return json({error:'invalid_query'},400);
