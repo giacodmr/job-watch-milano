@@ -19,30 +19,10 @@ const rejected=(code:string):never=>{throw new StageAuditError(code);};
  * but v1 staging alone must never be promoted as a full catalog.
  * This is fail-closed when any selected job cannot be represented in v1.
  */
-export async function verifyTrustedStagingAgainstSnapshot(
-  catalog:D1Database,runId:string,bundle:SnapshotBundle,selected:Selected,
-  verifiedProof:unknown,trustedPlan:Plan,
-){
-  const receipt=await auditReceivedIngestStage(catalog,runId);
-  const proof=projectionProofSchema.parse(verifiedProof);
-  if(proof.observedGitCommit!==bundle.manifest.commitSha ||
-     proof.sourceManifestDigest!==await sha256(canonical(bundle.manifest)))
-    return rejected('TRUSTED_SOURCE_PROOF_MISMATCH');
-  if(receipt.claimedCommitSha!==proof.observedGitCommit||
-     receipt.claimedManifestDigest!==proof.sourceManifestDigest||
-     receipt.claimedProjectionDigest!==proof.projectionInputDigest)
-    return rejected('SOURCE_RECEIPT_MISMATCH');
-  const {digest:planDigest,...planBody}=trustedPlan;
-  if(trustedPlan.target!=='OFFLINE_REVIEW_ONLY'||
-     trustedPlan.remoteExecutionAuthorized!==false||
-     trustedPlan.syncRevision!==receipt.expectedRevision+1||
-     trustedPlan.origin.observedCommit!==proof.observedGitCommit||
-     trustedPlan.origin.manifestDigest!==proof.sourceManifestDigest||
-     trustedPlan.origin.projectionDigest!==proof.projectionInputDigest||
-     planDigest!==await sha256(canonical(planBody))||
-     planDigest!==receipt.claimedPlanDigest)
-    return rejected('TRUSTED_PLAN_MISMATCH');
-
+/** Pure checked reduction of a FULL trusted snapshot to the v1 wire inventory.
+ * No data in this reduced view is ever used directly as catalog SQL payload.
+ */
+export function projectTrustedInventoryV1(bundle:SnapshotBundle,selected:Selected){
   const all=bundle.chunks.flat();
   const aliases=new Map(selected.ledger.mappings.map(r=>[r.key,r.jobId]));
   const chosen=new Map(selected.catalog.map(r=>[r.jobId,r]));
@@ -75,9 +55,36 @@ export async function verifyTrustedStagingAgainstSnapshot(
     if(ids.has(k))return rejected('TRUSTED_INVENTORY_DUPLICATE');
     ids.add(k);
   }
-  const expected=await sha256(canonical([...valid.data].sort((a,b)=>
+  return valid.data;
+}
+
+export async function verifyTrustedStagingAgainstSnapshot(
+  catalog:D1Database,runId:string,bundle:SnapshotBundle,selected:Selected,
+  verifiedProof:unknown,trustedPlan:Plan,
+){
+  const receipt=await auditReceivedIngestStage(catalog,runId);
+  const proof=projectionProofSchema.parse(verifiedProof);
+  if(proof.observedGitCommit!==bundle.manifest.commitSha ||
+     proof.sourceManifestDigest!==await sha256(canonical(bundle.manifest)))
+    return rejected('TRUSTED_SOURCE_PROOF_MISMATCH');
+  if(receipt.claimedCommitSha!==proof.observedGitCommit||
+     receipt.claimedManifestDigest!==proof.sourceManifestDigest||
+     receipt.claimedProjectionDigest!==proof.projectionInputDigest)
+    return rejected('SOURCE_RECEIPT_MISMATCH');
+  const {digest:planDigest,...planBody}=trustedPlan;
+  if(trustedPlan.target!=='OFFLINE_REVIEW_ONLY'||
+     trustedPlan.remoteExecutionAuthorized!==false||
+     trustedPlan.syncRevision!==receipt.expectedRevision+1||
+     trustedPlan.origin.observedCommit!==proof.observedGitCommit||
+     trustedPlan.origin.manifestDigest!==proof.sourceManifestDigest||
+     trustedPlan.origin.projectionDigest!==proof.projectionInputDigest||
+     planDigest!==await sha256(canonical(planBody))||
+     planDigest!==receipt.claimedPlanDigest)
+    return rejected('TRUSTED_PLAN_MISMATCH');
+  const valid=projectTrustedInventoryV1(bundle,selected);
+  const expected=await sha256(canonical([...valid].sort((a,b)=>
     (a.kind+':'+a.id).localeCompare(b.kind+':'+b.id))));
-  if(receipt.recordCount!==valid.data.length||receipt.inventoryDigest!==expected)
+  if(receipt.recordCount!==valid.length||receipt.inventoryDigest!==expected)
     return rejected('STAGED_PROJECTION_MISMATCH');
   // A successful attestation only proves the lossy packet agrees with an
   // independently verified FULL projection. It does not unlock a Worker route.
