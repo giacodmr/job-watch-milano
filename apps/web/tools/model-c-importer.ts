@@ -341,12 +341,13 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const m47=options.stagedPublication;
   const stageVerifiedDigest=m47?await sha256(canonical({
     run,phase:'VERIFIED',commit:proof.observedGitCommit,
-    manifest:proof.sourceManifestDigest,projection:proof.projectionInputDigest,
+    manifest:m47.trustedPlan.origin.manifestDigest,
+    projection:m47.trustedPlan.origin.projectionDigest,
     ledger:selected.ledgerDigest,content:selected.catalogContentDigest,
     plan:m47.trustedPlan.digest,
   })):null;
   const personalPreparedDigest=m47?await sha256(canonical({
-    run,phase:'PERSONAL_PREPARED',source:proof.projectionInputDigest,
+    run,phase:'PERSONAL_PREPARED',source:m47.trustedPlan.origin.projectionDigest,
     // Bind replay to the ORIGINAL immutable ingestion revision, never the
     // already-advanced catalog HEAD observed during recovery.
     expectedRevision:m47.trustedPlan.syncRevision-1,
