@@ -569,6 +569,26 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     expect(again.status).toBe('REPLAY');
     expect(again.metrics.total).toBe(0);
   });
+  it('rejects a forged digest-checked plan before reservation and PERSONAL append',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,
+        trustedPlan:{...trustedPlan,digest:'f'.repeat(64)}}}))
+      .rejects.toThrow('TRUSTED_PLAN_MISMATCH');
+    expect(await count(f.c,'catalog_write_reservations')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
+  });
+  it('rejects a new Git commit that disagrees with the immutable staged run',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    f.options.source.commit=commit(f.repo);
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('SOURCE_RECEIPT_MISMATCH');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.p,'personal_heads')).toBe(0);
+  });
   it('refuses an incomplete stage BEFORE any local importer write',async()=>{
     const {f,packet,trustedPlan,append}=await prepared();
     if(packet.chunks.length<2)throw Error('EXPECTED_MULTIPLE_SYNTHETIC_CHUNKS');
