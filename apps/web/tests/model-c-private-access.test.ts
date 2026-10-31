@@ -113,8 +113,9 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
       await jwt({common_name:'service-token'}),await jwt({type:'service'})])
       await expect(authenticatePrivateRequest(req('/',token),env(),verifyKey))
         .rejects.toMatchObject({code:'private_access_denied'});
-    await expect(authenticatePrivateRequest(req('/',await jwt()),
-      {...env(),PRIVATE_OWNER_ID:undefined},verifyKey))
+    const missingOwner=env();
+    delete missingOwner.PRIVATE_OWNER_ID;
+    await expect(authenticatePrivateRequest(req('/',await jwt()),missingOwner,verifyKey))
       .rejects.toMatchObject({code:'private_config_missing'});
     await expect(authenticatePrivateRequest(req('/',await jwt()),
       {...env(),PRIVATE_OWNER_ID:'synthetic-owner'},verifyKey))
@@ -205,8 +206,10 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     expect(local).toContain('"workers_dev": false');
   });
   it('requires physical distinct database bindings and never falls back to synthetic owner',async()=>{
-    await expect(authenticatePrivateRequest(req('/',await jwt()),
-      {...env(),PERSONAL:undefined,MODEL_C_TEST_OWNER:'synthetic-owner'},verifyKey))
+    const noPersonal=env();
+    delete noPersonal.PERSONAL;
+    Object.assign(noPersonal,{MODEL_C_TEST_OWNER:'synthetic-owner'});
+    await expect(authenticatePrivateRequest(req('/',await jwt()),noPersonal,verifyKey))
       .rejects.toMatchObject({code:'private_databases_unavailable',status:503});
   });
 });
