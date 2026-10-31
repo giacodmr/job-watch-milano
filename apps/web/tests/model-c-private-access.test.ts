@@ -1,3 +1,4 @@
+import {readFile} from 'node:fs/promises';
 import {describe,it,expect,beforeAll,afterAll} from 'vitest';
 import {SignJWT,generateKeyPair,exportJWK,createLocalJWKSet} from 'jose';
 import type {JWTVerifyGetKey} from 'jose';
@@ -172,6 +173,18 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     }
     expect((await worker.fetch(req('/api/model-c/personal/commands/decision',undefined,{method:'POST'}),
       noAssets)).status).toBe(405);
+  });
+  it('commits only a non-deployable protected private template, preserving local setup',async()=>{
+    const template=await readFile('wrangler.private.template.jsonc','utf8');
+    const local=await readFile('wrangler.jsonc','utf8');
+    expect(template).toContain('"workers_dev": false');
+    expect(template).toContain('"preview_urls": false');
+    expect(template).toContain('"run_worker_first": true');
+    expect(template).toContain('"APP_ENV": "private"');
+    expect(template).not.toMatch(/"d1_databases"\\s*:/);
+    expect(template).not.toContain('PRIVATE_ALLOWED_SUB":');
+    expect(local).toContain('"APP_ENV": "local"');
+    expect(local).toContain('"workers_dev": false');
   });
   it('requires physical distinct database bindings and never falls back to synthetic owner',async()=>{
     await expect(authenticatePrivateRequest(req('/',await jwt()),
