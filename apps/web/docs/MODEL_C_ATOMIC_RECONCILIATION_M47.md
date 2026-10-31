@@ -98,7 +98,11 @@ ingestion write costs must also be accounted for in any full remote budget.
 Remote account usage is UNKNOWN and therefore DENY.
 
 M46 caps one request at 12 KiB, 16 records per chunk, 64 chunks per run and
-8 immutable retained runs. Existing immutable retain triggers are preserved.
+8 immutable retained runs. M47 now enforces this eight-run limit in the same
+SQLite INSERT predicate as the run creation, preventing two concurrent
+requests from bypassing an out-of-transaction count precheck. A dedicated
+Miniflare test exercises contention at the admission boundary.
+Existing immutable retain triggers are preserved.
 A safe terminal-run retention/GC policy is **not** delivered here; indefinite
 reuse of this v1 receiver would exhaust local admission capacity.
 
