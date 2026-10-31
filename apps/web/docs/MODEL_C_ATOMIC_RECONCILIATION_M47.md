@@ -11,7 +11,7 @@ CATALOG and PERSONAL SQL. The M46 service JWT continues to grant only
 `catalog:stage`. It can never initiate publication, PERSONAL writes or GC.
 None of these offline modules is imported into either deployable Worker.
 
-Physical databases are separate: CATALOG schema v6, PERSONAL schema v3.
+Physical databases are separate: CATALOG schema v7, PERSONAL schema v3.
 No cross-database transaction is asserted. CATALOG publication retains one
 transactional D1 batch and an atomic compare-and-swap publication head.
 PERSONAL append precedes that batch, and a separate PERSONAL reconciliation
@@ -35,7 +35,7 @@ follows it. Retry is based on durable receipts, not network response status.
   rewritten.
 
 `model-c-schema.ts` applies the additive migration atomically and is
-migration-hash-locked. Readers/preflights are upgraded to require v6. The
+migration-hash-locked. Readers/preflights are upgraded to require v7. The
 v1 ingestion *wire* remains `schemaVersion:5` for compatibility; it MUST
 not be confused with the physical v6 database version.
 
@@ -75,7 +75,7 @@ reduced schema and strict legacy limits. Only the full independently
 replayed Git/Python source may be published; a lossy v1 payload never
 becomes CATALOG SQL directly.
 
-**v2 (offline contract only)** in `shared/model-c-ingestion-v2.ts` adds
+**v2 (durable synthetic-local D1 transport, not deployable)** in `shared/model-c-ingestion-v2.ts` adds
 complete owner-neutral CATALOG records: companies, ATS sources, vacancy
 metadata including nullable/closed lifecycles, confirmed identities,
 alias mappings and source/coverage provenance. It preserves deterministic
@@ -86,11 +86,15 @@ Private user/semantic event payloads are excluded from CATALOG v2. They
 must remain inside the separately authorized, owner-bound PERSONAL
 pipeline. Do not invent a `catalog:stage` permission to read PERSONAL.
 
-**Important limitation:** there is NO authenticated v2 HTTP ingestion
-handler or v2 durable staging table yet. The contract is only an offline
-packet builder/verifier. It is NOT a production transport or complete
-resolution of the v1 capacity limitations. Packet limits are conservative
-laboratory constraints, not remote CPU or quota verification.
+**V2 persistence implemented:** `worker/model-c-ingest-v2-lab.ts`
+implements a detached, signed-JWT, synthetic-only D1 HTTP receiver; schema
+`0007_v2_ingestion.sql` provides immutable versioned runs, chunks, receipts
+and archive. `tools/model-c-v2-stage-attestation.ts` reconstructs persisted
+packets, and `tools/model-c-v2-trusted-stage.ts` compares against an
+independently verified Git/Python inventory and original trusted plan.
+The existing atomic CATALOG importer and journal now support v2 and v1 run
+identity explicitly. These changes do not authorize production routes,
+Cloudflare traffic, remote quotas or CPU feasibility.
 
 ### Compaction and historical replay
 
@@ -198,3 +202,171 @@ Results must be checked on the **final** SHA, not inherited from M46.
 5. Pass complete CI and review final head SHA, permissions and Worker routes.
 
 **Decision: Gate A NOT COMPLETE; Gate B CLOSED. PR #48 must stay DRAFT.**
+
+## Final completion sprint — implementation, evidence and blockers
+
+**Status vocabulary:** `IMPLEMENTED_LOCALLY` applies to code committed on
+PR #48; `TESTED_LOCALLY` applies only after relevant Miniflare/GitHub Actions
+test success on the final SHA. `CLOUD_VERIFIED=NO`, `DEPLOYED=NO`,
+`ACTIVATED=NO` for the entire milestone. **Gate B CLOSED.**
+
+### V1 / V2 / physical schema
+
+| Feature | V1 unchanged | V2 local-only |
+|---|---|---|
+| Wire contract | `job-watch-model-c-ingestion/1` | `job-watch-model-c-ingestion/2` |
+| Run ID | `ingest:<sha256>` | `ingest-v2:<sha256>` |
+| Stored CATALOG | Reduced inventory | Full owner-neutral inventory incl. original source origin, stable identities and aliases |
+| Transport | JWT HTTP v1 isolated lab | JWT HTTP v2 isolated lab `model-c-ingest-v2-lab.ts` |
+| D1 storage | v5 receipt tables retained by v7 | Separate v7 live/archive receipt tables |
+| Journal | One immutable common chain | Same common chain with v2-specific completeness audit |
+| Publish authority | Trusted Git/Python importer only | Trusted Git/Python importer only |
+| PERSONAL writes | Not granted | Not granted |
+
+Physical CATALOG v7 and PERSONAL v3 remain **separate databases**. The
+`0007_v2_ingestion.sql` migration is additive to 0001–0006 (none rewritten)
+except journal guard trigger replacement in v7. Hash-locked migration history
+preserves v1. A CATALOG transactional publication batch cannot be combined
+atomically with a PERSONAL commit. The importer records the actual HEAD,
+then performs owner-bound PERSONAL reconciliation and verifies durable
+receipts before writing `COMPLETED`.
+
+### Field-by-field trusted projection matrix
+
+All fields below originate in the pinned canonical Git/Python snapshot
+or independently verified identity ledger. Client hashes prove packet
+integrity, **not** source provenance. Canonical comparison of every
+persisted V2 record with independently rebuilt trusted packets is required
+before `VERIFIED`.
+
+| Snapshot / selection fields | Wire v2 | CATALOG / reader / recovery responsibility |
+|---|---|---|
+| Company `id,name,configId,tier,priority,careerUrl,membership` | YES | Company identity, display, history |
+| Company `sourcePath,sourceSha256` | YES | Origin provenance |
+| ATS `id,companyId,sourceKey,family,inventoryUrl` | YES | Source/ATS mapping |
+| ATS `coverage,generatedAt,coveragePath,coverageSha256` | YES | Coverage freshness/provenance |
+| ATS `sourcePath,sourceSha256` | YES | Source origin |
+| Vacancy `jobKey,aliases,upstreamSourceId,companyId,sourceId` | YES | Original keys, mappings, stable reconciliation |
+| Vacancy `jobId,selectedKind` | YES | Derived only from trusted identity/selection, CATALOG membership |
+| Vacancy `title,location,batch,canonicalUrl,applyUrl` | YES | Reader display and filters |
+| Vacancy `lifecycle,fingerprint,firstSeenAt,lastSeenAt` | YES | Lifecycle, history, no delete-by-absence |
+| Vacancy `needsAnalysis,analysisStatus,analysisMethod,hardExclusionReason,sortKey` | YES | AI queue/analysis filtering and selection verification |
+| Vacancy `workerEligible,technicalStatus` | YES | Eligibility metadata |
+| Vacancy `sourcePath,sourceSha256` | YES | Origin |
+| Ledger identities `jobId,companyId,originJobKey` | YES | Permanent identity ledger |
+| Ledger alias mappings `key,jobId` | YES | Permanent alias ledger |
+| `fitScore,reportable,effectiveDecision` | NO | Trusted selection and owner-bound PERSONAL context; not a service grant |
+| `semantic`, `user` event rows | NO | PERSONAL append-only events, imported by trusted owner-bound path only |
+| `pipeline` rows | NO | Operational pipeline health, not the CATALOG vacancy reader |
+
+The protocol is complete **for the owner-neutral CATALOG reader's inventory**,
+not a transport for every field of the entire snapshot. `selectedKind`
+is recomputed by trusted selection; staging may never choose an owner.
+The reader uses `needsAnalysis` and other vacancy metadata. Missing
+trusted source fields must fail before promotion.
+
+### State machine / recovery
+
+```text
+[JWT service: catalog:stage] -> D1 CATALOG v7 run / numbered chunks
+                 |                |
+       no publish/PERSONAL        v
+                         durable receipts, resume/replay
+                                  |
+                            RECEIVING
+                                  v
+                    COMPLETE [all chunks + hashes]
+                                  |
+                        trusted Git/Python/plan
+                                  v
+                              VERIFIED
+                                  |
+                       owner-bound PERSONAL append
+                                  v
+                          PERSONAL_PREPARED
+                                  |
+                  atomic CATALOG D1 CAS+HEAD+journal
+                                  v
+                          CATALOG_PUBLISHED
+                                  |
+                PERSONAL receipt+APP-revision readback
+                                  v
+                      PERSONAL_RECONCILED -> COMPLETED
+                                  |
+                   future non-current terminal run
+                                  v
+             immutable archival run/chunk receipts + journal
+```
+
+Archive compaction in `model-c-v2-ingest-retention.ts` uses an atomic D1
+batch per completed, published, **non-current** run. Archiving does not
+remove immutable journal events or receipt digests. Archived replay does
+not recreate staged rows. Missing archive evidence and unknown outcomes
+must fail closed. Retention archive storage grows with the total count
+of historical runs/chunks; unbounded storage sustainability is not claimed.
+
+After an uncertain 503, read the durable run/chunk status, HEAD, journal
+and PERSONAL receipt **before any retry**. A run at `COMPLETE` has not
+been Git verified. A run at `CATALOG_PUBLISHED` may still have PERSONAL
+pending. Restart the trusted importer against the original pinned Git
+commit, plan and authorized owner, not an invented new run. If APP
+revision changed, recalculate and reconcile idempotently. Do not
+blindly delete staged runs or reconstruct cross-DB atomicity.
+
+### 30-cycle and fault-injection tests
+
+New `tests/model-c-m47-continuous.test.ts` executes 30 Git commits on
+one synthetic repo and one pair of Miniflare databases, with real Python
+snapshot verification, service JWT v2 staging, importer, PERSONAL,
+journal, readers, archive and replay. It tests a lost PERSONAL receipt,
+APP decision, historical archived replay and overlapping duplicate
+chunk delivery. The test prints `M47_CONTINUOUS_30_CYCLES` with one
+object per cycle, including record/chunk counts, revision before/after,
+journal/personal status, active/archived count, importer write accounting
+and retention `meta.rows_written`, duration, and replay.
+
+**Certification condition:** the test must actually pass CI on the
+final SHA. Merely adding the test is not evidence of 30 executed cycles.
+The complete 19-point failure-injection matrix and all PERSONAL
+categories/assessments are not independently demonstrated by this
+test yet. A green CI cannot substitute for missing acceptance proofs.
+
+### Writes and Free-tier
+
+Local importer `ImportMetrics` separates bounded statement cost from
+observed D1 write rows. Staging v2 appends one run + journal trigger
+and a row per chunk; retention archives one run + one receipt per
+chunk and deletes the original payload rows. SQL indexes, triggers,
+migration writes, PERSONAL, reconciliation and remote usage
+must be budgeted separately. The 30-cycle test records importer
+measured writes and local retention `meta.rows_written`; these
+are **not** an account-wide Cloudflare bill or remaining quota.
+Workers Free 10ms CPU and remote D1 quota are unverified. Unknown
+quota = DENY; the normal project ceiling is 30,000 write units,
+60,000 only on explicit authorization. An initial bootstrap exception
+does not grant recurring extended budget. See the official links above.
+
+### AC-01–AC-16 — provisional, final SHA certification required
+
+| Criterion | State | Concrete implementation / remaining evidence |
+|---|---|---|
+| AC-01 provenance | PARTIAL | V2 trusted-stage compares independent Git replay; final CI needed |
+| AC-02 completeness | PARTIAL | V7 immutable full chunks and trusted canonical inventory; full matrix pending |
+| AC-03 CATALOG atomicity | PARTIAL | Importer D1 single batch + journal head guard; v2 test verdict pending |
+| AC-04 CAS | PARTIAL | Existing CAS guard / concurrency regressions; v2 contention not exhaustive |
+| AC-05 PERSONAL | PARTIAL | APP revision stability + existing immutable history; all categories pending |
+| AC-06 Cross-D1 | PARTIAL | Owner receipt + independent checkpoint reader; additional crash windows pending |
+| AC-07 Recovery | PARTIAL | Post-commit PERSONAL loss + rollback tested; full matrix pending |
+| AC-08 Replay | PARTIAL | Versioned archive receipts and HTTP replay; continuous CI pending |
+| AC-09 Security | PARTIAL | Detached signed JWT + capability restriction; deeper import graph audit pending |
+| AC-10 Free | PARTIAL | Local SQL bounds; actual quota/Worker CPU unverified |
+| AC-11 Regression | PARTIAL | All existing tests must pass final SHA |
+| AC-12 Cloud safety | PASS in repository work | No remote resources created, migrated or deployed in this sprint |
+| AC-13 CI | PARTIAL | Final `Web foundation` and `Validate Job Watch` need SUCCESS |
+| AC-14 Hygiene | PARTIAL | Existing PR #48 branch only, diff to be reviewed |
+| AC-15 Documentation | PARTIAL | This report and private runbook; insert final measured run log |
+| AC-16 Continuous | PARTIAL | New executable 30-cycle test; result must be actually observed |
+
+**Handoff:** Do not deploy, merge or start M48. Gate B remains CLOSED.
+If complete local proofs cannot be established, Gate A stays PARTIAL
+and PR #48 stays DRAFT.
