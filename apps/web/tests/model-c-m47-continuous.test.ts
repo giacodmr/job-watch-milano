@@ -183,7 +183,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   headers:{'cf-access-jwt-assertion':jwt,...(body===undefined?{}:{
    'content-type':'application/json'})},
   ...(body===undefined?{}:{body:canonical(body)})}));
- let previous:string|undefined;
+ let previous:string|undefined,appRevision=0,savedByApp=false;
  for(let i=0;i<30;i++){
   const started=performance.now();
   if(i>0&&i!==1&&i!==9&&i!==20)await mutate(i);
@@ -280,14 +280,27 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    ).first<string>('job_id'))!;
    const save=await executePersonalCommand(c,p,{ownerId:opts.owner},{
     kind:'DECISION',jobId:initialJobId,catalogRevision:result.syncRevision,
-    expectedRevision:slot,operationId:'00000000-0000-4000-8000-00000000414'+slot,
+    expectedRevision:appRevision,operationId:'00000000-0000-4000-8000-00000000414'+slot,
     decision:decisions[slot]!,reasonSummary:null});
    expect('status' in save ? save.status : null).toBe('saved');
+   appRevision++;
+  }
+  if(i===7||i===22){
+   if(!initialJobId)throw Error('EXPECTED_APP_DECISION_BEFORE_SAVED');
+   savedByApp=i===7;
+   const changed=await executePersonalCommand(c,p,{ownerId:opts.owner},{
+    kind:'SAVED',jobId:initialJobId,catalogRevision:result.syncRevision,
+    expectedRevision:appRevision,
+    operationId:i===7?'00000000-0000-4000-8000-000000004170':
+      '00000000-0000-4000-8000-000000004172',active:savedByApp});
+   expect(changed.status).toBe('saved');
+   appRevision++;
   }
   if(i>=4){
    const ix=decisionCycles.filter(x=>x<=i).length-1;
-   expect((await getModelCPersonalJob(c,p,{ownerId:opts.owner},initialJobId)).job)
-    .toMatchObject({decision:decisions[ix],decisionSource:'APP'});
+   const item=(await getModelCPersonalJob(c,p,{ownerId:opts.owner},initialJobId)).job;
+   expect(item).toMatchObject({decision:decisions[ix],decisionSource:'APP'});
+   expect(item.activeReferences.includes('SAVED')).toBe(savedByApp);
   }
   const retained=await compactTerminalV2Runs(i===17?
    lostBatchAcknowledgement(c,'INSERT INTO catalog_ingest_v2_archive_runs'):c);
@@ -312,8 +325,10 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
  expect(await count('catalog_audit')).toBe(30);
  expect(await count('catalog_ingest_v2_archive_runs')).toBe(29);
  expect(await count('catalog_ingest_v2_runs')).toBe(1);
- expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_events').first('n'))).toBe(4);
- expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_operations').first('n'))).toBe(4);
+ expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_events').first('n'))).toBe(6);
+ expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_operations').first('n'))).toBe(6);
+ expect(Number(await p.prepare("SELECT count(*) AS n FROM personal_app_events WHERE kind='SAVED'").first('n'))).toBe(2);
+ expect(Number(await p.prepare("SELECT count(*) AS n FROM personal_app_events WHERE kind='DECISION'").first('n'))).toBe(4);
  expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_decision_events').first('n'))).toBeGreaterThan(0);
  expect(Number(await c.prepare('SELECT count(*) AS n FROM catalog_aliases').first('n'))).toBeGreaterThan(22);
  expect(await c.prepare("SELECT job_id FROM catalog_aliases WHERE alias_key='Amazon::rotated-2026'").first('job_id'))
