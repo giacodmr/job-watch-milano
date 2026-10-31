@@ -227,3 +227,43 @@ describe('M46 local-only HTTP → real ephemeral D1 staging',()=>{
     expect(p.run.runId).toMatch(/^ingest:[a-f0-9]{64}$/);
   });
 });
+
+describe('M47 immutable staging capacity admission',()=>{
+  it('rejects the ninth run in SQL, not through an unsafe pre-insert count',async()=>{
+    const isolated=new Miniflare(convertV4MiniflareOptions({
+      modules:true,cf:false,compatibilityDate:'2026-10-29',
+      script:'export default {fetch(){return new Response("offline")}}',
+      d1Databases:{CATALOG:'m47-capacity-race'},
+    }));
+    try{
+      const catalog=await isolated.getD1Database('CATALOG');
+      expect((await applySchema(catalog,'catalog')).applied).toBe(5);
+      const h=createOfflineServiceIngestionHarness({
+        catalog,auth:keys,keys:resolver,quota,
+      });
+      const jwt=await token();
+      const list=await Promise.all(Array.from({length:11},()=>packets(1)));
+      for(const p of list.slice(0,7)){
+        expect((await h(request(base,jwt,'POST',p.run))).status).toBe(201);
+      }
+      // Exercise the boundary with genuinely overlapping, distinct requests.
+      // Depending on SQLite scheduling, the loser is a 429 or a recoverable
+      // 503; neither may advance the durable run count beyond eight.
+      const concurrent=await Promise.all(list.slice(7,9).map(p=>
+        h(request(base,jwt,'POST',p.run))));
+      expect(concurrent.every(r=>[201,429,503].includes(r.status))).toBe(true);
+      let n=Number(await catalog.prepare('SELECT count(*) AS n FROM catalog_ingest_runs').first('n'));
+      expect(n).toBeLessThanOrEqual(8);
+      if(n===7){
+        expect((await h(request(base,jwt,'POST',list[9]!.run))).status).toBe(201);
+        n=8;
+      }
+      expect(n).toBe(8);
+      expect((await h(request(base,jwt,'POST',list[10]!.run))).status).toBe(429);
+      expect(Number(await catalog.prepare('SELECT count(*) AS n FROM catalog_ingest_runs').first('n'))).toBe(8);
+      const replay=await h(request(base,jwt,'POST',list[0]!.run));
+      expect(replay.status).toBe(200);
+      expect(Number(await catalog.prepare('SELECT count(*) AS n FROM catalog_head').first('n'))).toBe(0);
+    }finally{await isolated.dispose();}
+  });
+});
