@@ -129,7 +129,7 @@ describe('inactive trusted-owner Model C personal read service',()=>{
       if (property!=='prepare') return Reflect.get(target,property,target);
       return (sql:string)=>{
         const statement=target.prepare(sql);
-        if (!sql.includes('SELECT revision,context_digest AS contextDigest FROM personal_heads'))
+        if (!sql.includes('SELECT revision,context_digest AS contextDigest,'))
           return statement;
         return new Proxy(statement,{
           get(inner,key) {
