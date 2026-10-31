@@ -133,7 +133,7 @@ function CandidatureDrawer({selected,onClose,onConfirmed}:{
             </section>
             {!!detail.appEvents?.some(event=>event.kind==='SAVED')&&<section className="c-panel-section">
               <h3>Salvataggi nella piattaforma</h3>
-              <ol className="c-history">{detail.appEvents.filter(event=>event.kind==='SAVED').map(event=>
+              <ol className="c-history">{detail.appEvents?.filter(event=>event.kind==='SAVED').map(event=>
                 <li key={event.id}><strong>{event.savedActive?'Posizione salvata':'Rimossa dai salvati'}</strong>
                   <small>{displayDate(event.createdAt)} · Piattaforma</small></li>)}</ol>
             </section>}
