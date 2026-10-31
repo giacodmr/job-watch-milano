@@ -74,6 +74,12 @@ describe('M45 safe offline D1 remote bootstrap readiness',()=>{
       safetyMarginRows:5000,remoteLimitsVerified:true,recoveryPlanVerified:true,writersQuiesced:true};
     expect(evaluateRemoteQuotaForPlan(plan,preflight(),evidence,new Date(day+'T12:00:00Z')))
       .toMatchObject({quotaStatus:'READY_FOR_MANUAL_REMOTE_REVIEW',remoteExecutionAuthorized:false});
+    const undercount={...evidence,setupWritesUpperBound:47};
+    expect(evaluateRemoteQuotaForPlan(plan,preflight(),undercount,new Date(day+'T12:00:00Z')))
+      .toMatchObject({quotaStatus:'QUOTA_VERIFICATION_REQUIRED',remoteExecutionAuthorized:false});
+    const unrelated=preflight();unrelated.provenance.observedCommit='d'.repeat(40);
+    expect(evaluateRemoteQuotaForPlan(plan,unrelated,evidence,new Date(day+'T12:00:00Z')))
+      .toMatchObject({quotaStatus:'QUOTA_VERIFICATION_REQUIRED',remoteExecutionAuthorized:false});
   });
   it('rejects any remote target before D1 mutation and enforces statement parameters and size',async()=>{
     expect(()=>rejectRemoteTransport('remote')).toThrow('REMOTE_EXECUTION_NOT_AUTHORIZED');
