@@ -85,7 +85,10 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
       .setIssuer(issuer).setAudience(audience).setIssuedAt(-900).setExpirationTime(-600).sign(privateKey);
     const future=await new SignJWT({sub}).setProtectedHeader({alg:'RS256',kid:'valid-key'})
       .setIssuer(issuer).setAudience(audience).setIssuedAt().setNotBefore('10m').setExpirationTime('20m').sign(privateKey);
-    for(const token of [badAudience,badIssuer,expired,future])
+    const unsupportedAlgorithm=await new SignJWT({sub,email:'synthetic-user@example.test',type:'app'})
+      .setProtectedHeader({alg:'HS256',kid:'valid-key'}).setIssuer(issuer).setAudience(audience)
+      .setIssuedAt().setExpirationTime('10m').sign(new Uint8Array(32).fill(2));
+    for(const token of [badAudience,badIssuer,expired,future,unsupportedAlgorithm])
       await expect(authenticatePrivateRequest(req('/',token),env(),verifyKey))
         .rejects.toMatchObject({code:'private_auth_invalid'});
     expect(valid).toContain('.');
