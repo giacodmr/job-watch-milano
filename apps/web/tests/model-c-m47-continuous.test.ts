@@ -161,7 +161,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    result=await importModelC(c,p,stagedOptions);
    expect(result.status).toBe('RECOVERED');
   }else result=await importModelC(c,p,stagedOptions);
-  expect(result.status).toBe('PUBLISHED');
+  expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
   expect(result.syncRevision).toBe(before+1);
   expect((await observeIngestJournal(c,packets.run.runId)).phase).toBe('COMPLETED');
   const personal=await inspectPublishedModelCRecovery(c,p,{ownerId:opts.owner});
