@@ -251,3 +251,12 @@ REMOTE BOOTSTRAP NOT READY**. M45 is an offline preparation milestone,
 not Gate B approval. There is still no authorized remote importer,
 production-owner attestation, live Cloudflare account inventory or
 verifiable remote rollback.
+
+## Milestone #46 — Offline Service Auth + chunk staging (Gate A only)
+
+The isolated service JWT, ingestion wire contract and non-publishing CATALOG
+schema v5 are documented in [M46 service ingestion](MODEL_C_SERVICE_INGESTION_M46.md).
+Production Worker ingress is not wired and all remote writes remain denied;
+the local synthetic quota fixture is not evidence of a Cloudflare account
+reservation. Gate B is closed; no new Service Token, Access policy, database
+or Worker was created.
