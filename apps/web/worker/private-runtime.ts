@@ -25,6 +25,15 @@ function json(value:unknown,status=200){
     'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',
   }});
 }
+// Cloudflare D1 Free limit exceptions are enforced account-wide (since 2026-09-01).
+// Match only the documented stable error prefix; never expose exception text,
+// SQL, account details, or add a paid-tier/retry fallback.
+export function privateD1ErrorCode(error:unknown):'cloudflare_quota_exceeded'|'database_unavailable' {
+  if(error instanceof Error &&
+    /Your account has exceeded D1's free tier daily row (read|write) limit\./.test(error.message))
+    return 'cloudflare_quota_exceeded';
+  return 'database_unavailable';
+}
 function input(url:URL){
   const pairs=[...url.searchParams.entries()];
   if(pairs.length>12||pairs.some(([k,v])=>k.length>64||v.length>6000)||
@@ -42,6 +51,12 @@ export async function handlePrivateRuntime(
   // PRIVATE never dispatches POST to the local-only Write Engine.
   if(path==='/api'||path.startsWith('/api/')){
     if(request.method!=='GET')return json({error:'method_not_allowed'},405);
+    if(path==='/api/model-c/private/status'){
+      if(url.search)return json({error:'invalid_query'},400);
+      // Only an already-validated interactive Access principal can reach here.
+      // No subject, email, owner ID, token or account detail in the response.
+      return json({accessVerified:true,readOnly:true,environment:'private'});
+    }
     if(!path.startsWith(catalogPrefix)&&!path.startsWith(personalPrefix)&&
        !path.startsWith(opportunityPrefix))
       return json({error:'not_found'},404);
@@ -78,7 +93,7 @@ export async function handlePrivateRuntime(
       if(e instanceof z.ZodError)return json({error:'invalid_query'},400);
       if(e instanceof ModelCReadError||e instanceof ModelCPersonalReadError)
         return json({error:e.code},e.status);
-      return json({error:'database_unavailable'},503);
+      return json({error:privateD1ErrorCode(e)},503);
     }
   }
   if(!['GET','HEAD'].includes(request.method))return json({error:'method_not_allowed'},405);

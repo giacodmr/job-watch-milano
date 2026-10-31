@@ -158,7 +158,7 @@ function CandidatureDrawer({selected,onClose,onConfirmed}:{
           </section>}
         </>}
       </div>
-      <footer className="c-drawer-footer"><span>Azioni personali solo nel laboratorio locale</span>
+      <footer className="c-drawer-footer"><span>Azioni personali solo se autorizzate dal server</span>
         <button type="button" className="c-btn" onClick={onClose}>Chiudi</button>
       </footer>
     </div>
@@ -282,7 +282,7 @@ export default function Candidature(){
         </div>
       </footer>
     </section>
-    <p className="c-lab-note">Model C · laboratorio sintetico locale · modifiche possibili solo con autorizzazione server.</p>
+    <p className="c-lab-note">Model C · consultazione del registro verificato · modifiche solo se autorizzate dal server.</p>
     {selected&&<CandidatureDrawer selected={selected} onClose={()=>setSelected(null)} onConfirmed={reload}/>}
   </WorkspaceShell>;
 }

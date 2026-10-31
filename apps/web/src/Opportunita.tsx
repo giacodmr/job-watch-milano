@@ -5,7 +5,7 @@ import {WorkspaceShell,CompanyAvatar,FitValue,JWIcon} from './components/Candida
 import {PersonalActions} from './components/PersonalActions';
 import {decisionLabel,reconciliationLabel,safeExternalUrl} from './model-c-personal-client';
 import type {Opportunity,OpportunityPage,OpportunityDetail,OpportunitySnapshot,OpportunityFilters,OpportunityView} from './model-c-opportunities-client';
-import {readOpportunityDetail,readOpportunities,readOpportunitySnapshot} from './model-c-opportunities-client';
+import {readOpportunityDetail,readOpportunities,readOpportunitySnapshot,resolveOpportunityPersonal} from './model-c-opportunities-client';
 
 const views:{value:OpportunityView;label:string;description:string}[]=[
   {value:'all',label:'Tutte',description:'Tutte le vacancy correnti pubblicate'},
@@ -29,8 +29,8 @@ function SourceLink({commit,path}:{commit:string;path:string}){
   const url=valid?'https://github.com/giacodmr/job-watch-milano/blob/'+commit+'/'+path.split('/').map(encodeURIComponent).join('/'):null;
   return url?<a className="c-text-link" href={url} target="_blank" rel="noopener noreferrer">Fonte GitHub</a>:<span>Non disponibile</span>;
 }
-function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
-  row:Opportunity;revision:number;onClose:()=>void;onConfirmed:()=>void;
+function OpportunityDrawer({row,revision,personalAvailable,onClose,onConfirmed}:{
+  row:Opportunity;revision:number;personalAvailable:boolean;onClose:()=>void;onConfirmed:()=>void;
 }){
   const modal=useRef<HTMLDialogElement>(null);
   const [tab,setTab]=useState<'summary'|'analysis'|'source'|'history'>('summary');
@@ -57,7 +57,9 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
     setCurrentRevision(snapshot.syncRevision);setDetail(refreshed);setError(null);
   }
   const current=detail?.job??row;
-  const personal=detail?.personal??row.personal;
+  // A fresh, explicit null PERSONAL revision overrides a previously loaded list.
+  const personalReady=detail?detail.personalRevision!==null:personalAvailable;
+  const personal=personalReady?resolveOpportunityPersonal(row,detail):null;
   const link=safeExternalUrl(current.applyUrl)||safeExternalUrl(current.canonicalUrl);
   const title=current.title||'Ruolo non disponibile';
   const tabs:[typeof tab,string][]=[['summary','Riepilogo'],['analysis','Analisi'],['source','Provenienza'],['history','Storico personale']];
@@ -85,8 +87,8 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
                 <Fact label="Lifecycle">{lifecycleLabels[current.lifecycle]}</Fact>
                 <Fact label="Prima osservazione">{date(current.firstSeenAt)}</Fact>
                 <Fact label="Ultima osservazione">{date(current.lastSeenAt)}</Fact>
-                <Fact label="Decisione personale">{personal?.decision?decisionLabel[personal.decision]:'Nessuna decisione registrata'}</Fact>
-                <Fact label="Riferimenti personali">{personal?.activeReferences.join(' · ')||'Nessuno'}</Fact>
+                <Fact label="Decisione personale">{!personalReady?'Registro non disponibile':personal?.decision?decisionLabel[personal.decision]:'Nessuna decisione registrata'}</Fact>
+                <Fact label="Riferimenti personali">{!personalReady?'Registro non disponibile':personal?.activeReferences.join(' · ')||'Nessuno'}</Fact>
               </dl>
               {link&&<a className="c-btn c-btn-dark" href={link} target="_blank" rel="noopener noreferrer">Apri annuncio ufficiale <JWIcon name="arrow" size={14}/></a>}
             </section>
@@ -98,13 +100,13 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
               <Fact label="Stato analisi">{analysisLabel({...current,personal})}</Fact>
               <Fact label="Categoria">{current.kind==='AI_QUEUE'?'Coda AI':'Opportunità'}</Fact>
               <Fact label="Idoneità tecnica">{current.workerEligible===null?'Non disponibile':current.workerEligible?'Idonea':'Non idonea'}</Fact>
-              <Fact label="FIT personale">{personal?<FitValue row={personal}/>:<span>—</span>}</Fact>
+              <Fact label="FIT personale">{!personalReady?'Registro non disponibile':personal?<FitValue row={personal}/>:<span>—</span>}</Fact>
               <Fact label="Validità FIT">{personal?.assessment?.freshness==='CURRENT'?'Sul fingerprint corrente':
                 personal?.assessment?.freshness==='STALE'?'Storico, fingerprint precedente':
                 personal?.assessment?'Non verificabile':'Non disponibile'}</Fact>
               <Fact label="Metodo">{personal?.assessment?.method||'Non disponibile'}</Fact>
               <Fact label="Sintesi">{personal?.assessment?.summary||'Non registrata'}</Fact>
-              <Fact label="Riconciliazione">{personal?reconciliationLabel[personal.reconciliation]:'Nessun riferimento personale'}</Fact>
+              <Fact label="Riconciliazione">{!personalReady?'Registro non disponibile':personal?reconciliationLabel[personal.reconciliation]:'Nessun riferimento personale'}</Fact>
             </dl>
           </section>}
           {tab==='source'&&<section className="c-panel-section"><h3>Identità e provenienza</h3>
@@ -122,7 +124,7 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
             {detail.aliasesTruncated&&<p className="c-informative">Sono mostrati soltanto i primi 50 alias.</p>}
           </section>}
           {tab==='history'&&<section className="c-panel-section"><h3>Storico personale</h3>
-            {!detail.personalDetail&&<p className="c-informative">Nessuna storia personale registrata per questa vacancy.</p>}
+            {!detail.personalDetail&&<p className="c-informative">{personalReady?'Nessuna storia personale registrata per questa vacancy.':'Il registro personale non è ancora stato importato e verificato.'}</p>}
             {detail.personalDetail&&<>
               <h3>Decisioni</h3>
               {detail.personalDetail.decisionEvents.length?<ol className="c-history">
@@ -151,27 +153,29 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
           </section>}
         </>}
       </div>
-      <footer className="c-drawer-footer"><span>Azioni personali nel laboratorio locale</span>
+      <footer className="c-drawer-footer"><span>Azioni personali solo se autorizzate dal server</span>
         <button className="c-btn" type="button" onClick={onClose}>Chiudi</button>
       </footer>
     </div>
   </dialog>;
 }
-export function OpportunityTable({items,onSelect}:{items:Opportunity[];onSelect?:(item:Opportunity)=>void}){
+export function OpportunityTable({items,personalAvailable,onSelect}:{items:Opportunity[];personalAvailable:boolean;onSelect?:(item:Opportunity)=>void}){
   return <div className="c-table-scroll"><table className="c-listing o-listing">
     <thead><tr><th>Posizione</th><th>Lifecycle</th><th>Analisi</th><th>Decisione</th><th>FIT</th><th>Ultima osservazione</th><th><span className="c-sr-only">Dettaglio</span></th></tr></thead>
     <tbody>{items.map(row=>{
       const title=row.title||'Ruolo non disponibile';
+      // Do not display stale PERSONAL values when the owner context is absent.
+      const personal=personalAvailable?row.personal:null;
       return <tr key={row.id}>
         <td><div className="c-job-cell"><CompanyAvatar name={row.company}/>
           <span className="c-position"><strong>{title}</strong><small>{row.company}{row.location?' · '+row.location:''}</small>
-          <small className="o-mobile-decision">{row.personal?.decision?decisionLabel[row.personal.decision]:row.personal?.activeReferences.length?'Riferimento '+row.personal.activeReferences.join(', '):'Nessuna decisione'}{row.personal?.assessment?.fitScore!==null&&row.personal?.assessment?.fitScore!==undefined?' · FIT '+row.personal.assessment.fitScore+(row.personal.assessment.freshness==='CURRENT'?'':' storico'):''}</small></span>
+          <small className="o-mobile-decision">{personal?.decision?decisionLabel[personal.decision]:personal?.activeReferences.length?'Riferimento '+personal.activeReferences.join(', '):personalAvailable?'Nessuna decisione':'Registro non disponibile'}{personal?.assessment?.fitScore!==null&&personal?.assessment?.fitScore!==undefined?' · FIT '+personal.assessment.fitScore+(personal.assessment.freshness==='CURRENT'?'':' storico'):''}</small></span>
         </div></td>
         <td>{lifecycleLabels[row.lifecycle]}</td>
         <td>{analysisLabel(row)}</td>
-        <td>{row.personal?.decision?<span className="c-stage"><i className={row.personal.decision==='NOT_INTERESTED'?'c-dot c-dot-gray':'c-dot'}/>{decisionLabel[row.personal.decision]}</span>
-          :row.personal?.activeReferences.length?'Riferimento '+row.personal.activeReferences.join(', '):<span className="c-muted">Nessuna decisione</span>}</td>
-        <td>{row.personal?<FitValue row={row.personal}/>:<span className="c-muted">—</span>}</td>
+        <td>{personal?.decision?<span className="c-stage"><i className={personal.decision==='NOT_INTERESTED'?'c-dot c-dot-gray':'c-dot'}/>{decisionLabel[personal.decision]}</span>
+          :personal?.activeReferences.length?'Riferimento '+personal.activeReferences.join(', '):<span className="c-muted">{personalAvailable?'Nessuna decisione':'Registro non disponibile'}</span>}</td>
+        <td>{!personalAvailable?<span className="c-muted">—</span>:personal?<FitValue row={personal}/>:<span className="c-muted">—</span>}</td>
         <td>{date(row.lastSeenAt)}</td>
         <td><button type="button" className="c-row-open" disabled={!onSelect}
           aria-label={'Apri dettaglio '+title} onClick={()=>onSelect?.(row)}><JWIcon name="chevron"/></button></td>
@@ -184,8 +188,11 @@ function message(error:unknown) {
   if(['CATALOG_CHANGED','CONTEXT_CHANGED','CURSOR_FILTER_MISMATCH','INVALID_CURSOR'].includes(code))
     return 'Il catalogo o i filtri sono cambiati. Aggiorna la consultazione.';
   if(code==='not_found')return 'L’API Model C è disabilitata. Questa vista è disponibile solo nel laboratorio sintetico locale.';
-  if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Non è disponibile un contesto PERSONAL per l’owner sintetico.';
-  return 'Non è possibile leggere le opportunità. Controlla il laboratorio locale e i database sintetici.';
+  if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Il registro personale non è ancora stato importato e verificato per questo accesso.';
+  if(['NO_PUBLISHED_CATALOG','CATALOG_SCHEMA_MISMATCH'].includes(code))return 'Il catalogo non è ancora pronto per la consultazione.';
+  if(code==='cloudflare_quota_exceeded')return 'La quota gratuita giornaliera del database è stata raggiunta. La consultazione sarà nuovamente possibile dopo il reset Cloudflare delle 00:00 UTC, senza modificare i dati.';
+  if(code==='database_unavailable')return 'Il database non è temporaneamente disponibile. Riprova più tardi.';
+  return 'Non è possibile consultare le opportunità al momento. Riprova più tardi.';
 }
 export default function Opportunita(){
   const [view,setView]=useState<OpportunityView>('all');
@@ -235,6 +242,7 @@ export default function Opportunita(){
     {snapshot&&<p className="o-snapshot" role="status">
       {snapshot.currentJobs} vacancy correnti nel catalogo · Revisione {snapshot.syncRevision} · Commit {snapshot.observedCommit.slice(0,8)}
     </p>}
+    {!loading&&!error&&snapshot&&page&&page.personalRevision===null&&<p className="o-snapshot" role="status">Catalogo disponibile in sola lettura. Il registro personale non è ancora stato importato e verificato per questo accesso; le decisioni non vengono mostrate.</p>}
     <section className="c-content" aria-label="Catalogo opportunità">
       <div className="c-tabs" role="tablist" aria-label="Viste catalogo">
         {views.map(item=><button key={item.value} type="button" role="tab"
@@ -276,9 +284,9 @@ export default function Opportunita(){
         <p>{error}</p><button className="c-btn" type="button" onClick={reload}>Riprova</button>
       </div>}
       {!loading&&!error&&!snapshot&&<div className="c-state">
-        <h2>Nessun catalogo pubblicato</h2><p>Il laboratorio locale non ha un checkpoint CATALOG disponibile. Non sono mostrate vacancy inventate.</p>
+        <h2>Nessun catalogo pubblicato</h2><p>Non è ancora disponibile uno snapshot CATALOG verificato. Non vengono mostrate vacancy fittizie.</p>
       </div>}
-      {!loading&&!error&&page&&snapshot&&page.items.length>0&&<OpportunityTable items={page.items} onSelect={setSelected}/>}
+      {!loading&&!error&&page&&snapshot&&page.items.length>0&&<OpportunityTable items={page.items} personalAvailable={page.personalRevision!==null} onSelect={setSelected}/>}
       {!loading&&!error&&snapshot&&page&&page.items.length===0&&<div className="c-state">
         <h2>Nessuna opportunità nella vista</h2><p>Non ci sono vacancy che corrispondono ai filtri selezionati.</p>
         <button className="c-btn" type="button" onClick={clear}>Mostra tutte</button>
@@ -292,7 +300,7 @@ export default function Opportunita(){
         </div>
       </footer>
     </section>
-    <p className="c-lab-note">Model C · laboratorio sintetico · modifiche alle preferenze personali solo se autorizzate dal server.</p>
-    {selected&&snapshot&&<OpportunityDrawer row={selected} revision={snapshot.syncRevision} onClose={()=>setSelected(null)} onConfirmed={reload}/>}
+    <p className="c-lab-note">Model C · consultazione dei dati verificati · modifiche disponibili solo se autorizzate dal server.</p>
+    {selected&&snapshot&&<OpportunityDrawer row={selected} revision={snapshot.syncRevision} personalAvailable={page?.personalRevision!==null} onClose={()=>setSelected(null)} onConfirmed={reload}/>}
   </WorkspaceShell>;
 }

@@ -32,8 +32,10 @@ export default {
     if(env.APP_ENV==='private'){
       // Authentication precedes every read and asset fetch; no local synthetic fallback.
       try{
-        privateRequestPolicy(request);
         const principal=await authenticatePrivateRequest(request,env);
+        // Enforce identity on *every* request, including rejected mutations.
+        // Unauthenticated POST/OPTIONS must never skip JWT verification.
+        privateRequestPolicy(request);
         return await handlePrivateRuntime(request,env,principal);
       }catch(e){
         const status=e instanceof PrivateAuthError?e.status:503;

@@ -9,7 +9,7 @@ import {applySchema} from '../tools/model-c-schema';
 import {stageCatalog,publicationFixture,seedPersonal,owner,hash,commit,jobId} from './helpers/model-c-fixtures';
 import {authenticatePrivateRequest,privateAccessConfig,privateRequestPolicy} from '../worker/private-access';
 import type {PrivateAccessEnv} from '../worker/private-access';
-import {handlePrivateRuntime} from '../worker/private-runtime';
+import {handlePrivateRuntime,privateD1ErrorCode} from '../worker/private-runtime';
 
 const issuer='https://job-watch-tests.cloudflareaccess.com';
 const audience='a'.repeat(64);
@@ -166,6 +166,56 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     expect(parsed.items[0]?.personal).toBeNull();
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(0);
   });
+  it('reports official D1 Free daily quota failures without exposing the provider error or retrying',async()=>{
+    const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
+    const quota="D1_ERROR: Your account has exceeded D1's free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue.";
+    expect(privateD1ErrorCode(new Error(quota))).toBe('cloudflare_quota_exceeded');
+    expect(privateD1ErrorCode(new Error(quota.replace('read','write')))).toBe('cloudflare_quota_exceeded');
+    expect(privateD1ErrorCode(new Error('D1 storage unavailable'))).toBe('database_unavailable');
+    const quotaDb={prepare:(_sql:string)=>{throw new Error(quota);}} as unknown as D1Database;
+    const privateEnv={...env(),CATALOG:quotaDb};
+    const response=await handlePrivateRuntime(req('/api/model-c/catalog/snapshot'),privateEnv,principal);
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({error:'cloudflare_quota_exceeded'});
+    expect(response.headers.get('cache-control')).toBe('no-store');
+  });
+  it('keeps CATALOG readable for an Access user whose PERSONAL history has not been verified',async()=>{
+    const unprovisioned={...env(),PRIVATE_OWNER_ID:'personal-unprovisioned'};
+    const principal=await authenticatePrivateRequest(req('/',await jwt()),unprovisioned,verifyKey);
+    const catalogResponse=await handlePrivateRuntime(req('/api/model-c/catalog/snapshot'),unprovisioned,principal);
+    expect(catalogResponse.status).toBe(200);
+    const catalogBody=await catalogResponse.json() as {snapshot:{syncRevision:number}|null};
+    expect(catalogBody.snapshot).not.toBeNull();
+    const personalResponse=await handlePrivateRuntime(req('/api/model-c/personal/jobs'),unprovisioned,principal);
+    expect(personalResponse.status).toBe(404);
+    expect(await personalResponse.json()).toEqual({error:'PERSONAL_CONTEXT_UNAVAILABLE'});
+    const composite=await handlePrivateRuntime(req('/api/model-c/opportunities/jobs'),unprovisioned,principal);
+    expect(composite.status).toBe(200);
+    const page=await composite.json() as {items:Array<{personal:unknown}>,personalRevision:number|null};
+    expect(page.personalRevision).toBeNull();
+    expect(page.items).toHaveLength(1);
+    expect(page.items[0]?.personal).toBeNull();
+    const detail=await handlePrivateRuntime(req('/api/model-c/opportunities/jobs/'+jobId+
+      '?revision='+catalogBody.snapshot!.syncRevision),unprovisioned,principal);
+    expect(detail.status).toBe(200);
+    const detailBody=await detail.json() as {personal:unknown,personalDetail:unknown,personalRevision:unknown};
+    expect(detailBody.personal).toBeNull();
+    expect(detailBody.personalDetail).toBeNull();
+    expect(detailBody.personalRevision).toBeNull();
+    // An absent owner never seeds an implicit PERSONAL head or APP events.
+    expect(await personal.prepare("SELECT count(*) AS n FROM personal_heads WHERE owner_id=?")
+      .bind('personal-unprovisioned').first('n')).toBe(0);
+  });
+  it('exposes a minimal verified-session status only after private Access authentication',async()=>{
+    const protectedPath='/api/model-c/private/status';
+    expect((await worker.fetch(req(protectedPath),env())).status).toBe(401);
+    const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
+    const allowed=await handlePrivateRuntime(req(protectedPath),env(),principal);
+    expect(allowed.status).toBe(200);
+    expect(await allowed.json()).toEqual({accessVerified:true,readOnly:true,environment:'private'});
+    expect((await handlePrivateRuntime(req(protectedPath+'?unexpected=1'),env(),principal)).status).toBe(400);
+    expect((await handlePrivateRuntime(req('/api/model-c/private/other'),env(),principal)).status).toBe(404);
+  });
   it('protects every asset and SPA route in private router; no legacy, ingestion or command API',async()=>{
     const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
     let fetched=0;
@@ -193,8 +243,11 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
       expect(response.status).toBe(401);
       expect(response.headers.get('Cache-Control')).toBe('no-store');
     }
+    // Every method is authenticated before policy rejection.
     expect((await worker.fetch(req('/api/model-c/personal/commands/decision',undefined,{method:'POST'}),
-      noAssets)).status).toBe(405);
+      noAssets)).status).toBe(401);
+    expect((await worker.fetch(req('/api/model-c/personal/jobs',undefined,{method:'OPTIONS'}),
+      noAssets)).status).toBe(401);
   });
   it('commits only a non-deployable protected private template, preserving local setup',async()=>{
     const template=await readFile('wrangler.private.template.jsonc','utf8');

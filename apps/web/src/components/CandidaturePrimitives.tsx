@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import type {ReactNode} from 'react';
 import type {PersonalRow} from '../model-c-personal-client';
 
@@ -36,6 +36,20 @@ export function FitValue({row}:{row:PersonalRow}) {
 }
 export function WorkspaceShell({children,section='candidature'}:{children:ReactNode;section?:'candidature'|'opportunita'}) {
   const [menuOpen,setMenuOpen]=useState(false);
+  const [privateAccessVerified,setPrivateAccessVerified]=useState(false);
+  useEffect(()=>{
+    const controller=new AbortController();
+    fetch('/api/model-c/private/status',{cache:'no-store',signal:controller.signal})
+      .then(async response=>{
+        if(!response.ok)return;
+        const status:unknown=await response.json();
+        if(!controller.signal.aborted && status!==null && typeof status==='object' &&
+          'accessVerified' in status && status.accessVerified===true &&
+          'readOnly' in status && status.readOnly===true)
+          setPrivateAccessVerified(true);
+      }).catch(()=>{ /* Local mode and unavailable status remain neutral. */ });
+    return ()=>controller.abort();
+  },[]);
   return <div className="c-workspace">
     <a className="c-skip" href="#c-main">Vai a {section==='candidature'?'Candidature':'Opportunità'}</a>
     <button type="button" className="c-mobile-shield" tabIndex={menuOpen?0:-1}
@@ -43,7 +57,7 @@ export function WorkspaceShell({children,section='candidature'}:{children:ReactN
     <aside className={'c-sidebar'+(menuOpen?' c-sidebar-open':'')} aria-label="Navigazione">
       <a href="/opportunita" className="c-brand"><span className="c-brand-mark">✳</span><b>Job Watch</b></a>
       <div className="c-workspace-id"><span className="c-user-mark">JW</span>
-        <span><strong>Workspace personale</strong><small>Consultazione locale</small></span>
+        <span><strong>Workspace personale</strong><small>{privateAccessVerified?'Accesso verificato · Sola lettura':'Consultazione'}</small></span>
       </div>
       <nav className="c-nav" aria-label="Sezioni">
         <span className="c-nav-disabled" aria-disabled="true">Dashboard <small>Non disponibile</small></span>
@@ -57,7 +71,7 @@ export function WorkspaceShell({children,section='candidature'}:{children:ReactN
         <span className="c-nav-disabled" aria-disabled="true">Pipeline e ATS</span>
         <span className="c-nav-disabled" aria-disabled="true"><JWIcon name="archive"/> Archivio</span>
       </nav>
-      <p className="c-nav-footer">Modalità locale · Lettura dei dati sintetici, senza scritture.</p>
+      <p className="c-nav-footer">{privateAccessVerified?'Ambiente privato · Accesso protetto da Cloudflare Access · Sola lettura':'Consultazione · Modifiche consentite solo se autorizzate dal server.'}</p>
     </aside>
     <div className="c-main-column">
       <div className="c-topbar">
