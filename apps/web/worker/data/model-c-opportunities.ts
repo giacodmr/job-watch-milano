@@ -9,13 +9,20 @@ import type {ModelCLocalEnv} from '../model-c-local-api';
 
 const idSchema=z.string().regex(/^job:[a-f0-9]{64}$/);
 const revisionSchema=z.strictObject({revision:z.string().regex(/^[1-9][0-9]{0,9}$/).transform(Number)});
-function checkCatalog(before: {syncRevision:number;runId:string;contentRevision:number;ledgerDigest:string;observedCommit:string}|null,
-  after: typeof before) {
-  if(!before || !after ||
-    before.syncRevision!==after.syncRevision || before.runId!==after.runId ||
-    before.contentRevision!==after.contentRevision ||
-    before.ledgerDigest!==after.ledgerDigest ||
-    before.observedCommit!==after.observedCommit)
+type PublishedCheckpoint = {
+  syncRevision?:number;runId?:string;contentRevision?:number;
+  ledgerDigest?:string;observedCommit?:string;
+};
+function checkCatalog(before:PublishedCheckpoint|null,after:PublishedCheckpoint|null) {
+  const complete=(v:PublishedCheckpoint|null)=>!!v &&
+    Number.isSafeInteger(v.syncRevision) && (v.syncRevision??0)>0 &&
+    Number.isSafeInteger(v.contentRevision) && (v.contentRevision??0)>0 &&
+    !!v.runId && !!v.ledgerDigest && !!v.observedCommit;
+  if(!complete(before) || !complete(after) ||
+    before?.syncRevision!==after?.syncRevision || before?.runId!==after?.runId ||
+    before?.contentRevision!==after?.contentRevision ||
+    before?.ledgerDigest!==after?.ledgerDigest ||
+    before?.observedCommit!==after?.observedCommit)
     throw new ModelCReadError('CATALOG_CHANGED',409);
 }
 function verifyOwner(env:ModelCLocalEnv) {
