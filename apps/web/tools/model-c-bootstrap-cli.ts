@@ -52,7 +52,7 @@ async function main(){
     })+'\n');
   }finally{await runtime.dispose();}
 }
-main().catch(error=>{
+await main().catch(error=>{
   const m=error instanceof Error?error.message:'';
   const code=/^[A-Z][A-Z0-9_]+$/.test(m)?m:'PINNED_BOOTSTRAP_PREFLIGHT_FAILED';
   process.stderr.write(JSON.stringify({error:code,remoteExecutionAuthorized:false})+'\n');
