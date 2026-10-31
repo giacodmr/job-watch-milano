@@ -302,6 +302,16 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     const replayed=await handlePrivateRuntime(post(cmd),live,principal);
     expect(replayed.status).toBe(200);
     expect(await replayed.json()).toMatchObject({replayed:true,jobRevision:1});
+    const saveCommand={kind:'SAVED',jobId,catalogRevision:1,expectedRevision:1,
+      active:true,operationId:'00000000-0000-4000-8000-000000004802'};
+    const saveRequest=req('/api/model-c/personal/commands/saved',token,{
+      method:'POST',headers:{Origin:addr,'Content-Type':'application/json'},
+      body:JSON.stringify(saveCommand),
+    });
+    expect(()=>privateRequestPolicy(saveRequest,true)).not.toThrow();
+    const saved=await handlePrivateRuntime(saveRequest,live,principal);
+    expect(saved.status).toBe(200);
+    expect(await saved.json()).toMatchObject({status:'saved',saved:true,jobRevision:2});
     const stale=await handlePrivateRuntime(post({...cmd,operationId:'00000000-0000-4000-8000-000000004801',
       decision:'APPLIED'}),live,principal);
     expect(stale.status).toBe(409);
@@ -310,13 +320,13 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     expect(altered.status).toBe(409);
     expect(await altered.json()).toMatchObject({error:'IDEMPOTENCY_KEY_REUSED'});
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events WHERE owner_id=?')
-      .bind(person).first('n')).toBe(1);
+      .bind(person).first('n')).toBe(2);
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events WHERE owner_id=?')
       .bind(owner).first('n')).toBe(0);
     const read=await handlePrivateRuntime(req('/api/model-c/personal/jobs/'+jobId),live,principal);
     expect(read.status).toBe(200);
     expect(await read.json()).toMatchObject({job:{decision:'INTERESTED',
-      decisionSource:'APP',jobRevision:1}});
+      decisionSource:'APP',jobRevision:2,activeReferences:expect.arrayContaining(['SAVED'])}});
     const caps=await handlePrivateRuntime(req('/api/model-c/personal/capabilities'),live,principal);
     expect(await caps.json()).toMatchObject({writeEnabled:true,productionAccess:false});
     // No command endpoint becomes public; the actual Worker authenticates first.
