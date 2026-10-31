@@ -135,7 +135,7 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
               {detail.personalDetail.decisionEventsTruncated&&<p className="c-informative">Cronologia decisioni limitata agli ultimi 50 eventi.</p>}
               {!!detail.personalDetail.appEvents?.some(event=>event.kind==='SAVED')&&<>
                 <h3>Salvataggi nella piattaforma</h3>
-                <ol className="c-history">{detail.personalDetail.appEvents.filter(event=>event.kind==='SAVED').map(event=>
+                <ol className="c-history">{detail.personalDetail.appEvents?.filter(event=>event.kind==='SAVED').map(event=>
                   <li key={event.id}><strong>{event.savedActive?'Posizione salvata':'Rimossa dai salvati'}</strong>
                     <small>{date(event.createdAt)} · Piattaforma</small></li>)}</ol>
               </>}
