@@ -1,4 +1,5 @@
 import {describe,it,expect,beforeAll,afterAll} from 'vitest';
+import {execFileSync} from 'node:child_process';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {applySchema} from '../tools/model-c-schema';
 import {prepareSafeRemoteBootstrapPlan,evaluateRemoteQuotaForPlan} from '../tools/model-c-remote-plan';
@@ -31,6 +32,17 @@ beforeAll(async()=>{
 afterAll(async()=>{await runtime?.dispose();});
 
 describe('M45 safe offline D1 remote bootstrap readiness',()=>{
+  it('emits a safe blocked status when no real owner context is available; no cloud access',()=>{
+    const output=execFileSync(process.execPath,
+      ['tools/model-c-bootstrap-runner.mjs','--commit','a'.repeat(40)],
+      {cwd:process.cwd(),encoding:'utf8',
+        env:{...process.env,JOB_WATCH_PRIVATE_OWNER_ID:''}});
+    const report=JSON.parse(output) as {status:string;remoteExecutionAuthorized:boolean;blockers:string[]};
+    expect(report.status).toBe('REAL_DATA_PREFLIGHT_NOT_EXECUTED');
+    expect(report.remoteExecutionAuthorized).toBe(false);
+    expect(report.blockers).toContain('REMOTE_EXECUTION_NOT_AUTHORIZED');
+  });
+
   it('builds a deterministic PII-free and owner-free plan with per-DB dependencies',async()=>{
     const first=await prepareSafeRemoteBootstrapPlan(preflight(),setup());
     expect(first).toMatchObject({mode:'BOOTSTRAP_INITIAL',target:'OFFLINE_REVIEW_ONLY',
