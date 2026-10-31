@@ -109,10 +109,13 @@ live quota measurement; remote auth and route testing; Cloudflare activation.
 
 ## Tests
 
-The added test cases include Miniflare real local D1 receipt integrity
-checks, tampered but digest-consistent incoming metadata, missing chunks,
-replay, no-write rejection, published-run ID binding, and a failure after
-CATALOG commit but before PERSONAL reconciliation followed by recovery.
+The added test cases include locally signed service JWT requests to the M46
+HTTP handler, real Miniflare D1 staging, verified Git/Python reconstruction,
+a deterministic plan cross-check, tampered but digest-consistent metadata,
+missing chunks, replay, no-write rejection, published-run ID binding, and a
+failure after CATALOG commit but before PERSONAL reconciliation followed by
+recovery. The recovery path explicitly requires an immutable PERSONAL receipt
+even when there are zero personal job references.
 Final CI results must be reported against the final PR SHA; do not treat
 this list as proof that all tests passed until CI confirms it.
 
@@ -120,11 +123,9 @@ this list as proof that all tests passed until CI confirms it.
 
 Before Gate A can be marked COMPLETE:
 
-1. Demonstrate full E2E with service JWT staging and provenance, not only
-   trusted local direct insertion in integration tests.
-2. Persist distinct pre-publication phase evidence and prove restart
-   recovery for all required points, including poisoned state/concurrency.
-3. Resolve M46 v1 completeness/size limits with a versioned protocol.
-4. Solve secure retention and full write accounting.
-5. Run the complete failure matrix, get all required CI checks green.
-6. Preserve Gate B CLOSED until independently authorized remote deployment.
+1. Persist distinct pre-publication phase evidence and prove restart recovery
+   for every required fault window, including poisoned state and concurrency.
+2. Resolve M46 v1 completeness/size limits with a versioned protocol.
+3. Solve secure retention and full write accounting.
+4. Run the complete failure matrix and get all required CI checks green.
+5. Preserve Gate B CLOSED until independently authorized remote deployment.
