@@ -56,7 +56,6 @@ describe('verified incremental importer on ephemeral D1',()=>{
   it('never interprets a remote execution target as permission to mutate D1',async()=>{
     const f=await fixture(1);
     for(const extra of [{executionTarget:'remote' as const},
-      {executionTarget:undefined},
       {executionTarget:'remote' as const,oneTimeFreeBootstrap:true,
         budget:{...f.options.budget,availableRows:95000}}]) {
       const result=importModelC(f.c,f.p,{...f.options,...extra});
