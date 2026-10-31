@@ -110,6 +110,62 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(await count(f.c,'catalog_content_revisions')).toBe(1);expect(await count(f.c,'catalog_audit')).toBe(2);
     expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);expect(a.metrics.total).toBeLessThanOrEqual(a.metrics.reservedBound);
   });
+  it('M47 AC-05 retains imported assessment/notes, APP reason history and SAVED overrides across imports',async()=>{
+    const f=await fixture(1);
+    const first=await importModelC(f.c,f.p,f.options);
+    const id=(await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id'))!;
+    const commitSha=f.options.source.commit;
+    // Seed an independently owned synthetic historical imported assessment with
+    // an append-only provenance record. Its source remains PERSONAL, never CATALOG.
+    await f.p.batch([
+      f.p.prepare("INSERT INTO personal_job_refs VALUES (?,?,'Historical Synthetic Role','https://jobs.example.test','STILL_OPEN',?,'job_memory_jw2.json',?,1)")
+        .bind(f.options.owner,id,commitSha,'a'.repeat(64)),
+      f.p.prepare(`INSERT INTO personal_assessment_events
+        (owner_id,id,job_id,fingerprint,method,fit_score,reportable,summary,
+         evidence_state,analyzed_at,result_sha256,source_commit,source_path,source_sha256)
+        VALUES (?,?,?,'synthetic-fingerprint','manual_import',85,1,'Preserved assessment note',
+          'FULL','2026-10-30T10:00:00Z',?,?,'job_memory_jw2.json',?)`)
+        .bind(f.options.owner,'review:ac05',id,'b'.repeat(64),commitSha,'a'.repeat(64)),
+      f.p.prepare('INSERT INTO personal_assessment_current VALUES (?,?,?,1)')
+        .bind(f.options.owner,id,'review:ac05'),
+      f.p.prepare('UPDATE personal_heads SET revision=revision+1 WHERE owner_id=?')
+        .bind(f.options.owner),
+    ]);
+    const withAssessment=await importModelC(f.c,f.p,f.options);
+    expect(withAssessment.status).toBe('RECOVERED');
+    const base=(await f.p.prepare('SELECT * FROM personal_assessment_events WHERE owner_id=?').bind(f.options.owner).all()).results;
+    expect(base).toHaveLength(1);
+    const note=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id,catalogRevision:first.syncRevision,expectedRevision:0,
+      operationId:'00000000-0000-4000-8000-000000004501',
+      decision:'INTERESTED',reasonSummary:'APP decision note retained',
+    });
+    expect('status' in note?note.status:null).toBe('saved');
+    const saved=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'SAVED',jobId:id,catalogRevision:first.syncRevision,expectedRevision:1,
+      operationId:'00000000-0000-4000-8000-000000004502',active:true,
+    });
+    expect('status' in saved?saved.status:null).toBe('saved');
+    const history=(await f.p.prepare('SELECT * FROM personal_app_events WHERE owner_id=? ORDER BY revision').bind(f.options.owner).all()).results;
+    expect(history).toHaveLength(2);
+    const afterRef=(await f.p.prepare('SELECT * FROM personal_job_refs WHERE owner_id=?').bind(f.options.owner).all()).results;
+    f.options.source.commit=commit(f.repo);
+    await importModelC(f.c,f.p,f.options);
+    await importModelC(f.c,f.p,f.options);
+    expect((await f.p.prepare('SELECT * FROM personal_assessment_events WHERE owner_id=?').bind(f.options.owner).all()).results).toEqual(base);
+    expect((await f.p.prepare('SELECT * FROM personal_app_events WHERE owner_id=? ORDER BY revision').bind(f.options.owner).all()).results).toEqual(history);
+    expect((await f.p.prepare('SELECT * FROM personal_job_refs WHERE owner_id=?').bind(f.options.owner).all()).results).toEqual(afterRef);
+    const item=(await getModelCPersonalJob(f.c,f.p,{ownerId:f.options.owner},id)).job;
+    expect(item).toMatchObject({decision:'INTERESTED',decisionSource:'APP'});
+    expect(item.activeReferences).toContain('SAVED');
+    expect(item.assessment).not.toBeNull();
+    await expect(executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id,catalogRevision:first.syncRevision,expectedRevision:0,
+      operationId:'00000000-0000-4000-8000-000000004503',
+      decision:'APPLIED',reasonSummary:null,
+    })).rejects.toThrow('REVISION_CONFLICT');
+    expect((await f.p.prepare('SELECT * FROM personal_app_events WHERE owner_id=? ORDER BY revision').bind(f.options.owner).all()).results).toEqual(history);
+  });
   it('retains APP decisions after a subsequent real GitHub synthetic import and replay',async()=>{
     const f=await fixture(1);
     const initial=await importModelC(f.c,f.p,f.options);
