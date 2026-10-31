@@ -74,6 +74,31 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(await count(f.c,'catalog_write_reservations')).toBe(0);
     expect(await count(f.p,'personal_catalog_receipts')).toBe(0);
   });
+  it('M47 denies foreign-owner PERSONAL reads, writes and importer reassignment',async()=>{
+    const f=await fixture(1);
+    const published=await importModelC(f.c,f.p,f.options);
+    expect(published.status).toBe('PUBLISHED');
+    const id=await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id');
+    expect(id).toBeTruthy();
+    const valid=await executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
+      kind:'DECISION',jobId:id!,catalogRevision:published.syncRevision,
+      expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004190',
+      decision:'INTERESTED',reasonSummary:null});
+    expect(valid).toMatchObject({status:'saved'});
+    const baseline=await f.p.prepare('SELECT * FROM personal_app_events').all();
+    await expect(getModelCPersonalJob(f.c,f.p,{ownerId:'synthetic-other'},id!))
+      .rejects.toThrow();
+    await expect(executePersonalCommand(f.c,f.p,{ownerId:'other'},{
+      kind:'DECISION',jobId:id!,catalogRevision:published.syncRevision,
+      expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004191',
+      decision:'APPLIED',reasonSummary:null})).rejects.toThrow();
+    await expect(importModelC(f.c,f.p,{...f.options,owner:'synthetic-other'}))
+      .rejects.toThrow('MULTI_OWNER_PERSONAL_UNSUPPORTED');
+    expect((await f.p.prepare('SELECT * FROM personal_app_events').all()).results)
+      .toEqual(baseline.results);
+    expect(await f.c.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'")
+      .first('sync_revision')).toBe(published.syncRevision);
+  });
   it('bootstraps, replays with zero writes, and observes a new identical commit without a content revision',async()=>{
     const f=await fixture();const a=await importModelC(f.c,f.p,f.options);measurements.bootstrap=a.metrics;
     expect(a.status).toBe('PUBLISHED');expect(a.metrics.staging+a.metrics.promotion+a.metrics.checkpoint).toBe(a.metrics.publication);expect(await count(f.c,'catalog_vacancy_identity')).toBe(2);expect(await count(f.c,'catalog_vacancy_current')).toBe(2);
