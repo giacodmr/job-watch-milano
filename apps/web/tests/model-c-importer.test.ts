@@ -611,6 +611,52 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     await expect(verifyCatalogV2AgainstTrusted(bad,packet))
       .rejects.toThrow('V2_CHUNK_PROOF_MISMATCH');
   });
+  it('recovers a staged run after catalog commit but missing PERSONAL receipt, without republishing',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    let injected=false;
+    const failing=intercept(f.p,async(sql,actual)=>{
+      if(!injected&&sql.some(x=>x.startsWith('INSERT INTO personal_catalog_receipts'))){
+        injected=true;throw Error('INJECTED_PERSONAL_RECONCILIATION_LOSS');
+      }
+      return actual();
+    });
+    await expect(importModelC(f.c,failing,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('INJECTED_PERSONAL_RECONCILIATION_LOSS');
+    expect(injected).toBe(true);
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    const mid=await observeIngestJournal(f.c,packet.run.runId);
+    expect(mid.phase).toBe('CATALOG_PUBLISHED');
+    expect((await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner})).status)
+      .toBe('CATALOG_PUBLISHED_PERSONAL_PENDING');
+    const fixed=await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    expect(fixed.status).toBe('RECOVERED');
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase).toBe('COMPLETED');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+    expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
+  });
+  it('keeps HEAD old and preserves journal PREPARED if atomic publication phase fails',async()=>{
+    const {f,packet,trustedPlan,append}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    await f.c.prepare(`CREATE TRIGGER synthetic_m47_journal_abort
+      BEFORE INSERT ON catalog_ingest_journal WHEN NEW.phase='CATALOG_PUBLISHED'
+      BEGIN SELECT RAISE(ABORT,'synthetic_phase_failure'); END`).run();
+    await expect(importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}}))
+      .rejects.toThrow('MODEL_C_IMPORT_FAILED');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.c,'catalog_runs')).toBe(0);
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase)
+      .toBe('PERSONAL_PREPARED');
+    await f.c.prepare('DROP TRIGGER synthetic_m47_journal_abort').run();
+    const result=await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    expect(result.status).toBe('PUBLISHED');
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase).toBe('COMPLETED');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+  });
   it('compacts only historical COMPLETED ingest runs and proves archived HTTP replay',async()=>{
     const {f,packet,trustedPlan,append,handler,jwt,base}=await prepared();
     for(let i=0;i<packet.chunks.length;i++)await append(i);
