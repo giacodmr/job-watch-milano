@@ -24,7 +24,7 @@ export async function auditReceivedIngestStage(catalog:D1Database,runId:string){
   if(!validRunId(runId))return deny('INVALID_RUN_ID');
   const version=await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'")
     .first<number>('version');
-  if(version!==6)return deny('CATALOG_SCHEMA_MISMATCH');
+  if(version!==6&&version!==7)return deny('CATALOG_SCHEMA_MISMATCH');
   const row=await catalog.prepare('SELECT * FROM catalog_ingest_runs WHERE id=?')
     .bind(runId).first<RunRow>();
   if(!row)return deny('RUN_NOT_FOUND');
