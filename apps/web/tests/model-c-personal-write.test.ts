@@ -96,6 +96,21 @@ describe('PR #41: additive PERSONAL app writer, real D1 and Worker HTTP',()=>{
       .bind(second).first('n'))).toBe(0);
     expect(env.MODEL_C_TEST_OWNER).toBe(owner);
   });
+  it('edits an archived owner-bound CATALOG identity, without permitting an unknown job',async()=>{
+    const {catalog,personal,post}=await fresh();
+    await stageCatalog(catalog,'archived-second',1,2,'d'.repeat(64),true,true);
+    await catalog.batch(publicationFixture(catalog,'archived-second',1,2));
+    expect(await catalog.prepare('SELECT id FROM catalog_vacancy_identity WHERE id=?').bind(jobId).first('id')).toBe(jobId);
+    expect(await catalog.prepare('SELECT count(*) AS n FROM catalog_visible_vacancies').first('n')).toBe(0);
+    const archived=await post({...command(jobId,0,'DECISION',{decision:'INTERESTED'}),catalogRevision:2});
+    expect(archived).toMatchObject({status:200,body:{jobRevision:1,decision:'INTERESTED'}});
+    const detail=await getModelCPersonalJob(catalog,personal,{ownerId:owner},jobId);
+    expect(detail.job).toMatchObject({decision:'INTERESTED',currentlyVisible:false,decisionSource:'APP'});
+    const unknown='job:'+'f'.repeat(64);
+    const reject=await post({...command(unknown,0,'DECISION',{decision:'INTERESTED'}),catalogRevision:2});
+    expect(reject.status).toBe(404);
+    expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(1);
+  });
   it('revokes a decision with an immutable tombstone without deleting the imported record',async()=>{
     const {catalog,personal,post}=await fresh();
     const response=await post(command(jobId,0,'DECISION',{decision:null}));
