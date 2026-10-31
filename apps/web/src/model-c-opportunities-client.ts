@@ -21,14 +21,14 @@ const catalogHead=z.object({
 export const opportunitySchema=catalogJobSchema.extend({personal:personalRowSchema.nullable()});
 export const opportunityPageSchema=z.object({
   snapshot:catalogHead.nullable(),productionAccess:z.literal(false),
-  personalRevision:z.number().int().positive().nullable(),
+  personalRevision:z.number().int().positive().nullable(),appEpoch:z.number().int().nonnegative().nullable(),
   items:z.array(opportunitySchema),total:z.number().int().nonnegative(),
   nextCursor:z.string().nullable(),
 });
 export const opportunityDetailSchema=z.object({
   snapshot:catalogHead,productionAccess:z.literal(false),
   job:catalogJobSchema,aliases:z.array(z.string()),aliasesTruncated:z.boolean(),
-  personalRevision:z.number().int().positive(),
+  personalRevision:z.number().int().positive(),appEpoch:z.number().int().nonnegative(),
   personal:personalRowSchema.nullable(),personalDetail:personalDetailSchema.nullable(),
 });
 export const opportunitySnapshotSchema=z.object({
