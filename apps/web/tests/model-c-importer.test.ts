@@ -500,7 +500,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       preflightOnly:true,oneTimeFreeBootstrap:true,executionTarget:'remote'});
     if(preflight.status!=='PREFLIGHT')throw Error('SYNTHETIC_PREFLIGHT_REQUIRED');
     const setup={
-      catalog:{migrationFiles:5,localRowsWritten:f.schemaCosts.catalog.rowsWritten,
+      catalog:{migrationFiles:6,localRowsWritten:f.schemaCosts.catalog.rowsWritten,
         remoteUpperBound:f.schemaCosts.catalog.rowsWritten+100},
       personal:{migrationFiles:3,localRowsWritten:f.schemaCosts.personal.rowsWritten,
         remoteUpperBound:f.schemaCosts.personal.rowsWritten+100},
