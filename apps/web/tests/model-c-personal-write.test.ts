@@ -119,6 +119,19 @@ describe('PR #41: additive PERSONAL app writer, real D1 and Worker HTTP',()=>{
     expect(wrong).toMatchObject({status:409,body:{error:'IDEMPOTENCY_KEY_REUSED'}});
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(1);
   });
+  it('deduplicates concurrent identical operationIds transactionally',async()=>{
+    const {personal,post}=await fresh();
+    const cmd=command(jobId,0,'DECISION',{decision:'INTERESTED'});
+    const responses=await Promise.all([post(cmd),post(cmd)]);
+    expect(responses.map(r=>r.status)).toEqual([200,200]);
+    expect(responses.map(r=>r.body.eventId)).toEqual([responses[0]!.body.eventId,responses[0]!.body.eventId]);
+    expect(responses.filter(r=>r.body.replayed===false)).toHaveLength(1);
+    expect(responses.filter(r=>r.body.replayed===true)).toHaveLength(1);
+    expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(1);
+    expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_operations').first('n')).toBe(1);
+    expect(await personal.prepare('SELECT revision FROM personal_app_current').first('revision')).toBe(1);
+    expect(await personal.prepare('SELECT revision FROM personal_app_heads').first('revision')).toBe(1);
+  });
   it('enforces per-job CAS for competing operations, and invalidates stale PERSONAL paging cursors',async()=>{
     const {catalog,personal,post}=await fresh();
     // A second historical row ensures pagination has a real continuation cursor.
