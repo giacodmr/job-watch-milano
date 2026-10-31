@@ -17,6 +17,16 @@ type RunRow={id:string;commit_sha:string;manifest_digest:string;projection_diges
   plan_digest:string;expected_revision:number;total_chunks:number;principal_digest:string;
   run_digest:string;state:string};
 type ChunkRow={chunk_index:number;chunk_digest:string;record_count:number;idempotency_key:string};
+type ArchiveRun=Omit<RunRow,'state'>;
+async function archivedRun(db:D1Database,id:string){
+  return db.prepare('SELECT id,commit_sha,manifest_digest,projection_digest,plan_digest,expected_revision,total_chunks,principal_digest,run_digest FROM catalog_ingest_archive_runs WHERE id=?')
+    .bind(id).first<ArchiveRun>();
+}
+async function archivedChunk(db:D1Database,id:string,index:number){
+  return db.prepare('SELECT chunk_index,chunk_digest,record_count,idempotency_key FROM catalog_ingest_archive_chunks WHERE run_id=? AND chunk_index=?')
+    .bind(id,index).first<ChunkRow>();
+}
+
 const limit=MAX_INGEST_REQUEST_BYTES;
 function response(code:string,status:number,extra:Record<string,unknown>={}){
   return new Response(JSON.stringify({status:code,...extra}),{status,headers:{
@@ -76,6 +86,16 @@ async function createRun(db:D1Database,input:IngestRunInput,principal:ServicePri
   const existing=await readRun(db,input.runId);
   if(existing)return rowMatches(existing,input,pd,digest)?
     response('REPLAY',200):response('RUN_CONFLICT',409);
+  const archived=await archivedRun(db,input.runId);
+  if(archived)return (
+    archived.commit_sha===input.commitSha&&
+    archived.manifest_digest===input.manifestDigest&&
+    archived.projection_digest===input.projectionDigest&&
+    archived.plan_digest===input.planDigest&&
+    archived.expected_revision===input.expectedRevision&&
+    archived.total_chunks===input.totalChunks&&
+    archived.principal_digest===pd&&archived.run_digest===digest
+  )?response('ARCHIVED_REPLAY',200):response('RUN_CONFLICT',409);
   const schema=await db.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version');
   if(schema!==6)return response('schema_unavailable',503);
   const current=Number(await db.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision')??0);
@@ -115,7 +135,14 @@ async function createRun(db:D1Database,input:IngestRunInput,principal:ServicePri
 }
 async function addChunk(db:D1Database,input:IngestChunkInput,principal:ServicePrincipal){
   const pd=await sha256(principal.clientId),run=await readRun(db,input.runId);
-  if(!run||run.principal_digest!==pd)return response('RUN_NOT_FOUND',404);
+  if(!run){
+    const archived=await archivedRun(db,input.runId);
+    if(!archived||archived.principal_digest!==pd)return response('RUN_NOT_FOUND',404);
+    const original=await archivedChunk(db,input.runId,input.chunkIndex);
+    return original&&chunkMatches(original,input)?
+      response('ARCHIVED_REPLAY',200):response('CHUNK_CONFLICT',409);
+  }
+  if(run.principal_digest!==pd)return response('RUN_NOT_FOUND',404);
   if(run.total_chunks!==input.totalChunks||run.state!=='RECEIVING')
     return response('RUN_CONFLICT',409);
   const already=await readChunk(db,input.runId,input.chunkIndex);
@@ -146,7 +173,18 @@ async function addChunk(db:D1Database,input:IngestChunkInput,principal:ServicePr
 }
 async function runStatus(db:D1Database,id:string,principal:ServicePrincipal){
   const row=await readRun(db,id);
-  if(!row||row.principal_digest!==await sha256(principal.clientId))
+  if(!row){
+    const archived=await archivedRun(db,id);
+    if(!archived||archived.principal_digest!==await sha256(principal.clientId))
+      return response('RUN_NOT_FOUND',404);
+    const chunks=(await db.prepare(
+      'SELECT chunk_index,chunk_digest,record_count,idempotency_key FROM catalog_ingest_archive_chunks WHERE run_id=? ORDER BY chunk_index')
+      .bind(id).all<ChunkRow>()).results;
+    if(chunks.length!==archived.total_chunks)return response('archive_receipt_incomplete',503);
+    return response('ARCHIVED',200,{complete:true,received:chunks.length,
+      expected:archived.total_chunks,missing:[],receipts:chunks});
+  }
+  if(row.principal_digest!==await sha256(principal.clientId))
     return response('RUN_NOT_FOUND',404);
   const chunks=(await db.prepare('SELECT chunk_index,chunk_digest,record_count,idempotency_key FROM catalog_ingest_chunks WHERE run_id=? ORDER BY chunk_index')
     .bind(id).all<ChunkRow>()).results;
