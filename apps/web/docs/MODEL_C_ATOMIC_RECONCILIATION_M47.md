@@ -412,3 +412,21 @@ Official Cloudflare documentation, checked 31 October 2026: [D1 pricing](https:/
 | AC-16 continuity | PASS in previously verified CI | 30/30, 29 archived + 1 current, no D1 reset; enhanced version requires CI |
 
 A green test suite does **not** automatically convert these PARTIAL criteria to PASS. Review the final CI log markers and preserve Gate A as PARTIAL if full importer failure-window recovery or PERSONAL categories remain unverified. **No merge or Milestone #48.**
+
+### Observed local 30-cycle accounting (Web foundation run 41241029176)
+
+The 30-cycle test itself **PASSED** on SHA `3be475f55d322c9e1410082cc07a7350571b7b5a`; the overall workflow **FAILED** because of unrelated test harness issues (local importer fixture DB capacity and TypeScript module interop in the graph test), subsequently addressed in follow-up commits. Re-run the full workflow on the final SHA before certifying AC-11/13.
+
+| Synthetic local D1 | Successful statements with D1 results | `meta.rows_written` | Breakdown |
+|---|---:|---:|---|
+| CATALOG | 2,544 | 2,711 | migrations/DDL 258; publication 1,264; v2 HTTP staging 330; journal 540; retention 319 |
+| PERSONAL | 2,396 | 379 | migrations/DDL 111; appends/reconciliation 268 |
+| **Total** | **4,940** | **3,090** | Includes successful SQL after a deliberately lost client acknowledgement |
+
+This is a *local instrumented test run*, not actual Cloudflare metering, CPU, read rows, account quota or storage billing. `M47_D1_LOCAL_ACCOUNTING` is the machine-readable CI log marker. The enhanced test observed **30/30 completed CATALOG journals, 29 archive receipts, 1 current run, 2 chunks/run, 68–72 records/run, 6 immutable APP actions (4 decision changes, 2 SAVED toggles)**, including one recovered retention ACK loss. The importer emitted conservative publication bounds up to **697** for bootstrap and **153** for subsequent cycles. No Worker CPU and no remote writes were measured.
+
+### Exact originally requested recovery phases (gate matrix outstanding)
+
+The original 19 phases are: (1) before ingestion; (2) first chunk; (3) midpoint chunks; (4) after all chunks; (5) during trusted validation; (6) after VERIFIED; (7) before PERSONAL append; (8) during PERSONAL append; (9) after PERSONAL append; (10) during CATALOG batch; (11) after commit/before response; (12) before reconciliation; (13) during reconciliation; (14) after receipt/before COMPLETED; (15) during retention; (16) during historical replay; (17) during APP update; (18) during concurrent publication; (19) during revision change/CAS.
+
+Existing importer/transport regressions and the new 19 adverse transport vectors exercise parts of these boundaries, but do **not** provide one-to-one interruption/restart proof for every original phase, especially phases 6, 14 and 17. **AC-07 stays PARTIAL**. Never relabel the new 19 fault vectors as the original 19 importer phase windows.
