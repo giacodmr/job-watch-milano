@@ -59,7 +59,7 @@ describe('physically separate, inactive Model C schemas',()=>{
   });
 });
 
-describe('M47 populated v5 to v6 additive upgrade',()=>{
+describe('M47 populated v5 to v7 additive upgrade',()=>{
   it('backfills RECEIVING into durable immutable journal and preserves all M46 chunks',async()=>{
     const db=await runtime.getD1Database('DB'+sequence++);
     for(const m of (await migrationSources('catalog')).slice(0,5)){
@@ -90,8 +90,8 @@ describe('M47 populated v5 to v6 additive upgrade',()=>{
       VALUES(?,?,?,?,?,?)`).bind(packet.run.runId,0,part.chunkDigest,
         part.idempotencyKey,1,canonical(part.records)).run();
     const old=(await db.prepare('SELECT * FROM catalog_ingest_chunks').all()).results;
-    expect((await applySchema(db,'catalog')).applied).toBe(1);
-    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(6);
+    expect((await applySchema(db,'catalog')).applied).toBe(2);
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(7);
     expect((await db.prepare('SELECT * FROM catalog_ingest_chunks').all()).results).toEqual(old);
     const journal=(await db.prepare('SELECT * FROM catalog_ingest_journal').all()).results;
     expect(journal).toHaveLength(1);
