@@ -302,3 +302,89 @@ describe('Candidature actual browser layout and drawer against synthetic Model C
     }finally{session.close();}
   },125000);
 });
+
+
+describe('PR #42 browser mutations through real React, HTTP, Worker and ephemeral PERSONAL D1',()=>{
+  it('persists decisions, APPLIED confirmation, filtered refresh, SAVED on APP-only job and real 409 recovery',async()=>{
+    await runtime.dispose();
+    await initRuntime(true);
+    const catalog=await runtime.getD1Database('CATALOG');
+    const personal=await runtime.getD1Database('PERSONAL');
+    if(!tempDir)throw Error('CHROME_TEMP_MISSING');
+    const file=await readFile(join(tempDir,'DevToolsActivePort'),'utf8');
+    const [portString,endpoint]=file.trim().split('\\n');
+    const session=await connectCDP(Number(portString),endpoint);
+    try{
+      const target=await session.send('Target.createTarget',{url:'about:blank'});
+      const attached=await session.send('Target.attachToTarget',{targetId:target.targetId,flatten:true});
+      const tab=attached.sessionId as string;
+      await session.send('Page.enable',{},tab);
+      await session.send('Runtime.enable',{},tab);
+      async function run(expression:string){
+        const result=await session.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},tab);
+        if(result.exceptionDetails)throw Error('BROWSER_JS '+JSON.stringify(result.exceptionDetails));
+        return result?.result?.value as unknown;
+      }
+      async function until(expression:string){
+        for(let i=0;i<100;i++){
+          const value=await run(expression);
+          if(value)return value;
+          await delay(120);
+        }
+        throw Error('BROWSER_CONDITION_TIMEOUT '+expression);
+      }
+      async function choose(value:string){
+        expect(await run(`(()=>{const el=document.querySelector('.c-personal-actions select');
+          if(!el||el.disabled)return false;el.value=${JSON.stringify(value)};
+          el.dispatchEvent(new Event('change',{bubbles:true}));return true})()`)).toBe(true);
+      }
+      const navigate=async(to:string)=>{
+        await session.send('Page.navigate',{url:to},tab);
+        await until("document.querySelector('.c-listing tbody tr')!==null");
+      };
+      await navigate(url);
+      await run("document.querySelector('.c-row-open')?.click()");
+      await until("!!document.querySelector('.c-personal-actions select:not([disabled])')");
+      await choose('INTERESTED');
+      await until("!![...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione')&&!b.disabled)");
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione'))?.click()");
+      await until("document.querySelector('.c-listing tbody')?.textContent?.includes('Interessante') && document.querySelector('.c-drawer[open]')!==null");
+      expect(await personal.prepare("SELECT decision FROM personal_app_current WHERE job_id=?").bind(jobId).first('decision')).toBe('INTERESTED');
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_events").first('n')).toBe(1);
+      await session.send('Page.reload',{},tab);
+      await until("document.querySelector('.c-listing tbody')?.textContent?.includes('Interessante')");
+      await run("[...document.querySelectorAll('.c-tabs button')].find(b=>b.textContent==='Da candidare')?.click()");
+      await until("document.querySelector('.c-listing tbody')?.textContent?.includes('Synthetic Analyst')");
+      await run("document.querySelector('.c-row-open')?.click()");
+      await until("!!document.querySelector('.c-personal-actions select:not([disabled])')");
+      await choose('APPLIED');
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione'))?.click()");
+      await until("!![...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma candidatura inviata'))");
+      expect(await personal.prepare("SELECT revision FROM personal_app_current WHERE job_id=?").bind(jobId).first('revision')).toBe(1);
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma candidatura inviata'))?.click()");
+      await until("document.querySelector('.c-drawer[open]')!==null && document.querySelector('.c-listing tbody tr')===null");
+      expect(await personal.prepare("SELECT decision FROM personal_app_current WHERE job_id=?").bind(jobId).first('decision')).toBe('APPLIED');
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_events").first('n')).toBe(2);
+      await navigate(url.replace('/candidature','/opportunita'));
+      const second='job:'+'2'.repeat(64);
+      await run(`[...document.querySelectorAll('.c-listing tbody tr')].find(tr=>tr.textContent?.includes('Second Synthetic Analyst'))?.querySelector('.c-row-open')?.click()`);
+      await until("document.querySelector('.c-drawer[open] .c-personal-actions button:not([disabled])')!==null");
+      await run("[...document.querySelectorAll('.c-action-saved button')].find(b=>b.textContent?.includes('Salva posizione'))?.click()");
+      await until("document.querySelector('.c-action-saved')?.textContent?.includes('Rimuovi dai salvati')");
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_current WHERE job_id=?").bind(second).first('n')).toBe(1);
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_job_refs WHERE job_id=?").bind(second).first('n')).toBe(0);
+      // An external local APP operation races with a stale browser drawer.
+      const {executePersonalCommand}=await import('../worker/data/model-c-personal-write');
+      await executePersonalCommand(catalog,personal,{ownerId:owner},{
+        kind:'DECISION',jobId:second,expectedRevision:1,catalogRevision:1,
+        operationId:'00000000-0000-4000-8000-000000004242',decision:'TO_REVIEW',reasonSummary:null,
+      });
+      await choose('INTERESTED');
+      await run("[...document.querySelectorAll('.c-personal-actions button')].find(b=>b.textContent?.includes('Conferma decisione'))?.click()");
+      await until("document.querySelector('.c-action-feedback.c-error')?.textContent?.includes('cambiata')");
+      expect(await personal.prepare("SELECT count(*) AS n FROM personal_app_events WHERE job_id=?").bind(second).first('n')).toBe(2);
+      expect(await personal.prepare("SELECT decision FROM personal_app_current WHERE job_id=?").bind(second).first('decision')).toBe('TO_REVIEW');
+      expect(await run("document.body.scrollWidth <= window.innerWidth")).toBe(true);
+    }finally{session.close();}
+  },125000);
+});
