@@ -89,7 +89,7 @@ describe('inactive, read-only Model C catalog service', () => {
             expect(sql).toContain('LIMIT 501');
             return {all: async () => ({results: records})};
           }
-          if (sql.includes('FROM model_c_schema')) return {first: async () => 5};
+          if (sql.includes('FROM model_c_schema')) return {first: async () => 6};
           if (sql.includes('FROM catalog_head h')) return {first: async () => head};
           if (sql.includes('count(*) AS total')) return {first: async () => 1};
           throw new Error('UNEXPECTED_READ');
