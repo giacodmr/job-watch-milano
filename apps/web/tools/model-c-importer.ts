@@ -240,9 +240,16 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
   const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
+  const appRevisionAtStart=Number(await personal.prepare(
+    'SELECT revision FROM personal_app_heads WHERE owner_id=?').bind(options.owner).first('revision')??0);
+  const ensureStableApp=async()=>{
+    const now=Number(await personal.prepare('SELECT revision FROM personal_app_heads WHERE owner_id=?')
+      .bind(options.owner).first('revision')??0);
+    if(now!==appRevisionAtStart)throw Error('PERSONAL_APP_CONTEXT_CHANGED');
+  };
   if(options.oneTimeFreeBootstrap!==undefined && typeof options.oneTimeFreeBootstrap!=='boolean')throw Error('INVALID_BOOTSTRAP_AUTHORIZATION');
   if(options.oneTimeFreeBootstrap && old.head)throw Error('ONE_TIME_BOOTSTRAP_NOT_INITIAL');
-  if(options.preflightOnly && !options.oneTimeFreeBootstrap)throw Error('FREE_BOOTSTRAP_PREFLIGHT_REQUIRES_MODE');
+  // Incremental read-only preflight is safe without a bootstrap grant.
   let startingLedger=old.ledger, previousCommit=old.previous?.observedGitCommit;
   let legacy:Awaited<ReturnType<typeof v1Ledger>>|undefined;
   if (!old.head && options.v1) { legacy=await v1Ledger(options.v1); startingLedger=legacy.ledger; previousCommit=legacy.commit; }
@@ -376,6 +383,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     if(after.sequence>before.sequence)metrics.publication++;
   }
   // Detect modifications between proof construction and the first private batch.
+  await ensureStableApp();
   if (await digestRows(await read(personal,personalTables))!==privateDigest) throw Error('PERSONAL_CONTEXT_CHANGED');
   let afterPersonal=privateDigest;
   if(personalSteps.length) {
@@ -386,6 +394,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     metrics.personal=result.reduce((n,r)=>n+(r.meta.rows_written??0),0);
     afterPersonal=await digestRows(Object.fromEntries(personalTables.map((t,i)=>[t,result[mutations.length+i]!.results])));
   }
+  await ensureStableApp();
   if (await digestRows(await read(personal,personalTables))!==afterPersonal) throw Error('PERSONAL_CONTEXT_CHANGED');
   if(m47){
     const before=await observeIngestJournal(catalog,run);
