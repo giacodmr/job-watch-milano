@@ -2,7 +2,9 @@
 import {describe,expect,it} from 'vitest';
 import {existsSync,readFileSync} from 'node:fs';
 import {dirname,relative,resolve} from 'node:path';
-import * as ts from 'typescript';
+import * as tsModule from 'typescript';
+// Vite's CJS interop exposes the compiler API as the default namespace.
+const ts=(tsModule as typeof tsModule & {default?:typeof tsModule}).default??tsModule;
 
 const root=resolve(import.meta.dirname,'..');
 const entrypoints=['worker/index.ts','worker/private-runtime.ts'];
@@ -20,13 +22,13 @@ function dependencies(file:string):string[]{
  const body=readFileSync(file,'utf8');
  const tree=ts.createSourceFile(file,body,ts.ScriptTarget.Latest,true,ts.ScriptKind.TS);
  const imports:string[]=[];
- function record(value:ts.Expression|undefined){
+ function record(value:tsModule.Expression|undefined){
   if(value && ts.isStringLiteral(value))imports.push(value.text);
   else throw Error('NONSTATIC_WORKER_IMPORT:'+relative(root,file));
  }
- function walk(node:ts.Node){
+ function walk(node:tsModule.Node){
   if(ts.isImportDeclaration(node)&&!node.importClause?.isTypeOnly)
-   record(node.moduleSpecifier as ts.Expression);
+   record(node.moduleSpecifier as tsModule.Expression);
   if(ts.isExportDeclaration(node)&&!node.isTypeOnly&&node.moduleSpecifier)
    record(node.moduleSpecifier as ts.Expression);
   if(ts.isCallExpression(node)&&node.expression.kind===ts.SyntaxKind.ImportKeyword)
