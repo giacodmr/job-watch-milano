@@ -37,7 +37,7 @@ export async function inspectPrivateRepositoryGate(){
   ensure((localConfig.d1_databases??[]).every(db=>db.remote===false),
     'LOCAL_CONFIG_HAS_REMOTE_D1',errors);
   const migrations=[];
-  for(const [scope,expected] of [['catalog',4],['personal',3]]){
+  for(const [scope,expected] of [['catalog',5],['personal',3]]){
     const dir='model-c/'+scope+'/migrations';
     const names=(await readdir(resolve(root,dir))).filter(n=>n.endsWith('.sql')).sort();
     ensure(names.length===expected,'UNEXPECTED_'+scope.toUpperCase()+'_SCHEMA_VERSION',errors);
@@ -54,7 +54,7 @@ export async function inspectPrivateRepositoryGate(){
     activation:'BLOCKED_FOR_ACTIVATION',
     cloudAccountVerified:false,cloudMutationsAuthorized:false,
     remoteImporterAuthorized:false,
-    expectedSchemaVersions:{catalog:4,personal:3},
+    expectedSchemaVersions:{catalog:5,personal:3},
     migrations,errors,
     externalBlockers:[
       'CLOUDFLARE_ACCOUNT_AND_PLAN_UNVERIFIED',
