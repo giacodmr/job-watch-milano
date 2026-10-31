@@ -92,9 +92,12 @@ export async function authenticatePrivateRequest(
     throw new PrivateAuthError('private_auth_invalid',401);
   }
   if(typeof payload.sub!=='string'||payload.sub!==config.allowlistedSubject||
-      // Exclude Access service-token identities: explicit individual subject allowlist
-      // still applies even if Access policy misconfigures application service auth.
-      payload.type==='service' || payload.common_name!==undefined)
+      // Cloudflare application JWT: type=app for user AND service tokens.
+      // Real user token includes an IdP email; service token has common_name and
+      // empty sub. Never use email as the owner key or expose it to callers.
+      payload.type!=='app'||typeof payload.email!=='string'||!payload.email||
+      payload.common_name!==undefined||payload.service_token_id!==undefined||
+      payload.service_token_status===true)
     throw new PrivateAuthError('private_access_denied');
   // No email, cookies, IP or request-supplied owner IDs are used in the mapping.
   return {subject:payload.sub,issuer:config.issuer,audience:config.audience,
