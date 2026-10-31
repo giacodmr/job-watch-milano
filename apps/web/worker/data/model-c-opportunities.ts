@@ -4,7 +4,7 @@ import {
   getModelCCatalogSnapshot,getModelCCatalogJob,listModelCCatalogJobs,
   modelCCatalogQuerySchema,ModelCReadError,
 } from './model-c-catalog';
-import {getModelCPersonalJob,getModelCPersonalOverlays} from './model-c-personal';
+import {getModelCPersonalJob,getModelCPersonalOverlays,ModelCPersonalReadError} from './model-c-personal';
 import type {ModelCLocalEnv} from '../model-c-local-api';
 import type {TrustedOwner} from './model-c-personal';
 
@@ -33,6 +33,20 @@ function verifyOwner(env:ModelCLocalEnv,authenticatedOwner?:TrustedOwner) {
     throw new ModelCReadError('synthetic_owner_unavailable',403);
   return {catalog:env.CATALOG,personal:env.PERSONAL,owner:{ownerId:env.MODEL_C_TEST_OWNER}};
 }
+// An Access-authenticated user can read the catalog before their PERSONAL import.
+// This exception is ONLY for an absent verified owner context, never for invalid
+// schema, wrong scope, database faults, or unauthenticated local callers.
+async function personalOverlayOrAbsent(
+  catalog:D1Database,personal:D1Database,owner:TrustedOwner,ids:string[],
+  authenticatedOwner?:TrustedOwner,
+) {
+  try { return await getModelCPersonalOverlays(catalog,personal,owner,ids); }
+  catch(error) {
+    if(authenticatedOwner && error instanceof ModelCPersonalReadError &&
+       error.code==='PERSONAL_CONTEXT_UNAVAILABLE')return null;
+    throw error;
+  }
+}
 export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,input:Record<string,string>,authenticatedOwner?:TrustedOwner) {
   const {catalog,personal,owner}=verifyOwner(env,authenticatedOwner);
   if(suffix==='jobs'){
@@ -40,29 +54,29 @@ export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,i
     const page=await listModelCCatalogJobs(catalog,filters);
     // A missing CATALOG publication is not a personal-data publication.
     if(!page.snapshot)return {...page,personalRevision:null,items:[]};
-    const overlay=await getModelCPersonalOverlays(catalog,personal,owner,page.items.map(j=>j.id));
-    if(overlay.catalogRevision!==page.snapshot.syncRevision)
+    const overlay=await personalOverlayOrAbsent(catalog,personal,owner,page.items.map(j=>j.id),authenticatedOwner);
+    if(overlay && overlay.catalogRevision!==page.snapshot.syncRevision)
       throw new ModelCReadError('CATALOG_CHANGED',409);
     const now=(await getModelCCatalogSnapshot(catalog)).snapshot;
     checkCatalog(page.snapshot,now);
-    return {...page,personalRevision:overlay.personalRevision,appRevision:overlay.appRevision,
-      items:page.items.map(job=>({...job,personal:overlay.items[job.id]??null}))};
+    return {...page,personalRevision:overlay?.personalRevision??null,appRevision:overlay?.appRevision??null,
+      items:page.items.map(job=>({...job,personal:overlay?.items[job.id]??null}))};
   }
   if(!suffix.startsWith('jobs/'))throw new ModelCReadError('not_found',404);
   const id=idSchema.parse(suffix.slice('jobs/'.length));
   const {revision}=revisionSchema.parse(input);
   const page=await getModelCCatalogJob(catalog,id,revision);
   if(!page.snapshot)throw new ModelCReadError('NO_PUBLISHED_CATALOG',404);
-  const overlay=await getModelCPersonalOverlays(catalog,personal,owner,[id]);
-  if(overlay.catalogRevision!==page.snapshot.syncRevision)
+  const overlay=await personalOverlayOrAbsent(catalog,personal,owner,[id],authenticatedOwner);
+  if(overlay && overlay.catalogRevision!==page.snapshot.syncRevision)
     throw new ModelCReadError('CATALOG_CHANGED',409);
-  const personalRow=overlay.items[id]??null;
+  const personalRow=overlay?.items[id]??null;
   const personalDetail=personalRow?await getModelCPersonalJob(catalog,personal,owner,id):null;
   if(personalDetail && (personalDetail.catalogRevision!==revision ||
-    personalDetail.personalRevision!==overlay.personalRevision))
+    personalDetail.personalRevision!==overlay?.personalRevision))
     throw new ModelCReadError('CONTEXT_CHANGED',409);
   const now=(await getModelCCatalogSnapshot(catalog)).snapshot;
   checkCatalog(page.snapshot,now);
-  return {...page,personalRevision:overlay.personalRevision,appRevision:overlay.appRevision,
+  return {...page,personalRevision:overlay?.personalRevision??null,appRevision:overlay?.appRevision??null,
     personal:personalRow,personalDetail};
 }
