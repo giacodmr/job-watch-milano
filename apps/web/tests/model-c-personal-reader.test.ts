@@ -156,6 +156,29 @@ describe('inactive trusted-owner Model C personal read service',()=>{
     .rejects.toMatchObject({code:'CONTEXT_CHANGED'});
   expect(checks).toBe(2);
  });
+ it('provides bounded CATALOG display data and filters PERSONAL globally before pagination',async()=>{
+  const {c,p}=await fixture();
+  const initial=await listModelCPersonalJobs(c,p,{ownerId:owner},{view:'dismissed',q:'archived'});
+  expect(initial.total).toBe(1);
+  expect(initial.items.at(0)?.catalog).toMatchObject({
+    company:'Synthetic Company',title:'Synthetic Analyst',
+    companyId:'company:synthetic',lifecycle:'STILL_OPEN',
+  });
+  expect((await listModelCPersonalJobs(c,p,{ownerId:owner},{view:'applied'})).total).toBe(0);
+  expect((await listModelCPersonalJobs(c,p,{ownerId:owner},{view:'to_apply'})).total).toBe(0);
+  expect((await listModelCPersonalJobs(c,p,{ownerId:owner},{decision:'NOT_INTERESTED'})).total).toBe(1);
+  expect((await listModelCPersonalJobs(c,p,{ownerId:owner},{reference:'DISMISSED'})).total).toBe(1);
+  expect((await listModelCPersonalJobs(c,p,{ownerId:owner},{q:'unrelated'})).total).toBe(0);
+  await p.prepare("INSERT INTO personal_job_refs VALUES (?,?,'Historical candidate',NULL,'UNKNOWN',?,'job_memory_jw1.json',?,1)")
+    .bind(owner,'job:'+'2'.repeat(64),commit,hash).run();
+  const first=await listModelCPersonalJobs(c,p,{ownerId:owner},{limit:1,view:'all'});
+  expect(first.total).toBe(2);
+  const second=await listModelCPersonalJobs(c,p,{ownerId:owner},{limit:1,view:'all',cursor:first.nextCursor});
+  expect(second.items).toHaveLength(1);
+  expect(second.items.at(0)?.catalog).toBeNull();
+  await expect(listModelCPersonalJobs(c,p,{ownerId:owner},{limit:1,view:'applied',cursor:first.nextCursor}))
+    .rejects.toMatchObject({code:'CURSOR_FILTER_MISMATCH'});
+ });
  it('rejects wrong database scope and missing owner without issuing writes',async()=>{
   const {c,p}=await fixture();
   await expect(getModelCPersonalSummary(p,c,{ownerId:owner})).rejects.toMatchObject({code:'PERSONAL_SCHEMA_MISMATCH'});

@@ -122,6 +122,7 @@ export default function App() {
           <a href="#main" aria-current="page">
             Opportunità
           </a>
+          <a href="/candidature">Candidature</a>
         </nav>
         <span className="mode-label">Locale · Sola lettura</span>
       </header>
