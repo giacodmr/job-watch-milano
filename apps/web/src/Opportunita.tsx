@@ -151,7 +151,7 @@ function OpportunityDrawer({row,revision,onClose,onConfirmed}:{
           </section>}
         </>}
       </div>
-      <footer className="c-drawer-footer"><span>Azioni personali nel laboratorio locale</span>
+      <footer className="c-drawer-footer"><span>Azioni personali solo se autorizzate dal server</span>
         <button className="c-btn" type="button" onClick={onClose}>Chiudi</button>
       </footer>
     </div>
@@ -184,8 +184,10 @@ function message(error:unknown) {
   if(['CATALOG_CHANGED','CONTEXT_CHANGED','CURSOR_FILTER_MISMATCH','INVALID_CURSOR'].includes(code))
     return 'Il catalogo o i filtri sono cambiati. Aggiorna la consultazione.';
   if(code==='not_found')return 'L’API Model C è disabilitata. Questa vista è disponibile solo nel laboratorio sintetico locale.';
-  if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Non è disponibile un contesto PERSONAL per l’owner sintetico.';
-  return 'Non è possibile leggere le opportunità. Controlla il laboratorio locale e i database sintetici.';
+  if(code==='PERSONAL_CONTEXT_UNAVAILABLE')return 'Il registro personale non è ancora stato importato e verificato per questo accesso.';
+  if(['NO_PUBLISHED_CATALOG','CATALOG_SCHEMA_MISMATCH'].includes(code))return 'Il catalogo non è ancora pronto per la consultazione.';
+  if(code==='database_unavailable')return 'Il database non è temporaneamente disponibile. Riprova più tardi.';
+  return 'Non è possibile consultare le opportunità al momento. Riprova più tardi.';
 }
 export default function Opportunita(){
   const [view,setView]=useState<OpportunityView>('all');
@@ -235,6 +237,7 @@ export default function Opportunita(){
     {snapshot&&<p className="o-snapshot" role="status">
       {snapshot.currentJobs} vacancy correnti nel catalogo · Revisione {snapshot.syncRevision} · Commit {snapshot.observedCommit.slice(0,8)}
     </p>}
+    {!loading&&!error&&snapshot&&page&&page.personalRevision===null&&<p className="o-snapshot" role="status">Catalogo disponibile in sola lettura. Il registro personale non è ancora stato importato e verificato per questo accesso; le decisioni non vengono mostrate.</p>}
     <section className="c-content" aria-label="Catalogo opportunità">
       <div className="c-tabs" role="tablist" aria-label="Viste catalogo">
         {views.map(item=><button key={item.value} type="button" role="tab"
@@ -276,7 +279,7 @@ export default function Opportunita(){
         <p>{error}</p><button className="c-btn" type="button" onClick={reload}>Riprova</button>
       </div>}
       {!loading&&!error&&!snapshot&&<div className="c-state">
-        <h2>Nessun catalogo pubblicato</h2><p>Il laboratorio locale non ha un checkpoint CATALOG disponibile. Non sono mostrate vacancy inventate.</p>
+        <h2>Nessun catalogo pubblicato</h2><p>Non è ancora disponibile uno snapshot CATALOG verificato. Non vengono mostrate vacancy fittizie.</p>
       </div>}
       {!loading&&!error&&page&&snapshot&&page.items.length>0&&<OpportunityTable items={page.items} onSelect={setSelected}/>}
       {!loading&&!error&&snapshot&&page&&page.items.length===0&&<div className="c-state">
@@ -292,7 +295,7 @@ export default function Opportunita(){
         </div>
       </footer>
     </section>
-    <p className="c-lab-note">Model C · laboratorio sintetico · modifiche alle preferenze personali solo se autorizzate dal server.</p>
+    <p className="c-lab-note">Model C · consultazione dei dati verificati · modifiche disponibili solo se autorizzate dal server.</p>
     {selected&&snapshot&&<OpportunityDrawer row={selected} revision={snapshot.syncRevision} onClose={()=>setSelected(null)} onConfirmed={reload}/>}
   </WorkspaceShell>;
 }
