@@ -1,5 +1,7 @@
 // Inactive Node-only Model C importer. No Worker/browser entrypoint or D1 binding.
 import { randomUUID } from 'node:crypto';
+import {verifyTrustedStagingAgainstSnapshot} from './model-c-trusted-stage';
+import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
 import { selectModelC } from '../shared/model-c-selection';
 import type { IdentityLedger, SelectionContext } from '../shared/model-c-selection';
@@ -22,6 +24,9 @@ export interface ImportOptions {
   oneTimeFreeBootstrap?: boolean;
   executionTarget?: 'local-ephemeral' | 'remote';
   preflightOnly?: boolean;
+  // Optional M47 lab-only: bind an M46 staged run to the independently
+  // replayed full Git snapshot before ANY importer writes. Never a service grant.
+  stagedPublication?: {runId:string;trustedPlan:Awaited<ReturnType<typeof prepareSafeRemoteBootstrapPlan>>};
   budget: { day:string; availableRows:number; extendedAuthorized?:boolean };
 }
 export interface ImportMetrics {
@@ -245,6 +250,13 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const context:SelectionContext={identities:old.head||options.v1 ? {mode:'confirmed-ledger',ledger:startingLedger,expectedDigest:await sha256(canonical(startingLedger))} : {mode:'first-v1-bootstrap'},personalReferences:activeRefs,personalDecisionJobIds};
   const verified=await verifyGitProjection(options.source,context,previousCommit), {bundle}=verified;
   const proof=await verifyProjectionProof(bundle,verified.proof,context), selected=await selectModelC(bundle,context);
+  if(options.stagedPublication){
+    // The stage claim is untrusted. Verify against the SAME canonical Git proof
+    // and selection that the existing importer will publish. Keep all original
+    // personal guards, CAS, batch and reconciliation logic intact.
+    await verifyTrustedStagingAgainstSnapshot(catalog,options.stagedPublication.runId,
+      bundle,selected,proof,options.stagedPublication.trustedPlan);
+  }
   // Check ALL personal references against permanent identities, including inactive
   // refs and historical decisions, not just currently selected vacancies.
   if (privateData.personal_job_refs!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id)) ||
