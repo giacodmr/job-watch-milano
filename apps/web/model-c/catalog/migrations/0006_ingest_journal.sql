@@ -103,6 +103,12 @@ WHEN NOT EXISTS (
     AND r.projection_digest=NEW.projection_digest AND r.plan_digest=NEW.plan_digest
     AND r.expected_revision=NEW.expected_revision AND r.total_chunks=NEW.total_chunks
     AND r.principal_digest=NEW.principal_digest AND r.run_digest=NEW.run_digest
+    AND EXISTS(SELECT 1 FROM catalog_runs p JOIN catalog_run_proofs proof
+      ON proof.run_id=p.id WHERE p.id=r.id AND p.state='PUBLISHED'
+      AND p.observed_commit=r.commit_sha
+      AND p.projection_digest=r.projection_digest
+      AND p.expected_revision=r.expected_revision
+      AND proof.manifest_digest=r.manifest_digest)
     AND EXISTS(SELECT 1 FROM catalog_ingest_journal j
       WHERE j.run_id=r.id AND j.phase='COMPLETED')
     AND NOT EXISTS(SELECT 1 FROM catalog_head h
