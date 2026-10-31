@@ -123,13 +123,20 @@ function CandidatureDrawer({selected,onClose,onConfirmed}:{
             <section className="c-panel-section"><h3>Storico delle decisioni</h3>
               {detail.decisionEvents.length?<ol className="c-history">
                 {detail.decisionEvents.map(event=><li key={event.id}>
-                  <strong>{event.decision?decisionLabel[event.decision]:'Decisione revocata'}</strong><small>{displayDate(event.decidedAt)}</small>
+                  <strong>{event.decision?decisionLabel[event.decision]:'Decisione revocata'}</strong>
+                  <small>{displayDate(event.decidedAt)} · {event.origin==='APP'?'Piattaforma':'GitHub'}</small>
                   {event.reasonSummary&&<p>{event.reasonSummary}</p>}
-                  <Provenance commit={event.sourceCommit} path={event.sourcePath}/>
+                  {event.origin!=='APP'&&<Provenance commit={event.sourceCommit} path={event.sourcePath}/>}
                 </li>)}
               </ol>:<p className="c-informative">Nessuna decisione storica disponibile.</p>}
               {detail.decisionEventsTruncated&&<p className="c-informative">Sono visibili solo gli ultimi 50 eventi.</p>}
             </section>
+            {!!detail.appEvents?.some(event=>event.kind==='SAVED')&&<section className="c-panel-section">
+              <h3>Salvataggi nella piattaforma</h3>
+              <ol className="c-history">{detail.appEvents.filter(event=>event.kind==='SAVED').map(event=>
+                <li key={event.id}><strong>{event.savedActive?'Posizione salvata':'Rimossa dai salvati'}</strong>
+                  <small>{displayDate(event.createdAt)} · Piattaforma</small></li>)}</ol>
+            </section>}
             <section className="c-panel-section"><h3>Storico delle valutazioni</h3>
               {detail.assessmentEvents.length?<ol className="c-history">
                 {detail.assessmentEvents.map(event=><li key={event.id}>
