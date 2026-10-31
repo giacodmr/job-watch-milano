@@ -236,3 +236,18 @@ PERSONAL writes **only after** a secured, verified private environment exists,
 with CSRF, per-principal authorization, D1 CAS/idempotency, revocation, quota,
 retries and recovery independently proved; APP ↔ GitHub bidirectional sync
 remains a separate milestone.
+
+## Milestone #45 — Safe D1 bootstrap preparation (Gate A only)
+
+See [Model C Remote Bootstrap M45](MODEL_C_REMOTE_BOOTSTRAP_M45.md)
+for the new pinned-commit local preflight CLI, deterministic read-only
+plan and digest, per-database offline SQL transport contract, quota
+admission binding, Miniflare fault-injection evidence and remaining
+Cloudflare proof requirements. None creates remote credentials, D1
+bindings, resources, Workers or routes.
+
+The #44 activation decision remains **DEPLOYMENT BLOCKED —
+REMOTE BOOTSTRAP NOT READY**. M45 is an offline preparation milestone,
+not Gate B approval. There is still no authorized remote importer,
+production-owner attestation, live Cloudflare account inventory or
+verifiable remote rollback.
