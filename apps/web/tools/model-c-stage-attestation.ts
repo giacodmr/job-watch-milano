@@ -85,6 +85,13 @@ export async function auditReceivedIngestStage(catalog:D1Database,runId:string){
     status:'PACKET_INTEGRITY_VERIFIED_ONLY' as const,
     runId,expectedRevision:row.expected_revision,receivedChunks:results.length,
     recordCount:records.length,
+    // Deterministic set digest used only alongside independently verified Git projection.
+    inventoryDigest:await sha256(canonical([...records].sort((a,b)=>
+      (a.kind+':'+a.id).localeCompare(b.kind+':'+b.id)))),
+    claimedCommitSha:runData.commitSha,
+    claimedManifestDigest:runData.manifestDigest,
+    claimedProjectionDigest:runData.projectionDigest,
+    claimedPlanDigest:runData.planDigest,
     packetDigest:await sha256(canonical({run:runData,chunkDigests})),
     // These claims explicitly do NOT attest to Git ancestry, source completeness
     // or the full CATALOG projection (M46 v1 is lossy by design).
