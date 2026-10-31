@@ -43,7 +43,7 @@ beforeAll(async()=>{
     d1Databases:{CATALOG:'m47-stage-audit'},
   }));
   db=await runtime.getD1Database('CATALOG');
-  expect((await applySchema(db,'catalog')).applied).toBe(5);
+  expect((await applySchema(db,'catalog')).applied).toBe(6);
 });
 afterAll(async()=>{await runtime?.dispose();});
 const rejected=async(p:Packet,code:string)=>
