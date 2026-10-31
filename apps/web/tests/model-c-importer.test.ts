@@ -112,7 +112,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
   });
   it('M47 AC-05 retains imported assessment/notes, APP reason history and SAVED overrides across imports',async()=>{
     const f=await fixture(1);
-    const first=await importModelC(f.c,f.p,f.options);
+    await importModelC(f.c,f.p,f.options);
     const id=(await f.c.prepare('SELECT id FROM catalog_vacancy_identity').first<string>('id'))!;
     const commitSha=f.options.source.commit;
     // Seed an independently owned synthetic historical imported assessment with
@@ -159,8 +159,9 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(item).toMatchObject({decision:'INTERESTED',decisionSource:'APP'});
     expect(item.activeReferences).toContain('SAVED');
     expect(item.assessment).not.toBeNull();
+    const currentCatalogRevision=await f.c.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first<number>('sync_revision');
     await expect(executePersonalCommand(f.c,f.p,{ownerId:f.options.owner},{
-      kind:'DECISION',jobId:id,catalogRevision:withAssessment.syncRevision,expectedRevision:0,
+      kind:'DECISION',jobId:id,catalogRevision:currentCatalogRevision!,expectedRevision:0,
       operationId:'00000000-0000-4000-8000-000000004503',
       decision:'APPLIED',reasonSummary:null,
     })).rejects.toThrow('REVISION_CONFLICT');
