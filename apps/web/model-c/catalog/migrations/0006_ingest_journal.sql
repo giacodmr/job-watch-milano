@@ -21,9 +21,9 @@ INSERT INTO catalog_ingest_journal(run_id,sequence,phase,proof_digest,previous_d
     run_digest FROM catalog_ingest_runs;
 -- statement-breakpoint
 CREATE TRIGGER catalog_ingest_journal_guard BEFORE INSERT ON catalog_ingest_journal
+WHEN NEW.sequence>0
 BEGIN
-  SELECT CASE WHEN NEW.sequence=0 THEN RAISE(ABORT,'journal_start_via_run_only')
-    WHEN NOT EXISTS(SELECT 1 FROM catalog_ingest_runs WHERE id=NEW.run_id)
+  SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM catalog_ingest_runs WHERE id=NEW.run_id)
       THEN RAISE(ABORT,'journal_run_missing')
     WHEN NOT EXISTS(SELECT 1 FROM catalog_ingest_journal
       WHERE run_id=NEW.run_id AND sequence=NEW.sequence-1
