@@ -66,6 +66,7 @@ export function opportunityPagePath(filters:OpportunityFilters) {
 export const readOpportunities=(filters:OpportunityFilters,signal:AbortSignal)=>
   readApi(opportunityPagePath(filters),opportunityPageSchema,signal);
 export const readOpportunitySnapshot=(signal:AbortSignal)=>
-  readApi('/api/model-c/catalog/snapshot',opportunitySnapshotSchema,signal);
+  readApi('/api/model-c/catalog/snapshot',opportunitySnapshotSchema,signal)
+    .then(result=>result.snapshot);
 export const readOpportunityDetail=(job:string,revision:number,signal:AbortSignal)=>
   readApi('/api/model-c/opportunities/jobs/'+jobId.parse(job)+'?revision='+revision,opportunityDetailSchema,signal);
