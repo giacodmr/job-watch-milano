@@ -293,7 +293,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
     expectedRevision:appRevision,
     operationId:i===7?'00000000-0000-4000-8000-000000004170':
       '00000000-0000-4000-8000-000000004172',active:savedByApp});
-   expect(changed.status).toBe('saved');
+   expect('status' in changed ? changed.status : null).toBe('saved');
    appRevision++;
   }
   if(i>=4){
