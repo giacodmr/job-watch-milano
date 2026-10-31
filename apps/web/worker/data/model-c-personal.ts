@@ -61,9 +61,9 @@ async function catalogHead(db: D1Database) {
 async function personalHead(db: D1Database, ownerId: string) {
   const version = await db.prepare("SELECT version FROM model_c_schema WHERE scope='PERSONAL'").first<number>('version');
   if (version !== 3) throw new ModelCPersonalReadError('PERSONAL_SCHEMA_MISMATCH', 503);
-  const head = await db.prepare('SELECT revision,context_digest AS contextDigest,
+  const head = await db.prepare(`SELECT revision,context_digest AS contextDigest,
    COALESCE((SELECT revision FROM personal_app_heads a WHERE a.owner_id=personal_heads.owner_id),0) AS appRevision
-   FROM personal_heads WHERE owner_id=?')
+   FROM personal_heads WHERE owner_id=?`)
     .bind(ownerId).first<PersonalHead>();
   if (!head) throw new ModelCPersonalReadError('PERSONAL_CONTEXT_UNAVAILABLE', 404);
   return head;
