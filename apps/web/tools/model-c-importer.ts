@@ -305,7 +305,16 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const newRefs=personalSteps.filter(s=>s.sql.startsWith('INSERT INTO personal_job_refs ')).length;
   const reconBound=await bound(personal,personalGuard(privateData))+newPrivateRows*2+(privateData.personal_job_refs!.length+newRefs)*4+12;
   inspectCatalogPlan(publication,metrics);
-  const pendingReconciliation=!same || personalSteps.length>0 || privateData.personal_job_refs!.some(r=>!privateData.personal_reconciliation!.some(v=>v.owner_id===r.owner_id&&v.job_id===r.job_id&&v.state==='VERIFIED'&&v.receipt_id===receipt.id&&v.personal_revision===privateData.personal_heads!.find(h=>h.owner_id===r.owner_id)?.revision));
+  // Even an owner with ZERO personal_job_refs must have a durable, exactly
+  // matching catalog receipt. Otherwise a lost acknowledgment after CATALOG
+  // commit could incorrectly return RECOVERED while PERSONAL remains unbound.
+  const receiptMatches=privateData.personal_catalog_receipts!.some(r=>
+    r.id===receipt.id&&canonical(r)===canonical(receipt));
+  const pendingReconciliation=!same || personalSteps.length>0 || !receiptMatches ||
+    privateData.personal_job_refs!.some(r=>!privateData.personal_reconciliation!.some(v=>
+      v.owner_id===r.owner_id&&v.job_id===r.job_id&&v.state==='VERIFIED'&&
+      v.receipt_id===receipt.id&&v.personal_revision===
+        privateData.personal_heads!.find(h=>h.owner_id===r.owner_id)?.revision));
   const catalogEstimate=await estimateWrites(catalog,[...publication,...cleanup]);
   const privateBound=await bound(personal,personalSteps.length?[...personalGuard(privateData),...personalSteps]:[]);
   const estimated=catalogEstimate.total+privateBound+(pendingReconciliation?reconBound:0);
@@ -482,7 +491,10 @@ async function reconcile(catalog:D1Database, personal:D1Database, receipt:Row, s
   if (current.head?.run_id!==String(receipt.id).slice('receipt:'.length)||current.head.sync_revision!==receipt.catalog_sync_revision) throw Error('RECONCILIATION_HEAD_CHANGED');
   const data=await read(personal,personalTables), steps:Step[]=[];
   requireSingleOwner(data,owner);
-  if (!data.personal_catalog_receipts!.some(r=>r.id===receipt.id)) steps.push(insert('personal_catalog_receipts',receipt));
+  const existingReceipt=data.personal_catalog_receipts!.find(r=>r.id===receipt.id);
+  if(existingReceipt && canonical(existingReceipt)!==canonical(receipt))
+    throw Error('RECONCILIATION_RECEIPT_CONFLICT');
+  if (!existingReceipt) steps.push(insert('personal_catalog_receipts',receipt));
   for (const ref of data.personal_job_refs!) {
     const head=data.personal_heads!.find(h=>h.owner_id===ref.owner_id);
     if (!head || !selected.ledger.identities.some(i=>i.jobId===ref.job_id)) throw Error('UNRESOLVED_PERSONAL_REFERENCE');
