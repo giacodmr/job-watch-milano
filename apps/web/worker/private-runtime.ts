@@ -51,6 +51,12 @@ export async function handlePrivateRuntime(
   // PRIVATE never dispatches POST to the local-only Write Engine.
   if(path==='/api'||path.startsWith('/api/')){
     if(request.method!=='GET')return json({error:'method_not_allowed'},405);
+    if(path==='/api/model-c/private/status'){
+      if(url.search)return json({error:'invalid_query'},400);
+      // Only an already-validated interactive Access principal can reach here.
+      // No subject, email, owner ID, token or account detail in the response.
+      return json({accessVerified:true,readOnly:true,environment:'private'});
+    }
     if(!path.startsWith(catalogPrefix)&&!path.startsWith(personalPrefix)&&
        !path.startsWith(opportunityPrefix))
       return json({error:'not_found'},404);
