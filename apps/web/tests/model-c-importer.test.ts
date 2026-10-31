@@ -514,7 +514,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       manifestDigest:verified.proof.sourceManifestDigest,
       projectionDigest:verified.proof.projectionInputDigest,
       planDigest:trustedPlan.digest,expectedRevision:0,
-    },records,8);
+    },records,2);
     await f.c.prepare(`INSERT INTO catalog_ingest_runs
       (id,commit_sha,manifest_digest,projection_digest,plan_digest,expected_revision,
        total_chunks,principal_digest,run_digest) VALUES (?,?,?,?,?,?,?,?,?)`)
