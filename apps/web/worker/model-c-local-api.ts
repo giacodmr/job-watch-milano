@@ -1,5 +1,6 @@
 // Synthetic-only local HTTP adapter. Never enables remote access or authentication.
 import { z } from 'zod';
+import {readModelCOpportunities} from './data/model-c-opportunities';
 import {
   getModelCCatalogJob, getModelCCatalogSnapshot, listModelCCatalogJobs,
   ModelCReadError, modelCCatalogQuerySchema,
@@ -72,10 +73,13 @@ export async function handleModelCLocalApi(
   const path = url.pathname;
   const catalogPrefix = '/api/model-c/catalog/';
   const personalPrefix = '/api/model-c/personal/';
-  if (!path.startsWith(catalogPrefix) && !path.startsWith(personalPrefix))
+  const opportunitiesPrefix='/api/model-c/opportunities/';
+  if (!path.startsWith(catalogPrefix) && !path.startsWith(personalPrefix) && !path.startsWith(opportunitiesPrefix))
     return error('not_found',404);
   try {
     const input = checkedInput(url);
+    if(path.startsWith(opportunitiesPrefix))
+      return response(await readModelCOpportunities(env,path.slice(opportunitiesPrefix.length),input));
     const catalogPath = path.startsWith(catalogPrefix);
     const suffix = path.slice(catalogPath ? catalogPrefix.length : personalPrefix.length);
     if (!catalogPath && !['summary','jobs'].includes(suffix) && !suffix.startsWith('jobs/'))

@@ -34,22 +34,22 @@ export function FitValue({row}:{row:PersonalRow}) {
     {fit}{freshness==='CURRENT'?'':' · storico'}
   </span>;
 }
-export function WorkspaceShell({children}:{children:ReactNode}) {
+export function WorkspaceShell({children,section='candidature'}:{children:ReactNode;section?:'candidature'|'opportunita'}) {
   const [menuOpen,setMenuOpen]=useState(false);
   return <div className="c-workspace">
-    <a className="c-skip" href="#c-main">Vai alle candidature</a>
+    <a className="c-skip" href="#c-main">Vai a {section==='candidature'?'Candidature':'Opportunità'}</a>
     <button type="button" className="c-mobile-shield" tabIndex={menuOpen?0:-1}
       aria-label="Chiudi navigazione" onClick={()=>setMenuOpen(false)} hidden={!menuOpen}/>
     <aside className={'c-sidebar'+(menuOpen?' c-sidebar-open':'')} aria-label="Navigazione">
-      <a href="/" className="c-brand"><span className="c-brand-mark">✳</span><b>Job Watch</b></a>
+      <a href="/opportunita" className="c-brand"><span className="c-brand-mark">✳</span><b>Job Watch</b></a>
       <div className="c-workspace-id"><span className="c-user-mark">JW</span>
         <span><strong>Workspace personale</strong><small>Consultazione locale</small></span>
       </div>
       <nav className="c-nav" aria-label="Sezioni">
         <span className="c-nav-disabled" aria-disabled="true">Dashboard <small>Non disponibile</small></span>
-        <a href="/" className="c-nav-item"><JWIcon name="briefcase"/> Opportunità</a>
+        <a href="/opportunita" aria-current={section==='opportunita'?'page':undefined} className={'c-nav-item'+(section==='opportunita'?' c-nav-active':'')}><JWIcon name="briefcase"/> Opportunità</a>
         <span className="c-nav-disabled" aria-disabled="true">Aziende</span>
-        <a href="/candidature" aria-current="page" className="c-nav-item c-nav-active">
+        <a href="/candidature" aria-current={section==='candidature'?'page':undefined} className={'c-nav-item'+(section==='candidature'?' c-nav-active':'')}>
           <JWIcon name="file"/> Candidature
         </a>
         <span className="c-nav-section">AUTOMAZIONE</span>
@@ -63,7 +63,7 @@ export function WorkspaceShell({children}:{children:ReactNode}) {
       <div className="c-topbar">
         <button type="button" className="c-mobile-menu" aria-label="Apri navigazione"
           aria-expanded={menuOpen} onClick={()=>setMenuOpen(true)}><JWIcon name="menu"/></button>
-        <div className="c-breadcrumb"><span>Workspace</span><JWIcon name="chevron" size={12}/><b>Candidature</b></div>
+        <div className="c-breadcrumb"><span>Workspace</span><JWIcon name="chevron" size={12}/><b>{section==='candidature'?'Candidature':'Opportunità'}</b></div>
         <span className="c-top-avatar" aria-hidden="true">JW</span>
       </div>
       <main id="c-main" className="c-main">{children}</main>

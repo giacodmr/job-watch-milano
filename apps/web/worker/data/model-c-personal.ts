@@ -285,3 +285,29 @@ export async function getModelCPersonalJob(catalog:D1Database,personal:D1Databas
     assessmentEventsTruncated:assessments.results.length>50,
   };
 }
+
+
+/** PR #40: read-only owner-scoped batch for a *single bounded CATALOG page*.
+ * This is never served on the CATALOG public namespace. No per-job queries. */
+export async function getModelCPersonalOverlays(
+  catalog:D1Database,personal:D1Database,owner:TrustedOwner,jobIds:readonly string[],
+) {
+  if (jobIds.length>100 || new Set(jobIds).size!==jobIds.length ||
+      jobIds.some(id=>!jobIdSchema.safeParse(id).success))
+    throw new ModelCPersonalReadError('INVALID_JOB_ID_BATCH',400);
+  const c=await context(catalog,personal,owner);
+  const result:Record<string,ReturnType<typeof record>>={};
+  if (jobIds.length) {
+    const placeholders=jobIds.map(()=>'?').join(',');
+    const rows=await personal.prepare(`${selectRef} WHERE ref.owner_id=? AND ref.job_id IN (${placeholders})`)
+      .bind(c.ownerId,...jobIds).all<RefRow>();
+    const extras=await flags(catalog,personal,c.ownerId,rows.results.map(x=>x.jobId));
+    for(const row of rows.results){
+      const state=extras.get(row.jobId);
+      if(!state)throw new ModelCPersonalReadError('REFERENCE_STATE_UNAVAILABLE',503);
+      result[row.jobId]=record(row,c,state);
+    }
+  }
+  await assertUnchanged(catalog,personal,c);
+  return {...publicContext(c),items:result};
+}

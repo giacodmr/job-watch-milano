@@ -14,6 +14,7 @@ export const modelCCatalogQuerySchema = z.strictObject({
   kind: z.enum(['OPPORTUNITY', 'AI_QUEUE']).optional(),
   batch: z.enum(['jw1', 'jw2', 'jw3', 'jw4']).optional(),
   lifecycle: z.enum(['NEW', 'STILL_OPEN', 'UPDATED']).optional(),
+  needsAnalysis: z.enum(['true','false']).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(25),
   cursor: z.string().max(6000).optional(),
 });
@@ -137,6 +138,7 @@ export async function listModelCCatalogJobs(db: D1Database, input: ModelCCatalog
   if (query.kind) { conditions.push('v.kind=?'); args.push(query.kind); }
   if (query.batch) { conditions.push('v.batch=?'); args.push(query.batch); }
   if (query.lifecycle) { conditions.push('v.lifecycle=?'); args.push(query.lifecycle); }
+  if (query.needsAnalysis) { conditions.push('v.needs_analysis=?'); args.push(query.needsAnalysis==='true'?1:0); }
   const where = conditions.length ? ' WHERE ' + conditions.join(' AND ') : '';
   const total = await db.prepare(`SELECT count(*) AS n ${joins}${where}`)
     .bind(...args).first<number>('n');
