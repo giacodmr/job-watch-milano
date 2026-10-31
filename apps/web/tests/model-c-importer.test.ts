@@ -351,9 +351,9 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const f=await fixture(1);
     const options:ImportOptions={...f.options,oneTimeFreeBootstrap:true,executionTarget:'local-ephemeral',budget:{...f.options.budget,availableRows:95000}};
     await expect(importModelC(f.c,f.p,{...options,oneTimeFreeBootstrap:false})).rejects.toThrow('INVALID_WRITE_BUDGET');
-    await expect(importModelC(f.c,f.p,{...options,executionTarget:'remote'})).rejects.toThrow('QUOTA_VERIFICATION_REQUIRED');
+    await expect(importModelC(f.c,f.p,{...options,executionTarget:'remote'})).rejects.toThrow('REMOTE_IMPORT_NOT_AUTHORIZED');
     const {executionTarget:omitted,...noTarget}=options;expect(omitted).toBe('local-ephemeral');
-    await expect(importModelC(f.c,f.p,noTarget)).rejects.toThrow('QUOTA_VERIFICATION_REQUIRED');
+    await expect(importModelC(f.c,f.p,noTarget)).rejects.toThrow('REMOTE_IMPORT_NOT_AUTHORIZED');
     await expect(importModelC(f.c,f.p,{...options,budget:{...options.budget,availableRows:95001}})).rejects.toThrow('INVALID_WRITE_BUDGET');
     await expect(importModelC(f.c,f.p,{...options,source:{...options.source,commit:'main'}})).rejects.toThrow('EXPLICIT_COMMIT_SHA_REQUIRED');
     expect(await count(f.c,'catalog_initial_bootstrap_reservations')).toBe(0);expect(await count(f.c,'catalog_head')).toBe(0);expect(await count(f.p,'personal_owners')).toBe(0);
