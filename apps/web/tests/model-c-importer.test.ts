@@ -17,6 +17,7 @@ import { canonical, sha256 } from '../shared/canonical';
 import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
 import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-client';
 import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
+import {inspectPublishedModelCRecovery} from '../tools/model-c-import-recovery';
 
 let runtime:Miniflare, seq=0, commitSequence=0;
 const dirs:string[]=[], measurements:Record<string,unknown>={}, preflights:Record<string,unknown>={};
@@ -547,6 +548,8 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     expect(await count(f.c,'catalog_vacancy_current')).toBe(1);
     expect(await count(f.p,'personal_catalog_receipts')).toBe(1);
     expect(await count(f.c,'catalog_ingest_chunks')).toBe(packet.chunks.length);
+    const inspected=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
+    expect(inspected.status).toBe('PUBLISHED_RECEIPTS_RECONCILED');
     const again=await importModelC(f.c,f.p,f.options);
     expect(again.status).toBe('REPLAY');
     expect(again.metrics.total).toBe(0);
@@ -561,6 +564,28 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     expect(await count(f.c,'catalog_head')).toBe(0);
     expect(await count(f.c,'catalog_write_reservations')).toBe(0);
     expect(await count(f.p,'personal_heads')).toBe(0);
+  });
+  it('observes post-publication PERSONAL failure and recovers without re-publishing',async()=>{
+    const f=await fixture(1);
+    expect((await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner})).status)
+      .toBe('NO_PUBLISHED_CATALOG');
+    let interrupted=false;
+    const failing=intercept(f.p,async(sql,actual)=>{
+      if(!interrupted&&sql.some(t=>t.startsWith('INSERT INTO personal_catalog_receipts'))){
+        interrupted=true;throw Error('SIMULATED_PERSONAL_ACK_LOSS');
+      }
+      return actual();
+    });
+    await expect(importModelC(f.c,failing,f.options)).rejects.toThrow('MODEL_C_IMPORT_FAILED');
+    expect(interrupted).toBe(true);
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    const during=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
+    expect(during.status).toBe('CATALOG_PUBLISHED_PERSONAL_PENDING');
+    const completed=await importModelC(f.c,f.p,f.options);
+    expect(completed.status).toBe('RECOVERED');
+    expect(await count(f.c,'catalog_audit')).toBe(1);
+    const after=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
+    expect(after.status).toBe('PUBLISHED_RECEIPTS_RECONCILED');
   });
   it('refuses a digest-consistent but Git-inconsistent staged title BEFORE any publication',async()=>{
     const {f,packet,trustedPlan,append}=await prepared();
