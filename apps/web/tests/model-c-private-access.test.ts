@@ -166,6 +166,33 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     expect(parsed.items[0]?.personal).toBeNull();
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(0);
   });
+  it('keeps CATALOG readable for an Access user whose PERSONAL history has not been verified',async()=>{
+    const unprovisioned={...env(),PRIVATE_OWNER_ID:'personal-unprovisioned'};
+    const principal=await authenticatePrivateRequest(req('/',await jwt()),unprovisioned,verifyKey);
+    const catalogResponse=await handlePrivateRuntime(req('/api/model-c/catalog/snapshot'),unprovisioned,principal);
+    expect(catalogResponse.status).toBe(200);
+    const catalogBody=await catalogResponse.json() as {snapshot:{syncRevision:number}|null};
+    expect(catalogBody.snapshot).not.toBeNull();
+    const personalResponse=await handlePrivateRuntime(req('/api/model-c/personal/jobs'),unprovisioned,principal);
+    expect(personalResponse.status).toBe(404);
+    expect(await personalResponse.json()).toEqual({error:'PERSONAL_CONTEXT_UNAVAILABLE'});
+    const composite=await handlePrivateRuntime(req('/api/model-c/opportunities/jobs'),unprovisioned,principal);
+    expect(composite.status).toBe(200);
+    const page=await composite.json() as {items:Array<{personal:unknown}>,personalRevision:number|null};
+    expect(page.personalRevision).toBeNull();
+    expect(page.items).toHaveLength(1);
+    expect(page.items[0]?.personal).toBeNull();
+    const detail=await handlePrivateRuntime(req('/api/model-c/opportunities/jobs/'+jobId+
+      '?revision='+catalogBody.snapshot!.syncRevision),unprovisioned,principal);
+    expect(detail.status).toBe(200);
+    const detailBody=await detail.json() as {personal:unknown,personalDetail:unknown,personalRevision:unknown};
+    expect(detailBody.personal).toBeNull();
+    expect(detailBody.personalDetail).toBeNull();
+    expect(detailBody.personalRevision).toBeNull();
+    // An absent owner never seeds an implicit PERSONAL head or APP events.
+    expect(await personal.prepare("SELECT count(*) AS n FROM personal_heads WHERE owner_id=?")
+      .bind('personal-unprovisioned').first('n')).toBe(0);
+  });
   it('protects every asset and SPA route in private router; no legacy, ingestion or command API',async()=>{
     const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
     let fetched=0;
@@ -193,8 +220,11 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
       expect(response.status).toBe(401);
       expect(response.headers.get('Cache-Control')).toBe('no-store');
     }
+    // Every method is authenticated before policy rejection.
     expect((await worker.fetch(req('/api/model-c/personal/commands/decision',undefined,{method:'POST'}),
-      noAssets)).status).toBe(405);
+      noAssets)).status).toBe(401);
+    expect((await worker.fetch(req('/api/model-c/personal/jobs',undefined,{method:'OPTIONS'}),
+      noAssets)).status).toBe(401);
   });
   it('commits only a non-deployable protected private template, preserving local setup',async()=>{
     const template=await readFile('wrangler.private.template.jsonc','utf8');
