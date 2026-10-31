@@ -347,7 +347,9 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   })):null;
   const personalPreparedDigest=m47?await sha256(canonical({
     run,phase:'PERSONAL_PREPARED',source:proof.projectionInputDigest,
-    expectedRevision:expected,
+    // Bind replay to the ORIGINAL immutable ingestion revision, never the
+    // already-advanced catalog HEAD observed during recovery.
+    expectedRevision:m47.trustedPlan.syncRevision-1,
   })):null;
   const catalogPublishedDigest=m47?await sha256(canonical({
     run,phase:'CATALOG_PUBLISHED',syncRevision,contentRevision,ledgerRevision,
