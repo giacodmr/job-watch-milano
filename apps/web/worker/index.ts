@@ -4,8 +4,11 @@ import { jobsQuerySchema } from '../shared/queries';
 import { getSnapshot, listJobs, getJob, QueryError } from './data/queries';
 import { handleModelCLocalApi } from './model-c-local-api';
 import type { ModelCLocalEnv } from './model-c-local-api';
+import {authenticatePrivateRequest,privateRequestPolicy,PrivateAuthError} from './private-access';
+import type {PrivateAccessEnv} from './private-access';
+import {handlePrivateRuntime} from './private-runtime';
 
-export interface Env extends ModelCLocalEnv {
+export interface Env extends ModelCLocalEnv,PrivateAccessEnv {
   APP_ENV?: string;
   DB?: D1Database;
   ASSETS?: Fetcher;
@@ -26,6 +29,18 @@ function json(
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    if(env.APP_ENV==='private'){
+      // Authentication precedes every read and asset fetch; no local synthetic fallback.
+      try{
+        privateRequestPolicy(request);
+        const principal=await authenticatePrivateRequest(request,env);
+        return await handlePrivateRuntime(request,env,principal);
+      }catch(e){
+        const status=e instanceof PrivateAuthError?e.status:503;
+        const code=e instanceof PrivateAuthError?e.code:'private_access_unavailable';
+        return json({error:code},status,{'WWW-Authenticate':status===401?'Bearer realm="Cloudflare Access"':''});
+      }
+    }
     // Local development boundary, not an authentication mechanism. No remote
     // runtime is enabled until verified Access JWT authentication is implemented.
     if (
