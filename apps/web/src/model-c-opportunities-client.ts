@@ -72,3 +72,12 @@ export const readOpportunitySnapshot=(signal:AbortSignal)=>
     .then(result=>result.snapshot);
 export const readOpportunityDetail=(job:string,revision:number,signal:AbortSignal)=>
   readApi('/api/model-c/opportunities/jobs/'+jobId.parse(job)+'?revision='+revision,opportunityDetailSchema,signal);
+
+// An explicit null from a fresh detail is authoritative: never restore a stale
+// PERSONAL overlay from the previously rendered list row.
+export function resolveOpportunityPersonal(
+  row:Pick<Opportunity,'personal'>,
+  detail:Pick<OpportunityDetail,'personal'>|null,
+) {
+  return detail===null ? row.personal : detail.personal;
+}
