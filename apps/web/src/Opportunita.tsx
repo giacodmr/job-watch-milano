@@ -57,9 +57,9 @@ function OpportunityDrawer({row,revision,personalAvailable,onClose,onConfirmed}:
     setCurrentRevision(snapshot.syncRevision);setDetail(refreshed);setError(null);
   }
   const current=detail?.job??row;
-  const personal=resolveOpportunityPersonal(row,detail);
   // A fresh, explicit null PERSONAL revision overrides a previously loaded list.
   const personalReady=detail?detail.personalRevision!==null:personalAvailable;
+  const personal=personalReady?resolveOpportunityPersonal(row,detail):null;
   const link=safeExternalUrl(current.applyUrl)||safeExternalUrl(current.canonicalUrl);
   const title=current.title||'Ruolo non disponibile';
   const tabs:[typeof tab,string][]=[['summary','Riepilogo'],['analysis','Analisi'],['source','Provenienza'],['history','Storico personale']];
@@ -164,16 +164,18 @@ export function OpportunityTable({items,personalAvailable,onSelect}:{items:Oppor
     <thead><tr><th>Posizione</th><th>Lifecycle</th><th>Analisi</th><th>Decisione</th><th>FIT</th><th>Ultima osservazione</th><th><span className="c-sr-only">Dettaglio</span></th></tr></thead>
     <tbody>{items.map(row=>{
       const title=row.title||'Ruolo non disponibile';
+      // Do not display stale PERSONAL values when the owner context is absent.
+      const personal=personalAvailable?row.personal:null;
       return <tr key={row.id}>
         <td><div className="c-job-cell"><CompanyAvatar name={row.company}/>
           <span className="c-position"><strong>{title}</strong><small>{row.company}{row.location?' · '+row.location:''}</small>
-          <small className="o-mobile-decision">{row.personal?.decision?decisionLabel[row.personal.decision]:row.personal?.activeReferences.length?'Riferimento '+row.personal.activeReferences.join(', '):personalAvailable?'Nessuna decisione':'Registro non disponibile'}{row.personal?.assessment?.fitScore!==null&&row.personal?.assessment?.fitScore!==undefined?' · FIT '+row.personal.assessment.fitScore+(row.personal.assessment.freshness==='CURRENT'?'':' storico'):''}</small></span>
+          <small className="o-mobile-decision">{personal?.decision?decisionLabel[personal.decision]:personal?.activeReferences.length?'Riferimento '+personal.activeReferences.join(', '):personalAvailable?'Nessuna decisione':'Registro non disponibile'}{personal?.assessment?.fitScore!==null&&personal?.assessment?.fitScore!==undefined?' · FIT '+personal.assessment.fitScore+(personal.assessment.freshness==='CURRENT'?'':' storico'):''}</small></span>
         </div></td>
         <td>{lifecycleLabels[row.lifecycle]}</td>
         <td>{analysisLabel(row)}</td>
-        <td>{row.personal?.decision?<span className="c-stage"><i className={row.personal.decision==='NOT_INTERESTED'?'c-dot c-dot-gray':'c-dot'}/>{decisionLabel[row.personal.decision]}</span>
-          :row.personal?.activeReferences.length?'Riferimento '+row.personal.activeReferences.join(', '):<span className="c-muted">{personalAvailable?'Nessuna decisione':'Registro non disponibile'}</span>}</td>
-        <td>{!personalAvailable?<span className="c-muted">—</span>:row.personal?<FitValue row={row.personal}/>:<span className="c-muted">—</span>}</td>
+        <td>{personal?.decision?<span className="c-stage"><i className={personal.decision==='NOT_INTERESTED'?'c-dot c-dot-gray':'c-dot'}/>{decisionLabel[personal.decision]}</span>
+          :personal?.activeReferences.length?'Riferimento '+personal.activeReferences.join(', '):<span className="c-muted">{personalAvailable?'Nessuna decisione':'Registro non disponibile'}</span>}</td>
+        <td>{!personalAvailable?<span className="c-muted">—</span>:personal?<FitValue row={personal}/>:<span className="c-muted">—</span>}</td>
         <td>{date(row.lastSeenAt)}</td>
         <td><button type="button" className="c-row-open" disabled={!onSelect}
           aria-label={'Apri dettaglio '+title} onClick={()=>onSelect?.(row)}><JWIcon name="chevron"/></button></td>
