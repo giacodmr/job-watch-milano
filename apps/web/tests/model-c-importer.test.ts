@@ -19,6 +19,7 @@ import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-clien
 import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
 import {inspectPublishedModelCRecovery} from '../tools/model-c-import-recovery';
 import {observeIngestJournal} from '../tools/model-c-publication-journal';
+import {prepareCatalogV2Packets,verifyCatalogV2AgainstTrusted} from '../shared/model-c-ingestion-v2';
 import {compactTerminalIngestRuns,lookupArchivedIngest} from '../tools/model-c-ingest-retention';
 import {createOfflineServiceIngestionHarness} from '../worker/model-c-ingest-lab';
 import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
@@ -555,7 +556,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       }
       expect((await post(base+'/'+packet.run.runId+'/chunks',chunk)).status).toBe(201);
     };
-    return {f,packet,trustedPlan,append,handler:h,jwt,base};
+    return {f,packet,trustedPlan,append,handler:h,jwt,base,verified,selected};
   }
   it('binds a complete staging receipt to trusted Git and reuses original CATALOG and PERSONAL importer',async()=>{
     const {f,packet,trustedPlan,append}=await prepared();
@@ -583,6 +584,32 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     const again=await importModelC(f.c,f.p,f.options);
     expect(again.status).toBe('REPLAY');
     expect(again.metrics.total).toBe(0);
+  });
+  it('produces a complete owner-neutral v2 inventory and rejects omissions or altered chunks',async()=>{
+    const {verified,selected,trustedPlan}=await prepared();
+    const packet=await prepareCatalogV2Packets(verified.bundle,selected,
+      verified.proof,trustedPlan.digest,0);
+    expect(packet.run.contract).toBe('job-watch-model-c-ingestion/2');
+    expect(packet.run.recordCount).toBeGreaterThan(0);
+    expect(packet.chunks.flatMap(c=>c.records).some(r=>r.kind==='identity')).toBe(true);
+    expect(packet.chunks.flatMap(c=>c.records).some(r=>r.kind==='alias')).toBe(true);
+    expect(packet.chunks.flatMap(c=>c.records).some(r=>r.kind==='job')).toBe(true);
+    expect(JSON.stringify(packet)).not.toContain('personal_decision_events');
+    expect(await verifyCatalogV2AgainstTrusted(packet,packet)).toMatchObject({
+      status:'V2_TRUSTED_INVENTORY_MATCH',personalDataTransmitted:false,
+      publicationAuthorized:false,
+    });
+    await expect(verifyCatalogV2AgainstTrusted({
+      run:packet.run,chunks:packet.chunks.slice(1),
+    },packet)).rejects.toThrow('V2_INCOMPLETE_CHUNKS');
+    const bad=structuredClone(packet);
+    const first=bad.chunks.find(c=>c.records.some(r=>r.kind==='job'));
+    if(!first)throw Error('SYNTHETIC_JOB_REQUIRED');
+    const row=first.records.find(r=>r.kind==='job')!;
+    if(row.kind!=='job')throw Error('JOB_REQUIRED');
+    row.title='Forged';
+    await expect(verifyCatalogV2AgainstTrusted(bad,packet))
+      .rejects.toThrow('V2_CHUNK_PROOF_MISMATCH');
   });
   it('compacts only historical COMPLETED ingest runs and proves archived HTTP replay',async()=>{
     const {f,packet,trustedPlan,append,handler,jwt,base}=await prepared();
