@@ -77,7 +77,7 @@ BEGIN
 END;
 -- statement-breakpoint
 UPDATE model_c_schema SET version=6 WHERE id=1 AND version=5;
-
+-- statement-breakpoint
 -- M47: immutable compact archival receipts. Payload bytes are not stored here;
 -- replay/conflict is decided by original run/chunk binding and digests.
 CREATE TABLE catalog_ingest_archive_runs (
