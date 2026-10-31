@@ -1,8 +1,10 @@
-// PR #41: LOCAL SYNTHETIC ONLY. Never import from a browser bundle.
+// Shared trusted D1 writer: local synthetic adapter and private Access adapter.
+// Never import from a browser bundle. Remote writes remain disabled by Gate B.
 import {z} from 'zod';
 import {canonical,sha256} from '../../shared/canonical';
 import {getModelCCatalogJob,getModelCCatalogSnapshot,ModelCReadError} from './model-c-catalog';
 import type {TrustedOwner} from './model-c-personal';
+import type {AuthenticatedPrincipal} from '../private-access';
 
 const jobId=z.string().regex(/^job:[a-f0-9]{64}$/);
 const operationId=z.string().uuid();
@@ -42,10 +44,29 @@ function replay(existing:Operation,digest:string){
 export async function executePersonalCommand(
  catalog:D1Database,personal:D1Database,owner:TrustedOwner,input:unknown,
 ){
-  const cmd=personalCommandSchema.parse(input);
-  if(catalog===personal)throw new ModelCPersonalWriteError('DATABASE_SCOPE_COLLISION',503);
   if(!owner?.ownerId || !/^synthetic-[a-z][a-z0-9-]{0,63}$/.test(owner.ownerId))
     throw new ModelCPersonalWriteError('SYNTHETIC_OWNER_REQUIRED',403);
+  return executeTrustedPersonalCommand(catalog,personal,owner,input);
+}
+/** Invoked only after the Worker validates the private interactive JWT and
+ * server-owned owner mapping. This module does not parse client owner IDs.
+ * The caller MUST also enforce the disabled-by-default Gate B write switch. */
+export async function executePrivatePersonalCommand(
+ catalog:D1Database,personal:D1Database,principal:AuthenticatedPrincipal,input:unknown,
+){
+  if(!principal || principal.principalType!=='interactive' ||
+      !principal.subject || principal.subject.length<8 ||
+      !principal.capabilities.includes('personal:read') ||
+      !/^[a-z][a-z0-9:_-]{0,199}$/.test(principal.ownerId) ||
+      principal.ownerId.startsWith('synthetic-'))
+    throw new ModelCPersonalWriteError('PRIVATE_OWNER_UNAUTHORIZED',403);
+  return executeTrustedPersonalCommand(catalog,personal,{ownerId:principal.ownerId},input);
+}
+async function executeTrustedPersonalCommand(
+ catalog:D1Database,personal:D1Database,owner:TrustedOwner,input:unknown,
+){
+  const cmd=personalCommandSchema.parse(input);
+  if(catalog===personal)throw new ModelCPersonalWriteError('DATABASE_SCOPE_COLLISION',503);
   await checkSchema(personal);
   const digest=await sha256(canonical(cmd));
   const old=await readOperation(personal,owner.ownerId,cmd.operationId);
