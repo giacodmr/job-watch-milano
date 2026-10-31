@@ -37,13 +37,13 @@ export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,i
     const filters=modelCCatalogQuerySchema.parse(input);
     const page=await listModelCCatalogJobs(catalog,filters);
     // A missing CATALOG publication is not a personal-data publication.
-    if(!page.snapshot)return {...page,personalRevision:null,items:[]};
+    if(!page.snapshot)return {...page,personalRevision:null,appEpoch:null,items:[]};
     const overlay=await getModelCPersonalOverlays(catalog,personal,owner,page.items.map(j=>j.id));
     if(overlay.catalogRevision!==page.snapshot.syncRevision)
       throw new ModelCReadError('CATALOG_CHANGED',409);
     const now=(await getModelCCatalogSnapshot(catalog)).snapshot;
     checkCatalog(page.snapshot,now);
-    return {...page,personalRevision:overlay.personalRevision,
+    return {...page,personalRevision:overlay.personalRevision,appEpoch:overlay.appEpoch,
       items:page.items.map(job=>({...job,personal:overlay.items[job.id]??null}))};
   }
   if(!suffix.startsWith('jobs/'))throw new ModelCReadError('not_found',404);
@@ -57,9 +57,9 @@ export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,i
   const personalRow=overlay.items[id]??null;
   const personalDetail=personalRow?await getModelCPersonalJob(catalog,personal,owner,id):null;
   if(personalDetail && (personalDetail.catalogRevision!==revision ||
-    personalDetail.personalRevision!==overlay.personalRevision))
+    personalDetail.personalRevision!==overlay.personalRevision || personalDetail.appEpoch!==overlay.appEpoch))
     throw new ModelCReadError('CONTEXT_CHANGED',409);
   const now=(await getModelCCatalogSnapshot(catalog)).snapshot;
   checkCatalog(page.snapshot,now);
-  return {...page,personalRevision:overlay.personalRevision,personal:personalRow,personalDetail};
+  return {...page,personalRevision:overlay.personalRevision,appEpoch:overlay.appEpoch,personal:personalRow,personalDetail};
 }
