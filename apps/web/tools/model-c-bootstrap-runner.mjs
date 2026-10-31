@@ -1,5 +1,6 @@
 // A single local offline invocation. esbuild transiently transpiles the TS
-// planner to the tools directory so the existing Git adapter resolves app root.
+// planner inside node_modules/ (excluded from trusted implementation digests).
+// The Git adapter still resolves the app root from its bundled location.
 // The temporary file is unlinked in finally; no database/token/network client.
 import {build} from 'esbuild';
 import {randomUUID} from 'node:crypto';
@@ -8,7 +9,9 @@ import {dirname,resolve} from 'node:path';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 
 const toolsDir=dirname(fileURLToPath(import.meta.url));
-const output=resolve(toolsDir,'.m45-local-'+randomUUID()+'.mjs');
+// Never write temporary .mjs into tools/: that directory is SHA-scanned by
+// verifyGitProjection, and a concurrent fixture replay must remain deterministic.
+const output=resolve(toolsDir,'../node_modules','.m45-local-'+randomUUID()+'.mjs');
 try{
   await build({entryPoints:[resolve(toolsDir,'model-c-bootstrap-cli.ts')],
     outfile:output,bundle:true,platform:'node',format:'esm',target:'node24',
