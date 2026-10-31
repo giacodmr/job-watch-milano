@@ -80,16 +80,28 @@ async function createRun(db:D1Database,input:IngestRunInput,principal:ServicePri
   if(schema!==5)return response('schema_unavailable',503);
   const current=Number(await db.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision')??0);
   if(current!==input.expectedRevision)return response('STALE_CHECKPOINT',409);
-  if(await runCount(db)>=8)return response('STAGING_CAPACITY',429);
+  // Pre-read is not a reservation: competing runs must be admitted by the
+  // SAME D1 write that creates their immutable receipt (M47 concurrency fix).
   try{
     const result=await db.prepare(`INSERT INTO catalog_ingest_runs
       (id,commit_sha,manifest_digest,projection_digest,plan_digest,expected_revision,
        total_chunks,principal_digest,run_digest)
       SELECT ?,?,?,?,?,?,?,?,?
-      WHERE ?=coalesce((SELECT sync_revision FROM catalog_head WHERE scope='catalog'),0)`)
+      WHERE ?=coalesce((SELECT sync_revision FROM catalog_head WHERE scope='catalog'),0)
+        AND (SELECT count(*) FROM catalog_ingest_runs)<8`)
       .bind(input.runId,input.commitSha,input.manifestDigest,input.projectionDigest,
         input.planDigest,input.expectedRevision,input.totalChunks,pd,digest,input.expectedRevision).run();
-    if((result.meta.changes??0)!==1)return response('STALE_CHECKPOINT',409);
+    if((result.meta.changes??0)!==1){
+      // The competing write may have won while our pre-read was stale.
+      // Never report a quota failure as a revision conflict or retry blindly.
+      const observed=await readRun(db,input.runId);
+      if(observed)return rowMatches(observed,input,pd,digest)?
+        response('REPLAY',200):response('RUN_CONFLICT',409);
+      const revision=Number(await db.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision')??0);
+      if(revision!==input.expectedRevision)return response('STALE_CHECKPOINT',409);
+      if(await runCount(db)>=8)return response('STAGING_CAPACITY',429);
+      return response('WRITE_OUTCOME_UNKNOWN',503);
+    }
     return response('RUN_CREATED',201);
   }catch{
     // A lost reply can hide a committed D1 write. Inspect durable receipt.
