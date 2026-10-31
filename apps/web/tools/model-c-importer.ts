@@ -116,7 +116,7 @@ async function trustedCatalog(db:D1Database) {
   return {data,head,ledger:fullLedger,previous};
 }
 async function v1Ledger(db:D1Database) {
-  if (await db.prepare('SELECT version FROM schema_metadata WHERE id=1').first('version')!==5) throw Error('V1_SCHEMA_REQUIRED');
+  if (await db.prepare('SELECT version FROM schema_metadata WHERE id=1').first('version')!==6) throw Error('V1_SCHEMA_REQUIRED');
   const d=await read(db,['sync_checkpoints','sync_snapshots','jobs','job_aliases','job_versions','snapshot_job_aliases','user_decisions','semantic_reviews','snapshot_user_decisions','snapshot_semantic_reviews','companies','sources','source_versions','company_versions']);
   const checkpoint=d.sync_checkpoints!.find(r=>r.scope==='main'), snapshot=d.sync_snapshots!.find(r=>r.id===checkpoint?.snapshot_id);
   if (!checkpoint || !snapshot || snapshot.state!=='CONFIRMED') throw Error('V1_CHECKPOINT_REQUIRED');
@@ -233,7 +233,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   // Read-only bootstrap preflights may plan with executionTarget='remote'.
   if(!options.preflightOnly && options.executionTarget!=='local-ephemeral')
     throw Error('REMOTE_IMPORT_NOT_AUTHORIZED');
-  if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==5 ||
+  if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==6 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
   const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
