@@ -48,7 +48,7 @@ type PersonalHead = { revision: number; contextDigest: string; appRevision: numb
 type Context = { catalog: CatalogHead; personal: PersonalHead; ownerId: string; ownerDigest: string; headDigest: string };
 async function catalogHead(db: D1Database) {
   const version = await db.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version');
-  if (version !== 5) throw new ModelCPersonalReadError('CATALOG_SCHEMA_MISMATCH', 503);
+  if (version !== 6) throw new ModelCPersonalReadError('CATALOG_SCHEMA_MISMATCH', 503);
   const head = await db.prepare(`SELECT h.sync_revision AS syncRevision,h.content_revision AS contentRevision,
     h.ledger_revision AS ledgerRevision,h.run_id AS run,r.observed_commit AS observedCommit,
     l.ledger_digest AS ledgerDigest,r.state FROM catalog_head h
