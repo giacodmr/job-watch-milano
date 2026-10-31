@@ -44,7 +44,7 @@ beforeAll(async()=>{
     compatibilityDate:'2026-10-29',d1Databases:{CATALOG:'m46-catalog',PERSONAL:'m46-personal'}}));
   db=await runtime.getD1Database('CATALOG');
   const personal=await runtime.getD1Database('PERSONAL');
-  expect((await applySchema(db,'catalog')).applied).toBe(5);
+  expect((await applySchema(db,'catalog')).applied).toBe(6);
   expect((await applySchema(personal,'personal')).applied).toBe(3);
   const pair=await generateKeyPair('RS256',{extractable:true});
   privateKey=pair.privateKey;
@@ -237,7 +237,7 @@ describe('M47 immutable staging capacity admission',()=>{
     }));
     try{
       const catalog=await isolated.getD1Database('CATALOG');
-      expect((await applySchema(catalog,'catalog')).applied).toBe(5);
+      expect((await applySchema(catalog,'catalog')).applied).toBe(6);
       const h=createOfflineServiceIngestionHarness({
         catalog,auth:keys,keys:resolver,quota,
       });
