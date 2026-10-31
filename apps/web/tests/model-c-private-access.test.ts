@@ -90,6 +90,24 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
         .rejects.toMatchObject({code:'private_auth_invalid'});
     expect(valid).toContain('.');
   });
+  it('accepts rotated matching JWKS keys and fails closed when JWKS retrieval is unavailable',async()=>{
+    const rotated=await generateKeyPair('RS256',{extractable:true});
+    const newJwk=await exportJWK(rotated.publicKey);
+    const initialJwk=await exportJWK((await generateKeyPair('RS256',{extractable:true})).publicKey);
+    const keySet=createLocalJWKSet({keys:[
+      {...initialJwk,kid:'old-key',alg:'RS256',use:'sig'},
+      {...newJwk,kid:'rotated-key',alg:'RS256',use:'sig'},
+    ]});
+    const token=await new SignJWT({sub,email:'synthetic-user@example.test',type:'app'})
+      .setProtectedHeader({alg:'RS256',kid:'rotated-key'})
+      .setIssuer(issuer).setAudience(audience).setIssuedAt().setExpirationTime('10m')
+      .sign(rotated.privateKey);
+    const principal=await authenticatePrivateRequest(req('/',token),env(),keySet);
+    expect(principal.ownerId).toBe(person);
+    await expect(authenticatePrivateRequest(req('/',token),env(),async()=>{
+      throw Error('JWKS_UNAVAILABLE');
+    })).rejects.toMatchObject({code:'private_auth_invalid',status:401});
+  });
   it('rejects unknown identity, service token claims and missing owner mapping',async()=>{
     for(const token of [await jwt({sub:'different-user-987654321'}),
       await jwt({common_name:'service-token'}),await jwt({type:'service'})])
