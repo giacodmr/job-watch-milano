@@ -77,3 +77,86 @@ BEGIN
 END;
 -- statement-breakpoint
 UPDATE model_c_schema SET version=6 WHERE id=1 AND version=5;
+
+-- M47: immutable compact archival receipts. Payload bytes are not stored here;
+-- replay/conflict is decided by original run/chunk binding and digests.
+CREATE TABLE catalog_ingest_archive_runs (
+  id TEXT PRIMARY KEY NOT NULL,
+  commit_sha TEXT NOT NULL, manifest_digest TEXT NOT NULL,
+  projection_digest TEXT NOT NULL,plan_digest TEXT NOT NULL,
+  expected_revision INTEGER NOT NULL,total_chunks INTEGER NOT NULL,
+  principal_digest TEXT NOT NULL,run_digest TEXT NOT NULL,
+  archived_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
+-- statement-breakpoint
+CREATE TABLE catalog_ingest_archive_chunks (
+  run_id TEXT NOT NULL REFERENCES catalog_ingest_archive_runs(id),
+  chunk_index INTEGER NOT NULL,chunk_digest TEXT NOT NULL,
+  idempotency_key TEXT NOT NULL UNIQUE,record_count INTEGER NOT NULL,
+  PRIMARY KEY(run_id,chunk_index)
+);
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_archive_run_guard BEFORE INSERT ON catalog_ingest_archive_runs
+WHEN NOT EXISTS (
+  SELECT 1 FROM catalog_ingest_runs r WHERE r.id=NEW.id
+    AND r.commit_sha=NEW.commit_sha AND r.manifest_digest=NEW.manifest_digest
+    AND r.projection_digest=NEW.projection_digest AND r.plan_digest=NEW.plan_digest
+    AND r.expected_revision=NEW.expected_revision AND r.total_chunks=NEW.total_chunks
+    AND r.principal_digest=NEW.principal_digest AND r.run_digest=NEW.run_digest
+    AND EXISTS(SELECT 1 FROM catalog_ingest_journal j
+      WHERE j.run_id=r.id AND j.phase='COMPLETED')
+    AND NOT EXISTS(SELECT 1 FROM catalog_head h
+      WHERE h.scope='catalog' AND h.run_id=r.id)
+)
+BEGIN SELECT RAISE(ABORT,'archive_run_not_terminal'); END;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_archive_chunk_guard BEFORE INSERT ON catalog_ingest_archive_chunks
+WHEN NOT EXISTS (
+ SELECT 1 FROM catalog_ingest_chunks c JOIN catalog_ingest_archive_runs ar
+   ON ar.id=c.run_id WHERE c.run_id=NEW.run_id
+   AND c.chunk_index=NEW.chunk_index AND c.chunk_digest=NEW.chunk_digest
+   AND c.idempotency_key=NEW.idempotency_key AND c.record_count=NEW.record_count
+)
+BEGIN SELECT RAISE(ABORT,'archive_chunk_unverified'); END;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_archive_run_immutable BEFORE UPDATE ON catalog_ingest_archive_runs
+BEGIN SELECT RAISE(ABORT,'immutable_archive_run'); END;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_archive_run_retain BEFORE DELETE ON catalog_ingest_archive_runs
+BEGIN SELECT RAISE(ABORT,'retained_archive_run'); END;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_archive_chunk_immutable BEFORE UPDATE ON catalog_ingest_archive_chunks
+BEGIN SELECT RAISE(ABORT,'immutable_archive_chunk'); END;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_archive_chunk_retain BEFORE DELETE ON catalog_ingest_archive_chunks
+BEGIN SELECT RAISE(ABORT,'retained_archive_chunk'); END;
+-- statement-breakpoint
+DROP TRIGGER catalog_ingest_chunk_retain;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_chunk_retain BEFORE DELETE ON catalog_ingest_chunks
+WHEN NOT EXISTS (
+ SELECT 1 FROM catalog_ingest_archive_chunks a
+ JOIN catalog_ingest_archive_runs ar ON ar.id=a.run_id
+ JOIN catalog_ingest_journal j ON j.run_id=a.run_id AND j.phase='COMPLETED'
+ WHERE a.run_id=OLD.run_id AND a.chunk_index=OLD.chunk_index
+  AND a.chunk_digest=OLD.chunk_digest
+  AND a.idempotency_key=OLD.idempotency_key AND a.record_count=OLD.record_count
+  AND NOT EXISTS(SELECT 1 FROM catalog_head h WHERE h.scope='catalog' AND h.run_id=a.run_id)
+)
+BEGIN SELECT RAISE(ABORT,'retained_ingest_chunk'); END;
+-- statement-breakpoint
+DROP TRIGGER catalog_ingest_run_retain;
+-- statement-breakpoint
+CREATE TRIGGER catalog_ingest_run_retain BEFORE DELETE ON catalog_ingest_runs
+WHEN NOT EXISTS (
+ SELECT 1 FROM catalog_ingest_archive_runs a WHERE a.id=OLD.id
+  AND a.commit_sha=OLD.commit_sha AND a.manifest_digest=OLD.manifest_digest
+  AND a.projection_digest=OLD.projection_digest AND a.plan_digest=OLD.plan_digest
+  AND a.expected_revision=OLD.expected_revision AND a.total_chunks=OLD.total_chunks
+  AND a.principal_digest=OLD.principal_digest AND a.run_digest=OLD.run_digest
+  AND EXISTS(SELECT 1 FROM catalog_ingest_journal j
+    WHERE j.run_id=a.id AND j.phase='COMPLETED')
+  AND NOT EXISTS(SELECT 1 FROM catalog_ingest_chunks c WHERE c.run_id=a.id)
+  AND NOT EXISTS(SELECT 1 FROM catalog_head h WHERE h.scope='catalog' AND h.run_id=a.id)
+)
+BEGIN SELECT RAISE(ABORT,'retained_ingest_run'); END;
