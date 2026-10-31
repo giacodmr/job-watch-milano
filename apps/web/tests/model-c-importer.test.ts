@@ -53,6 +53,18 @@ afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recu
   if(process.env.MODEL_C_METRICS_FILE)await writeFile(process.env.MODEL_C_METRICS_FILE,JSON.stringify({syntheticOnly:true,measurement:'actual D1 meta.rows_written; schema setup and fixture seed excluded',scenarios:measurements,preflights},null,2)+'\n');});
 
 describe('verified incremental importer on ephemeral D1',()=>{
+  it('never interprets a remote execution target as permission to mutate D1',async()=>{
+    const f=await fixture(1);
+    for(const extra of [{executionTarget:'remote' as const},
+      {executionTarget:'remote' as const,oneTimeFreeBootstrap:true,
+        budget:{...f.options.budget,availableRows:95000}}]) {
+      const result=importModelC(f.c,f.p,{...f.options,...extra});
+      await expect(result).rejects.toThrow('REMOTE_IMPORT_NOT_AUTHORIZED');
+    }
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.c,'catalog_write_reservations')).toBe(0);
+    expect(await count(f.p,'personal_catalog_receipts')).toBe(0);
+  });
   it('bootstraps, replays with zero writes, and observes a new identical commit without a content revision',async()=>{
     const f=await fixture();const a=await importModelC(f.c,f.p,f.options);measurements.bootstrap=a.metrics;
     expect(a.status).toBe('PUBLISHED');expect(a.metrics.staging+a.metrics.promotion+a.metrics.checkpoint).toBe(a.metrics.publication);expect(await count(f.c,'catalog_vacancy_identity')).toBe(2);expect(await count(f.c,'catalog_vacancy_current')).toBe(2);
