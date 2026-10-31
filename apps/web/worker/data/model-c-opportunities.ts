@@ -43,6 +43,7 @@ export async function readModelCOpportunities(env:ModelCLocalEnv,suffix:string,i
   const id=idSchema.parse(suffix.slice('jobs/'.length));
   const {revision}=revisionSchema.parse(input);
   const page=await getModelCCatalogJob(catalog,id,revision);
+  if(!page.snapshot)throw new ModelCReadError('NO_PUBLISHED_CATALOG',404);
   const overlay=await getModelCPersonalOverlays(catalog,personal,owner,[id]);
   if(overlay.catalogRevision!==page.snapshot.syncRevision)
     throw new ModelCReadError('CATALOG_CHANGED',409);
