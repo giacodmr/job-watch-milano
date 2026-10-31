@@ -32,6 +32,46 @@ let runtime:Miniflare,repo:string,c:D1Database,p:D1Database;
 let sourceJobs:Record<string,unknown>[],initialJobId='',initialPacket:
  Awaited<ReturnType<typeof prepareCatalogV2Packets>>|null=null;
 const metrics:Array<Record<string,unknown>>=[];
+// Account for every D1 batch and run() used by the continuous workflow,
+ // including v2 HTTP staging, journal triggers, PERSONAL and retention.
+ // first()/raw() reads have no D1Result meta and are NOT claimed as billed reads.
+ type Meter={statements:number;rowsWritten:number;byCategory:Record<string,number>;
+  migrations:number};
+ const meters:Record<'catalog'|'personal',Meter>={
+  catalog:{statements:0,rowsWritten:0,byCategory:{},migrations:0},
+  personal:{statements:0,rowsWritten:0,byCategory:{},migrations:0}};
+ let applyingMigrations=true;
+ function metered(db:D1Database,scope:'catalog'|'personal'):D1Database{
+  const statements=new WeakMap<object,{sql:string;real:D1PreparedStatement}>();
+  const note=(sql:string,result:D1Result)=>{
+   const meter=meters[scope];
+   meter.statements++;
+   const written=Number(result.meta.rows_written??0);
+   meter.rowsWritten+=written;
+   const category=applyingMigrations?'migration':
+    /catalog_ingest_v2_archive|DELETE FROM catalog_ingest_v2_/i.test(sql)?'retention':
+    /catalog_ingest_v2_runs|catalog_ingest_v2_chunks/i.test(sql)?'http-staging':
+    /catalog_ingest_journal/i.test(sql)?'journal':
+    scope==='personal'?'personal-and-reconciliation':'catalog-publication';
+   meter.byCategory[category]=(meter.byCategory[category]??0)+written;
+   if(applyingMigrations)meter.migrations+=written;
+  };
+  const wrap=(real:D1PreparedStatement,sql:string):D1PreparedStatement=>{
+   const stmt={bind:(...args:unknown[])=>wrap(real.bind(...args),sql),
+    all:real.all.bind(real),first:real.first.bind(real),
+    run:async()=>{const result=await real.run();note(sql,result);return result;},
+    raw:real.raw.bind(real)} as D1PreparedStatement;
+   statements.set(stmt,{sql,real});return stmt;
+  };
+  return {prepare:(sql:string)=>wrap(db.prepare(sql),sql),
+   batch:async(steps:D1PreparedStatement[])=>{
+    const batch=steps.map(s=>statements.get(s));
+    if(batch.some(x=>!x))throw Error('M47_METER_UNTRACKED_STATEMENT');
+    const result=await db.batch(batch.map(x=>x!.real));
+    result.forEach((value,i)=>note(batch[i]!.sql,value));
+    return result;
+   }} as D1Database;
+ }
 function git(...args:string[]){
  return execFileSync('git',['-C',repo,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
 }
@@ -105,9 +145,11 @@ beforeAll(async()=>{
   script:'export default {fetch(){return new Response("synthetic")}}',
   compatibilityDate:'2026-10-29',d1Databases:{
    CATALOG:'m47-continuous-catalog',PERSONAL:'m47-continuous-personal'}}));
- c=await runtime.getD1Database('CATALOG');p=await runtime.getD1Database('PERSONAL');
+ c=metered(await runtime.getD1Database('CATALOG'),'catalog');
+ p=metered(await runtime.getD1Database('PERSONAL'),'personal');
  expect((await applySchema(c,'catalog')).applied).toBe(7);
  expect((await applySchema(p,'personal')).applied).toBe(3);
+ applyingMigrations=false;
 });
 afterAll(async()=>{await runtime?.dispose();if(repo)await rm(repo,{recursive:true,force:true});});
 it('publishes, replays, retains and verifies thirty consecutive v2 revisions with real D1',async()=>{
@@ -259,5 +301,20 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   .toBe(initialJobId);
  expect((await c.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
  expect((await p.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+ // A complete local D1 write tally for this exercise; includes all successful
+ // statements visible through the wrappers, not concurrent account-wide usage.
+ for(const m of Object.values(meters)){
+  expect(m.statements).toBeGreaterThan(0);
+  expect(m.rowsWritten).toBeGreaterThan(0);
+  expect(Object.values(m.byCategory).reduce((a,b)=>a+b,0)).toBe(m.rowsWritten);
+  expect(m.migrations).toBeGreaterThan(0);
+ }
+ expect(meters.catalog.byCategory['http-staging']).toBeGreaterThan(0);
+ expect(meters.catalog.byCategory.retention).toBeGreaterThan(0);
+ expect(meters.catalog.byCategory.journal).toBeGreaterThan(0);
+ expect(meters.personal.byCategory['personal-and-reconciliation']).toBeGreaterThan(0);
+ console.log('M47_D1_LOCAL_ACCOUNTING '+JSON.stringify({
+  ...meters,scope:'synthetic-local-only',remoteQuotaVerified:false,
+  remoteCpuVerified:false,readStatementsNotFullyMetered:true}));
  console.log('M47_CONTINUOUS_30_CYCLES '+JSON.stringify(metrics));
 },360000);
