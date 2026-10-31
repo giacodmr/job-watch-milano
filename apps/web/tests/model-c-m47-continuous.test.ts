@@ -185,7 +185,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
     kind:'DECISION',jobId:initialJobId,catalogRevision:result.syncRevision,
     expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004147',
     decision:'INTERESTED',reasonSummary:null});
-   expect(save.status).toBe('saved');
+   expect('status' in save ? save.status : null).toBe('saved');
   }
   if(i>=4)expect((await getModelCPersonalJob(c,p,{ownerId:opts.owner},initialJobId)).job)
    .toMatchObject({decision:'INTERESTED',decisionSource:'APP'});
