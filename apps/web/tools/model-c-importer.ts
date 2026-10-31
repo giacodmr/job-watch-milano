@@ -1,7 +1,8 @@
 // Inactive Node-only Model C importer. No Worker/browser entrypoint or D1 binding.
 import { randomUUID } from 'node:crypto';
 import {verifyTrustedStagingAgainstSnapshot,verifyPublishedStageReplay} from './model-c-trusted-stage';
-import {advanceCompleteIngestJournal,advanceIngestJournal,nextJournalStatement,observeIngestJournal} from './model-c-publication-journal';
+import {verifyTrustedV2Stage,verifyPublishedV2StageReplay} from './model-c-v2-trusted-stage';
+import {advanceCompleteIngestJournal,advanceCompleteV2IngestJournal,advanceIngestJournal,nextJournalStatement,observeIngestJournal} from './model-c-publication-journal';
 import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
 import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
@@ -268,10 +269,16 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
       // An already published run must ONLY be replayed/reconciled, never
       // promoted again with a new revision or a changed selection context.
       if(!same)throw Error('STAGED_REPLAY_CONTEXT_CHANGED');
-      await verifyPublishedStageReplay(catalog,options.stagedPublication.runId,
+      if(options.stagedPublication.runId.startsWith('ingest-v2:'))
+        await verifyPublishedV2StageReplay(catalog,options.stagedPublication.runId,
+          proof,options.stagedPublication.trustedPlan);
+      else await verifyPublishedStageReplay(catalog,options.stagedPublication.runId,
         proof,options.stagedPublication.trustedPlan);
     }else{
-      await verifyTrustedStagingAgainstSnapshot(catalog,options.stagedPublication.runId,
+      if(options.stagedPublication.runId.startsWith('ingest-v2:'))
+        await verifyTrustedV2Stage(catalog,options.stagedPublication.runId,
+          bundle,selected,proof,options.stagedPublication.trustedPlan);
+      else await verifyTrustedStagingAgainstSnapshot(catalog,options.stagedPublication.runId,
         bundle,selected,proof,options.stagedPublication.trustedPlan);
     }
   }
@@ -359,7 +366,9 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if(m47){
     const current=await observeIngestJournal(catalog,run);
     if(current.phase==='RECEIVING'){
-      await advanceCompleteIngestJournal(catalog,run);
+      if(run.startsWith('ingest-v2:'))
+        await advanceCompleteV2IngestJournal(catalog,run);
+      else await advanceCompleteIngestJournal(catalog,run);
       metrics.publication++;
     }
     const before=await observeIngestJournal(catalog,run);
