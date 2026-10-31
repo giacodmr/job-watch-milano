@@ -6,7 +6,7 @@
 import {z} from 'zod';
 import {canonical,sha256} from './canonical';
 import {bundleSchema,validateBundle} from './snapshot';
-import type {SnapshotBundle,SnapshotRow} from './snapshot';
+import type {SnapshotBundle} from './snapshot';
 import {identityLedgerSchema} from './model-c-selection';
 import type {selectModelC} from './model-c-selection';
 import {projectionProofSchema} from './projection-proof';
@@ -70,11 +70,12 @@ const chunk=z.strictObject({
 export type CatalogV2Run=z.infer<typeof run>;
 export type CatalogV2Chunk=z.infer<typeof chunk>;
 type Selected=Awaited<ReturnType<typeof selectModelC>>;
-const sortRecords=(records:CatalogV2Record[])=>[...records].sort((a,b)=>{
-  const ax=a.kind+':'+('id'in a?a.id:'jobId'in a?a.jobId:'key'in a?a.key:'');
-  const bx=b.kind+':'+('id'in b?b.id:'jobId'in b?b.jobId:'key'in b?b.key:'');
-  return ax.localeCompare(bx);
-});
+const catalogRecordKey=(r:CatalogV2Record)=>
+  r.kind==='alias'?'alias:'+r.key:
+  r.kind==='identity'?'identity:'+r.jobId:
+  r.kind==='job'?'job:'+r.jobId:r.kind+':'+r.id;
+const sortRecords=(records:CatalogV2Record[])=>[...records].sort((a,b)=>
+  catalogRecordKey(a).localeCompare(catalogRecordKey(b)));
 /** FULL owner-neutral catalog records: no selection facts or PERSONAL payload. */
 export function projectCatalogV2(bundle:SnapshotBundle,selected:Selected){
   const valid=bundleSchema.parse(bundle);
