@@ -1,7 +1,7 @@
 // PR #41: LOCAL SYNTHETIC ONLY. Never import from a browser bundle.
 import {z} from 'zod';
 import {canonical,sha256} from '../../shared/canonical';
-import {getModelCCatalogJob,ModelCReadError} from './model-c-catalog';
+import {getModelCCatalogJob,getModelCCatalogSnapshot,ModelCReadError} from './model-c-catalog';
 import type {TrustedOwner} from './model-c-personal';
 
 const jobId=z.string().regex(/^job:[a-f0-9]{64}$/);
@@ -53,8 +53,27 @@ export async function executePersonalCommand(
   const head=await personal.prepare('SELECT revision FROM personal_heads WHERE owner_id=?')
     .bind(owner.ownerId).first<{revision:number}>();
   if(!head)throw new ModelCPersonalWriteError('PERSONAL_CONTEXT_UNAVAILABLE',404);
-  const publication=await getModelCCatalogJob(catalog,cmd.jobId,cmd.catalogRevision);
-  const job=publication.job;
+  // A PERSONAL capture can outlive the visible vacancy. Allow owner-bound archived
+  // captures if the permanent catalog identity still exists; never invent provenance.
+  let job:{title:string|null;canonicalUrl:string|null;lifecycle:string;
+    originCommit:string;originPath:string;originSha256:string};
+  try {
+    job=(await getModelCCatalogJob(catalog,cmd.jobId,cmd.catalogRevision)).job;
+  }catch(error){
+    if(!(error instanceof ModelCReadError) || error.code!=='JOB_NOT_CURRENT')throw error;
+    const checkpoint=await getModelCCatalogSnapshot(catalog);
+    if(checkpoint.snapshot?.syncRevision!==cmd.catalogRevision)
+      throw new ModelCPersonalWriteError('CATALOG_CHANGED',409);
+    const identity=await catalog.prepare('SELECT id FROM catalog_vacancy_identity WHERE id=?')
+      .bind(cmd.jobId).first('id');
+    const captured=await personal.prepare(`SELECT captured_title AS title,official_url AS canonicalUrl,
+      last_known_lifecycle AS lifecycle,captured_commit AS originCommit,
+      captured_path AS originPath,captured_sha256 AS originSha256
+      FROM personal_job_refs WHERE owner_id=? AND job_id=?`)
+      .bind(owner.ownerId,cmd.jobId).first<typeof job>();
+    if(!identity || !captured)throw error;
+    job={...captured,lifecycle:captured.lifecycle??'UNKNOWN'};
+  }
   const current=await personal.prepare(`SELECT revision,decision_override,saved_override,
     decision,saved_active FROM personal_app_current WHERE owner_id=? AND job_id=?`)
     .bind(owner.ownerId,cmd.jobId).first<Current>();
