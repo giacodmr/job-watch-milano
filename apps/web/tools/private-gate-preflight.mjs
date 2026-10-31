@@ -32,6 +32,9 @@ export async function inspectPrivateRepositoryGate(){
     'TEMPLATE_EXPOSES_UNPROTECTED_HOST',errors);
   ensure(privateConfig.account_id===undefined,'TEMPLATE_CONTAINS_ACCOUNT_ID',errors);
   ensure(Object.keys(privateConfig.vars??{}).length===1,'TEMPLATE_CONTAINS_IDENTITY_OR_SECRETS',errors);
+  ensure(privateConfig.vars?.PRIVATE_APP_WRITE_GATE===undefined &&
+    privateConfig.vars?.PRIVATE_QUOTA_ATTESTED===undefined,
+    'GATE_B_WRITE_SWITCH_MUST_NOT_BE_PRESET',errors);
   ensure(localConfig.vars?.APP_ENV==='local' && localConfig.workers_dev===false,
     'LOCAL_CONFIG_CHANGED',errors);
   ensure((localConfig.d1_databases??[]).every(db=>db.remote===false),
@@ -52,6 +55,11 @@ export async function inspectPrivateRepositoryGate(){
   return {
     gate:'A',repositoryPreflight:errors.length?'FAILED':'PASSED',
     activation:'BLOCKED_FOR_ACTIVATION',
+    privateReadPath:'ACCESS_PROTECTED_LOCAL_TESTED',
+    privateWritePath:'TWO_FLAG_GATE_B_REQUIRED',
+    privateCommandActivation:'DISABLED_IN_COMMITTED_TEMPLATE',
+    serviceIngestion:'LAB_ONLY_NOT_DEPLOYABLE',
+    remoteD1Bindings:'GATE_B_REQUIRED',
     cloudAccountVerified:false,cloudMutationsAuthorized:false,
     remoteImporterAuthorized:false,
     expectedSchemaVersions:{catalog:7,personal:3},
@@ -63,6 +71,7 @@ export async function inspectPrivateRepositoryGate(){
       'REAL_OWNER_AND_PROVENANCE_UNVERIFIED',
       'REMOTE_BOOTSTRAP_TRANSPORT_NOT_AUTHORIZED',
       'RECOVERY_AND_LIVE_SMOKE_UNVERIFIED',
+      'WRITE_GATE_AND_REMOTE_QUOTA_ATTESTATION_REQUIRED',
       'GATE_B_APPROVAL_NOT_GRANTED'
     ]
   };
