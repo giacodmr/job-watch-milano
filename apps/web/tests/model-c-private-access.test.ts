@@ -9,7 +9,7 @@ import {applySchema} from '../tools/model-c-schema';
 import {stageCatalog,publicationFixture,seedPersonal,owner,hash,commit,jobId} from './helpers/model-c-fixtures';
 import {authenticatePrivateRequest,privateAccessConfig,privateRequestPolicy} from '../worker/private-access';
 import type {PrivateAccessEnv} from '../worker/private-access';
-import {handlePrivateRuntime} from '../worker/private-runtime';
+import {handlePrivateRuntime,privateD1ErrorCode} from '../worker/private-runtime';
 
 const issuer='https://job-watch-tests.cloudflareaccess.com';
 const audience='a'.repeat(64);
@@ -165,6 +165,19 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     const parsed=await composite.json() as {items:Array<{personal:unknown}>};
     expect(parsed.items[0]?.personal).toBeNull();
     expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events').first('n')).toBe(0);
+  });
+  it('reports official D1 Free daily quota failures without exposing the provider error or retrying',async()=>{
+    const principal=await authenticatePrivateRequest(req('/',await jwt()),env(),verifyKey);
+    const quota='D1_ERROR: Your account has exceeded D1\\'s free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue.';
+    expect(privateD1ErrorCode(new Error(quota))).toBe('cloudflare_quota_exceeded');
+    expect(privateD1ErrorCode(new Error(quota.replace('read','write')))).toBe('cloudflare_quota_exceeded');
+    expect(privateD1ErrorCode(new Error('D1 storage unavailable'))).toBe('database_unavailable');
+    const quotaDb={prepare:(_sql:string)=>{throw new Error(quota);}} as unknown as D1Database;
+    const privateEnv={...env(),CATALOG:quotaDb};
+    const response=await handlePrivateRuntime(req('/api/model-c/catalog/snapshot'),privateEnv,principal);
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({error:'cloudflare_quota_exceeded'});
+    expect(response.headers.get('cache-control')).toBe('no-store');
   });
   it('keeps CATALOG readable for an Access user whose PERSONAL history has not been verified',async()=>{
     const unprovisioned={...env(),PRIVATE_OWNER_ID:'personal-unprovisioned'};
