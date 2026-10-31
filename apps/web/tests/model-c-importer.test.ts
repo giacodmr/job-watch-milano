@@ -505,7 +505,13 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       personal:{migrationFiles:3,localRowsWritten:f.schemaCosts.personal.rowsWritten,
         remoteUpperBound:f.schemaCosts.personal.rowsWritten+100},
     };
-    const trustedPlan=await prepareSafeRemoteBootstrapPlan(preflight,setup);
+    const trustedPlan=await prepareSafeRemoteBootstrapPlan({
+      status:preflight.status,provenance:preflight.provenance,
+      budgetDay:preflight.budgetDay,
+      priorLocalReservations:preflight.priorLocalReservations,
+      remoteExecutionAuthorized:false,
+      syncRevision:preflight.syncRevision,metrics:preflight.metrics,
+    },setup);
     const context={identities:{mode:'first-v1-bootstrap' as const},
       personalReferences:[],personalDecisionJobIds:[]};
     const verified=await verifyGitProjection(f.options.source,context);
@@ -611,7 +617,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       }
       return actual();
     });
-    await expect(importModelC(f.c,failing,f.options)).rejects.toThrow('MODEL_C_IMPORT_FAILED');
+    await expect(importModelC(f.c,failing,f.options)).rejects.toThrow('SIMULATED_PERSONAL_ACK_LOSS');
     expect(interrupted).toBe(true);
     expect(await count(f.c,'catalog_head')).toBe(1);
     const during=await inspectPublishedModelCRecovery(f.c,f.p,{ownerId:f.options.owner});
