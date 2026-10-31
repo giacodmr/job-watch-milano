@@ -337,3 +337,12 @@ Do not deploy, provision, merge PR #48 or enable any remote write.
 Detailed field matrix, offline acceptance criteria AC-01–AC-16 and
 30-cycle test contract:
 `apps/web/docs/MODEL_C_ATOMIC_RECONCILIATION_M47.md`.
+
+
+## Milestone #47 final hardening — operator gate (31 October 2026)
+
+**Local-only implementation; PR #48 remains DRAFT; GATE_A_PARTIAL pending full crash/restart and PERSONAL proof; GATE_B_CLOSED.** No production service route has been added and the v2 HTTP harness is not imported by the deployable Worker graph. The new transitive graph test scans indirect TypeScript imports/reexports from both entrypoints, not merely their file text.
+
+The 30-cycle synthetic validation now emits `M47_D1_LOCAL_ACCOUNTING`, measuring successful D1 `batch()/run()` statements (including schema creation, indexes, triggers, HTTP staging, publication, journal, PERSONAL and retention) and flagging lost-ack commits separately. Those are **local diagnostic measurements, not** an account-wide D1 quota check, remote CPU observation, final storage projection, or permission to deploy. See `MODEL_C_ATOMIC_RECONCILIATION_M47.md` for the AC-01–16 matrix and 19 named fault-vector distinction.
+
+**Hard stop before Gate B:** verify the real Cloudflare account/plan and remaining shared Free daily read/write budget, Worker CPU (10 ms Free/request), actual database storage, domain/Access/owner bindings, authenticated endpoints, zero public alternate routes, backup/rollback and explicit owner approval. No remote worker action or new paid entitlement is authorized in this milestone. Unknown account usage, write budget, CPU, Access control or identity mapping => **DENY**. Under no circumstances merge PR #48 or start M48 merely because CI is green.
