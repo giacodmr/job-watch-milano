@@ -46,9 +46,35 @@ async function mutate(n:number){
  const data=JSON.parse(await readFile(path,'utf8'));
  const jobs=data.companies[0].jobs as Record<string,unknown>[];
  if(n%3===2&&jobs[0])jobs[0].title='Synthetic Strategy '+n;
+ if(n===5)jobs.push({...sourceJobs[0],source_id:'999999',
+  canonical_url:'https://www.amazon.jobs/en/jobs/999999/additional',
+  title:'New Synthetic Vacancy'});
  if(n===10&&jobs.length>1)jobs.splice(1,1);
- if(n===12&&jobs.length===1)jobs.push({...sourceJobs[1]});
+ if(n===12&&!jobs.some(j=>j.source_id===sourceJobs[1]?.source_id))
+  jobs.push({...sourceJobs[1]});
+ if(n===16&&jobs[0]){
+  // Only Python identity resolution authorizes this alias. The trusted
+  // ledger retains the previous id when a native ATS identifier changes.
+  const memoryPath=resolve(repo,'job_memory_jw2.json');
+  const mem=JSON.parse(await readFile(memoryPath,'utf8'));
+  mem.records['Amazon::123456']={identity:{...sourceJobs[0]}};
+  await writeFile(memoryPath,JSON.stringify(mem));
+  jobs[0].source_id='rotated-2026';
+ }
  if(n===18&&jobs[0])jobs[0].title='Updated Advisory';
+ if(n===21&&jobs[2])jobs[2].status='CLOSED';
+ if(n===22&&jobs[2])jobs[2].status='STILL_OPEN';
+ if(n===24)jobs.splice(jobs.findIndex(j=>j.source_id==='999999'),1);
+ if(n===27){
+  // Historical Git personal decision remains the trusted importer domain,
+  // never staged under a service JWT.
+  const memoryPath=resolve(repo,'job_memory_jw2.json');
+  const mem=JSON.parse(await readFile(memoryPath,'utf8'));
+  mem.records['Amazon::123459']={
+   identity:{...sourceJobs[3]},
+   user:{decision:'NOT_INTERESTED',decided_at:'2026-10-29T10:00:00Z'}};
+  await writeFile(memoryPath,JSON.stringify(mem));
+ }
  await writeFile(path,JSON.stringify(data));
  execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'cohere'],
   {stdio:'pipe',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
@@ -71,7 +97,7 @@ function intercept(db:D1Database,stop:(sqls:string[])=>boolean){
 const count=async(table:string)=>Number(await c.prepare('SELECT count(*) AS n FROM '+table).first('n'));
 beforeAll(async()=>{
  repo=await mkdtemp(resolve(tmpdir(),'model-c-m47-continuous-'));
- execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'seed','2'],
+ execFileSync(python,['tests/helpers/model-c-import-fixture.py',repo,'seed','22'],
    {stdio:'pipe',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
  sourceJobs=JSON.parse(await readFile(resolve(repo,'current_jobs_jw2.json'),'utf8')).companies[0].jobs;
  git('init','-q','-b','main');git('remote','add','origin','https://github.com/giacodmr/job-watch-milano.git');
@@ -111,10 +137,16 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   const mappings=(await c.prepare(`SELECT alias_key AS key,job_id AS jobId
    FROM catalog_aliases ORDER BY alias_key`).all()).results as {key:string;jobId:string}[];
   const ledger={identities,mappings};
+  const personalDecisionJobIds=(await p.prepare(
+   'SELECT DISTINCT job_id AS jobId FROM personal_decision_events ORDER BY job_id'
+  ).all<{jobId:string}>()).results.map(x=>x.jobId);
+  const activeRefs=(await p.prepare(
+   'SELECT job_id AS jobId,kind FROM personal_reference_state WHERE active=1 ORDER BY job_id,kind'
+  ).all<{jobId:string;kind:'SAVED'|'APPLICATION'|'DISMISSED'}>()).results;
   const context={identities:before?{
    mode:'confirmed-ledger' as const,ledger,expectedDigest:await sha256(canonical(ledger))
-  }:{mode:'first-v1-bootstrap' as const},personalReferences:[],
-   personalDecisionJobIds:[]};
+  }:{mode:'first-v1-bootstrap' as const},personalReferences:activeRefs,
+   personalDecisionJobIds};
   const source={repo,commit:sha};
   const verified=await verifyGitProjection(source,context,previous);
   const proof=await verifyProjectionProof(verified.bundle,verified.proof,context);
@@ -133,6 +165,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    remoteExecutionAuthorized:false,
    syncRevision:preflight.syncRevision,metrics:preflight.metrics},costs);
   const packets=await prepareCatalogV2Packets(verified.bundle,selected,proof,plan.digest,before);
+  expect(packets.chunks.length).toBeGreaterThanOrEqual(2);
   expect((await send(base,'POST',packets.run)).status).toBe(201);
   const url=base+'/'+packets.run.runId+'/chunks';
   for(const chunk of [...packets.chunks].reverse()){
@@ -179,16 +212,24 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   const head=await getModelCCatalogSnapshot(c);
   expect(head.snapshot?.syncRevision).toBe(before+1);
   expect((await importModelC(c,p,stagedOptions)).status).toBe('REPLAY');
-  if(i===3){
-   initialJobId=(await c.prepare('SELECT id FROM catalog_vacancy_identity ORDER BY id').first<string>('id'))!;
+  const decisionCycles=[3,8,13,18];
+  const decisions=['INTERESTED','TO_REVIEW','APPLIED','NOT_INTERESTED'] as const;
+  const slot=decisionCycles.indexOf(i);
+  if(slot>=0){
+   if(!initialJobId)initialJobId=(await c.prepare(
+    "SELECT job_id FROM catalog_aliases WHERE alias_key='Amazon::123456'"
+   ).first<string>('job_id'))!;
    const save=await executePersonalCommand(c,p,{ownerId:opts.owner},{
     kind:'DECISION',jobId:initialJobId,catalogRevision:result.syncRevision,
-    expectedRevision:0,operationId:'00000000-0000-4000-8000-000000004147',
-    decision:'INTERESTED',reasonSummary:null});
+    expectedRevision:slot,operationId:'00000000-0000-4000-8000-00000000414'+slot,
+    decision:decisions[slot]!,reasonSummary:null});
    expect('status' in save ? save.status : null).toBe('saved');
   }
-  if(i>=4)expect((await getModelCPersonalJob(c,p,{ownerId:opts.owner},initialJobId)).job)
-   .toMatchObject({decision:'INTERESTED',decisionSource:'APP'});
+  if(i>=4){
+   const ix=decisionCycles.filter(x=>x<=i).length-1;
+   expect((await getModelCPersonalJob(c,p,{ownerId:opts.owner},initialJobId)).job)
+    .toMatchObject({decision:decisions[ix],decisionSource:'APP'});
+  }
   const retained=await compactTerminalV2Runs(c);
   expect(await count('catalog_ingest_v2_runs')).toBeLessThanOrEqual(8);
   if(i>0)expect(retained.archived).toBeGreaterThanOrEqual(1);
@@ -210,9 +251,13 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
  expect(await count('catalog_audit')).toBe(30);
  expect(await count('catalog_ingest_v2_archive_runs')).toBe(29);
  expect(await count('catalog_ingest_v2_runs')).toBe(1);
- expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_events').first('n'))).toBe(1);
- expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_operations').first('n'))).toBe(1);
+ expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_events').first('n'))).toBe(4);
+ expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_app_operations').first('n'))).toBe(4);
+ expect(Number(await p.prepare('SELECT count(*) AS n FROM personal_decision_events').first('n'))).toBeGreaterThan(0);
+ expect(Number(await c.prepare('SELECT count(*) AS n FROM catalog_aliases').first('n'))).toBeGreaterThan(22);
+ expect(await c.prepare("SELECT job_id FROM catalog_aliases WHERE alias_key='Amazon::rotated-2026'").first('job_id'))
+  .toBe(initialJobId);
  expect((await c.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
  expect((await p.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
  console.log('M47_CONTINUOUS_30_CYCLES '+JSON.stringify(metrics));
-},180000);
+},360000);
