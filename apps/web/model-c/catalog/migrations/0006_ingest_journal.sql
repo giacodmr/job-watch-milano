@@ -20,6 +20,15 @@ INSERT INTO catalog_ingest_journal(run_id,sequence,phase,proof_digest,previous_d
     '0000000000000000000000000000000000000000000000000000000000000000',
     run_digest FROM catalog_ingest_runs;
 -- statement-breakpoint
+CREATE TRIGGER catalog_ingest_journal_first_guard BEFORE INSERT ON catalog_ingest_journal
+WHEN NEW.sequence=0 AND (
+  NEW.phase!='RECEIVING' OR
+  NEW.previous_digest!='0000000000000000000000000000000000000000000000000000000000000000' OR
+  NEW.proof_digest IS NOT (SELECT run_digest FROM catalog_ingest_runs WHERE id=NEW.run_id) OR
+  NEW.event_digest IS NOT (SELECT run_digest FROM catalog_ingest_runs WHERE id=NEW.run_id)
+)
+BEGIN SELECT RAISE(ABORT,'invalid_journal_first_event'); END;
+-- statement-breakpoint
 CREATE TRIGGER catalog_ingest_journal_guard BEFORE INSERT ON catalog_ingest_journal
 WHEN NEW.sequence>0
 BEGIN
