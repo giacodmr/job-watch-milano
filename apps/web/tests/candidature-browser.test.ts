@@ -4,7 +4,7 @@ import {beforeAll,afterAll,describe,it,expect} from 'vitest';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {applySchema} from '../tools/model-c-schema';
-import {stageCatalog,publicationFixture,seedPersonal,owner} from './helpers/model-c-fixtures';
+import {stageCatalog,publicationFixture,seedPersonal,owner,jobId} from './helpers/model-c-fixtures';
 import {createServer} from 'node:http';
 import type {Server} from 'node:http';
 import {spawn} from 'node:child_process';
@@ -82,7 +82,31 @@ async function capture(session:Session,tab:string,url:string,width:number,height
   return image?.data as string;
 }
 let runtime:Miniflare,server:Server|null=null,chrome:ChildProcess|null=null,tempDir:string|null=null;
+let workerScript='';
 let url='';
+async function initRuntime(write:boolean){
+  runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:workerScript,
+    compatibilityDate:'2026-10-29',cf:false,
+    bindings:{APP_ENV:'local',MODEL_C_LOCAL_API:'synthetic-only',MODEL_C_TEST_OWNER:owner,
+      ...(write?{MODEL_C_LOCAL_WRITE:'synthetic-only'}:{})},
+    d1Databases:{CATALOG:write?'visual-write-catalog':'visual-catalog',
+      PERSONAL:write?'visual-write-personal':'visual-personal'},
+  }));
+  const catalog=await runtime.getD1Database('CATALOG');
+  const personal=await runtime.getD1Database('PERSONAL');
+  await applySchema(catalog,'catalog');await applySchema(personal,'personal');
+  await stageCatalog(catalog);await catalog.batch(publicationFixture(catalog,'run-one'));
+  await seedPersonal(personal);
+  if(write){
+    const second='job:'+'2'.repeat(64);
+    await catalog.prepare("INSERT INTO catalog_vacancy_identity VALUES (?,'company:synthetic','Synthetic Company::second')")
+      .bind(second).run();
+    await catalog.prepare(`INSERT INTO catalog_vacancy_current
+      (job_id,company_id,source_id,kind,lifecycle,title,location,origin_id)
+      VALUES (?,'company:synthetic','source:synthetic','OPPORTUNITY','STILL_OPEN','Second Synthetic Analyst','Milano','origin:run-one')`)
+      .bind(second).run();
+  }
+}
 beforeAll(async()=>{
   const [browser,workerBundle]=await Promise.all([
     build({entryPoints:['src/main.tsx'],bundle:true,write:false,format:'iife',platform:'browser',
@@ -93,25 +117,39 @@ beforeAll(async()=>{
   const css=browser.outputFiles.find(f=>f.path.endsWith('.css'))?.text;
   const workerJs=workerBundle.outputFiles.at(0)?.text;
   if(!js||!css||!workerJs)throw Error('VISUAL_BUNDLE_MISSING');
-  runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:workerJs,
-    compatibilityDate:'2026-10-29',cf:false,
-    bindings:{APP_ENV:'local',MODEL_C_LOCAL_API:'synthetic-only',MODEL_C_TEST_OWNER:owner},
-    d1Databases:{CATALOG:'visual-catalog',PERSONAL:'visual-personal'},
-  }));
-  const catalog=await runtime.getD1Database('CATALOG');
-  const personal=await runtime.getD1Database('PERSONAL');
-  await applySchema(catalog,'catalog');await applySchema(personal,'personal');
-  await stageCatalog(catalog);await catalog.batch(publicationFixture(catalog,'run-one'));
-  await seedPersonal(personal);
+  workerScript=workerJs;
+  await initRuntime(false);
   server=createServer(async(request,response)=>{
     try{
       const path=request.url??'/';
       if(path==='/app.js'){response.setHeader('Content-Type','text/javascript');response.end(js);return;}
       if(path==='/app.css'){response.setHeader('Content-Type','text/css');response.end(css);return;}
       if(path.startsWith('/api/')){
-        const result=await runtime.dispatchFetch('http://localhost'+path);
+        // This browser-facing loopback proxy checks the real incoming Origin first.
+        // It then maps the *trusted* same-origin request to the synthetic Worker.
+        let options:RequestInit|undefined;
+        if(request.method==='POST'){
+          const address=server?.address();
+          if(!address||typeof address==='string'||
+             request.headers.origin!=='http://127.0.0.1:'+address.port){
+            response.statusCode=403;response.end('Origin forbidden');return;
+          }
+          const chunks:Buffer[]=[];let size=0;
+          for await(const chunk of request){
+            const data=Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk as Uint8Array);
+            size+=data.length;
+            if(size>2048){response.statusCode=413;response.end('Body too large');return;}
+            chunks.push(data);
+          }
+          options={method:'POST',headers:{
+            Origin:'http://localhost',
+            'Content-Type':String(request.headers['content-type']??''),
+          },body:Buffer.concat(chunks).toString('utf8')};
+        }
+        const result=await runtime.dispatchFetch('http://localhost'+path,options);
         response.statusCode=result.status;
         response.setHeader('Content-Type','application/json');
+        response.setHeader('Cache-Control','no-store');
         response.end(await result.text());
         return;
       }
