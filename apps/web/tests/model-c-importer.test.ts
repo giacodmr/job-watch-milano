@@ -19,6 +19,7 @@ import {prepareOfflineIngestPackets} from '../tools/model-c-ingest-offline-clien
 import {projectTrustedInventoryV1} from '../tools/model-c-trusted-stage';
 import {inspectPublishedModelCRecovery} from '../tools/model-c-import-recovery';
 import {observeIngestJournal} from '../tools/model-c-publication-journal';
+import {compactTerminalIngestRuns,lookupArchivedIngest} from '../tools/model-c-ingest-retention';
 import {createOfflineServiceIngestionHarness} from '../worker/model-c-ingest-lab';
 import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
 
@@ -554,7 +555,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       }
       expect((await post(base+'/'+packet.run.runId+'/chunks',chunk)).status).toBe(201);
     };
-    return {f,packet,trustedPlan,append};
+    return {f,packet,trustedPlan,append,handler:h,jwt,base};
   }
   it('binds a complete staging receipt to trusted Git and reuses original CATALOG and PERSONAL importer',async()=>{
     const {f,packet,trustedPlan,append}=await prepared();
@@ -582,6 +583,38 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
     const again=await importModelC(f.c,f.p,f.options);
     expect(again.status).toBe('REPLAY');
     expect(again.metrics.total).toBe(0);
+  });
+  it('compacts only historical COMPLETED ingest runs and proves archived HTTP replay',async()=>{
+    const {f,packet,trustedPlan,append,handler,jwt,base}=await prepared();
+    for(let i=0;i<packet.chunks.length;i++)await append(i);
+    await importModelC(f.c,f.p,{...f.options,
+      stagedPublication:{runId:packet.run.runId,trustedPlan}});
+    // A run still pointed to by the published HEAD must never be deleted.
+    expect((await compactTerminalIngestRuns(f.c)).archived).toBe(0);
+    await expect(f.c.prepare('DELETE FROM catalog_ingest_runs WHERE id=?')
+      .bind(packet.run.runId).run()).rejects.toThrow('retained_ingest_run');
+    f.options.source.commit=commit(f.repo);
+    await importModelC(f.c,f.p,f.options);
+    const compacted=await compactTerminalIngestRuns(f.c);
+    expect(compacted).toMatchObject({archived:1,payloadChunksReclaimed:packet.chunks.length});
+    expect(await lookupArchivedIngest(f.c,packet.run.runId))
+      .toMatchObject({run_digest:await sha256(canonical(packet.run))});
+    expect(await count(f.c,'catalog_ingest_runs')).toBe(0);
+    expect(await count(f.c,'catalog_ingest_chunks')).toBe(0);
+    expect((await observeIngestJournal(f.c,packet.run.runId)).phase).toBe('COMPLETED');
+    const send=async(path:string,method:string,body?:unknown)=>handler(new Request(path,{
+      method,headers:{'cf-access-jwt-assertion':jwt,
+        ...(body===undefined?{}:{'content-type':'application/json'})},
+      ...(body===undefined?{}:{body:canonical(body)}),
+    }));
+    expect((await send(base,'POST',packet.run)).status).toBe(200);
+    expect((await send(base+'/'+packet.run.runId+'/status','GET')).status).toBe(200);
+    expect((await send(base+'/'+packet.run.runId+'/chunks','POST',packet.chunks[0])).status).toBe(200);
+    const tampered={...packet.chunks[0]!,chunkDigest:'f'.repeat(64)};
+    expect((await send(base+'/'+packet.run.runId+'/chunks','POST',tampered)).status).toBe(400);
+    expect((await compactTerminalIngestRuns(f.c)).archived).toBe(0);
+    await expect(f.c.prepare('UPDATE catalog_ingest_archive_runs SET run_digest=? WHERE id=?')
+      .bind('f'.repeat(64),packet.run.runId).run()).rejects.toThrow('immutable_archive_run');
   });
   it('rejects a forged digest-checked plan before reservation and PERSONAL append',async()=>{
     const {f,packet,trustedPlan,append}=await prepared();
