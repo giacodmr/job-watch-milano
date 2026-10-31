@@ -51,7 +51,7 @@ type Head = {
 async function publishedHead(db: D1Database): Promise<Head | null> {
   const version = await db.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'")
     .first<number>('version');
-  if (version !== 6) throw new ModelCReadError('CATALOG_SCHEMA_MISMATCH', 503);
+  if (version !== 7) throw new ModelCReadError('CATALOG_SCHEMA_MISMATCH', 503);
   const head = await db.prepare(`SELECT h.sync_revision AS syncRevision,
       h.content_revision AS contentRevision,h.ledger_revision AS ledgerRevision,
       h.run_id AS runId,r.observed_commit AS observedCommit,r.state,
