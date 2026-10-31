@@ -488,3 +488,11 @@ Official (2026-10-31): [D1 pricing](https://developers.cloudflare.com/d1/platfor
 ### Certification rule
 
 The new tests are additional local proof, not automatic certification. **GATE_A_PARTIAL / GATE_B_CLOSED** until final GitHub SHA CI is green and AC-05, AC-07, AC-10 local requirements are genuinely demonstrated. No remote provisioning, production CPU probes, remote migrations, merge or M48.
+
+### Observed closure-sprint fault results (Web foundation 41244127854; superseded SHA)
+
+The CI at `b388317e929c05ee018e305adbe27926eced9fa0` executed **all 19 indexed importer-phase scenarios successfully**. AC-05 assessment/summary plus APP history, the two filesystem-persistent Miniflare cold restart tests, and AC-10 forecasting scenarios also passed. **287 of 289 Vitest passed**, with two final legacy importer tests unable to start due to synthetic `DB128`/`DB129` bindings being absent. Those were **test-harness capacity errors, not production errors**; the fixture pool has been extended to 160 local test bindings in `19f16763`. Until the *new final SHA* CI is green, regression and CI ACs remain unverified.
+
+The 19 importer-stage tests currently exercise **M46 v1 staged protocol with the shared trusted M47 importer and CATALOG/PERSONAL D1**; v2 is independently covered by the consecutive 30-cycle and cold-restart staging tests. The 19 importer scenarios re-instantiate the trusted importer call against persistent D1, but do **not** create 19 separate filesystem-backed cold restarts. Windows 15–19 primarily verify retention/replay/CAS/APP/concurrency invariants, not forced power loss at every instruction. Because the mandate requires exact per-window cold restart where applicable, **do not advertise 19/19 end-to-end v2 cold-restart certification** based on this evidence alone. `GATE_A_PARTIAL` remains the conservative decision if that stronger interpretation is mandatory.
+
+The GitHub Actions logs, not this text, are authoritative for any subsequent final SHA and unit count.
