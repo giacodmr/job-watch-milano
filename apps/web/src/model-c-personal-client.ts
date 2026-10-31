@@ -65,6 +65,14 @@ export const personalDetailSchema=z.object({
     evidenceState:z.string(),analyzedAt:z.string(),
   })),
   assessmentEventsTruncated:z.boolean(),
+  appEvents:z.array(z.object({
+    id:z.string(),operationId:z.string(),kind:z.enum(['DECISION','SAVED']),
+    decision:decisionSchema.nullable(),savedActive:z.boolean().nullable(),
+    previousDecision:decisionSchema.nullable(),previousSaved:z.boolean().nullable(),
+    expectedRevision:z.number().int().nonnegative(),revision:z.number().int().positive(),
+    createdAt:z.string(),reasonSummary:nullable,
+  })).optional(),
+  appEventsTruncated:z.boolean().optional(),
 });
 export type PersonalRow=z.infer<typeof personalRowSchema>;
 export type PersonalPage=z.infer<typeof personalPageSchema>;
