@@ -1,6 +1,7 @@
 // M49: deployable service-only Cloudflare ingress, tested on real local D1.
 // All data and principals below are synthetic. No Cloudflare account is contacted.
 import {beforeAll,afterAll,describe,it,expect} from 'vitest';
+import worker from '../worker/index';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {SignJWT,generateKeyPair,exportJWK,createLocalJWKSet} from 'jose';
@@ -61,6 +62,12 @@ beforeAll(async()=>{
 afterAll(async()=>{await mf?.dispose();});
 
 describe('M49 default-denied service ingestion boundary',()=>{
+ it('worker dispatch denies the service route before any remote bindings exist',async()=>{
+  const res=await worker.fetch(request('/api/model-c/sync/v2/runs',undefined,'POST',{}),
+    {APP_ENV:'private'} as never);
+  expect(res.status).toBe(404);
+  expect(await res.json()).toMatchObject({status:'not_found'});
+ });
  it('does not activate from a public template, partial flag, or unknown quota',async()=>{
   const secret=await token();
   expect(privateServiceGateEnabled({...env(),PRIVATE_INGESTION_GATE:undefined})).toBe(false);
