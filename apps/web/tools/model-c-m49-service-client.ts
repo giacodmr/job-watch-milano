@@ -59,7 +59,12 @@ export async function stageCheckedV2Packets(packet:Packet,opts:Options){
      ...(body===undefined?{}:{'content-type':'application/json'}),
     },...(body===undefined?{}:{body:JSON.stringify(body)}),
    }));
-  }catch{return missing('M49_TRANSPORT_OUTCOME_UNKNOWN');}
+  }catch{
+   // A POST may have committed even when its response was lost. Only the
+   // status readback may resolve it; never send the POST again automatically.
+   if(method==='POST')return {code:503,data:{status:'TRANSPORT_OUTCOME_UNKNOWN'} as Status};
+   return missing('M49_STATUS_UNAVAILABLE');
+  }
   let data:Status;
   try{data=await result.json() as Status;}
   catch{return missing('M49_INVALID_RECEIPT');}
