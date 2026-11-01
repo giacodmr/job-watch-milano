@@ -173,4 +173,29 @@ describe('M49 default-denied service ingestion boundary',()=>{
      .bind(budget.day).first('charged'))).toBe(144);
  });
 
+ it('serializes trusted publisher and APP reservations in one durable CATALOG budget',async()=>{
+   const day=new Date().toISOString().slice(0,10);
+   const before=Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+     .bind(day).first('charged')??0);
+   const ceiling=before+72; // both 64+32 cannot succeed
+   const trustedPublisher=async()=>catalog.batch([
+     catalog.prepare('INSERT INTO catalog_write_days VALUES (?,0) ON CONFLICT DO NOTHING').bind(day),
+     // Exact SQL reservation shape used by the trusted M47/M50 importer.
+     catalog.prepare('INSERT INTO catalog_write_reservations VALUES (?,?,?,?)')
+       .bind(crypto.randomUUID(),day,64,ceiling),
+   ]);
+   const results=await Promise.allSettled([
+     trustedPublisher(),reservePersonalWriteBudget(catalog,
+       {operatorVerified:true,day,writeUnitsRemaining:ceiling},32),
+   ]);
+   expect(results.filter(r=>r.status==='fulfilled')).toHaveLength(1);
+   expect(results.filter(r=>r.status==='rejected')).toHaveLength(1);
+   const after=Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+     .bind(day).first('charged'));
+   expect([32,64]).toContain(after-before);
+   expect(after).toBeLessThanOrEqual(ceiling);
+   // Unknown quota must never reach the reservation SQL or PERSONAL writes.
+   expect(privateServiceQuota({...env(),PRIVATE_QUOTA_ATTESTED:''})).toBeUndefined();
+ });
+
 });
