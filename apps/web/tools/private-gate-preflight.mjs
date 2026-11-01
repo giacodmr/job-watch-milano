@@ -33,7 +33,12 @@ export async function inspectPrivateRepositoryGate(){
   ensure(privateConfig.account_id===undefined,'TEMPLATE_CONTAINS_ACCOUNT_ID',errors);
   ensure(Object.keys(privateConfig.vars??{}).length===1,'TEMPLATE_CONTAINS_IDENTITY_OR_SECRETS',errors);
   ensure(privateConfig.vars?.PRIVATE_APP_WRITE_GATE===undefined &&
-    privateConfig.vars?.PRIVATE_QUOTA_ATTESTED===undefined,
+    privateConfig.vars?.PRIVATE_QUOTA_ATTESTED===undefined &&
+    privateConfig.vars?.PRIVATE_INGESTION_GATE===undefined &&
+    privateConfig.vars?.PRIVATE_INGESTION_QUOTA_REMAINING===undefined &&
+    privateConfig.vars?.PRIVATE_INGESTION_QUOTA_VALID_UNTIL===undefined &&
+    privateConfig.vars?.PRIVATE_SERVICE_ACCESS_AUD===undefined &&
+    privateConfig.vars?.PRIVATE_SERVICE_ALLOWED_CLIENT_ID===undefined,
     'GATE_B_WRITE_SWITCH_MUST_NOT_BE_PRESET',errors);
   ensure(localConfig.vars?.APP_ENV==='local' && localConfig.workers_dev===false,
     'LOCAL_CONFIG_CHANGED',errors);
@@ -58,7 +63,7 @@ export async function inspectPrivateRepositoryGate(){
     privateReadPath:'ACCESS_PROTECTED_LOCAL_TESTED',
     privateWritePath:'TWO_FLAG_GATE_B_REQUIRED',
     privateCommandActivation:'DISABLED_IN_COMMITTED_TEMPLATE',
-    serviceIngestion:'LAB_ONLY_NOT_DEPLOYABLE',
+    serviceIngestion:'DEPLOYABLE_DEFAULT_DENIED',
     remoteD1Bindings:'GATE_B_REQUIRED',
     cloudAccountVerified:false,cloudMutationsAuthorized:false,
     remoteImporterAuthorized:false,
