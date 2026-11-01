@@ -240,7 +240,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   // Read-only bootstrap preflights may plan with executionTarget='remote'.
   if(!options.preflightOnly && options.executionTarget!=='local-ephemeral' &&
     !(options.executionTarget==='remote' &&
-      isM50AuthorizedRemotePair(options.remoteOperatorCapability,catalog,personal)))
+      isM50AuthorizedRemotePair(options.remoteOperatorCapability,catalog,personal,options.budget)))
     throw Error('REMOTE_IMPORT_NOT_AUTHORIZED');
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==7 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
