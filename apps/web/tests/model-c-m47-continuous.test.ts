@@ -302,6 +302,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
     accountId:'3'.repeat(32),catalogDatabaseId:catalogId,personalDatabaseId:personalId,
     apiToken:'SYNTHETIC_TEST_ONLY_OPERATOR_TOKEN',gateBApproved:true,
     accountFreePlanVerified:true,operatorQuotaVerified:true,
+    remainingWriteUnits:30000,quotaDay:new Date().toISOString().slice(0,10),
     validUntil:new Date(Date.now()+120000).toISOString(),transport,
    });
    const verified=await publishM50WithRemoteOperator(pair.catalog,pair.personal,{
