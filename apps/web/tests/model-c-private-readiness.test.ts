@@ -24,7 +24,7 @@ describe('Milestone #44 no-credentials repository activation preflight',()=>{
     expect(result.privateReadPath).toBe('ACCESS_PROTECTED_LOCAL_TESTED');
     expect(result.privateWritePath).toBe('TWO_FLAG_GATE_B_REQUIRED');
     expect(result.privateCommandActivation).toBe('DISABLED_IN_COMMITTED_TEMPLATE');
-    expect(result.serviceIngestion).toBe('LAB_ONLY_NOT_DEPLOYABLE');
+    expect(result.serviceIngestion).toBe('DEPLOYABLE_DEFAULT_DENIED');
     expect(result.remoteD1Bindings).toBe('GATE_B_REQUIRED');
     expect(result.cloudAccountVerified).toBe(false);
     expect(result.cloudMutationsAuthorized).toBe(false);
