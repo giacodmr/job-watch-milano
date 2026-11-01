@@ -25,12 +25,20 @@ type Readback={
  receiptMatchesPublishedHead:boolean;
 };
 const denied=(reason:string):never=>{throw Error(reason);};
-const matchStage=(options:M50LocalPublication,preflight:Awaited<ReturnType<typeof importModelC>>)=>{
+const matchStage=async(catalog:D1Database,options:M50LocalPublication,
+ preflight:Awaited<ReturnType<typeof importModelC>>)=>{
  const plan=options.stagedPublication.trustedPlan;
  if(preflight.status!=='PREFLIGHT')return;
+ const published=await catalog.prepare("SELECT run_id FROM catalog_head WHERE scope='catalog'")
+   .first<string>('run_id')===options.stagedPublication.runId;
+ // Recovery after PERSONAL append may change the selection-context projection
+ // digest. M47 replay checks the original immutable plan against published
+ // CATALOG bytes; do not demand a freshly recomputed projection digest then.
  if(preflight.run!==options.stagedPublication.runId||
     plan.syncRevision!==preflight.syncRevision||
-    canonical(plan.origin)!==canonical(preflight.provenance))
+    plan.origin.observedCommit!==preflight.provenance.observedCommit||
+    plan.origin.manifestDigest!==preflight.provenance.manifestDigest||
+    (!published&&canonical(plan.origin)!==canonical(preflight.provenance)))
    denied('M50_TRUSTED_PREFLIGHT_MISMATCH');
 };
 async function readback(catalog:D1Database,personal:D1Database,runId:string,owner:string):
@@ -67,7 +75,7 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
  // Read-only importer preflight independently verifies origin/main ancestry,
  // Python exporter, manifest, identity ledger and projected stage packets.
  const preflight=await importModelC(catalog,personal,{...args,preflightOnly:true});
- matchStage(options,preflight);
+ await matchStage(catalog,options,preflight);
  if(preflight.status==='PREFLIGHT'&&
     preflight.metrics.requiredBound>options.budget.availableRows)
    denied('M50_WRITE_BUDGET_INSUFFICIENT');
@@ -88,7 +96,7 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
        published.status!=='REPLAY')||receipt.journalPhase!=='COMPLETED'||
       !receipt.receiptMatchesPublishedHead||receipt.pendingReferences!==0)
      denied('M50_LOCAL_PUBLICATION_UNVERIFIED');
-   return {status:published.status,runId:options.stagedPublication.runId,
+   return {...published,runId:options.stagedPublication.runId,
      receipt,remoteExecutionAuthorized:false as const};
  }catch{
    // Even if the CATALOG commit succeeded, an exception/ACK loss is not PASS.
