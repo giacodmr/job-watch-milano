@@ -13,7 +13,7 @@ export function verifiedWriteBudget(env:QuotaAttestation, now=Date.now()):WriteB
   const expiry=env.PRIVATE_INGESTION_QUOTA_VALID_UNTIL;
   if(env.PRIVATE_QUOTA_ATTESTED!=='verified-under-budget'||!raw||!expiry||
     !/^(?:0|[1-9][0-9]{0,4})$/.test(raw)||
-    !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$/.test(expiry))
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(expiry))
     return undefined;
   const remaining=Number(raw),deadline=Date.parse(expiry);
   if(!Number.isSafeInteger(remaining)||remaining<100||remaining>30000||
