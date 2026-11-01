@@ -2,6 +2,7 @@
 // This handler is reachable ONLY after authenticatePrivateRequest validates Access JWT.
 import {z} from 'zod';
 import {privateWriteEnabled} from './private-access';
+import {verifiedWriteBudget,reservePersonalWriteBudget} from './data/model-c-quota-admission';
 import type {AuthenticatedPrincipal,PrivateAccessEnv} from './private-access';
 import {executePrivatePersonalCommand,ModelCPersonalWriteError} from './data/model-c-personal-write';
 import {ModelCReadError,modelCCatalogQuerySchema,getModelCCatalogSnapshot,
@@ -76,6 +77,13 @@ async function privateCommand(request:Request,env:PrivateAccessEnv,
       return json({error:'invalid_payload'},400);
     if((payload as Record<string,unknown>).kind!==(kind==='decision'?'DECISION':'SAVED'))
       return json({error:'invalid_payload'},400);
+    // Reserve a conservative upper bound in the SAME CATALOG daily ledger
+    // used by the trusted importer and v2 staging. Cross-D1 reservation is
+    // deliberately not rolled back after a failed PERSONAL commit.
+    const quota=verifiedWriteBudget(env);
+    if(!quota)return json({error:'quota_unverified'},503);
+    try{await reservePersonalWriteBudget(env.CATALOG,quota);}
+    catch{return json({error:'write_budget_unavailable'},503);}
     return json(await executePrivatePersonalCommand(env.CATALOG,env.PERSONAL,principal,payload));
   }catch(e){
     if(e instanceof z.ZodError)return json({error:'invalid_payload'},400);
