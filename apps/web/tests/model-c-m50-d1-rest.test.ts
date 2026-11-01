@@ -93,6 +93,22 @@ it('executes typed/null readback through real local D1 and fails closed on one a
   expect(values[1]!.results).toEqual([{a:'integer',b:'null',c:'real'}]);
   expect((await pair.catalog.prepare('SELECT name FROM typed WHERE id=?').bind(1).first<string>('name')))
    .toBe('trusted');
+  // Journal COMPLETE uses prepared.run() (not batch or all). Compare exactly
+  // the bound six-placeholder SQL through direct D1 and synthetic REST.
+  await c.prepare('CREATE TABLE journal_probe (run_id TEXT, sequence INTEGER, phase TEXT, proof_digest TEXT, previous_digest TEXT, event_digest TEXT)').run();
+  const journalSql='INSERT INTO journal_probe (run_id,sequence,phase,proof_digest,previous_digest,event_digest) VALUES (?,?,?,?,?,?)';
+  const journalValues=['ingest-v2:synthetic',1,'COMPLETE','a'.repeat(64),'b'.repeat(64),'c'.repeat(64)] as const;
+  await c.prepare(journalSql).bind(...journalValues).run();
+  const viaRest=await pair.catalog.prepare(journalSql).bind(
+    'ingest-v2:synthetic-rest',...journalValues.slice(1)).run();
+  expect(viaRest.success).toBe(true);
+  const restCall=calls[calls.length-1]!.payload as {batch:{sql:string;params:string[]}[]};
+  expect(restCall.batch).toEqual([encodeM50RestQuery(journalSql,
+    ['ingest-v2:synthetic-rest',...journalValues.slice(1)])]);
+  expect((await c.prepare('SELECT sequence,phase,proof_digest,previous_digest,event_digest FROM journal_probe WHERE run_id=?')
+   .bind('ingest-v2:synthetic-rest').first())).toEqual(
+   await c.prepare('SELECT sequence,phase,proof_digest,previous_digest,event_digest FROM journal_probe WHERE run_id=?')
+    .bind('ingest-v2:synthetic').first());
   await expect(pair.catalog.batch([
    pair.catalog.prepare('INSERT INTO typed(id,name) VALUES (?,?)').bind(2,'rolled-back'),
    pair.catalog.prepare('INSERT INTO typed(id,name) VALUES (?,?)').bind(1,'unique-conflict'),
