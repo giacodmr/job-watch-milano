@@ -14,6 +14,7 @@ import {verifyProjectionProof} from '../shared/projection-proof';
 import {selectModelC} from '../shared/model-c-selection';
 import {prepareCatalogV2Packets} from '../shared/model-c-ingestion-v2';
 import {importModelC} from '../tools/model-c-importer';
+import {publishM50Locally} from '../tools/model-c-m50-trusted-controller';
 import type {ImportOptions} from '../tools/model-c-importer';
 import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
 import {createOfflineV2IngestionHarness} from '../worker/model-c-ingest-v2-lab';
@@ -248,7 +249,14 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
      injected=true;return true;
     }return false;
    });
-   await expect(importModelC(c,broken,stagedOptions)).rejects.toThrow('SYNTHETIC_PERSONAL_RECEIPT_LOST');
+   // M50 independent operator controller must observe (not blindly retry)
+   // an ambiguous local acknowledgement after the atomic CATALOG commit.
+   const unknown=await publishM50Locally(c,broken,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   expect(unknown.status).toBe('REQUIRES_OPERATOR_RECOVERY');
+   expect(unknown.receipt?.journalPhase).toBe('CATALOG_PUBLISHED');
    expect((await observeIngestJournal(c,packets.run.runId)).phase).toBe('CATALOG_PUBLISHED');
    try{result=await importModelC(c,p,stagedOptions);}
    catch(e){
@@ -271,6 +279,15 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   const head=await getModelCCatalogSnapshot(c);
   expect(head.snapshot?.syncRevision).toBe(before+1);
   expect((await importModelC(c,p,stagedOptions)).status).toBe('REPLAY');
+  if(i===0||i===14){
+   const controlled=await publishM50Locally(c,p,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   expect(controlled.status).toBe('REPLAY');
+   expect(controlled.receipt.receiptMatchesPublishedHead).toBe(true);
+   expect(controlled.receipt.pendingReferences).toBe(0);
+  }
   const decisionCycles=[3,8,13,18];
   const decisions=['INTERESTED','TO_REVIEW','APPLIED','NOT_INTERESTED'] as const;
   const slot=decisionCycles.indexOf(i);
