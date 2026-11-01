@@ -10,6 +10,7 @@ const config=(transport:(request:Request)=>Promise<Response>)=>({
  accountId,catalogDatabaseId:catalogId,personalDatabaseId:personalId,
  apiToken:'SYNTHETIC_OPERATOR_TEST_TOKEN_0000',gateBApproved:true,
  accountFreePlanVerified:true,operatorQuotaVerified:true,
+ remainingWriteUnits:30000,quotaDay:new Date().toISOString().slice(0,10),
  validUntil:new Date(Date.now()+120000).toISOString(),transport,
 });
 it('uses explicit type casts and NULL without SQL/text parameter interpolation',()=>{
@@ -35,6 +36,8 @@ it('denies unknown operator authority without issuing any HTTP request',async()=
   {...good,operatorQuotaVerified:false},
   {...good,validUntil:new Date(Date.now()-1000).toISOString()},
   {...good,catalogDatabaseId:good.personalDatabaseId},
+  {...good,remainingWriteUnits:-1},
+  {...good,quotaDay:'2000-01-01'},
  ]){
   expect(()=>createM50RemoteOperatorPair(bad)).toThrow('M50_REMOTE_OPERATOR_GATE_CLOSED');
  }
@@ -43,6 +46,10 @@ it('denies unknown operator authority without issuing any HTTP request',async()=
  expect(isM50AuthorizedRemotePair(pair.capability,pair.catalog,pair.personal)).toBe(true);
  expect(isM50AuthorizedRemotePair({},pair.catalog,pair.personal)).toBe(false);
  expect(isM50AuthorizedRemotePair(pair.capability,pair.personal,pair.catalog)).toBe(false);
+ expect(isM50AuthorizedRemotePair(pair.capability,pair.catalog,pair.personal,
+   {availableRows:30001,day:new Date().toISOString().slice(0,10)})).toBe(false);
+ expect(isM50AuthorizedRemotePair(pair.capability,pair.catalog,pair.personal,
+   {availableRows:30000,day:new Date().toISOString().slice(0,10)})).toBe(true);
  await expect(importModelC(pair.catalog,pair.personal,{
   source:{repo:'.',commit:'a'.repeat(40)},owner:'synthetic-owner',
   budget:{day:new Date().toISOString().slice(0,10),availableRows:30000},
