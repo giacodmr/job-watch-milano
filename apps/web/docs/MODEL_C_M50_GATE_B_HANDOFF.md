@@ -41,3 +41,16 @@ JOB WATCH — CLOSE M49 & START M50 PRIVATE CLOUDFLARE PILOT.
 7. After each stage, stop on unknown outcome, unexpected resource cost or failed security/consistency checks. Present exact SHA, workflow results, resource IDs privately, receipts, observed rows read/written, plan cost, blockers, GO/NO-GO and the next action requiring explicit user consent. No implicit production rollout.
 
 **Current authorization:** NONE. This document is a handoff, not permission to provision or deploy.
+
+
+## €0 hostname decision (must be resolved before M50)
+
+The committed private configuration sets `workers_dev:false` and `preview_urls:false`; `privateAccessConfig` expressly rejects `*.workers.dev`. A private Custom Domain requires a Cloudflare-managed zone/domain owned by the operator. If no usable domain is already owned, the required hostname might introduce a domain purchase/renewal cost, which is forbidden without new approval.
+
+Cloudflare officially supports **Cloudflare Access protection of production `workers.dev` URLs**, often allowing a zero-domain-cost hobby pilot. However, using that route is **not** authorized by M49 and would reverse an intentional M43–M48 security choice. Present the two options to the user: (A) use an already-owned Cloudflare zone/custom hostname with existing deny-all alternate routes, or (B) explicitly authorize a separately reviewed Access-protected `workers.dev` pilot with revised hostname policy, negative bypass tests, `workers_dev` routing, and verified Access-before-assets. Never silently change the original design or pay for a domain. Reference: https://developers.cloudflare.com/workers/configuration/routing/workers-dev/ and https://developers.cloudflare.com/workers/configuration/cloudflare-access/.
+
+## Trusted administrative publication contract (not implemented remotely)
+
+The existing M47 Node/Python importer remains the sole verifier of pinned Git provenance, ledger and projected inventory. A real privileged publication adapter requires an **independent operator principal** (not `catalog:stage`), a remote D1 transaction-compatible transport with typed SQLite binding equivalence, a tested atomic CATALOG batch and owner-bound PERSONAL reconciliation, durable receipt readback after lost ACK, and shared admission accounting. Do not expose a generic public SQL proxy or trust client-supplied digests as Git provenance.
+
+If evaluating Cloudflare's D1 REST query API, note its administrative role and global API limits; prove bound numeric/null semantics, per-batch rollback, write results and large-batch behavior on the exact supported API before allowing any real write. Any inability to prove these properties is a hard NO-GO. Reference: https://developers.cloudflare.com/d1/tutorials/build-an-api-to-access-d1/ and https://developers.cloudflare.com/d1/worker-api/d1-database/.
