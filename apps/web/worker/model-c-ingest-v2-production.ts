@@ -9,9 +9,11 @@ import {ServiceAuthError,verifyServicePrincipal} from './model-c-service-auth';
 import type {ServiceAuthConfig,ServicePrincipal} from './model-c-service-auth';
 import {privateAccessConfig} from './private-access';
 import type {PrivateAccessEnv} from './private-access';
+import {verifiedWriteBudget,reservationStatements} from './data/model-c-quota-admission';
+import type {WriteBudget} from './data/model-c-quota-admission';
 
 type Options={catalog:D1Database;auth:ServiceAuthConfig;keys?:JWTVerifyGetKey|undefined;
-  quota?:{operatorVerified:true;writeUnitsRemaining:number}|undefined};
+  quota?:WriteBudget|undefined};
 type RunRow={id:string;commit_sha:string;manifest_digest:string;projection_digest:string;
  ledger_digest:string;catalog_content_digest:string;plan_digest:string;expected_revision:number;
  total_chunks:number;record_count:number;inventory_digest:string;principal_digest:string;
@@ -63,7 +65,7 @@ const sameRun=(row:RunRow,run:CatalogV2Run,pd:string,digest:string)=>
 const sameChunk=(row:ChunkRow,c:CatalogV2Chunk)=>
  row.chunk_index===c.index&&row.chunk_digest===c.digest&&
  row.idempotency_key===c.idempotencyKey&&row.record_count===c.count;
-async function create(db:D1Database,run:CatalogV2Run,p:ServicePrincipal){
+async function create(db:D1Database,run:CatalogV2Run,p:ServicePrincipal,budget:WriteBudget){
  const pd=await sha256(p.clientId),digest=await sha256(canonical(run));
  const existing=await liveRun(db,run.runId);
  if(existing)return reply(sameRun(existing,run,pd,digest)?'REPLAY':'RUN_CONFLICT',
@@ -76,7 +78,7 @@ async function create(db:D1Database,run:CatalogV2Run,p:ServicePrincipal){
  const revision=Number(await db.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision')??0);
  if(revision!==run.expectedRevision)return reply('STALE_CHECKPOINT',409);
  try{
-  const out=await db.prepare(`INSERT INTO catalog_ingest_v2_runs
+  const out=(await db.batch([...reservationStatements(db,budget,64),db.prepare(`INSERT INTO catalog_ingest_v2_runs
    (id,commit_sha,manifest_digest,projection_digest,ledger_digest,catalog_content_digest,
     plan_digest,expected_revision,total_chunks,record_count,inventory_digest,
     principal_digest,run_digest)
@@ -86,7 +88,7 @@ async function create(db:D1Database,run:CatalogV2Run,p:ServicePrincipal){
          (SELECT count(*) FROM catalog_ingest_v2_runs))<8`)
    .bind(run.runId,run.commitSha,run.manifestDigest,run.projectionDigest,run.ledgerDigest,
      run.catalogContentDigest,run.planDigest,run.expectedRevision,run.totalChunks,
-     run.recordCount,run.inventoryDigest,pd,digest,run.expectedRevision).run();
+     run.recordCount,run.inventoryDigest,pd,digest,run.expectedRevision)]))[2]!;
   const observed=await liveRun(db,run.runId);
   if(observed)return reply(sameRun(observed,run,pd,digest)?
      ((out.meta.changes??0)>0?'RUN_CREATED':'REPLAY'):'RUN_CONFLICT',
@@ -104,7 +106,7 @@ async function create(db:D1Database,run:CatalogV2Run,p:ServicePrincipal){
   return reply('WRITE_OUTCOME_UNKNOWN',503);
  }
 }
-async function add(db:D1Database,c:CatalogV2Chunk,p:ServicePrincipal){
+async function add(db:D1Database,c:CatalogV2Chunk,p:ServicePrincipal,budget:WriteBudget){
  const pd=await sha256(p.clientId),run=await liveRun(db,c.runId);
  if(!run){
   const archive=await archiveRun(db,c.runId);
@@ -121,14 +123,14 @@ async function add(db:D1Database,c:CatalogV2Chunk,p:ServicePrincipal){
  const records=canonical(c.records);
  if(new TextEncoder().encode(records).byteLength>48*1024)return reply('payload_too_large',413);
  try{
-  const result=await db.prepare(`INSERT INTO catalog_ingest_v2_chunks
+  const result=(await db.batch([...reservationStatements(db,budget,16),db.prepare(`INSERT INTO catalog_ingest_v2_chunks
    (run_id,chunk_index,chunk_digest,idempotency_key,record_count,records_json)
    SELECT id,?,?,?,?,? FROM catalog_ingest_v2_runs WHERE id=? AND principal_digest=?
     AND total_chunks=? AND expected_revision=coalesce(
       (SELECT sync_revision FROM catalog_head WHERE scope='catalog'),0)
     AND NOT EXISTS (SELECT 1 FROM catalog_ingest_v2_chunks WHERE run_id=? AND chunk_index=?)`)
    .bind(c.index,c.digest,c.idempotencyKey,c.count,records,
-     c.runId,pd,c.totalChunks,c.runId,c.index).run();
+     c.runId,pd,c.totalChunks,c.runId,c.index)]))[2]!;
   const now=await liveChunk(db,c.runId,c.index);
   if(now)return reply(sameChunk(now,c)?
     ((result.meta.changes??0)>0?'CHUNK_STAGED':'REPLAY'):'CHUNK_CONFLICT',
@@ -180,11 +182,11 @@ function createPrivateV2Receiver(opts:Options){
    if(url.pathname===base){
    const run=await validateCatalogV2Run(await json(request));
    if(run.totalChunks>512||run.recordCount>20000)return reply('RUN_TOO_LARGE',413);
-   return create(opts.catalog,run,p);
+   return create(opts.catalog,run,p,opts.quota);
   }
    const c=await validateCatalogV2Chunk(await json(request));
    if(c.runId!==match![1])return reply('RUN_CONFLICT',409);
-   return add(opts.catalog,c,p);
+   return add(opts.catalog,c,p,opts.quota);
   }catch(e){
    if(e instanceof ServiceAuthError)return reply(e.code,e.status);
    if(e instanceof z.ZodError)return reply('invalid_payload',400);
@@ -214,17 +216,7 @@ export function privateServiceGateEnabled(env:PrivateIngestionEnv):boolean{
  * Lack of a trusted account-wide observation MUST deny all new writes.
  */
 export function privateServiceQuota(env:PrivateIngestionEnv,now=Date.now()){
- const raw=env.PRIVATE_INGESTION_QUOTA_REMAINING;
- const expires=env.PRIVATE_INGESTION_QUOTA_VALID_UNTIL;
- if(!raw||!expires||!/^(?:0|[1-9][0-9]{0,4})$/.test(raw)||
-    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(expires))
-   return undefined;
- const remaining=Number(raw),until=Date.parse(expires);
- // 30k internal ordinary ceiling; no automatic 60k or paid-tier fallback.
- if(!Number.isSafeInteger(remaining)||remaining<100||remaining>30000||
-    !Number.isFinite(until)||until<=now||until>now+5*60_000)
-   return undefined;
- return {operatorVerified:true as const,writeUnitsRemaining:remaining};
+ return verifiedWriteBudget(env,now);
 }
 /** The service route must be dispatched BEFORE the interactive Access router.
  * It verifies a different application audience and a service-only JWT. */
