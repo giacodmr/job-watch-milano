@@ -37,7 +37,10 @@ export function reservationStatements(db:D1Database,budget:WriteBudget,units:num
  * The resulting accounting is an upper bound, not billed rows_written. */
 export async function reservePersonalWriteBudget(db:D1Database,budget:WriteBudget,units=32){
  const results=await db.batch(reservationStatements(db,budget,units));
- if(results.length!==2||results.some(r=>r.success===false))
+ // D1.batch() rejects on an SQL failure and rolls the batch back. The D1
+ // result type exposes success as the literal true, so comparing it to false
+ // is impossible (TS2367). A missing receipt is not an accepted reservation.
+ if(results.length!==2)
    throw Error('M49_QUOTA_RESERVATION_FAILED');
  return {reservedUnits:units,chargedByAccountLedger:true as const};
 }
