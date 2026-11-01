@@ -14,6 +14,8 @@ import {verifyProjectionProof} from '../shared/projection-proof';
 import {selectModelC} from '../shared/model-c-selection';
 import {prepareCatalogV2Packets} from '../shared/model-c-ingestion-v2';
 import {importModelC} from '../tools/model-c-importer';
+import {publishM50Locally,publishM50WithRemoteOperator} from '../tools/model-c-m50-trusted-controller';
+import {createM50RemoteOperatorPair} from '../tools/model-c-m50-d1-rest';
 import type {ImportOptions} from '../tools/model-c-importer';
 import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
 import {createOfflineV2IngestionHarness} from '../worker/model-c-ingest-v2-lab';
@@ -248,7 +250,14 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
      injected=true;return true;
     }return false;
    });
-   await expect(importModelC(c,broken,stagedOptions)).rejects.toThrow('SYNTHETIC_PERSONAL_RECEIPT_LOST');
+   // M50 independent operator controller must observe (not blindly retry)
+   // an ambiguous local acknowledgement after the atomic CATALOG commit.
+   const unknown=await publishM50Locally(c,broken,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   expect(unknown.status).toBe('REQUIRES_OPERATOR_RECOVERY');
+   expect(unknown.receipt?.journalPhase).toBe('CATALOG_PUBLISHED');
    expect((await observeIngestJournal(c,packets.run.runId)).phase).toBe('CATALOG_PUBLISHED');
    try{result=await importModelC(c,p,stagedOptions);}
    catch(e){
@@ -261,6 +270,54 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
       '_error'+(e instanceof Error?e.message:'unknown'));
    }
    expect(result.status).toBe('RECOVERED');
+  }else if(i===0){
+   // Exercise successful full publication through the new M50 trusted controller,
+   // not only its read-only replay/recovery branches.
+   const controlled=await publishM50Locally(c,p,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    oneTimeFreeBootstrap:true,
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   if(controlled.status!=='PUBLISHED')throw Error('M50_INITIAL_PUBLISH_NOT_CONFIRMED');
+   result=controlled;
+  }else if(i===1){
+   // Mock ONLY Cloudflare's REST envelope; all SQL executes against the SAME
+   // real Miniflare D1 CATALOG/PERSONAL tables. No remote API is contacted.
+   const catalogId='11111111-1111-4111-8111-111111111111';
+   const personalId='22222222-2222-4222-8222-222222222222';
+   const restErrors:string[]=[];
+   const transport=async(req:Request)=>{
+    const database=new URL(req.url).pathname.includes(catalogId)?c:
+     new URL(req.url).pathname.includes(personalId)?p:null;
+    if(!database)return new Response('{}',{status:404});
+    const wire=await req.json() as {batch:{sql:string;params:string[]}[]};
+    try{
+     const result=await database.batch(wire.batch.map(q=>
+       database.prepare(q.sql).bind(...q.params)));
+     return Response.json({success:true,result});
+    }catch(e){
+     // Synthetic-only diagnostics; never forward DB exception details to the
+     // operator adapter or to a real external response.
+     restErrors.push(e instanceof Error?e.message.slice(0,180):'UNKNOWN_SQLITE_ERROR');
+     return Response.json({success:false,result:[]},{status:400});
+    }
+   };
+   const pair=createM50RemoteOperatorPair({
+    accountId:'3'.repeat(32),catalogDatabaseId:catalogId,personalDatabaseId:personalId,
+    apiToken:'SYNTHETIC_TEST_ONLY_OPERATOR_TOKEN',gateBApproved:true,
+    accountFreePlanVerified:true,operatorQuotaVerified:true,
+    remainingWriteUnits:30000,quotaDay:new Date().toISOString().slice(0,10),
+    validUntil:new Date(Date.now()+120000).toISOString(),transport,
+   });
+   const verified=await publishM50WithRemoteOperator(pair.catalog,pair.personal,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   },pair.capability);
+   if(verified.status!=='PUBLISHED')throw Error('M50_REMOTE_ADAPTER_PUBLICATION_UNVERIFIED_'+
+     verified.status+('failureCode' in verified?'_'+String(verified.failureCode):'')+
+     '_JOURNAL'+(verified.receipt?.journalPhase??'UNKNOWN')+
+     '_SYNTHETIC_ERROR'+(restErrors[0]??'NONE'));
+   result=verified;
   }else result=await importModelC(c,p,stagedOptions);
   expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
   expect(result.syncRevision).toBe(before+1);
@@ -271,6 +328,16 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   const head=await getModelCCatalogSnapshot(c);
   expect(head.snapshot?.syncRevision).toBe(before+1);
   expect((await importModelC(c,p,stagedOptions)).status).toBe('REPLAY');
+  if(i===0||i===14){
+   const controlled=await publishM50Locally(c,p,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   expect(controlled.status).toBe('REPLAY');
+   if(!controlled.receipt)throw Error('M50_REPLAY_RECEIPT_REQUIRED');
+   expect(controlled.receipt.receiptMatchesPublishedHead).toBe(true);
+   expect(controlled.receipt.pendingReferences).toBe(0);
+  }
   const decisionCycles=[3,8,13,18];
   const decisions=['INTERESTED','TO_REVIEW','APPLIED','NOT_INTERESTED'] as const;
   const slot=decisionCycles.indexOf(i);
