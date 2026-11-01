@@ -115,7 +115,7 @@ function createD1(config:Config,id:string):D1Database{
    // Prepared SQL may contain unbound placeholders: only encode on execution.
    bind:(...args:M50RestValue[])=>prepare(sql,args),
    all:async<T=Record<string,unknown>>()=>(await send([encodeM50RestQuery(sql,values)]))[0] as D1Result<T>,
-   run:async<T=Record<string,unknown>>()=>(await send([wire]))[0] as D1Result<T>,
+   run:async<T=Record<string,unknown>>()=>(await send([encodeM50RestQuery(sql,values)]))[0] as D1Result<T>,
    first:async<T=Record<string,unknown>>(column?:string)=>{
     const row=(await send([encodeM50RestQuery(sql,values)]))[0]!.results[0];
     if(!row)return null;
