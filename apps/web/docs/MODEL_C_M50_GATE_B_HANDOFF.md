@@ -13,12 +13,12 @@ M48 merged, PR #49 M49 reviewed/merged **only after AC04/05/06/07 are genuinely 
 | 03 | Verify live Free quotas, request and D1 limits against official documentation, confirm zero paid fallback | Operator | YES | €0 |
 | 04 | Decide hostname/private domain and DNS requirements; assess domain ownership, renewal or registrar charges | USER | YES | MAY COST — stop if nonzero |
 | 05 | Create separate CATALOG/PERSONAL remote D1 only after approving exact names/IDs; confirm no new resource charge under Free | Operator | YES | Conditional Free |
-| 06 | Review migration plan, schema hashes, backups, 30-day Time Travel limitations and roll-forward/restore of both D1 independently | Operator | YES | Conditional Free |
+| 06 | Review migration plan, schema hashes, backups, 7-day Free Time Travel window (30 days only on Paid) and roll-forward/restore of both D1 independently | Operator | YES | Conditional Free |
 | 07 | Configure single-user Cloudflare Access app and strict owner mapping, with no workers.dev or preview route | USER + operator | YES | Verify Free availability |
 | 08 | Configure distinct path-scoped Access service app with its own audience/client ID and service principal; test service denied on interactive paths | USER + operator | YES | Verify Free availability |
 | 09 | Store JWT/config secret values via protected deployment mechanism, never commit tokens or personal identifiers | USER + operator | YES | €0 expected |
 | 10 | Implement/certify remotely authorized trusted Git/Python publication and PERSONAL reconciliation before writes; no service-only promotion grant | Developer + operator | YES | Depends on architecture |
-| 11 | Implement durable shared quota admission / confirm authoritative account usage across APP, staging, journal, migration, retention and other consumers; UNKNOWN_REMOTE_QUOTA=DENY | Developer + operator | YES | Conditional Free |
+| 11 | Verify M49's local CATALOG shared reservation ledger under live concurrency and implement authoritative account-wide quota admission/telemetry for other Cloudflare consumers, reads, CPU, storage and migrations; UNKNOWN_REMOTE_QUOTA=DENY | Developer + operator | YES | Conditional Free |
 | 12 | Approve exact Worker config/hostname and perform private read-only deploy, then verify no unauthenticated asset access | USER + operator | YES | Conditional Free |
 | 13 | Read-only smoke: Access identity, owner isolation, CATALOG/PERSONAL query, no side route or secret exposure | Operator | YES | Within verified quota |
 | 14 | Authorize 1 small pinned Git snapshot run; stage, independent trusted verification, publish CATALOG CAS and reconcile PERSONAL | USER + operator | YES | Within verified quota |
