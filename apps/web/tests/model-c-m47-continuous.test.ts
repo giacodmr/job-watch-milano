@@ -269,6 +269,16 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
       '_error'+(e instanceof Error?e.message:'unknown'));
    }
    expect(result.status).toBe('RECOVERED');
+  }else if(i===0){
+   // Exercise successful full publication through the new M50 trusted controller,
+   // not only its read-only replay/recovery branches.
+   const controlled=await publishM50Locally(c,p,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    oneTimeFreeBootstrap:true,
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   if(controlled.status!=='PUBLISHED')throw Error('M50_INITIAL_PUBLISH_NOT_CONFIRMED');
+   result=controlled;
   }else result=await importModelC(c,p,stagedOptions);
   expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
   expect(result.syncRevision).toBe(before+1);
