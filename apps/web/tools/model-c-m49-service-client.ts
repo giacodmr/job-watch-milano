@@ -43,7 +43,7 @@ async function packetProof(packet:Packet){
 /** No retry loop: uncertain writes are read back using durable receipts.
  * Staging does not promote/verify provenance; only the trusted Git importer can.
  */
-export async function stageVerifiedV2Packets(packet:Packet,opts:Options){
+export async function stageCheckedV2Packets(packet:Packet,opts:Options){
  if(opts.gateBApproved!==true)return missing('M49_GATE_B_CLOSED');
  const target=origin(opts.endpoint);
  if(!opts.serviceJwt||opts.serviceJwt.length>8192||opts.serviceJwt.split('.').length!==3)
