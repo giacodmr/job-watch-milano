@@ -4,6 +4,7 @@ import {verifyTrustedStagingAgainstSnapshot,verifyPublishedStageReplay} from './
 import {verifyTrustedV2Stage,verifyPublishedV2StageReplay} from './model-c-v2-trusted-stage';
 import {advanceCompleteIngestJournal,advanceCompleteV2IngestJournal,advanceIngestJournal,nextJournalStatement,observeIngestJournal} from './model-c-publication-journal';
 import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
+import {isM50AuthorizedRemotePair} from './model-c-m50-d1-rest';
 import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
 import { selectModelC } from '../shared/model-c-selection';
@@ -26,6 +27,9 @@ export interface ImportOptions {
   owner: string;
   oneTimeFreeBootstrap?: boolean;
   executionTarget?: 'local-ephemeral' | 'remote';
+  // Detached operator-only capability bound to the precise REST D1 pair.
+  // A staging marker/JWT can never satisfy this runtime guard.
+  remoteOperatorCapability?: object;
   preflightOnly?: boolean;
   // Optional M47 lab-only: bind an M46 staged run to the independently
   // replayed full Git snapshot before ANY importer writes. Never a service grant.
@@ -234,7 +238,9 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   // A transport marker is NOT an authorization. Never enter the remote
   // mutation path for normal deltas or the exceptional initial bootstrap.
   // Read-only bootstrap preflights may plan with executionTarget='remote'.
-  if(!options.preflightOnly && options.executionTarget!=='local-ephemeral')
+  if(!options.preflightOnly && options.executionTarget!=='local-ephemeral' &&
+    !(options.executionTarget==='remote' &&
+      isM50AuthorizedRemotePair(options.remoteOperatorCapability,catalog,personal)))
     throw Error('REMOTE_IMPORT_NOT_AUTHORIZED');
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==7 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
@@ -349,6 +355,8 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
     remoteQuotaStatus:'QUOTA_VERIFICATION_REQUIRED' as const,remoteExecutionAuthorized:false as const};
   // No remote transport/account meter is enabled. Explicit local-only attestation
   // is required; a separate read-only quota assessment never authorizes execution.
+  // Initial remote bootstrap remains a separate, stricter Gate B operation:
+  // the account-wide 95k Free allowance is not approved by this adapter.
   if(options.oneTimeFreeBootstrap && options.executionTarget!=='local-ephemeral')throw Error('QUOTA_VERIFICATION_REQUIRED');
   metrics.reservation=await reserve(catalog,options.budget,metrics.requiredBound,options.oneTimeFreeBootstrap?proof:undefined);
   metrics.reservedBound=metrics.requiredBound; // only after the daily reservation really committed
