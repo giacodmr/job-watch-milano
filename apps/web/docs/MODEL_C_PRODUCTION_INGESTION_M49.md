@@ -1,6 +1,6 @@
 # M49 — Production ingestion transport (Gate B closed)
 
-**Status: PARTIAL local integration / PR #50 DRAFT.** Neither production Cloudflare, Access service application, D1 remote, DNS, secrets, ingestion nor APP write paths are activated. M48 is merged in `main` (`70925973e8e3e7872d939294954f3ff2b8d90ed4`). Do not label the code as cloud-verified or the remote publication flow complete.
+**Status: locally scoped M49 candidate; remote release blockers transferred to M50 Stage 0.** The PR may merge only after local acceptance and both final CI workflows are green; merge does not authorize the pilot. Neither production Cloudflare, Access service application, D1 remote, DNS, secrets, ingestion nor APP write paths are activated. M48 is merged in `main` (`70925973e8e3e7872d939294954f3ff2b8d90ed4`). Do not label the code as cloud-verified or the remote publication flow complete.
 
 ## Boundary and files
 
@@ -48,7 +48,7 @@ Any remote publication design must preserve M47 commit/manifest/projection/ledge
 | 10 Documentation | PASS scoped | This runbook and M50 Gate B handoff; production operator steps need confirmation |
 | 11 Final CI | PENDING | Both workflows must pass on final HEAD |
 
-Do not upgrade PARTIAL cells merely because CI is green. Until AC04/05/06/07 are fully proved, keep PR #50 DRAFT and Gate B CLOSED.
+Do not upgrade PARTIAL cells merely because CI is green. M49 can merge after complete local (A) acceptance; AC04–AC07 remain explicit M50 Stage 0 release blockers. Gate B stays CLOSED.
 
 ## Actual Free-tier policy (official docs checked 1 November 2026)
 
@@ -62,3 +62,16 @@ References: https://developers.cloudflare.com/d1/platform/pricing/ , https://dev
 ## Non-negotiable stop line
 
 No deployment, D1 remote operations, Cloudflare API provisioning, account changes, Access/DNS setup, secrets or billing in M49. Only a new explicit M50 authorization, independent quota checks, trusted publication implementation, and staged smoke approval can open Gate B.
+
+
+## M49 local scope freeze and explicit release debt (1 Nov 2026)
+
+**Gate A / merge requirements (A):** final TypeScript typecheck and build, tests including M47/M48 regressions, service JWT and interactive Access isolation, D1 v7 run/chunk/replay, shared conservative CATALOG reservation including PERSONAL pre-reservation, idempotent APP behavior, private Worker graph, local migration, standard/private Worker dry-runs, private preflight, and both final-HEAD CI workflows green. The D1 batch contract is reject-on-failure; a batch rejection cannot grant a PERSONAL write. No unknown result is promoted to success.
+
+**Implemented but locally incomplete for the pilot (B):** AC04 independently authorized Git/Python remote trusted publisher (M50 Stage 0 deliverable: pinned-source proof, trusted principal, atomic CATALOG publish/CAS and verified receipt); AC05 controlled PERSONAL reconciliation (Stage 0 deliverable: owner-bound reconciliation and preserved APP precedence); AC06 ambiguous-ACK recovery (Stage 0 deliverable: restart/lost-ACK simulation and durable receipt readback); AC07 quota admission (Stage 0 deliverable: validated shared write admission under concurrency and an explicit fail-closed operator budget procedure). These remain **PARTIAL and RELEASE-BLOCKING**, not PASS, even if M49 merges.
+
+**Cloudflare-only evidence (C):** independently verified actual Free account plan and live available quotas (including other consumers), D1 remote behavior, Access and hostname enforcement, production CPU/latency/storage, backup/rollback and real deployment. No Cloudflare-only criterion is PASS in M49. Gate B = CLOSED.
+
+**M50 Stage 0 exit:** record a bounded test matrix proving trusted provenance cannot be forged by the stage principal; CATALOG commit and rollback under conflict; PERSONAL receipt reconciliation and APP priority; lost-ACK plus process restart recovery; shared ledger concurrent admission and deny-unknown quota. GO only when all are proved locally, then **request separate user authorization** to start Cloudflare Stage 1. NO-GO on any concrete integrity/security failure. No additional SaaS, ATS, UI, scoring or hardening requirements without evidence.
+
+**Merge-policy correction:** the previous instruction to keep M49 DRAFT until *remote* AC04–AC07 were fully resolved conflated local merge with production authorization. It is superseded by this scope freeze. Keep original PARTIAL markings for the missing remote capabilities; do not backfill them as PASS. The changes do not permit an accidental runtime activation.
