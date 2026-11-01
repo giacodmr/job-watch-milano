@@ -271,7 +271,9 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
 
   it('M48 private APP writes: default denied, Access-bound owner, atomic D1, replay and stale CAS',async()=>{
     const live={...env(),PRIVATE_APP_WRITE_GATE:'gate-b-approved',
-      PRIVATE_QUOTA_ATTESTED:'verified-under-budget'};
+      PRIVATE_QUOTA_ATTESTED:'verified-under-budget',
+      PRIVATE_INGESTION_QUOTA_REMAINING:'30000',
+      PRIVATE_INGESTION_QUOTA_VALID_UNTIL:new Date(Date.now()+120000).toISOString()};
     const partial={...env(),PRIVATE_APP_WRITE_GATE:'gate-b-approved'};
     const token=await jwt();
     const principal=await authenticatePrivateRequest(req('/',token),live,verifyKey);

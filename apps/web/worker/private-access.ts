@@ -4,6 +4,7 @@
 import {createRemoteJWKSet,jwtVerify} from 'jose';
 import type {JWTVerifyGetKey} from 'jose';
 import {z} from 'zod';
+import {verifiedWriteBudget} from './data/model-c-quota-admission';
 
 export interface PrivateAccessEnv {
   APP_ENV?:string;
@@ -15,6 +16,8 @@ export interface PrivateAccessEnv {
   // Never set in an unapproved template. Gate B must independently verify account quota.
   PRIVATE_APP_WRITE_GATE?:string;
   PRIVATE_QUOTA_ATTESTED?:string;
+  PRIVATE_INGESTION_QUOTA_REMAINING?:string;
+  PRIVATE_INGESTION_QUOTA_VALID_UNTIL?:string;
   CATALOG?:D1Database;
   PERSONAL?:D1Database;
   ASSETS?:Fetcher;
@@ -111,7 +114,7 @@ export async function authenticatePrivateRequest(
  * Neither an API client nor a service JWT may select a write permission. */
 export function privateWriteEnabled(env:PrivateAccessEnv){
   return env.APP_ENV==='private' && env.PRIVATE_APP_WRITE_GATE==='gate-b-approved' &&
-    env.PRIVATE_QUOTA_ATTESTED==='verified-under-budget';
+    verifiedWriteBudget(env)!==undefined;
 }
 export function privateRequestPolicy(request:Request,writeEnabled=false){
   const url=new URL(request.url);

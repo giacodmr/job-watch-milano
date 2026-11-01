@@ -7,6 +7,7 @@ import type { ModelCLocalEnv } from './model-c-local-api';
 import {authenticatePrivateRequest,privateRequestPolicy,privateWriteEnabled,PrivateAuthError} from './private-access';
 import type {PrivateAccessEnv} from './private-access';
 import {handlePrivateRuntime} from './private-runtime';
+import {handlePrivateServiceIngestion} from './model-c-ingest-v2-production';
 
 export interface Env extends ModelCLocalEnv,PrivateAccessEnv {
   APP_ENV?: string;
@@ -30,6 +31,11 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if(env.APP_ENV==='private'){
+      // M49: service-only staging never reaches interactive Access/APP routes.
+      // The committed config denies it; enabled requests require a distinct
+      // Access service JWT, hostname, quota attestation, and CATALOG-only DB.
+      if(url.pathname.startsWith('/api/model-c/sync/'))
+        return handlePrivateServiceIngestion(request,env);
       // Authentication precedes every read and asset fetch; no local synthetic fallback.
       try{
         const principal=await authenticatePrivateRequest(request,env);
