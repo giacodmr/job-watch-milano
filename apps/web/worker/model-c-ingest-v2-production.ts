@@ -10,8 +10,8 @@ import type {ServiceAuthConfig,ServicePrincipal} from './model-c-service-auth';
 import {privateAccessConfig} from './private-access';
 import type {PrivateAccessEnv} from './private-access';
 
-type Options={catalog:D1Database;auth:ServiceAuthConfig;keys?:JWTVerifyGetKey;
-  quota?:{operatorVerified:true;writeUnitsRemaining:number}};
+type Options={catalog:D1Database;auth:ServiceAuthConfig;keys?:JWTVerifyGetKey|undefined;
+  quota?:{operatorVerified:true;writeUnitsRemaining:number}|undefined};
 type RunRow={id:string;commit_sha:string;manifest_digest:string;projection_digest:string;
  ledger_digest:string;catalog_content_digest:string;plan_digest:string;expected_revision:number;
  total_chunks:number;record_count:number;inventory_digest:string;principal_digest:string;
