@@ -79,11 +79,11 @@ export function encodeM50RestQuery(sql:string,values:readonly M50RestValue[]=[])
 function validateResult(value:unknown):QueryResult{
  if(!flat(value)||value.success!==true||!Array.isArray(value.results)||
     !value.results.every(flat)||!flat(value.meta))
-   fail('M50_REST_RESULT_UNVERIFIED');
+   throw Error('M50_REST_RESULT_UNVERIFIED');
  const m=value.meta;
  if(!Number.isSafeInteger(m.rows_written)||Number(m.rows_written)<0||
     !Number.isSafeInteger(m.rows_read)||Number(m.rows_read)<0)
-   fail('M50_REST_META_UNVERIFIED');
+   throw Error('M50_REST_META_UNVERIFIED');
  return {success:true,results:value.results as Record<string,unknown>[],
   meta:{rows_written:Number(m.rows_written),rows_read:Number(m.rows_read),
    duration:typeof m.duration==='number'&&Number.isFinite(m.duration)?m.duration:0}};
@@ -99,13 +99,13 @@ function createD1(config:Config,id:string):D1Database{
   },body:JSON.stringify({batch:queries})});
   let response:Response;
   try{response=await (config.transport??fetch)(request);}
-  catch{fail('M50_REST_OUTCOME_UNKNOWN');}
+  catch{throw Error('M50_REST_OUTCOME_UNKNOWN');}
   if(!response.ok)fail('M50_REST_OUTCOME_UNKNOWN');
   let json:unknown;
-  try{json=await response.json();}catch{fail('M50_REST_RESPONSE_INVALID');}
+  try{json=await response.json();}catch{throw Error('M50_REST_RESPONSE_INVALID');}
   if(!flat(json)||json.success!==true||!Array.isArray(json.result)||
      json.result.length!==queries.length)
-   fail('M50_REST_BATCH_NOT_CONFIRMED');
+   throw Error('M50_REST_BATCH_NOT_CONFIRMED');
   return json.result.map(validateResult);
  };
  type Prepared={sql:string;params:M50RestValue[]};
@@ -134,7 +134,7 @@ function createD1(config:Config,id:string):D1Database{
   if(!Array.isArray(items)||!items.length)fail('M50_BATCH_EMPTY');
   const wire=items.map(item=>{
    const value=statements.get(item);
-   if(!value)fail('M50_FOREIGN_PREPARED_STATEMENT');
+   if(!value)throw Error('M50_FOREIGN_PREPARED_STATEMENT');
    return encodeM50RestQuery(value.sql,value.params);
   });
   return await send(wire) as D1Result<T>[];
