@@ -11,7 +11,7 @@ import {privateAccessConfig} from './private-access';
 import type {PrivateAccessEnv} from './private-access';
 
 type Options={catalog:D1Database;auth:ServiceAuthConfig;keys?:JWTVerifyGetKey;
-  quota?:{syntheticVerified:true;writeUnitsRemaining:number}};
+  quota?:{operatorVerified:true;writeUnitsRemaining:number}};
 type RunRow={id:string;commit_sha:string;manifest_digest:string;projection_digest:string;
  ledger_digest:string;catalog_content_digest:string;plan_digest:string;expected_revision:number;
  total_chunks:number;record_count:number;inventory_digest:string;principal_digest:string;
@@ -174,10 +174,14 @@ function createPrivateV2Receiver(opts:Options){
        match?.[2]==='status'&&request.method!=='GET')
       return reply('method_not_allowed',405);
    if(match?.[2]==='status')return status(opts.catalog,match[1]!,p);
-   if(!opts.quota||opts.quota.syntheticVerified!==true||
+   if(!opts.quota||opts.quota.operatorVerified!==true||
      !Number.isSafeInteger(opts.quota.writeUnitsRemaining)||
      opts.quota.writeUnitsRemaining<100)return reply('quota_unverified',503);
-   if(url.pathname===base)return create(opts.catalog,await validateCatalogV2Run(await json(request)),p);
+   if(url.pathname===base){
+   const run=await validateCatalogV2Run(await json(request));
+   if(run.totalChunks>512||run.recordCount>20000)return reply('RUN_TOO_LARGE',413);
+   return create(opts.catalog,run,p);
+  }
    const c=await validateCatalogV2Chunk(await json(request));
    if(c.runId!==match![1])return reply('RUN_CONFLICT',409);
    return add(opts.catalog,c,p);
@@ -220,7 +224,7 @@ export function privateServiceQuota(env:PrivateIngestionEnv,now=Date.now()){
  if(!Number.isSafeInteger(remaining)||remaining<100||remaining>30000||
     !Number.isFinite(until)||until<=now||until>now+5*60_000)
    return undefined;
- return {syntheticVerified:true as const,writeUnitsRemaining:remaining};
+ return {operatorVerified:true as const,writeUnitsRemaining:remaining};
 }
 /** The service route must be dispatched BEFORE the interactive Access router.
  * It verifies a different application audience and a service-only JWT. */
