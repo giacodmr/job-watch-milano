@@ -12,6 +12,7 @@ import {handlePrivateServiceIngestion,privateServiceGateEnabled,privateServiceQu
   from '../worker/model-c-ingest-v2-production';
 import type {PrivateIngestionEnv} from '../worker/model-c-ingest-v2-production';
 import {authenticatePrivateRequest} from '../worker/private-access';
+import {reservePersonalWriteBudget} from '../worker/data/model-c-quota-admission';
 import {stageCheckedV2Packets} from '../tools/model-c-m49-service-client';
 
 const host='jobs.example.com',issuer='https://job-watch-tests.cloudflareaccess.com';
@@ -150,9 +151,26 @@ describe('M49 default-denied service ingestion boundary',()=>{
   })).rejects.toThrow('M49_GATE_B_CLOSED');
   const count=await catalog.prepare('SELECT COUNT(*) AS n FROM catalog_ingest_v2_chunks').first('n');
   expect(count).toBe(1);
+  const charged=Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+    .bind(new Date().toISOString().slice(0,10)).first('charged')??0);
+  // 64 units reserved with the run, 16 with the chunk, and 0 on replay.
+  expect(charged).toBe(80);
   const head=await catalog.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision');
   expect(head??0).toBe(0);
   // Service never advances the canonical head, publishes, or changes PERSONAL.
   expect(await personal.prepare('SELECT COUNT(*) AS n FROM personal_app_events').first('n')).toBe(0);
  });
+ it('rejects concurrent writes exceeding the common durable account budget',async()=>{
+   const budget={operatorVerified:true as const,day:new Date().toISOString().slice(0,10),
+     writeUnitsRemaining:200};
+   const results=await Promise.allSettled([
+     reservePersonalWriteBudget(catalog,budget,64),
+     reservePersonalWriteBudget(catalog,budget,64),
+   ]);
+   expect(results.filter(r=>r.status==='fulfilled')).toHaveLength(1);
+   expect(results.filter(r=>r.status==='rejected')).toHaveLength(1);
+   expect(Number(await catalog.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+     .bind(budget.day).first('charged'))).toBe(144);
+ });
+
 });
