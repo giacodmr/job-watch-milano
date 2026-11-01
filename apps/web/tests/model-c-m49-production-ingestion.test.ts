@@ -135,6 +135,15 @@ describe('M49 default-denied service ingestion boundary',()=>{
   });
   expect(staged).toMatchObject({status:'STAGED_NOT_PUBLISHED',received:1,
     publicationAuthorized:false});
+  const lostAck=await stageCheckedV2Packets({run:run as never,chunks:[chunk] as never},{
+    endpoint:url,serviceJwt:secret,gateBApproved:true,
+    transport:async r=>{
+      const response=await handlePrivateServiceIngestion(r,env(),keys);
+      if(r.method==='POST')throw Error('SYNTHETIC_LOST_ACK_AFTER_COMMIT');
+      return response;
+    },
+  });
+  expect(lostAck).toMatchObject({status:'STAGED_NOT_PUBLISHED',received:1});
   await expect(stageCheckedV2Packets({run:run as never,chunks:[chunk] as never},{
     endpoint:url,serviceJwt:secret,gateBApproved:false,
     transport:r=>handlePrivateServiceIngestion(r,env(),keys),
