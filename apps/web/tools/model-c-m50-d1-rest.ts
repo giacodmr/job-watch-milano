@@ -109,13 +109,13 @@ function createD1(config:Config,id:string):D1Database{
  type Prepared={sql:string;params:M50RestValue[]};
  const statements=new WeakMap<object,Prepared>();
  const prepare=(sql:string,values:M50RestValue[]=[]):D1PreparedStatement=>{
-  const wire=encodeM50RestQuery(sql,values);
   const s={
+   // Prepared SQL may contain unbound placeholders: only encode on execution.
    bind:(...args:M50RestValue[])=>prepare(sql,args),
-   all:async<T=Record<string,unknown>>()=>(await send([wire]))[0] as D1Result<T>,
+   all:async<T=Record<string,unknown>>()=>(await send([encodeM50RestQuery(sql,values)]))[0] as D1Result<T>,
    run:async<T=Record<string,unknown>>()=>(await send([wire]))[0] as D1Result<T>,
    first:async<T=Record<string,unknown>>(column?:string)=>{
-    const row=(await send([wire]))[0]!.results[0];
+    const row=(await send([encodeM50RestQuery(sql,values)]))[0]!.results[0];
     if(!row)return null;
     if(column!==undefined){
      if(!(column in row))fail('M50_REST_COLUMN_MISSING');
