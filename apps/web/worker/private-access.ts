@@ -12,6 +12,9 @@ export interface PrivateAccessEnv {
   PRIVATE_ACCESS_AUD?:string;
   PRIVATE_ALLOWED_SUB?:string;
   PRIVATE_OWNER_ID?:string;
+  // Never set in an unapproved template. Gate B must independently verify account quota.
+  PRIVATE_APP_WRITE_GATE?:string;
+  PRIVATE_QUOTA_ATTESTED?:string;
   CATALOG?:D1Database;
   PERSONAL?:D1Database;
   ASSETS?:Fetcher;
@@ -104,10 +107,21 @@ export async function authenticatePrivateRequest(
     ownerId:config.ownerId,principalType:'interactive',
     capabilities:['catalog:read','personal:read']};
 }
-export function privateRequestPolicy(request:Request){
+/** Both server-owned Gate B flags must be deliberately configured.
+ * Neither an API client nor a service JWT may select a write permission. */
+export function privateWriteEnabled(env:PrivateAccessEnv){
+  return env.APP_ENV==='private' && env.PRIVATE_APP_WRITE_GATE==='gate-b-approved' &&
+    env.PRIVATE_QUOTA_ATTESTED==='verified-under-budget';
+}
+export function privateRequestPolicy(request:Request,writeEnabled=false){
   const url=new URL(request.url);
-  // Deny all remote mutations (including ingestion and legacy commands).
-  if(request.method!=='GET'&&request.method!=='HEAD')throw new PrivateAuthError('method_not_allowed',405);
+  // POST is permitted only for the two owner-bound APP command routes after Gate B.
+  const isApprovedCommand=writeEnabled && request.method==='POST' &&
+    /^\/api\/model-c\/personal\/commands\/(?:decision|saved)$/.test(url.pathname);
+  if(!isApprovedCommand&&request.method!=='GET'&&request.method!=='HEAD')
+    throw new PrivateAuthError('method_not_allowed',405);
+  if(isApprovedCommand&&request.headers.get('origin')!==url.origin)
+    throw new PrivateAuthError('origin_required',403);
   const origin=request.headers.get('origin');
   if(origin && origin!==url.origin)throw new PrivateAuthError('cross_origin_forbidden');
   if(['x-owner-id','x-user-id','x-job-watch-owner','x-actor-ref'].some(h=>request.headers.has(h)))

@@ -7,7 +7,7 @@ import {build} from 'esbuild';
 import worker from '../worker/index';
 import {applySchema} from '../tools/model-c-schema';
 import {stageCatalog,publicationFixture,seedPersonal,owner,hash,commit,jobId} from './helpers/model-c-fixtures';
-import {authenticatePrivateRequest,privateAccessConfig,privateRequestPolicy} from '../worker/private-access';
+import {authenticatePrivateRequest,privateAccessConfig,privateRequestPolicy,privateWriteEnabled} from '../worker/private-access';
 import type {PrivateAccessEnv} from '../worker/private-access';
 import {handlePrivateRuntime,privateD1ErrorCode} from '../worker/private-runtime';
 
@@ -267,5 +267,75 @@ describe('Private Cloudflare Access authentication boundary (no cloud resources)
     Object.assign(noPersonal,{MODEL_C_TEST_OWNER:'synthetic-owner'});
     await expect(authenticatePrivateRequest(req('/',await jwt()),noPersonal,verifyKey))
       .rejects.toMatchObject({code:'private_databases_unavailable',status:503});
+  });
+
+  it('M48 private APP writes: default denied, Access-bound owner, atomic D1, replay and stale CAS',async()=>{
+    const live={...env(),PRIVATE_APP_WRITE_GATE:'gate-b-approved',
+      PRIVATE_QUOTA_ATTESTED:'verified-under-budget'};
+    const partial={...env(),PRIVATE_APP_WRITE_GATE:'gate-b-approved'};
+    const token=await jwt();
+    const principal=await authenticatePrivateRequest(req('/',token),live,verifyKey);
+    expect(privateWriteEnabled(env())).toBe(false);
+    expect(privateWriteEnabled(partial)).toBe(false);
+    expect(privateWriteEnabled(live)).toBe(true);
+    const path='/api/model-c/personal/commands/decision';
+    const cmd={kind:'DECISION',jobId,catalogRevision:1,expectedRevision:0,
+      decision:'INTERESTED',reasonSummary:'Private synthetic case',
+      operationId:'00000000-0000-4000-8000-000000004800'};
+    const post=(body:unknown,_envOverride:PrivateAccessEnv=live,headers:Record<string,string>={})=>
+      req(path,token,{method:'POST',headers:{'Origin':addr,
+        'Content-Type':'application/json',...headers},body:JSON.stringify(body)});
+    const denied=await handlePrivateRuntime(post(cmd,env()),env(),principal);
+    expect(denied.status).toBe(405);
+    expect((await handlePrivateRuntime(post(cmd,partial),partial,principal)).status).toBe(405);
+    expect(()=>privateRequestPolicy(post(cmd,env()))).toThrow();
+    expect(()=>privateRequestPolicy(post(cmd),true)).not.toThrow();
+    expect(()=>privateRequestPolicy(post(cmd,live,{'X-Owner-Id':'synthetic-owner'}),true)).toThrow();
+    expect(()=>privateRequestPolicy(req(path,token,{method:'POST',headers:{
+      'Content-Type':'application/json',Origin:'https://untrusted.example'},body:JSON.stringify(cmd)}),true)).toThrow();
+    const forbidden=await handlePrivateRuntime(post(cmd,live,{'X-Owner-Id':'synthetic-owner'}),live,principal);
+    expect(forbidden.status).toBe(403);
+    const accepted=await handlePrivateRuntime(post(cmd),live,principal);
+    expect(accepted.status).toBe(200);
+    expect(await accepted.json()).toMatchObject({status:'saved',replayed:false,
+      operationId:cmd.operationId,jobRevision:1,decision:'INTERESTED'});
+    const replayed=await handlePrivateRuntime(post(cmd),live,principal);
+    expect(replayed.status).toBe(200);
+    expect(await replayed.json()).toMatchObject({replayed:true,jobRevision:1});
+    const saveCommand={kind:'SAVED',jobId,catalogRevision:1,expectedRevision:1,
+      active:true,operationId:'00000000-0000-4000-8000-000000004802'};
+    const saveRequest=req('/api/model-c/personal/commands/saved',token,{
+      method:'POST',headers:{Origin:addr,'Content-Type':'application/json'},
+      body:JSON.stringify(saveCommand),
+    });
+    expect(()=>privateRequestPolicy(saveRequest,true)).not.toThrow();
+    const saved=await handlePrivateRuntime(saveRequest,live,principal);
+    expect(saved.status).toBe(200);
+    expect(await saved.json()).toMatchObject({status:'saved',saved:true,jobRevision:2});
+    const stale=await handlePrivateRuntime(post({...cmd,operationId:'00000000-0000-4000-8000-000000004801',
+      decision:'APPLIED'}),live,principal);
+    expect(stale.status).toBe(409);
+    expect(await stale.json()).toMatchObject({error:'REVISION_CONFLICT'});
+    const altered=await handlePrivateRuntime(post({...cmd,decision:'APPLIED'}),live,principal);
+    expect(altered.status).toBe(409);
+    expect(await altered.json()).toMatchObject({error:'IDEMPOTENCY_KEY_REUSED'});
+    expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events WHERE owner_id=?')
+      .bind(person).first('n')).toBe(2);
+    expect(await personal.prepare('SELECT count(*) AS n FROM personal_app_events WHERE owner_id=?')
+      .bind(owner).first('n')).toBe(0);
+    const read=await handlePrivateRuntime(req('/api/model-c/personal/jobs/'+jobId),live,principal);
+    expect(read.status).toBe(200);
+    expect(await read.json()).toMatchObject({job:{decision:'INTERESTED',
+      decisionSource:'APP',jobRevision:2,activeReferences:expect.arrayContaining(['SAVED'])}});
+    const caps=await handlePrivateRuntime(req('/api/model-c/personal/capabilities'),live,principal);
+    expect(await caps.json()).toMatchObject({writeEnabled:true,productionAccess:false});
+    // No command endpoint becomes public; the actual Worker authenticates first.
+    expect((await worker.fetch(req(path,undefined,{method:'POST',headers:{
+      Origin:addr,'Content-Type':'application/json'},body:JSON.stringify(cmd)}),live)).status).toBe(401);
+    expect((await handlePrivateRuntime(post(cmd,live,{'Content-Type':'text/plain'}),live,principal)).status).toBe(415);
+    expect((await handlePrivateRuntime(post(cmd,live,{'Origin':'https://evil.invalid'}),live,principal)).status).toBe(403);
+    expect((await handlePrivateRuntime(post(cmd,live,{'Content-Length':'9999'}),live,principal)).status).toBe(413);
+    expect((await handlePrivateRuntime(req('/api/model-c/personal/commands/saved',token,{method:'POST',
+      headers:{Origin:addr,'Content-Type':'application/json'},body:JSON.stringify({...cmd,kind:'DECISION'})}),live,principal)).status).toBe(400);
   });
 });

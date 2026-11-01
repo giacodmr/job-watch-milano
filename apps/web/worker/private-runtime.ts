@@ -1,7 +1,9 @@
-// PRIVATE_CLOUDFLARE is read-only until a separately reviewed remote write milestone.
+// PRIVATE_CLOUDFLARE remains read-only by default. Writes require two explicit Gate B flags.
 // This handler is reachable ONLY after authenticatePrivateRequest validates Access JWT.
 import {z} from 'zod';
+import {privateWriteEnabled} from './private-access';
 import type {AuthenticatedPrincipal,PrivateAccessEnv} from './private-access';
+import {executePrivatePersonalCommand,ModelCPersonalWriteError} from './data/model-c-personal-write';
 import {ModelCReadError,modelCCatalogQuerySchema,getModelCCatalogSnapshot,
   getModelCCatalogJob,listModelCCatalogJobs} from './data/model-c-catalog';
 import {ModelCPersonalReadError,getModelCPersonalSummary,getModelCPersonalJob,
@@ -34,6 +36,54 @@ export function privateD1ErrorCode(error:unknown):'cloudflare_quota_exceeded'|'d
     return 'cloudflare_quota_exceeded';
   return 'database_unavailable';
 }
+/** Command transport is deliberately unavailable in the committed template.
+ * A verified Access identity, same-origin browser request, two server-owned Gate B
+ * settings and an atomic D1 write are ALL required for a successful response. */
+async function privateCommand(request:Request,env:PrivateAccessEnv,
+ principal:AuthenticatedPrincipal,kind:'decision'|'saved'):Promise<Response>{
+  // Preserve legacy read-only API surface: hidden command GETs return 404.
+  if(!privateWriteEnabled(env))return request.method==='GET'||request.method==='HEAD'?
+    json({error:'not_found'},404):json({error:'method_not_allowed'},405);
+  if(request.method!=='POST')return json({error:'method_not_allowed'},405);
+  const url=new URL(request.url);
+  if(url.search)return json({error:'invalid_query'},400);
+  if(request.headers.get('origin')!==url.origin)return json({error:'origin_required'},403);
+  if(['x-owner-id','x-user-id','x-job-watch-owner','x-actor-ref'].some(h=>request.headers.has(h)))
+    return json({error:'owner_override_forbidden'},403);
+  if(request.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase()!=='application/json')
+    return json({error:'invalid_content_type'},415);
+  const declared=Number(request.headers.get('content-length')??0);
+  if(!Number.isSafeInteger(declared)||declared>2048)return json({error:'body_too_large'},413);
+  if(!env.CATALOG||!env.PERSONAL||env.CATALOG===env.PERSONAL)
+    return json({error:'database_unavailable'},503);
+  const reader=request.body?.getReader();
+  if(!reader)return json({error:'invalid_body'},400);
+  let size=0;const chunks:Uint8Array[]=[];
+  try{
+    while(true){
+      const part=await reader.read();
+      if(part.done)break;
+      size+=part.value.byteLength;
+      if(size>2048){await reader.cancel();return json({error:'body_too_large'},413);}
+      chunks.push(part.value);
+    }
+    const bytes=new Uint8Array(size);let offset=0;
+    for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+    let payload:unknown;
+    try{payload=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
+    catch{return json({error:'invalid_json'},400);}
+    if(!payload||typeof payload!=='object'||Array.isArray(payload))
+      return json({error:'invalid_payload'},400);
+    if((payload as Record<string,unknown>).kind!==(kind==='decision'?'DECISION':'SAVED'))
+      return json({error:'invalid_payload'},400);
+    return json(await executePrivatePersonalCommand(env.CATALOG,env.PERSONAL,principal,payload));
+  }catch(e){
+    if(e instanceof z.ZodError)return json({error:'invalid_payload'},400);
+    if(e instanceof ModelCPersonalWriteError||e instanceof ModelCReadError)
+      return json({error:e.code},e.status);
+    return json({error:privateD1ErrorCode(e)},503);
+  }
+}
 function input(url:URL){
   const pairs=[...url.searchParams.entries()];
   if(pairs.length>12||pairs.some(([k,v])=>k.length>64||v.length>6000)||
@@ -48,14 +98,20 @@ export async function handlePrivateRuntime(
   const catalogPrefix='/api/model-c/catalog/';
   const personalPrefix='/api/model-c/personal/';
   const opportunityPrefix='/api/model-c/opportunities/';
-  // PRIVATE never dispatches POST to the local-only Write Engine.
+  const commandPrefix='/api/model-c/personal/commands/';
+  if(path.startsWith(commandPrefix)){
+    const suffix=path.slice(commandPrefix.length);
+    if(suffix!=='decision'&&suffix!=='saved')return json({error:'not_found'},404);
+    return privateCommand(request,env,principal,suffix);
+  }
+  // The private APP handler is independent of the synthetic local Write Engine.
   if(path==='/api'||path.startsWith('/api/')){
     if(request.method!=='GET')return json({error:'method_not_allowed'},405);
     if(path==='/api/model-c/private/status'){
       if(url.search)return json({error:'invalid_query'},400);
       // Only an already-validated interactive Access principal can reach here.
       // No subject, email, owner ID, token or account detail in the response.
-      return json({accessVerified:true,readOnly:true,environment:'private'});
+      return json({accessVerified:true,readOnly:!privateWriteEnabled(env),environment:'private'});
     }
     if(!path.startsWith(catalogPrefix)&&!path.startsWith(personalPrefix)&&
        !path.startsWith(opportunityPrefix))
@@ -78,7 +134,7 @@ export async function handlePrivateRuntime(
       const suffix=path.slice(personalPrefix.length);
       if(suffix==='capabilities'){
         empty.parse(query);
-        return json({writeEnabled:false,productionAccess:false});
+        return json({writeEnabled:privateWriteEnabled(env),productionAccess:false});
       }
       if(suffix==='summary'){
         empty.parse(query);return json(await getModelCPersonalSummary(env.CATALOG,env.PERSONAL,owner));

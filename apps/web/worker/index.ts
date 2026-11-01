@@ -4,7 +4,7 @@ import { jobsQuerySchema } from '../shared/queries';
 import { getSnapshot, listJobs, getJob, QueryError } from './data/queries';
 import { handleModelCLocalApi } from './model-c-local-api';
 import type { ModelCLocalEnv } from './model-c-local-api';
-import {authenticatePrivateRequest,privateRequestPolicy,PrivateAuthError} from './private-access';
+import {authenticatePrivateRequest,privateRequestPolicy,privateWriteEnabled,PrivateAuthError} from './private-access';
 import type {PrivateAccessEnv} from './private-access';
 import {handlePrivateRuntime} from './private-runtime';
 
@@ -35,7 +35,7 @@ export default {
         const principal=await authenticatePrivateRequest(request,env);
         // Enforce identity on *every* request, including rejected mutations.
         // Unauthenticated POST/OPTIONS must never skip JWT verification.
-        privateRequestPolicy(request);
+        privateRequestPolicy(request,privateWriteEnabled(env));
         return await handlePrivateRuntime(request,env,principal);
       }catch(e){
         const status=e instanceof PrivateAuthError?e.status:503;
