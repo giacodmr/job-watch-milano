@@ -16,12 +16,14 @@ type HttpTransport=(request:Request)=>Promise<Response>;
 type Config={
  accountId:string;catalogDatabaseId:string;personalDatabaseId:string;
  apiToken:string;gateBApproved:boolean;accountFreePlanVerified:boolean;
- operatorQuotaVerified:boolean;validUntil:string;
+ operatorQuotaVerified:boolean;remainingWriteUnits:number;quotaDay:string;
+ validUntil:string;
  transport?:HttpTransport;
 };
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const account=/^[a-f0-9]{32}$/i;
-const authorized=new WeakMap<object,{catalog:D1Database;personal:D1Database}>();
+const authorized=new WeakMap<object,{catalog:D1Database;personal:D1Database;
+ remainingWriteUnits:number;quotaDay:string;expiresAt:number}>();
 const fail=(code:string):never=>{throw Error(code);};
 const flat=(value:unknown):value is Record<string,unknown>=>
  !!value&&typeof value==='object'&&!Array.isArray(value);
@@ -148,6 +150,9 @@ export function createM50RemoteOperatorPair(config:Config){
     config.operatorQuotaVerified!==true||!account.test(config.accountId)||
     !uuid.test(config.catalogDatabaseId)||!uuid.test(config.personalDatabaseId)||
     config.catalogDatabaseId===config.personalDatabaseId||
+    !Number.isSafeInteger(config.remainingWriteUnits)||
+    config.remainingWriteUnits<0||config.remainingWriteUnits>30000||
+    config.quotaDay!==new Date().toISOString().slice(0,10)||
     !config.apiToken||config.apiToken.length<20||config.apiToken.length>2048||
     !Number.isFinite(Date.parse(config.validUntil))||
     Date.parse(config.validUntil)<=Date.now()||
@@ -156,13 +161,20 @@ export function createM50RemoteOperatorPair(config:Config){
  const catalog=createD1(config,config.catalogDatabaseId);
  const personal=createD1(config,config.personalDatabaseId);
  const capability=Object.freeze({});
- authorized.set(capability,{catalog,personal});
+ authorized.set(capability,{catalog,personal,
+  remainingWriteUnits:config.remainingWriteUnits,quotaDay:config.quotaDay,
+  expiresAt:Date.parse(config.validUntil)});
  return {catalog,personal,capability,remoteExecutionAuthorized:true as const};
 }
 /** Runtime-only capability tied to the EXACT two D1 transport instances. */
 export function isM50AuthorizedRemotePair(capability:object|undefined,
- catalog:D1Database,personal:D1Database){
+ catalog:D1Database,personal:D1Database,budget?:{availableRows:number;day:string}){
  if(!capability)return false;
  const refs=authorized.get(capability);
- return refs?.catalog===catalog&&refs.personal===personal;
+ return !!refs&&refs.catalog===catalog&&refs.personal===personal&&
+   refs.expiresAt>Date.now()&&
+   refs.quotaDay===new Date().toISOString().slice(0,10)&&
+   (!budget||(budget.day===refs.quotaDay&&
+     Number.isSafeInteger(budget.availableRows)&&budget.availableRows>=0&&
+     budget.availableRows<=refs.remainingWriteUnits));
 }
