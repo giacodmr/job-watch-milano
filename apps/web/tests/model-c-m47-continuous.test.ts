@@ -285,6 +285,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    // real Miniflare D1 CATALOG/PERSONAL tables. No remote API is contacted.
    const catalogId='11111111-1111-4111-8111-111111111111';
    const personalId='22222222-2222-4222-8222-222222222222';
+   const restErrors:string[]=[];
    const transport=async(req:Request)=>{
     const database=new URL(req.url).pathname.includes(catalogId)?c:
      new URL(req.url).pathname.includes(personalId)?p:null;
@@ -294,7 +295,10 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
      const result=await database.batch(wire.batch.map(q=>
        database.prepare(q.sql).bind(...q.params)));
      return Response.json({success:true,result});
-    }catch{
+    }catch(e){
+     // Synthetic-only diagnostics; never forward DB exception details to the
+     // operator adapter or to a real external response.
+     restErrors.push(e instanceof Error?e.message.slice(0,180):'UNKNOWN_SQLITE_ERROR');
      return Response.json({success:false,result:[]},{status:400});
     }
    };
@@ -311,7 +315,8 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    },pair.capability);
    if(verified.status!=='PUBLISHED')throw Error('M50_REMOTE_ADAPTER_PUBLICATION_UNVERIFIED_'+
      verified.status+('failureCode' in verified?'_'+String(verified.failureCode):'')+
-     '_JOURNAL'+(verified.receipt?.journalPhase??'UNKNOWN'));
+     '_JOURNAL'+(verified.receipt?.journalPhase??'UNKNOWN')+
+     '_SYNTHETIC_ERROR'+(restErrors[0]??'NONE'));
    result=verified;
   }else result=await importModelC(c,p,stagedOptions);
   expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
