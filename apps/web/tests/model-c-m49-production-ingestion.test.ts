@@ -11,6 +11,7 @@ import {handlePrivateServiceIngestion,privateServiceGateEnabled,privateServiceQu
   from '../worker/model-c-ingest-v2-production';
 import type {PrivateIngestionEnv} from '../worker/model-c-ingest-v2-production';
 import {authenticatePrivateRequest} from '../worker/private-access';
+import {stageVerifiedV2Packets} from '../tools/model-c-m49-service-client';
 
 const host='jobs.example.com',issuer='https://job-watch-tests.cloudflareaccess.com';
 const userAudience='a'.repeat(64),serviceAudience='s'.repeat(64);
@@ -121,6 +122,16 @@ describe('M49 default-denied service ingestion boundary',()=>{
   expect(await progress.json()).toMatchObject({complete:true,received:1,expected:1});
   const mutated={...chunk,records:[{...record,companyId:'evil'}]};
   expect((await post(path+'/chunks',mutated)).status).toBe(400);
+  const staged=await stageVerifiedV2Packets({run:run as never,chunks:[chunk] as never},{
+    endpoint:url,serviceJwt:secret,gateBApproved:true,
+    transport:r=>handlePrivateServiceIngestion(r,env(),keys),
+  });
+  expect(staged).toMatchObject({status:'STAGED_NOT_PUBLISHED',received:1,
+    publicationAuthorized:false});
+  await expect(stageVerifiedV2Packets({run:run as never,chunks:[chunk] as never},{
+    endpoint:url,serviceJwt:secret,gateBApproved:false,
+    transport:r=>handlePrivateServiceIngestion(r,env(),keys),
+  })).rejects.toThrow('M49_GATE_B_CLOSED');
   const count=await catalog.prepare('SELECT COUNT(*) AS n FROM catalog_ingest_v2_chunks').first('n');
   expect(count).toBe(1);
   const head=await catalog.prepare("SELECT sync_revision FROM catalog_head WHERE scope='catalog'").first('sync_revision');
