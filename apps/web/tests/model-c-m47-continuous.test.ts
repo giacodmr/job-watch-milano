@@ -285,6 +285,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
     stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
    });
    expect(controlled.status).toBe('REPLAY');
+   if(!controlled.receipt)throw Error('M50_REPLAY_RECEIPT_REQUIRED');
    expect(controlled.receipt.receiptMatchesPublishedHead).toBe(true);
    expect(controlled.receipt.pendingReferences).toBe(0);
   }
