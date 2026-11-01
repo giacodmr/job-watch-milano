@@ -3,7 +3,7 @@
 // independently verified pinned Git bytes, NEVER the service staging JWT.
 // Local D1 only: remote binding/semantics and Gate B are not authorized here.
 import {canonical} from '../shared/canonical';
-import {importModelC} from './model-c-importer';
+import {importModelC,ModelCImportError} from './model-c-importer';
 import type {ImportOptions} from './model-c-importer';
 import {observeIngestJournal} from './model-c-publication-journal';
 import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
@@ -116,14 +116,17 @@ async function publishWithOperator(catalog:D1Database,personal:D1Database,
      denied('M50_LOCAL_PUBLICATION_UNVERIFIED');
    return {...published,runId:options.stagedPublication.runId,
      receipt,remoteExecutionAuthorized:target==='remote'};
- }catch{
+ }catch(error){
    // Even if the CATALOG commit succeeded, an exception/ACK loss is not PASS.
    // Human/operator must first inspect immutable receipts and then explicitly
    // reinvoke a pinned-source controller; never blind-retry a write.
    let receipt:Readback|null=null;
    try{receipt=await readback(catalog,personal,options.stagedPublication.runId,options.owner);}
    catch{/* cannot establish outcome */}
-   return {status:'REQUIRES_OPERATOR_RECOVERY' as const,
+   const failureCode=error instanceof ModelCImportError?error.message:
+     error instanceof Error&&/^[A-Z][A-Z0-9_]+$/.test(error.message)?error.message:
+       'M50_UNCERTAIN_OPERATOR_OUTCOME';
+   return {status:'REQUIRES_OPERATOR_RECOVERY' as const,failureCode,
      runId:options.stagedPublication.runId,receipt,
      remoteExecutionAuthorized:target==='remote'};
  }
