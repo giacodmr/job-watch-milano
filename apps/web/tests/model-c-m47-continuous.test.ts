@@ -309,7 +309,9 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
     source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
     stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
    },pair.capability);
-   if(verified.status!=='PUBLISHED')throw Error('M50_REMOTE_ADAPTER_PUBLICATION_UNVERIFIED');
+   if(verified.status!=='PUBLISHED')throw Error('M50_REMOTE_ADAPTER_PUBLICATION_UNVERIFIED_'+
+     verified.status+('_'+'failureCode' in verified?String(verified.failureCode):'')+
+     '_JOURNAL'+(verified.receipt?.journalPhase??'UNKNOWN'));
    result=verified;
   }else result=await importModelC(c,p,stagedOptions);
   expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
