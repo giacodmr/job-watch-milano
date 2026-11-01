@@ -70,17 +70,17 @@ describe('M49 default-denied service ingestion boundary',()=>{
  });
  it('does not activate from a public template, partial flag, or unknown quota',async()=>{
   const secret=await token();
-  expect(privateServiceGateEnabled({...env(),PRIVATE_INGESTION_GATE:undefined})).toBe(false);
-  expect(privateServiceQuota({...env(),PRIVATE_INGESTION_QUOTA_REMAINING:undefined})).toBeUndefined();
+  expect(privateServiceGateEnabled({...env(),PRIVATE_INGESTION_GATE:''})).toBe(false);
+  expect(privateServiceQuota({...env(),PRIVATE_INGESTION_QUOTA_REMAINING:''})).toBeUndefined();
   expect(privateServiceQuota({...env(),PRIVATE_INGESTION_QUOTA_REMAINING:'60000'})).toBeUndefined();
   expect(privateServiceQuota({...env(),PRIVATE_INGESTION_QUOTA_VALID_UNTIL:
     new Date(Date.now()+3600000).toISOString()})).toBeUndefined();
   expect(privateServiceQuota(env())).toMatchObject({operatorVerified:true,writeUnitsRemaining:30000});
   const disabled=await handlePrivateServiceIngestion(request('/api/model-c/sync/v2/runs',secret),
-   {...env(),PRIVATE_INGESTION_GATE:undefined},keys);
+   {...env(),PRIVATE_INGESTION_GATE:''},keys);
   expect(disabled.status).toBe(404);
   const unknown=await handlePrivateServiceIngestion(request('/api/model-c/sync/v2/runs',secret,'POST',{}),
-   {...env(),PRIVATE_INGESTION_QUOTA_REMAINING:undefined},keys);
+   {...env(),PRIVATE_INGESTION_QUOTA_REMAINING:''},keys);
   expect(unknown.status).toBe(503);
   expect((await unknown.json() as {status:string}).status).toBe('quota_unverified');
  });
