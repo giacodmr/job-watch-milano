@@ -66,6 +66,9 @@ describe('M47 transitive deployable-worker isolation',()=>{
   expect(graph.length).toBeGreaterThan(5);
   for(const module of forbidden)expect(graph,entry+' reached '+module).not.toContain(module);
   for(const file of graph){
+   // M49 deployable service staging is the sole reviewed sync route exception.
+   // Detached Node Git/trusted promotion/lab modules remain unreachable.
+   if(file==='worker/model-c-ingest-v2-production.ts')continue;
    const body=readFileSync(resolve(root,file),'utf8');
    expect(body,file).not.toContain('/api/model-c/sync/v2/runs');
   }
@@ -73,6 +76,7 @@ describe('M47 transitive deployable-worker isolation',()=>{
  it('actually traverses shared modules, reexports and indirect dependencies',()=>{
   const graph=reachable('worker/index.ts');
   expect(graph).toContain('worker/private-runtime.ts');
+  expect(graph).toContain('worker/model-c-ingest-v2-production.ts');
   expect(graph).toContain('worker/data/model-c-catalog.ts');
   expect(graph).toContain('shared/canonical.ts');
  });
