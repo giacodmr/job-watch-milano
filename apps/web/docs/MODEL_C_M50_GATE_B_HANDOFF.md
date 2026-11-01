@@ -2,7 +2,18 @@
 
 ## Entry conditions
 
-M48 merged, PR #49 M49 reviewed/merged **only after AC04/05/06/07 are genuinely resolved** and both final CI workflows pass. Gate B is CLOSED until the user separately authorizes concrete Cloudflare actions. Do not infer authorization from this document or the existence of deployment scripts.
+M48 merged. M49 PR #50 may be merged with green local acceptance while AC04/05/06/07 remain explicitly PARTIAL; these are mandatory M50 Stage 0 release blockers before Gate B, not grounds to relabel M49 cloud-ready. Both M49 final-HEAD workflows must pass before its merge. Gate B is CLOSED until the user separately authorizes concrete Cloudflare actions. Do not infer authorization from this document or the existence of deployment scripts.
+
+## Stage 0 — local release blockers (no Cloudflare action)
+
+This is the *only* permitted M50 execution phase without new user approval. Bound its scope to the four carried release blockers, with each outcome PASS/FAIL and immutable test evidence:
+
+1. **Trusted publisher:** implement the independently authorized Git/Python remote-publishing controller; locally prove pinned provenance, fixed service-vs-publisher permissions, single-transaction CATALOG journal/CAS and rollback.
+2. **PERSONAL reconciliation:** controller must reconcile owner-bound PERSONAL against committed CATALOG and preserve immutable APP decision/event precedence; deny service-stage mutation.
+3. **Recovery:** locally simulate dropped acknowledgement, process restart and receipt-based replay (no blind retry and no duplicate APP effects).
+4. **Shared quota:** exercise reservation concurrency and conservative denied writes for shared CATALOG/APP/PERSONAL, and supply a fail-closed operator plan for authoritative account-wide telemetry. Actual account-wide observations remain Cloudflare-only.
+
+**GO/NO-GO:** stop M50 Stage 0 after these verifications; all four local proofs must PASS for GO to request user approval. If a security/data-integrity guarantee fails, NO-GO with the minimal patch. Do not introduce a new architecture hardening sprint or activate stages 1–6 in the same session.
 
 ## Operator / owner checklist
 
