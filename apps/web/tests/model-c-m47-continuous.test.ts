@@ -14,7 +14,8 @@ import {verifyProjectionProof} from '../shared/projection-proof';
 import {selectModelC} from '../shared/model-c-selection';
 import {prepareCatalogV2Packets} from '../shared/model-c-ingestion-v2';
 import {importModelC} from '../tools/model-c-importer';
-import {publishM50Locally} from '../tools/model-c-m50-trusted-controller';
+import {publishM50Locally,publishM50WithRemoteOperator} from '../tools/model-c-m50-trusted-controller';
+import {createM50RemoteOperatorPair} from '../tools/model-c-m50-d1-rest';
 import type {ImportOptions} from '../tools/model-c-importer';
 import {prepareSafeRemoteBootstrapPlan} from '../tools/model-c-remote-plan';
 import {createOfflineV2IngestionHarness} from '../worker/model-c-ingest-v2-lab';
@@ -279,6 +280,36 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    });
    if(controlled.status!=='PUBLISHED')throw Error('M50_INITIAL_PUBLISH_NOT_CONFIRMED');
    result=controlled;
+  }else if(i===1){
+   // Mock ONLY Cloudflare's REST envelope; all SQL executes against the SAME
+   // real Miniflare D1 CATALOG/PERSONAL tables. No remote API is contacted.
+   const catalogId='11111111-1111-4111-8111-111111111111';
+   const personalId='22222222-2222-4222-8222-222222222222';
+   const transport=async(req:Request)=>{
+    const database=new URL(req.url).pathname.includes(catalogId)?c:
+     new URL(req.url).pathname.includes(personalId)?p:null;
+    if(!database)return new Response('{}',{status:404});
+    const wire=await req.json() as {batch:{sql:string;params:string[]}[]};
+    try{
+     const result=await database.batch(wire.batch.map(q=>
+       database.prepare(q.sql).bind(...q.params)));
+     return Response.json({success:true,result});
+    }catch{
+     return Response.json({success:false,result:[]},{status:400});
+    }
+   };
+   const pair=createM50RemoteOperatorPair({
+    accountId:'3'.repeat(32),catalogDatabaseId:catalogId,personalDatabaseId:personalId,
+    apiToken:'SYNTHETIC_TEST_ONLY_OPERATOR_TOKEN',gateBApproved:true,
+    accountFreePlanVerified:true,operatorQuotaVerified:true,
+    validUntil:new Date(Date.now()+120000).toISOString(),transport,
+   });
+   const verified=await publishM50WithRemoteOperator(pair.catalog,pair.personal,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   },pair.capability);
+   if(verified.status!=='PUBLISHED')throw Error('M50_REMOTE_ADAPTER_PUBLICATION_UNVERIFIED');
+   result=verified;
   }else result=await importModelC(c,p,stagedOptions);
   expect(result.status).toBe(i===14?'RECOVERED':'PUBLISHED');
   expect(result.syncRevision).toBe(before+1);
