@@ -217,7 +217,7 @@ export function privateServiceQuota(env:PrivateIngestionEnv,now=Date.now()){
  const raw=env.PRIVATE_INGESTION_QUOTA_REMAINING;
  const expires=env.PRIVATE_INGESTION_QUOTA_VALID_UNTIL;
  if(!raw||!expires||!/^(?:0|[1-9][0-9]{0,4})$/.test(raw)||
-    !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$/.test(expires))
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(expires))
    return undefined;
  const remaining=Number(raw),until=Date.parse(expires);
  // 30k internal ordinary ceiling; no automatic 60k or paid-tier fallback.
