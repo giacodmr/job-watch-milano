@@ -7,6 +7,7 @@ import {importModelC} from './model-c-importer';
 import type {ImportOptions} from './model-c-importer';
 import {observeIngestJournal} from './model-c-publication-journal';
 import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
+import {isM50AuthorizedRemotePair} from './model-c-m50-d1-rest';
 
 type Stage=NonNullable<ImportOptions['stagedPublication']>;
 export type M50LocalPublication={
@@ -57,6 +58,22 @@ async function readback(catalog:D1Database,personal:D1Database,runId:string,owne
  */
 export async function publishM50Locally(catalog:D1Database,personal:D1Database,
  options:M50LocalPublication){
+ return publishWithOperator(catalog,personal,options,'local-ephemeral');
+}
+/** Explicit operator-only remote path: cannot be reached with a service JWT.
+ * No implicit authorization, no live account discovery or provisioning.
+ */
+export async function publishM50WithRemoteOperator(catalog:D1Database,
+ personal:D1Database,options:M50LocalPublication,capability:object){
+ if(!isM50AuthorizedRemotePair(capability,catalog,personal))
+   denied('M50_REMOTE_OPERATOR_CAPABILITY_INVALID');
+ if(options.oneTimeFreeBootstrap)
+   denied('M50_REMOTE_INITIAL_BOOTSTRAP_NOT_AUTHORIZED');
+ return publishWithOperator(catalog,personal,options,'remote',capability);
+}
+async function publishWithOperator(catalog:D1Database,personal:D1Database,
+ options:M50LocalPublication,target:'local-ephemeral'|'remote',
+ capability?:object){
  if(catalog===personal)denied('M50_DISTINCT_DATABASES_REQUIRED');
  if(!options.stagedPublication?.runId.startsWith('ingest-v2:'))
    denied('M50_V2_STAGED_RUN_REQUIRED');
@@ -67,7 +84,8 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
    denied('M50_INTERNAL_BUDGET_EXCEEDED');
  const args:ImportOptions={source:options.source,owner:options.owner,
    budget:options.budget,stagedPublication:options.stagedPublication,
-   executionTarget:'local-ephemeral',
+   executionTarget:target,
+   ...(capability?{remoteOperatorCapability:capability}:{}),
    ...(options.bootstrap?{bootstrap:options.bootstrap}:{}),
    ...(options.v1?{v1:options.v1}:{}),
    ...(options.oneTimeFreeBootstrap===undefined?{}:
@@ -87,7 +105,7 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
       !receipt.receiptMatchesPublishedHead||receipt.pendingReferences!==0)
      denied('M50_REPLAY_RECEIPT_MISMATCH');
    return {status:'REPLAY' as const,runId:options.stagedPublication.runId,
-     receipt,remoteExecutionAuthorized:false as const};
+     receipt,remoteExecutionAuthorized:target==='remote'};
  }
  try{
    const published=await importModelC(catalog,personal,args);
@@ -97,7 +115,7 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
       !receipt.receiptMatchesPublishedHead||receipt.pendingReferences!==0)
      denied('M50_LOCAL_PUBLICATION_UNVERIFIED');
    return {...published,runId:options.stagedPublication.runId,
-     receipt,remoteExecutionAuthorized:false as const};
+     receipt,remoteExecutionAuthorized:target==='remote'};
  }catch{
    // Even if the CATALOG commit succeeded, an exception/ACK loss is not PASS.
    // Human/operator must first inspect immutable receipts and then explicitly
@@ -107,6 +125,6 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
    catch{/* cannot establish outcome */}
    return {status:'REQUIRES_OPERATOR_RECOVERY' as const,
      runId:options.stagedPublication.runId,receipt,
-     remoteExecutionAuthorized:false as const};
+     remoteExecutionAuthorized:target==='remote'};
  }
 }
