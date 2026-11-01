@@ -22,7 +22,7 @@ Only a separately authorized future M50 configuration could supply:
 - `PRIVATE_INGESTION_QUOTA_VALID_UNTIL` — UTC timestamp no more than five minutes away
 - existing private hostname, issuer, Access owner binding, and physical CATALOG/PERSONAL database IDs.
 
-**None of these settings is populated in `wrangler.private.template.jsonc`.** A flag or short-lived quota number does **not** reserve account-wide writes. Until an authoritative usage/remaining-quota read and durable shared admission accounting are available, repeated requests or other account consumers could exceed the internal 30k/day allowance. This is a **Gate B blocker**, not a solved remote feature.
+**None of these settings is populated in `wrangler.private.template.jsonc`.** A flag or short-lived quota number does **not** reserve account-wide writes. The M49 CATALOG quota admission now **durably reserves conservative write units** before v2 run/chunk staging, and private APP commands reserve against the same `catalog_write_reservations` ledger already used by the trusted importer. Service run+chunk reservation occurs in the same CATALOG transaction as each staged write. PERSONAL commands reserve in CATALOG before writing PERSONAL; a failed PERSONAL mutation intentionally leaves its reservation charged, because no cross-D1 transaction is claimed. This guards concurrent **Job Watch-owned** spending locally; it does not measure external Cloudflare account consumers, actual rows billed, read allowance, Worker CPU or remote storage. Until authoritative account-wide telemetry and a verified operating budget are available, **Gate B remains CLOSED**.
 
 Default unknown quota is deny; no 60k boost, paid fallback, public Worker route or alternative secret mechanism. Stage requests cap at 512 chunks and 20,000 catalog records; each chunk has the existing 48 KiB canonical record cap and the 56 KiB HTTP body bound. Staging capacity is bounded by existing M47 SQL (8 live runs). Unknown write outcome requires receipt readback, not a blind re-submit.
 
@@ -42,7 +42,7 @@ Any remote publication design must preserve M47 commit/manifest/projection/ledge
 | 04 Provenance and completeness | PARTIAL | Trusted M47 importer unchanged, but remote verified publication adapter absent |
 | 05 Cross-D1 reconciliation | PARTIAL | M47 local regression retained, remote controlled reconciliation absent |
 | 06 Recovery | PARTIAL | Local v2 durable readback plus M47 regression; no end-to-end remote cold restart |
-| 07 Free-tier safety | PARTIAL | Default-deny, short-lived local gate, conservative bounds; no authoritative remote shared quota reservation |
+| 07 Free-tier safety | PARTIAL | Default-deny, atomic local CATALOG reservations shared by v2 staging, importer and private APP; no authoritative Cloudflare account-wide observation |
 | 08 Private security | PENDING CI | Worker import graph, service/user isolation, disabled public and APP endpoints |
 | 09 Regression | PENDING CI | Full pre-existing M47/M48 Vitest + browser, typecheck, build, migrations and dry-runs |
 | 10 Documentation | PASS scoped | This runbook and M50 Gate B handoff; production operator steps need confirmation |
