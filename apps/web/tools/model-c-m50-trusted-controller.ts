@@ -65,7 +65,7 @@ export async function publishM50Locally(catalog:D1Database,personal:D1Database,
  */
 export async function publishM50WithRemoteOperator(catalog:D1Database,
  personal:D1Database,options:M50LocalPublication,capability:object){
- if(!isM50AuthorizedRemotePair(capability,catalog,personal))
+ if(!isM50AuthorizedRemotePair(capability,catalog,personal,options.budget))
    denied('M50_REMOTE_OPERATOR_CAPABILITY_INVALID');
  if(options.oneTimeFreeBootstrap)
    denied('M50_REMOTE_INITIAL_BOOTSTRAP_NOT_AUTHORIZED');
