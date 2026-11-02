@@ -1,6 +1,7 @@
 import {beforeAll,describe,expect,it} from 'vitest';
 import {pbkdf2Sync,randomBytes} from 'node:crypto';
 import worker from '../worker/index';
+import {SignJWT} from 'jose';
 import {authenticatePasswordRequest,checkPassword,handlePasswordWorker,passwordConfig} from '../worker/password-auth';
 import type {PasswordAuthEnv} from '../worker/password-auth';
 
@@ -63,6 +64,25 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     const head=await worker.fetch(request('/login',{method:'HEAD'}),env);
     expect(head.status).toBe(200);
     expect(await head.text()).toBe('');
+  });
+  it('rejects a wrong password without issuing a session cookie',async()=>{
+    const bad=await worker.fetch(authenticate('not-the-correct-password-123456789'),env);
+    expect(bad.status).toBe(303);
+    expect(bad.headers.get('Location')).toBe('/login?error=1');
+    expect(bad.headers.get('set-cookie')).toBeNull();
+  });
+  it('rejects expired signed sessions and wrong-session audience',async()=>{
+    const key=Buffer.from(env.PASSWORD_SESSION_KEY!,'base64url');
+    for(const audience of [host,'someone-else.workers.dev']){
+      const expired=await new SignJWT({sub:'single-owner',type:'password'})
+        .setProtectedHeader({alg:'HS256'})
+        .setIssuer('job-watch-password').setAudience(audience)
+        .setIssuedAt(-1200).setExpirationTime(-600)
+        .setJti('expired-token').sign(key);
+      const out=await worker.fetch(withCookie('/api/model-c/private/status',
+        '__Host-jobwatch_session='+expired),env);
+      expect(out.status).toBe(401);
+    }
   });
   it('checks a high-entropy password and issues a short-lived host-only HttpOnly session',async()=>{
     const config=passwordConfig(env);
