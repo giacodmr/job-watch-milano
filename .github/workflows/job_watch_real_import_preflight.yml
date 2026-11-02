@@ -8,6 +8,10 @@ on:
     paths:
       - .github/workflows/job_watch_real_import_preflight.yml
       - apps/web/tools/model-c-bootstrap-cli.ts
+      - apps/web/tools/model-c-importer.ts
+      - apps/web/tools/model-c-m50-trusted-controller.ts
+      - apps/web/tools/model-c-remote-plan.ts
+      - apps/web/model-c/catalog/migrations/0008_phased_initial_preparation.sql
 permissions:
   contents: read
 concurrency:
