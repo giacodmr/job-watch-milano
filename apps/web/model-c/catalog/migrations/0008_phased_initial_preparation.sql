@@ -14,6 +14,3 @@ BEGIN SELECT RAISE(ABORT,'immutable_prepared_chunk'); END;
 -- statement-breakpoint
 CREATE TRIGGER catalog_prepared_chunk_retain BEFORE DELETE ON catalog_prepared_chunks
 BEGIN SELECT RAISE(ABORT,'retained_prepared_chunk'); END;
--- statement-breakpoint
--- Intentionally keep model_c_schema.version=7: this adds isolated preparation
--- metadata only; v2 service contracts and all read schemas are unchanged.
