@@ -31,6 +31,9 @@ export interface ImportOptions {
   // A staging marker/JWT can never satisfy this runtime guard.
   remoteOperatorCapability?: object;
   preflightOnly?: boolean;
+  // Offline-only initial CATALOG preparation. Never authorizes remote writes.
+  // Prepared identities/aliases remain invisible until the atomic HEAD switch.
+  preparedInitial?: boolean;
   // Optional M47 lab-only: bind an M46 staged run to the independently
   // replayed full Git snapshot before ANY importer writes. Never a service grant.
   stagedPublication?: {runId:string;trustedPlan:Awaited<ReturnType<typeof prepareSafeRemoteBootstrapPlan>>};
@@ -109,6 +112,10 @@ function ledger(data:Record<string,Row[]>):IdentityLedger {
     identities:data.catalog_vacancy_identity!.map(r=>({jobId:String(r.id),companyId:String(r.company_id),originJobKey:String(r.origin_job_key)})).sort((a,b)=>a.jobId<b.jobId?-1:1),
     mappings:data.catalog_aliases!.map(r=>({key:String(r.alias_key),jobId:String(r.job_id)})).sort((a,b)=>a.key<b.key?-1:1),
   };
+}
+function emptyInitialCatalog():Awaited<ReturnType<typeof trustedCatalog>> {
+  const data=Object.fromEntries(catalogTables.map(t=>[t,[]])) as Record<string,Row[]>;
+  return {data,head:undefined,ledger:{identities:[],mappings:[]},previous:undefined};
 }
 async function trustedCatalog(db:D1Database) {
   const data=await read(db,catalogTables), head=data.catalog_head![0], fullLedger=ledger(data);
@@ -245,7 +252,12 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==7 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
-  const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
+  if(options.preparedInitial && options.executionTarget!=='local-ephemeral')
+    throw Error('PREPARED_REMOTE_EXECUTION_NOT_AUTHORIZED');
+  const headExists=await catalog.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n');
+  const old=options.preparedInitial && !headExists
+    ? emptyInitialCatalog() : await trustedCatalog(catalog);
+  const privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
   const appRevisionAtStart=Number(await personal.prepare(
     'SELECT revision FROM personal_app_heads WHERE owner_id=?').bind(options.owner).first('revision')??0);
   const ensureStableApp=async()=>{
@@ -315,8 +327,14 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const expected=Number(old.head?.sync_revision??0), syncRevision=same?expected:expected+1;
   const contentRevision=observation.catalogRevision, ledgerChanged=await sha256(canonical(old.ledger))!==selected.ledgerDigest;
   const ledgerRevision=old.head?Number(old.head.ledger_revision)+(ledgerChanged?1:0):1;
-  const publication:Step[]=same?[]:await planCatalog(old,selected,bundle.chunks.flat(),run,proof,contentRevision,ledgerRevision,environmentDigest,referenceDigest,legacy);
-  const cleanup=await cleanupPlan(catalog,same?run:undefined);
+  const fullPublication:Step[]=same?[]:await planCatalog(old,selected,bundle.chunks.flat(),run,proof,contentRevision,ledgerRevision,environmentDigest,referenceDigest,legacy);
+  let publication:Step[]=fullPublication;
+  if(options.preparedInitial && !same) {
+    const portions=splitInitialPublication(fullPublication);
+    await verifyInitialPreparedReceipts(catalog,run,portions.preparation);
+    publication=portions.final;
+  }
+  const cleanup=options.preparedInitial ? [] : await cleanupPlan(catalog,same?run:undefined);
   // New run's staged rows will also be cleaned after publication.
   if (!same) cleanup.push(...cleanupFor(run,publication));
   for(const step of cleanup)step.phase='cleanup';
