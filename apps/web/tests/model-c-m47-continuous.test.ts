@@ -166,7 +166,7 @@ beforeAll(async()=>{
    CATALOG:'m47-continuous-catalog',PERSONAL:'m47-continuous-personal'}}));
  c=metered(await runtime.getD1Database('CATALOG'),'catalog');
  p=metered(await runtime.getD1Database('PERSONAL'),'personal');
- expect((await applySchema(c,'catalog')).applied).toBe(7);
+ expect((await applySchema(c,'catalog')).applied).toBe(8);
  expect((await applySchema(p,'personal')).applied).toBe(3);
  applyingMigrations=false;
 });
@@ -218,7 +218,7 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
   const preflight=await importModelC(c,p,{...opts,preflightOnly:true,
    oneTimeFreeBootstrap:i===0});
   if(preflight.status!=='PREFLIGHT')throw Error('EXPECTED_PREFLIGHT');
-  const costs={catalog:{migrationFiles:7,localRowsWritten:0,remoteUpperBound:1000},
+  const costs={catalog:{migrationFiles:8,localRowsWritten:0,remoteUpperBound:1000},
     personal:{migrationFiles:3,localRowsWritten:0,remoteUpperBound:1000}};
   const plan=await prepareSafeRemoteBootstrapPlan({
    status:preflight.status,provenance:preflight.provenance,budgetDay:preflight.budgetDay,
