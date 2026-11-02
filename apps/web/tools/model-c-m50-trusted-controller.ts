@@ -18,6 +18,7 @@ export type M50LocalPublication={
  bootstrap?:ImportOptions['bootstrap'];
  v1?:ImportOptions['v1'];
  oneTimeFreeBootstrap?:boolean;
+ preparedInitial?:boolean;
 };
 type Readback={
  journalPhase:string;
@@ -69,6 +70,8 @@ export async function publishM50WithRemoteOperator(catalog:D1Database,
    denied('M50_REMOTE_OPERATOR_CAPABILITY_INVALID');
  if(options.oneTimeFreeBootstrap)
    denied('M50_REMOTE_INITIAL_BOOTSTRAP_NOT_AUTHORIZED');
+ if(options.preparedInitial)
+   denied('M50_PREPARED_INITIAL_REMOTE_NOT_AUTHORIZED');
  return publishWithOperator(catalog,personal,options,'remote',capability);
 }
 async function publishWithOperator(catalog:D1Database,personal:D1Database,
@@ -89,7 +92,8 @@ async function publishWithOperator(catalog:D1Database,personal:D1Database,
    ...(options.bootstrap?{bootstrap:options.bootstrap}:{}),
    ...(options.v1?{v1:options.v1}:{}),
    ...(options.oneTimeFreeBootstrap===undefined?{}:
-    {oneTimeFreeBootstrap:options.oneTimeFreeBootstrap})};
+    {oneTimeFreeBootstrap:options.oneTimeFreeBootstrap}),
+   ...(options.preparedInitial?{preparedInitial:true}:{})};
  // Read-only importer preflight independently verifies origin/main ancestry,
  // Python exporter, manifest, identity ledger and projected stage packets.
  const preflight=await importModelC(catalog,personal,{...args,preflightOnly:true});
