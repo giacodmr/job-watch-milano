@@ -44,6 +44,15 @@ async function main(){
       .reduce((total,phase)=>total+(phaseBounds[phase]??0),0);
     if(phaseSum!==report.metrics.requiredBound||catalogTableSum!==catalogPhaseSum)
       throw Error('MODEL_C_WRITE_BOUND_BREAKDOWN_INCONSISTENT');
+    // The existing importer executes ALL catalog publication steps, including
+    // its own staging, in one D1 batch. Charging v2 service ingestion separately
+    // does not make these steps disappear from the final importer batch.
+    const singleCatalogBatchBound=['staging','promotion','checkpoint']
+      .reduce((total,phase)=>total+(phaseBounds[phase]??0),0);
+    const ordinaryDailyWriteLimit=30000;
+    const multiDayBootstrapAssessment=singleCatalogBatchBound>ordinaryDailyWriteLimit
+      ? 'BLOCKED_CATALOG_ATOMIC_BATCH_OVER_ORDINARY_BUDGET'
+      : 'ADDITIONAL_REMOTE_PATH_VERIFICATION_REQUIRED';
     process.stdout.write(JSON.stringify({
       status:'LOCAL_PLAN_VALID',source:'PINNED_GIT_OFFLINE_PROJECTION',
       observedCommit:report.provenance.observedCommit,
@@ -56,6 +65,9 @@ async function main(){
       importWriteUpperBound:report.metrics.requiredBound,
       writeBoundsByPhase:phaseBounds,
       catalogWriteBoundsByTable:tableBounds,
+      catalogSingleBatchBound:singleCatalogBatchBound,
+      catalogAtomicBatchBudgetLimit:ordinaryDailyWriteLimit,
+      multiDayBootstrapAssessment,
       publicationStatements:report.metrics.publicationStatements,
       publicationBytes:report.metrics.publicationBytes,
       maxStatementSqlBytes:report.metrics.maxStatementSqlBytes,
