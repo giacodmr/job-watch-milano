@@ -7,6 +7,7 @@ import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { applySchema, captureSynthetic } from '../tools/model-c-schema';
 import { importModelC, ModelCImportError, inspectCatalogPlan, prepareModelCInitialChunk, cleanupModelCInitial } from '../tools/model-c-importer';
 import {executePersonalCommand} from '../worker/data/model-c-personal-write';
+import {getModelCCatalogSnapshot} from '../worker/data/model-c-catalog';
 import {getModelCPersonalJob} from '../worker/data/model-c-personal';
 import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
@@ -75,6 +76,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
       status=out.status;segments++;runIds.add(out.run);days.push(day);
       expect(await count(f.c,'catalog_head')).toBe(0);
       expect(await count(f.c,'catalog_vacancy_current')).toBe(0);
+      expect((await getModelCCatalogSnapshot(f.c)).snapshot).toBeNull();
       expect(Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
         .bind(day).first('charged'))).toBeLessThanOrEqual(30000);
     }
@@ -113,6 +115,34 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const restored=await importModelC(f.c,f.p,f.options);
     expect(restored.status).toBe('REPLAY');
   },180000);
+  it('recovers a lost preparation acknowledgement without a second reservation or changing HEAD',async()=>{
+    const f=await fixture(4);
+    let lost=false;
+    const uncertain=intercept(f.c,async(sql,actual)=>{
+      if(!lost&&sql.some(x=>x.startsWith('INSERT INTO catalog_prepared_chunks'))){
+        lost=true;await actual();throw Error('SYNTHETIC_PREPARE_ACK_LOST');
+      }
+      return actual();
+    });
+    await expect(prepareModelCInitialChunk(uncertain,f.p,f.options))
+      .rejects.toThrow('SYNTHETIC_PREPARE_ACK_LOST');
+    expect(lost).toBe(true);
+    expect(await count(f.c,'catalog_prepared_chunks')).toBe(1);
+    const day=f.options.budget.day;
+    const charged=Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(day).first('charged'));
+    const replay=await prepareModelCInitialChunk(f.c,f.p,f.options);
+    expect(replay).toMatchObject({status:'PREPARED',charged:0});
+    expect(Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(day).first('charged'))).toBe(charged);
+    expect((await getModelCCatalogSnapshot(f.c)).snapshot).toBeNull();
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    const newer=commit(f.repo);
+    await expect(prepareModelCInitialChunk(f.c,f.p,{
+      ...f.options,source:{...f.options.source,commit:newer},
+    })).rejects.toThrow('PHASED_OTHER_CATALOG_RUN_PRESENT');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+  },60000);
   it('rejects a prepared initial remote write without operator publication grant',async()=>{
     const f=await fixture(2);
     await expect(prepareModelCInitialChunk(f.c,f.p,{
