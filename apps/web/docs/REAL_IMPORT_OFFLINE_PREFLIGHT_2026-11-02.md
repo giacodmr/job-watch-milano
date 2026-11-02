@@ -1,6 +1,11 @@
 # Job Watch — first real data offline preflight (2026-11-02)
 
-**Status:** `OFFLINE_PREFLIGHT_PASS`, `REMOTE_IMPORT_NO_GO`.
+**CURRENT OFFLINE STATUS:** `MULTI_DAY_BOOTSTRAP_IMPLEMENTED_AND_TESTED` (offline-only);
+`REMOTE_IMPORT_NOT_AUTHORIZED`. The original one-shot bound below is retained
+as historical evidence; the **final validated acceptance** is in the last
+section of this document.
+
+**Original one-shot preflight status:** `OFFLINE_PREFLIGHT_PASS`, `REMOTE_IMPORT_NO_GO`.
 
 This report records a completed GitHub-hosted, read-only offline Model C preflight.
 It is not a remote publication approval or evidence of any remote D1 query,
@@ -385,3 +390,120 @@ synthetic day simulation on local ephemeral databases.
 
 Until these pass: **`MULTI_DAY_BOOTSTRAP_PARTIALLY_IMPLEMENTED`**,
 `REMOTE_IMPORT_NOT_AUTHORIZED`.
+
+---
+
+## FINAL OFFLINE ACCEPTANCE — verified 2026-11-02 (supersedes earlier open test items)
+
+**Acceptance status:** `MULTI_DAY_BOOTSTRAP_IMPLEMENTED_AND_TESTED` for
+**ephemeral local D1 only**. **Remote status:** `REMOTE_IMPORT_NOT_AUTHORIZED`.
+No remote DB writes, Worker deployment, new owner, private APP writes,
+secrets, Access activation, PR, or main merge occurred.
+
+### Grounded CI evidence
+
+1. [Final 10-suite integrated D1 regression](https://github.com/giacodmr/job-watch-milano/actions/runs/41532123024)
+   — **SUCCESS; TypeScript PASS; 116/116 tests PASS**.
+   Includes the 3,000-identity cross-day bootstrap, stable source/receipt
+   resume, lost preparation ACK, unchanged HEAD prior to CAS publication,
+   no premature cleanup/extra quota debit on replay, PERSONAL, migration,
+   real Miniflare v2 HTTP staging -> phased prepare -> local M50 -> journal
+   COMPLETED, remote prepared-publication denial and **30 consecutive
+   v2 catalog revisions** with recovery and APP precedence.
+2. [Final pinned real-data source/projection preflight](https://github.com/giacodmr/job-watch-milano/actions/runs/41533190555)
+   — **SUCCESS; LOCAL_PLAN_VALID; 78/78 regressions PASS (4 suites)**.
+   This second run validates current implementation files and the real
+   pinned snapshot; the tests partially overlap with the 116-test run,
+   so **do not add the counts together as unique tests**.
+3. Snapshot/source commit (unchanged):
+   `6b46f1e6f6ea3d466cb39f4d27e23f71ed1a8570`.
+   SHA-256 manifest:
+   `29be78b3478db345cfabac2e6d7d0dbc0e67efbf0c106af98f7c0d7a87ca8927`.
+   **New implementation-specific projection digest:**
+   `b754ae5efc5ec64d0eb2537f28e1d5d0db69079bdea6211de9a5725fcc71c47f`.
+   This new proof supersedes older projection digests when using this exact
+   implementation revision; proof must be revalidated if tools/shared files
+   change again.
+
+### Measured conservative schedule — source-pinned planner, not remote telemetry
+
+| Logical UTC day | Mutation scope | Upper bound | Spare capacity vs 30,000 |
+|---|---|---:|---:|
+| Day 1 | Prepared CATALOG groups 0–2 | 25,518 | 4,482 |
+| Day 2 | Prepared CATALOG groups 3–5 | 25,262 | 4,738 |
+| Day 3 | Prepared CATALOG groups 6–8 | 18,144 | 11,856 |
+| Day 4 | CATALOG HEAD/CAS + PERSONAL + reconciliation | 13,906 | 16,094 |
+| Day 5 | Explicit CATALOG cleanup | 28,624 | 1,376 |
+| **Total** | **Planner phases only** | **111,454** | |
+
+Selection: 218 catalog vacancy rows, **all 5,516 identity records**
+and **all 5,536 aliases**. The preparation path uses nine receipt groups
+with conservative bound 68,924; final CATALOG atomic portion is 4,140.
+The original 111,218 estimate is the **unphased** path and is not the
+sum of the new guarded multi-day schedule. Daily numbers are **planning
+upper bounds** and are not remotely metered writes.
+
+**Outside this 111,454 budget:** v2 HTTP/service ingestion staging on the
+remote D1, any additional quota already consumed by other account workloads,
+actual remote migration units, live host transaction parity, and unexpected
+operator recovery costs. For a v2 staged publication the journal can add an
+extra bounded amount; the no-staged-source CLI schedule reports zero journal.
+These must be admitted in a separate, account-wide real quota assessment
+without increasing the 30,000-unit daily admission.
+
+### Verified behavior and one targeted fix
+
+- In the first integrated run, **115/116 PASS** exposed an actual defect:
+  the normal replay consumed the future deferred cleanup. The importer now
+  excludes runs with `catalog_prepared_chunks` from automatic cleanup and
+  requires explicit `cleanupModelCInitial` with its own quota reservation.
+  The subsequent integrated run was **116/116 PASS**.
+- Existing v2 transport and trusted M50 controller are exercised
+  end-to-end on ephemeral D1; no duplicate service publisher or generic
+  SQL endpoint was created.
+- The catalog receipt sidecar is **migration 0008**. It was verified as
+  additive on a populated v7 CATALOG: `model_c_schema.version` remains 7,
+  all existing run/ledger rows remain identical, receipt update/delete are
+  denied, replay of migration is a no-op. Remote pilot has **not** received
+  0008 and must not be assumed to have the sidecar.
+- Remote M50 `preparedInitial` execution is still explicitly denied even
+  when a separate operator capability is presented. This is intentional;
+  offline acceptance **is not** a remote Gate B grant.
+- No claims are made about remote D1's actual atomic HTTP behavior,
+  credentials or quota observation.
+
+### Next *single scoped* Gate B proposal (NOT AUTHORIZED / NOT EXECUTED)
+
+**Gate B — additive CATALOG receipt schema migration only**, not data import.
+
+1. **Read-only operator prechecks:** verify real Cloudflare Workers Free plan,
+   account-wide D1 written rows for the current UTC quota day, correct EU
+   database `job-watch-pilot-catalog`, `model_c_schema.version=7`,
+   exactly 7 recorded CATALOG migrations, absence of
+   `catalog_prepared_chunks`, no published CATALOG HEAD and no application
+   data. If data/status changed, **stop**.
+2. **Requested authorization (separate):** one hash-locked execution of
+   `0008_phased_initial_preparation.sql` on **CATALOG only**, with at most
+   **500 conservative account-wide write units and 12 follow-up SQL reads**.
+   These caps are proposed safety limits, not measured remote costs.
+   Stop **before execution** if remote accounting/statement budgeting cannot
+   establish those caps. Never blind-retry a migration of uncertain outcome.
+3. **Read-only postchecks:** eight hash-locked `model_c_migrations` receipts,
+   unchanged v7 logical schema version, new empty receipt table, zero
+   `catalog_head`, unchanged PERSONAL v3, D1 FK/integrity checks, no Worker
+   change, and verified Free plan with €0 cost.
+4. **Explicit exclusions:** no v2 ingestion, source import, owner
+   initialization, PERSONAL writes, APP commands, deployments, Access/Zero
+   Trust activation, key/secret changes, new databases, paid upgrade or
+   remote initial publisher enablement.
+5. **Recovery:** on unknown response, inspect immutable migration receipts
+   and schema read-only first; do not repeat DDL until outcome is proven.
+
+**Only after this Gate and independently verified v2 staging quota and
+remote D1 operator semantics** may an operator prepare a second,
+separately authorized data bootstrap Gate. The current Worker password
+runtime does not itself confer `catalog:stage` or publication privileges.
+
+**Decision:** offline bootstrap work is closed. No more generic hardening
+or new milestone. The next user decision is whether to authorize the
+precisely scoped schema-only Gate B above.
