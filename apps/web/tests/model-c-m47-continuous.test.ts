@@ -330,6 +330,13 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
     remainingWriteUnits:30000,quotaDay:new Date().toISOString().slice(0,10),
     validUntil:new Date(Date.now()+120000).toISOString(),transport,
    });
+   // Possessing an operator capability is not approval for the new phased
+   // initial bootstrap. Its remote execution must stay fail-closed.
+   await expect(publishM50WithRemoteOperator(pair.catalog,pair.personal,{
+    source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
+    preparedInitial:true,
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   },pair.capability)).rejects.toThrow('M50_PREPARED_INITIAL_REMOTE_NOT_AUTHORIZED');
    const verified=await publishM50WithRemoteOperator(pair.catalog,pair.personal,{
     source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
     stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
