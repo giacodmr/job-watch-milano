@@ -204,10 +204,11 @@ export default function Candidature(){
   const [summary,setSummary]=useState<PersonalSummary|null>(null);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState<string|null>(null);
+  const [uninitialized,setUninitialized]=useState(false);
   const [selected,setSelected]=useState<PersonalRow|null>(null);
   useEffect(()=>{
     const controller=new AbortController();
-    setLoading(true);setError(null);setPage(null);
+    setLoading(true);setError(null);setUninitialized(false);setPage(null);setSummary(null);
     const filters:PersonalFilters={view,q:search,limit:25};
     if(decision)filters.decision=decision;
     if(reference)filters.reference=reference;
@@ -217,8 +218,15 @@ export default function Candidature(){
       if(context.catalogRevision!==result.catalogRevision||context.personalRevision!==result.personalRevision||context.appRevision!==result.appRevision)
         throw new ApiError('CONTEXT_CHANGED');
       setSummary(context);setPage(result);
-    }).catch(err=>{if(!controller.signal.aborted)setError(personalReadError(err));})
-      .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
+    }).catch(err=>{
+      if(controller.signal.aborted)return;
+      // The remote password pilot intentionally has no PERSONAL owner until a
+      // separately approved import. Preserve the 404 API contract: absence of
+      // an owner is NOT a verified empty personal history or a D1 failure.
+      if(err instanceof ApiError && err.code==='PERSONAL_CONTEXT_UNAVAILABLE')
+        setUninitialized(true);
+      else setError(personalReadError(err));
+    }).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return ()=>controller.abort();
   },[view,search,decision,reference,cursor,refresh]);
   function resetPage(){setCursor(null);setPrevious([]);}
@@ -268,7 +276,13 @@ export default function Candidature(){
       {!loading&&error&&<div className="c-state c-error" role="alert"><h2>Consultazione non disponibile</h2>
         <p>{error}</p><button className="c-btn" type="button" onClick={reload}>Riprova</button>
       </div>}
-      {!loading&&!error&&page&&page.items.length>0&&<CandidatureTable items={page.items} onSelect={setSelected}/>}
+      {!loading&&!error&&uninitialized&&<div className="c-state" role="status">
+        <h2>Registro personale non ancora inizializzato</h2>
+        <p>Il database PERSONAL non contiene ancora un contesto verificato per questo accesso.
+          Le candidature e le decisioni esistenti non sono state importate: non significa che tu non ne abbia.</p>
+        <p>La consultazione sarà disponibile dopo l’importazione autorizzata. Nessun dato viene creato automaticamente.</p>
+      </div>}
+      {!loading&&!error&&!uninitialized&&page&&page.items.length>0&&<CandidatureTable items={page.items} onSelect={setSelected}/>}
       {!loading&&!error&&page&&page.items.length===0&&<div className="c-state">
         <h2>Nessuna posizione in questa vista</h2>
         <p>{page.total===0?'Nessun riferimento personale corrisponde ai filtri selezionati.':'Nessun altro risultato disponibile.'}</p>
