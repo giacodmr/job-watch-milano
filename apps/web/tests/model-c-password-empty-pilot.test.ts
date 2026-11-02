@@ -39,8 +39,8 @@ beforeAll(async()=>{
   await applySchema(personal,'personal');
   env={APP_ENV:'password',PASSWORD_HOSTNAME:host,PRIVATE_OWNER_ID:owner,
     CATALOG:catalog,PERSONAL:personal,
-    PASSWORD_PBKDF2_SALT:randomBytes(16).toString('base64url'),
-    PASSWORD_PBKDF2_VERIFIER:randomBytes(32).toString('base64url'),
+    PASSWORD_HMAC_KEY:randomBytes(32).toString('base64url'),
+    PASSWORD_HMAC_VERIFIER:randomBytes(32).toString('base64url'),
     PASSWORD_SESSION_KEY:sessionKey.toString('base64url'),
     PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
 });

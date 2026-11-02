@@ -7,26 +7,25 @@ import {handlePrivateRuntime} from './private-runtime';
 
 export interface PasswordAuthEnv extends PrivateAccessEnv {
   PASSWORD_HOSTNAME?:string;
-  PASSWORD_PBKDF2_SALT?:string;
-  PASSWORD_PBKDF2_VERIFIER?:string;
+  PASSWORD_HMAC_KEY?:string;
+  PASSWORD_HMAC_VERIFIER?:string;
   PASSWORD_SESSION_KEY?:string;
   PASSWORD_RATE_LIMITER?:{limit(arg:{key:string}):Promise<{success:boolean}>};
 }
 
 const cookieName='__Host-jobwatch_session';
 const sessionSeconds=4*60*60;
-const iterations=100_000;
 const enc=new TextEncoder();
 const ownerPattern=/^[a-z][a-z0-9:_-]{0,199}$/;
 const hostPart=/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
-type Config={host:string;ownerId:string;salt:Uint8Array;verifier:Uint8Array;key:Uint8Array};
+type Config={host:string;ownerId:string;hmacKey:Uint8Array;verifier:Uint8Array;key:Uint8Array};
 
 function decodeSecret(value:string|undefined,length:number):Uint8Array|null{
   if(!value||!/^[A-Za-z0-9_-]+$/.test(value)||value.length>180)return null;
   try{
     const bytes=Uint8Array.from(atob(value.replace(/-/g,'+').replace(/_/g,'/')+
       '='.repeat((4-value.length%4)%4)),c=>c.charCodeAt(0));
-    return bytes.length===length?bytes:null;
+    return bytes.length===length&&btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')===value?bytes:null;
   }catch{return null;}
 }
 export function passwordConfig(env:PasswordAuthEnv):Config{
@@ -38,11 +37,11 @@ export function passwordConfig(env:PasswordAuthEnv):Config{
     ownerId.startsWith('synthetic-')||
     !env.CATALOG||!env.PERSONAL||env.CATALOG===env.PERSONAL||
     !env.PASSWORD_RATE_LIMITER)throw new PrivateAuthError('password_config_missing',503);
-  const salt=decodeSecret(env.PASSWORD_PBKDF2_SALT,16);
-  const verifier=decodeSecret(env.PASSWORD_PBKDF2_VERIFIER,32);
+  const hmacKey=decodeSecret(env.PASSWORD_HMAC_KEY,32);
+  const verifier=decodeSecret(env.PASSWORD_HMAC_VERIFIER,32);
   const key=decodeSecret(env.PASSWORD_SESSION_KEY,32);
-  if(!salt||!verifier||!key)throw new PrivateAuthError('password_config_missing',503);
-  return {host,ownerId,salt,verifier,key};
+  if(!hmacKey||!verifier||!key||fixedEqual(hmacKey,key))throw new PrivateAuthError('password_config_missing',503);
+  return {host,ownerId,hmacKey,verifier,key};
 }
 function checkHost(request:Request,host:string){
   const url=new URL(request.url);
@@ -57,11 +56,14 @@ function fixedEqual(a:Uint8Array,b:Uint8Array){
   return difference===0;
 }
 export async function checkPassword(password:string,config:Config){
-  if(password.length<20||password.length>256)return false;
-  const material=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
-  const result=new Uint8Array(await crypto.subtle.deriveBits(
-    {name:'PBKDF2',hash:'SHA-256',salt:config.salt as BufferSource,iterations},material,256));
-  return fixedEqual(result,config.verifier);
+  // Only the offline CSPRNG-generated jw1_ credential is provisioned. Shape
+  // validation cannot prove entropy: never provision a human-selected value.
+  if(!password.startsWith('jw1_')||!decodeSecret(password.slice(4),32))return false;
+  const key=await crypto.subtle.importKey('raw',config.hmacKey as BufferSource,
+    {name:'HMAC',hash:'SHA-256'},false,['verify']);
+  // Native HMAC verification compares the fixed-size tag without a JS early exit.
+  return crypto.subtle.verify('HMAC',key,config.verifier as BufferSource,
+    enc.encode('job-watch-login:v1\0'+password));
 }
 function headers(extra:Record<string,string>={}):Headers{
   return new Headers({'Cache-Control':'no-store, private','X-Content-Type-Options':'nosniff',

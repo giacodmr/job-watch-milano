@@ -1,5 +1,5 @@
 import {beforeAll,describe,expect,it,vi} from 'vitest';
-import {pbkdf2Sync,randomBytes} from 'node:crypto';
+import {createHmac,randomBytes} from 'node:crypto';
 import worker from '../worker/index';
 import {SignJWT} from 'jose';
 import {authenticatePasswordRequest,checkPassword,handlePasswordWorker,passwordConfig} from '../worker/password-auth';
@@ -7,7 +7,7 @@ import type {PasswordAuthEnv} from '../worker/password-auth';
 
 const host='job-watch.test.workers.dev';
 const origin='https://'+host;
-const password='test-'+'z'.repeat(35);
+const password='jw1_'+Buffer.alloc(32,11).toString('base64url');
 let env:PasswordAuthEnv;
 let calls=0;
 const request=(path:string,init:RequestInit={})=>new Request(origin+path,init);
@@ -21,12 +21,12 @@ const withCookie=(path:string,c:string,options:RequestInit={})=>request(path,{
   ...options,headers:{Cookie:c,...options.headers}
 });
 beforeAll(()=>{
-  const salt=randomBytes(16);
+  const salt=randomBytes(32);
   calls=0;
   const c={} as D1Database,p={} as D1Database;
   env={APP_ENV:'password',PASSWORD_HOSTNAME:host,PRIVATE_OWNER_ID:'pilot-owner-1234',
-    CATALOG:c,PERSONAL:p,PASSWORD_PBKDF2_SALT:salt.toString('base64url'),
-    PASSWORD_PBKDF2_VERIFIER:pbkdf2Sync(password,salt,100_000,32,'sha256').toString('base64url'),
+    CATALOG:c,PERSONAL:p,PASSWORD_HMAC_KEY:salt.toString('base64url'),
+    PASSWORD_HMAC_VERIFIER:createHmac('sha256',salt).update('job-watch-login:v1\0'+password).digest('base64url'),
     PASSWORD_SESSION_KEY:randomBytes(32).toString('base64url'),
     PASSWORD_RATE_LIMITER:{limit:async()=>({success:++calls<=8})},
     ASSETS:{fetch:async()=>new Response('only for an authenticated visitor',
@@ -46,6 +46,31 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     expect(()=>passwordConfig({...env,PERSONAL:catalog})).toThrow('password_config_missing');
     expect(()=>passwordConfig({...env,APP_ENV:'private'})).toThrow('password_runtime_disabled');
     expect(()=>passwordConfig({...env,PRIVATE_OWNER_ID:'synthetic-owner'})).toThrow('password_config_missing');
+  });
+  it('rejects malformed and wrong canonical credentials and legacy-only or incomplete configurations',async()=>{
+    const config=passwordConfig(env);
+    const independent={...env,PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
+    for(const value of ['', 'human-password-123456789',password+'=',password+' ',
+      password.slice(0,-1)+'B','jw1_'+Buffer.alloc(31).toString('base64url'),
+      'jw2_'+password.slice(4),'jw1_'+Buffer.alloc(32,12).toString('base64url')]){
+      expect(await checkPassword(value,config)).toBe(false);
+      const response=await worker.fetch(authenticate(value),independent);
+      expect(response.headers.get('Location')).toBe('/login?error=1');
+      expect(response.headers.get('set-cookie')).toBeNull();
+    }
+    for(const name of ['PASSWORD_HMAC_KEY','PASSWORD_HMAC_VERIFIER','PASSWORD_SESSION_KEY'] as const){
+      const missing={...env};delete missing[name];
+      expect(()=>passwordConfig(missing)).toThrow('password_config_missing');
+    }
+    const legacy={...env,
+      PASSWORD_PBKDF2_SALT:randomBytes(16).toString('base64url'),
+      PASSWORD_PBKDF2_VERIFIER:randomBytes(32).toString('base64url')};
+    delete legacy.PASSWORD_HMAC_KEY;delete legacy.PASSWORD_HMAC_VERIFIER;
+    expect((await worker.fetch(authenticate(password),legacy)).status).toBe(503);
+    expect(()=>passwordConfig({...env,PASSWORD_HMAC_KEY:env.PASSWORD_SESSION_KEY!})).toThrow('password_config_missing');
+    expect(()=>passwordConfig({...env,PASSWORD_HMAC_VERIFIER:env.PASSWORD_HMAC_VERIFIER+'='})).toThrow('password_config_missing');
+    const changed={...independent,PASSWORD_HMAC_KEY:randomBytes(32).toString('base64url')};
+    expect((await worker.fetch(authenticate(password),changed)).headers.get('set-cookie')).toBeNull();
   });
   it('denies arbitrary hosts, HTTP, forwarded-host mismatch and discloses no assets before login',async()=>{
     for(const path of ['/','/assets/main.js','/candidature','/opportunita']){

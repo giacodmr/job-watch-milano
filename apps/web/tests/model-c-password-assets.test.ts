@@ -1,5 +1,5 @@
 import {afterAll,beforeAll,describe,expect,it} from 'vitest';
-import {pbkdf2Sync} from 'node:crypto';
+import {createHmac} from 'node:crypto';
 import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -7,7 +7,7 @@ import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 
 const origin='https://password-assets.example.test';
-const password='public-synthetic-asset-fixture-'+'z'.repeat(32);
+const password='jw1_'+Buffer.alloc(32,11).toString('base64url');
 let runtime:Miniflare,directory:string;
 beforeAll(async()=>{
   directory=await mkdtemp(join(tmpdir(),'job-watch-password-assets-'));
@@ -17,12 +17,12 @@ beforeAll(async()=>{
   await writeFile(join(directory,'assets/app.css'),'/* protected synthetic CSS */');
   const bundle=await build({entryPoints:['worker/index.ts'],bundle:true,write:false,
     format:'esm',platform:'browser',target:'es2023'});
-  const salt=Buffer.alloc(16,3);
+  const salt=Buffer.alloc(32,3);
   runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:bundle.outputFiles[0]!.text,
     compatibilityDate:'2026-10-29',cf:false,
     bindings:{APP_ENV:'password',PASSWORD_HOSTNAME:'password-assets.example.test',
-      PRIVATE_OWNER_ID:'fixture-owner',PASSWORD_PBKDF2_SALT:salt.toString('base64url'),
-      PASSWORD_PBKDF2_VERIFIER:pbkdf2Sync(password,salt,100000,32,'sha256').toString('base64url'),
+      PRIVATE_OWNER_ID:'fixture-owner',PASSWORD_HMAC_KEY:salt.toString('base64url'),
+      PASSWORD_HMAC_VERIFIER:createHmac('sha256',salt).update('job-watch-login:v1\0'+password).digest('base64url'),
       PASSWORD_SESSION_KEY:Buffer.alloc(32,5).toString('base64url')},
     d1Databases:{CATALOG:'password-assets-catalog',PERSONAL:'password-assets-personal'},
     ratelimits:{PASSWORD_RATE_LIMITER:{namespace_id:'1001',simple:{limit:5,period:60}}},

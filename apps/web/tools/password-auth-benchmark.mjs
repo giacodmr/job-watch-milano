@@ -1,7 +1,7 @@
 // Local-only synthetic workerd measurements. No credentials, remote bindings or deployment.
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {pbkdf2Sync} from 'node:crypto';
+import {createHmac,pbkdf2Sync} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {cpus,platform,arch} from 'node:os';
 import {performance} from 'node:perf_hooks';
@@ -10,17 +10,23 @@ import {fileURLToPath} from 'node:url';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions,Request} from 'miniflare';
 
-assert.equal(process.argv.length,2,'LOCAL_SYNTHETIC_BENCHMARK_TAKES_NO_INPUT');
+const baseline=process.argv.length===3&&process.argv[2]==='--baseline';
+assert(process.argv.length===2||baseline,'LOCAL_SYNTHETIC_BENCHMARK_INVALID_ARGUMENT');
+const baselineSource=()=>execFileSync('git',['show','c579a255c3fe90e684d7e6260f0ee8c686c3638e:apps/web/worker/password-auth.ts'],{encoding:'utf8'});
 const app=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const host='password-benchmark.example.test',origin='https://'+host;
 // Public, intentionally unusable synthetic fixture. Never run the real secret generator here.
-const password='benchmark-fixture-'+'z'.repeat(32),salt=Buffer.alloc(16,7);
+const password='jw1_'+Buffer.alloc(32,11).toString('base64url'),salt=Buffer.alloc(32,7);
 const bundle=await build({entryPoints:[resolve(app,'worker/index.ts')],bundle:true,
-  write:false,format:'esm',platform:'browser',target:'es2023'});
+  plugins:baseline?[{name:'baseline-auth',setup(b){b.onLoad({filter:/password-auth\.ts$/},()=>({contents:baselineSource(),loader:'ts'}));}}]:[],write:false,format:'esm',platform:'browser',target:'es2023'});
 const fixture={APP_ENV:'password',PASSWORD_HOSTNAME:host,PRIVATE_OWNER_ID:'benchmark-owner',
-  PASSWORD_PBKDF2_SALT:salt.toString('base64url'),
-  PASSWORD_PBKDF2_VERIFIER:pbkdf2Sync(password,salt,100000,32,'sha256').toString('base64url'),
+  PASSWORD_HMAC_KEY:salt.toString('base64url'),
+  PASSWORD_HMAC_VERIFIER:createHmac('sha256',salt).update('job-watch-login:v1\0'+password).digest('base64url'),
   PASSWORD_SESSION_KEY:Buffer.alloc(32,9).toString('base64url')};
+if(baseline){
+  fixture.PASSWORD_PBKDF2_SALT=Buffer.alloc(16,7).toString('base64url');
+  fixture.PASSWORD_PBKDF2_VERIFIER=pbkdf2Sync(password,Buffer.alloc(16,7),100000,32,'sha256').toString('base64url');
+}
 function runtime(limit){
   return new Miniflare(convertV4MiniflareOptions({modules:true,script:bundle.outputFiles[0].text,
     compatibilityDate:'2026-10-29',cf:false,bindings:fixture,
@@ -28,7 +34,7 @@ function runtime(limit){
     ratelimits:{PASSWORD_RATE_LIMITER:{namespace_id:'1001',simple:{limit,period:60}}}}));
 }
 function cpuMilliseconds(){
-  // Descendants of this harness only; excludes other tests/Workers and Node-side PBKDF2 setup.
+  // Descendants of this harness only; excludes other tests/Workers and Node-side fixture setup.
   const rows=execFileSync('ps',['-ax','-o','pid=,ppid=,comm='],{encoding:'utf8'}).trim().split('\n')
     .map(line=>/^\s*(\d+)\s+(\d+)\s+(.+)$/.exec(line)).filter(Boolean);
   const descendants=new Set([process.pid]);
@@ -66,8 +72,8 @@ try{
       workerd_process_cpu_ms_total:cpu,workerd_process_cpu_ms_per_request:cpu/count});
   }
   await measure('login_page_no_kdf',30,()=>new Request(origin+'/login'),200);
-  await measure('invalid_password_full_kdf',30,()=>login('wrong-benchmark-fixture-'+'x'.repeat(32)),303);
-  await measure('valid_password_full_kdf_and_sign',30,()=>login(password),303);
+  await measure('invalid_credential_verification',30,()=>login('jw1_'+Buffer.alloc(32,12).toString('base64url')),303);
+  await measure('valid_credential_verification_and_sign',30,()=>login(password),303);
   const signed=await mf.dispatchFetch(login(password));
   const cookie=signed.headers.get('set-cookie').split(';')[0];await signed.arrayBuffer();
   await measure('authenticated_session_no_d1',60,()=>new Request(origin+'/api/model-c/private/status',{
@@ -76,7 +82,7 @@ try{
   limited=runtime(5);
   const statuses=[];
   for(let i=0;i<12;i++){
-    const response=await limited.dispatchFetch(login('wrong-benchmark-fixture-'+'x'.repeat(32)));
+    const response=await limited.dispatchFetch(login('jw1_'+Buffer.alloc(32,12).toString('base64url')));
     statuses.push(response.status);assert.equal(response.headers.get('set-cookie'),null);
     await response.arrayBuffer();
   }
@@ -84,7 +90,7 @@ try{
   const workerd=JSON.parse(await readFile(resolve(app,'node_modules/workerd/package.json'),'utf8'));
   console.log(JSON.stringify({localOnly:true,syntheticOnly:true,remoteCalls:0,
     node:process.version,workerd:workerd.version,platform:platform(),arch:arch(),cpu:cpus()[0]?.model,
-    iterations:100000,algorithm:'PBKDF2-HMAC-SHA256',scenarios,
+    baseline,algorithm:baseline?'PBKDF2-HMAC-SHA256-100000':'HMAC-SHA256-256bit-random-credential',scenarios,
     localRateLimit:{threshold:5,period_seconds:60,statuses},
     cloudFreeCpuCertified:false,
     limitation:'Host wall time and aggregate local workerd process CPU (ps, coarse resolution) are not per-invocation billed Cloudflare CPU. Remote CPU, distributed limiter overshoot and edge asset routing require separate Gate B.'},null,2));
