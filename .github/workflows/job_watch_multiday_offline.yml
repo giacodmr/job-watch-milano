@@ -8,12 +8,18 @@ on:
       - apps/web/tools/model-c-importer.ts
       - apps/web/tests/model-c-importer.test.ts
       - apps/web/model-c/catalog/migrations/0008_phased_initial_preparation.sql
+      - apps/web/tools/model-c-m50-trusted-controller.ts
+      - apps/web/tools/model-c-remote-plan.ts
+      - apps/web/tests/model-c-m47-continuous.test.ts
+      - apps/web/tests/model-c-schema.test.ts
+      - apps/web/tests/model-c-ingestion-v2.test.ts
+      - apps/web/tests/model-c-remote-readiness.test.ts
 permissions:
   contents: read
 jobs:
   local-only:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: apps/web
@@ -29,4 +35,16 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
-      - run: npx vitest run tests/model-c-importer.test.ts
+      - name: Final offline phased bootstrap, v2, M50, quotas and migration regression
+        run: |
+          npx vitest run \
+            tests/model-c-importer.test.ts \
+            tests/model-c-schema.test.ts \
+            tests/model-c-ingestion-v2.test.ts \
+            tests/model-c-m47-continuous.test.ts \
+            tests/model-c-remote-readiness.test.ts \
+            tests/model-c-free-bootstrap.test.ts \
+            tests/model-c-m49-production-ingestion.test.ts \
+            tests/model-c-m50-d1-rest.test.ts \
+            tests/model-c-backup.test.ts \
+            tests/model-c-catalog-reader.test.ts
