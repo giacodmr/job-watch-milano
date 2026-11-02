@@ -618,7 +618,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   }
   const cleanup=options.preparedInitial ? [] : await cleanupPlan(catalog,same?run:undefined);
   // New run's staged rows will also be cleaned after publication.
-  if (!same) cleanup.push(...cleanupFor(run,publication));
+  if (!same && !options.preparedInitial) cleanup.push(...cleanupFor(run,publication));
   for(const step of cleanup)step.phase='cleanup';
   const receipt={id:'receipt:'+run,catalog_sync_revision:syncRevision,catalog_content_revision:contentRevision,observed_commit:bundle.manifest.commitSha,
     ledger_digest:selected.ledgerDigest,head_digest:await sha256(canonical({syncRevision,run,contentRevision,ledgerRevision,ledgerDigest:selected.ledgerDigest}))};
