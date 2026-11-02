@@ -34,6 +34,16 @@ async function main(){
       budget:{day:new Date().toISOString().slice(0,10),availableRows:95000},
     });
     if(report.status!=='PREFLIGHT')throw Error('UNEXPECTED_PREFLIGHT_STATE');
+    // Numbers only: deterministic aggregate diagnostics, with no owner ID,
+    // source contents, application decisions or SQL parameter values.
+    const phaseBounds=report.metrics.writeBounds;
+    const tableBounds=report.metrics.writeUnits;
+    const phaseSum=Object.values(phaseBounds).reduce((total,bound)=>total+bound,0);
+    const catalogTableSum=Object.values(tableBounds).reduce((total,entry)=>total+entry.bound,0);
+    const catalogPhaseSum=['staging','promotion','checkpoint','cleanup']
+      .reduce((total,phase)=>total+(phaseBounds[phase]??0),0);
+    if(phaseSum!==report.metrics.requiredBound||catalogTableSum!==catalogPhaseSum)
+      throw Error('MODEL_C_WRITE_BOUND_BREAKDOWN_INCONSISTENT');
     process.stdout.write(JSON.stringify({
       status:'LOCAL_PLAN_VALID',source:'PINNED_GIT_OFFLINE_PROJECTION',
       observedCommit:report.provenance.observedCommit,
@@ -44,6 +54,8 @@ async function main(){
       // Local D1 setup writes are NOT a trustworthy remote upper bound.
       remoteMigrationUpperBound:null,
       importWriteUpperBound:report.metrics.requiredBound,
+      writeBoundsByPhase:phaseBounds,
+      catalogWriteBoundsByTable:tableBounds,
       publicationStatements:report.metrics.publicationStatements,
       publicationBytes:report.metrics.publicationBytes,
       maxStatementSqlBytes:report.metrics.maxStatementSqlBytes,
