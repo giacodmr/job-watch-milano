@@ -268,5 +268,18 @@ v3 pilot empty, APP writes and service ingestion off, and €0 budget.
   operation, production owner, real snapshot publication, new importer,
   or authorization escalation.
 
+### Targeted CI verification (completed)
+
+- Run: https://github.com/giacodmr/job-watch-milano/actions/runs/41515309849
+- Result: **SUCCESS**, **4 test files passed, 75 tests passed**.
+- Suites: `model-c-importer.test.ts`,
+  `model-c-free-bootstrap.test.ts`,
+  `model-c-m49-production-ingestion.test.ts`,
+  `model-c-m50-d1-rest.test.ts`.
+- The real pinned Git offline preflight also passed inside this run.
+- These existing regression tests verify laboratory importer/journal/quote
+  boundaries; **they are not a test of a multi-day bootstrap implementation,
+  which does not yet exist**, and do not establish real D1 REST atomicity.
+
 **Final status:** `OFFLINE_PREFLIGHT_PASS`,
 `MULTI_DAY_BOOTSTRAP_BLOCKED`, `REMOTE_IMPORT_NOT_AUTHORIZED`.
