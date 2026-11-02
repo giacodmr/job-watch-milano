@@ -39,6 +39,7 @@ async function main(){
       executionTarget:'local-ephemeral',
       budget:{day:new Date().toISOString().slice(0,10),availableRows:30000},
     });
+    if(!phased.boundPerDayVerified)throw Error('PHASED_INITIAL_DAILY_BUDGET_EXCEEDED');
     // Numbers only: deterministic aggregate diagnostics, with no owner ID,
     // source contents, application decisions or SQL parameter values.
     const phaseBounds=report.metrics.writeBounds;
