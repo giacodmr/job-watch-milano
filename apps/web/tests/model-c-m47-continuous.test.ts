@@ -13,7 +13,7 @@ import {verifyGitProjection} from '../tools/model-c-git';
 import {verifyProjectionProof} from '../shared/projection-proof';
 import {selectModelC} from '../shared/model-c-selection';
 import {prepareCatalogV2Packets} from '../shared/model-c-ingestion-v2';
-import {importModelC} from '../tools/model-c-importer';
+import {importModelC,prepareModelCInitialChunk} from '../tools/model-c-importer';
 import {publishM50Locally,publishM50WithRemoteOperator} from '../tools/model-c-m50-trusted-controller';
 import {createM50RemoteOperatorPair} from '../tools/model-c-m50-d1-rest';
 import type {ImportOptions} from '../tools/model-c-importer';
@@ -271,14 +271,35 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    }
    expect(result.status).toBe('RECOVERED');
   }else if(i===0){
-   // Exercise successful full publication through the new M50 trusted controller,
-   // not only its read-only replay/recovery branches.
+   // Existing HTTP v2 receipts -> trusted Git -> durable phased preparation
+   // -> local M50 controller -> CATALOG HEAD/CAS -> PERSONAL -> COMPLETED.
+   // A small first cycle fits one preparation group; 3000-identity/day
+   // interruption and resume are independently exercised in importer tests.
+   let preparation=await prepareModelCInitialChunk(c,p,{
+    ...opts,stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   for(let rounds=0;preparation.status==='PREPARING'&&rounds<16;rounds++)
+    preparation=await prepareModelCInitialChunk(c,p,{
+      ...opts,stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+    });
+   expect(preparation.status).toBe('PREPARED');
+   expect(await count('catalog_head')).toBe(0);
+   expect((await getModelCCatalogSnapshot(c)).snapshot).toBeNull();
+   const preparedReceipts=await count('catalog_prepared_chunks');
+   expect(preparedReceipts).toBeGreaterThan(0);
+   const replay=await prepareModelCInitialChunk(c,p,{
+     ...opts,stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   });
+   expect(replay).toMatchObject({status:'PREPARED',charged:0});
+   expect(await count('catalog_prepared_chunks')).toBe(preparedReceipts);
    const controlled=await publishM50Locally(c,p,{
     source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
-    oneTimeFreeBootstrap:true,
+    preparedInitial:true,
     stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
    });
-   if(controlled.status!=='PUBLISHED')throw Error('M50_INITIAL_PUBLISH_NOT_CONFIRMED');
+   if(controlled.status!=='PUBLISHED')
+     throw Error('M50_PHASED_INITIAL_PUBLISH_NOT_CONFIRMED_'+controlled.status+
+       ('failureCode' in controlled?'_'+controlled.failureCode:''));
    result=controlled;
   }else if(i===1){
    // Mock ONLY Cloudflare's REST envelope; all SQL executes against the SAME
