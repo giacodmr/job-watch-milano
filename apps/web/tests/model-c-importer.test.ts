@@ -64,7 +64,7 @@ afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recu
 describe('verified incremental importer on ephemeral D1',()=>{
 
   it('prepares an initial full ledger in immutable receipt-bound groups across simulated UTC days and publishes only at HEAD',async()=>{
-    const f=await fixture(700);
+    const f=await fixture(3000);
     let status:'PREPARING'|'PREPARED'='PREPARING';
     let segments=0;const runIds=new Set<string>(),days:string[]=[];
     while(status!=='PREPARED' && segments<40) {
@@ -95,8 +95,8 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const published=await importModelC(f.c,f.p,{...f.options,preparedInitial:true});
     expect(published.status).toBe('PUBLISHED');
     expect(await count(f.c,'catalog_head')).toBe(1);
-    expect(await count(f.c,'catalog_vacancy_identity')).toBe(700);
-    expect(await count(f.c,'catalog_vacancy_current')).toBe(700);
+    expect(await count(f.c,'catalog_vacancy_identity')).toBe(3000);
+    expect(await count(f.c,'catalog_vacancy_current')).toBe(3000);
     expect(await count(f.c,'catalog_stage_vacancies')).toBeGreaterThan(0);
     const cleanDay='2026-09-30';
     const cleaned=await cleanupModelCInitial(f.c,{
