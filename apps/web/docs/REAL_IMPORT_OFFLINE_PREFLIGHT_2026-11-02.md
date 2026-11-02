@@ -283,3 +283,105 @@ v3 pilot empty, APP writes and service ingestion off, and €0 budget.
 
 **Final status:** `OFFLINE_PREFLIGHT_PASS`,
 `MULTI_DAY_BOOTSTRAP_BLOCKED`, `REMOTE_IMPORT_NOT_AUTHORIZED`.
+
+## Multi-day initial implementation — offline source-based preview (2026-11-02)
+
+The branch now contains a scoped **initial empty-CATALOG only** prepare/publish
+path in the existing `model-c-importer.ts`, with an additive CATALOG migration
+`0008_phased_initial_preparation.sql`. The migration is **NOT** applied to
+remote D1; it adds immutable preparation receipts while keeping the existing
+published CATALOG v7 reader contract and `model_c_schema.version=7`. The
+remote pilot still has the old seven catalog migrations. The new receipt table
+is absent there and intentionally cannot be assumed.
+
+The staged preparation is bound to independent pinned Git/Python verification,
+the trusted projection, deterministic groups and immutable receipts. Its
+`catalog_prepared_chunks` receipts atomically accompany group SQL mutations
+and shared CATALOG write-budget reservations. Preparation uses existing
+`planCatalog` SQL: big set-based identity/alias statements are restricted to
+stable exact job/alias keys, never shrinking `LIMIT/OFFSET`. An initial
+unpublished run may append immutable ledger identities but **cannot populate
+the user-facing current tables or advance CATALOG HEAD** until the final
+single `importModelC` transaction.
+
+**Remote execution for this new path is deliberately denied** by both the
+Node importer and the M50 trusted controller. Only local ephemeral D1
+tests and read-only real-Git planner output are currently authorized. This
+code has not passed live Cloudflare REST D1 semantics or GitHub migration
+acceptance, and must not be deployed as an active publisher.
+
+### Actual pinned snapshot planner output
+
+Source SHA: `6b46f1e6f6ea3d466cb39f4d27e23f71ed1a8570`.
+Source manifest: `29be78b3478db345cfabac2e6d7d0dbc0e67efbf0c106af98f7c0d7a87ca8927`.
+The projection digest is an **implementation-specific** hash and changes as
+source-controlled importer/preflight diagnostics change. Always use the digest
+printed by the exact deployment candidate; do not reuse old values.
+
+| Logical UTC day | Mutations planned | Conservative bound |
+|---|---|---:|
+| Day 1 | Prepare receipt groups 0,1,2 | **25,518** |
+| Day 2 | Prepare receipt groups 3,4,5 | **25,262** |
+| Day 3 | Prepare receipt groups 6,7,8 | **18,144** |
+| Day 4 | Final CATALOG + PERSONAL append/reconciliation + reservation | **13,906** |
+| Day 5 | Deferred CATALOG staging cleanup | **28,624** |
+| **Total** | Phased SQL excluding independent v2 service staging | **111,454** |
+
+The new conservative total is **236 higher** than the old unphased
+111,218 bound because multi-day receipts/reservations have their own cost;
+that is expected, not an effort to make the original number fit by omission.
+The baseline prep bound is **68,924**, in nine receipt groups; original
+CATALOG single-batch bound **72,848** is no longer the cost of the final
+atomic transaction in the proposed offline path.
+
+- Selected catalog rows: **218**.
+- Complete vacancy identity ledger: **5,516**.
+- Complete alias mapping ledger: **5,536**.
+- Final CATALOG atomic bound alone: **4,140**.
+- PERSONAL append/checks: **5,158**.
+- PERSONAL reconciliation: **4,588**.
+- Ordinary budget: **30,000/day**, reserved account-wide on CATALOG.
+- Old `model-c-importer.ts` atomic path remains unchanged for normal
+  incremental deltas and all existing imports.
+- **NOT accounted for:** independent remote v2 service staging,
+  remote Free account-wide live usage, D1 transport/transaction parity,
+  additional remote migration costs, host-specific failure/retry reserve.
+
+This is a **theoretical SQL planner schedule backed by real Git/Python
+snapshot and local D1 index weights**, not proof of successful five-day
+remote import. It makes no claim about a specific real calendar date; actual
+operator reservations must use the current UTC quota day, except explicit
+synthetic day simulation on local ephemeral databases.
+
+### Publication and recovery invariants
+
+- No public row visibility before `catalog_head`, verified through existing
+  v7 CATALOG reader gating; dedicated acceptance tests exercise no-HEAD.
+- Immutable receipt = run ID, group ordinal, plan digest and reserved bound;
+  a previously committed group is not re-inserted or charged a second time.
+- A missing receipt with irreversible preparatory rows requires operator
+  recovery; never adopt a partially modified ledger as the initial baseline.
+- Publication uses the existing importer PERSONAL append, single CATALOG
+  batch/CAS/HEAD and post-CATALOG reconciliation and journal (when v2 staged).
+- Cleanup may occur after a completed publication and must require another
+  conservative D1 daily reservation. If v2 staged, journal must be COMPLETED.
+- Source/owner/APP context divergence fails closed, rather than mixing a
+  different source/projection with existing preparation receipts.
+- The service staging JWT is not an operator publication capability.
+
+### Remaining acceptance gates
+
+1. Complete targeted GitHub Actions importer regression with the **3,000**
+   identity synthetic multi-day test; original 700 identity fixture was small
+   enough to fit one preparation group, so it did not test cross-day resume.
+2. Add/verify lost-ACK recovery and forged/changed prepared payload tests.
+3. Validate a v2-staged local end-to-end run via the M50 controller. No
+   remote `M50_REMOTE_OPERATOR_GATE_CLOSED` bypass is permitted.
+4. Validate the migration alongside all existing D1 read, command, backup and
+   schema guards, including newly increased migration-file count.
+5. Obtain a fresh remote quota observation and a narrow **new** Gate B for
+   remote migration and staging; remote D1 batch semantics and operator
+   publication authority remain independently unverified.
+
+Until these pass: **`MULTI_DAY_BOOTSTRAP_PARTIALLY_IMPLEMENTED`**,
+`REMOTE_IMPORT_NOT_AUTHORIZED`.
