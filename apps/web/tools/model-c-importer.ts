@@ -229,6 +229,204 @@ export function inspectCatalogPlan(steps:readonly Step[], metrics:ImportMetrics=
   if (steps.length>8000 || metrics.publicationBytes>8*1024*1024) throw Error('ATOMIC_PUBLICATION_LIMIT');
   return metrics;
 }
+
+/** Initial bootstrap only. Never advance an existing published CATALOG this way.
+ * The immutable identity/alias base may be populated ahead of HEAD because
+ * Model C readers require a trusted published HEAD before exposing jobs.
+ * The original generic importer keeps rejecting abandoned partial targets.
+ */
+function splitInitialPublication(steps:readonly Step[]) {
+  const preparation:Step[]=[], final:Step[]=[];
+  for(const step of steps){
+    const sql=step.sql;
+    if(sql.startsWith('INSERT INTO catalog_cas_guard ')||
+       sql.startsWith('INSERT INTO catalog_import_assert ')||
+       sql.startsWith("UPDATE catalog_runs SET state='READY'")||
+       sql.startsWith('INSERT INTO catalog_company_current ')||
+       sql.startsWith('INSERT INTO catalog_source_current ')||
+       sql.startsWith('INSERT INTO catalog_vacancy_current ')||
+       sql.startsWith('INSERT INTO catalog_head ')||
+       sql.startsWith('UPDATE catalog_head '))
+      final.push(step);
+    else preparation.push(step);
+  }
+  if(!final.some(s=>s.sql.includes('catalog_head'))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_runs '))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_vacancy_identity '))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_aliases ')))
+     throw Error('PHASED_INITIAL_PLAN_INCOMPLETE');
+  // Preserve the ordering of all SQL in its own set. The CATALOG final
+  // transaction still contains the CAS guard, stage assertions and HEAD.
+  return {preparation,final};
+}
+type InitialPreparedGroup={index:number;steps:Step[];bound:number;digest:string};
+async function initialPreparedGroups(db:D1Database,run:string,steps:Step[]) {
+  const maxGroup=8500;
+  const groups:Step[][]=[];let group:Step[]=[],bound=0;
+  for(const step of steps) {
+    const cost=(await estimateWrites(db,[step])).total;
+    if(cost>maxGroup)throw Error('PHASED_PREPARE_STEP_TOO_LARGE');
+    if(group.length && cost+bound>maxGroup){groups.push(group);group=[];bound=0;}
+    group.push(step);bound+=cost;
+  }
+  if(group.length)groups.push(group);
+  if(!groups.length)throw Error('PHASED_PREPARATION_EMPTY');
+  const result:InitialPreparedGroup[]=[];
+  for(const [index,part] of groups.entries()){
+    const predicted=(await estimateWrites(db,part)).total;
+    // Reserve conservatively for the receipt, reservation trigger, budget-day
+    // record and atomic anti-concurrency assertion in the same D1 batch.
+    const units=predicted+24;
+    if(units>9000)throw Error('PHASED_PREPARE_GROUP_BUDGET_EXCEEDED');
+    result.push({index,steps:part,bound:units,
+      digest:await sha256(canonical({run,index,steps:part}))});
+  }
+  return result;
+}
+async function preparedReceipts(db:D1Database,run:string){
+  const rows=(await db.prepare('SELECT chunk_index,chunk_digest,rows_bound FROM catalog_prepared_chunks WHERE run_id=? ORDER BY chunk_index')
+    .bind(run).all<{chunk_index:number;chunk_digest:string;rows_bound:number}>()).results;
+  return rows;
+}
+async function verifyInitialPreparedReceipts(db:D1Database,run:string,steps:Step[]) {
+  const groups=await initialPreparedGroups(db,run,steps);
+  const receipts=await preparedReceipts(db,run);
+  if(receipts.length!==groups.length||
+     receipts.some((r,i)=>r.chunk_index!==i||r.chunk_digest!==groups[i]!.digest||r.rows_bound!==groups[i]!.bound))
+     throw Error('PHASED_PREPARATION_INCOMPLETE_OR_CONFLICT');
+  const matches=await db.prepare('SELECT count(*) AS n FROM catalog_runs WHERE id=? AND state=?')
+    .bind(run,'STAGING').first<number>('n');
+  if(matches!==1)throw Error('PHASED_PREPARED_RUN_UNTRUSTED');
+  if(await db.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n'))
+    throw Error('PHASED_INITIAL_ALREADY_PUBLISHED');
+  return groups;
+}
+async function initialPlan(catalog:D1Database,personal:D1Database,options:ImportOptions) {
+  if(options.executionTarget!=='local-ephemeral'||options.v1||
+     options.bootstrap!=='empty-target'||options.oneTimeFreeBootstrap)
+    throw Error('PHASED_INITIAL_LOCAL_ONLY');
+  if(catalog===personal || await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version')!==7||
+     await personal.prepare("SELECT version FROM model_c_schema WHERE scope='PERSONAL'").first<number>('version')!==3)
+    throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
+  const existing=await catalog.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n');
+  if(existing)throw Error('PHASED_INITIAL_ALREADY_PUBLISHED');
+  const other=await read(personal,personalTables);
+  const refs=references(other,options.owner);
+  const decisionIds=[...new Set(other.personal_decision_events!.map(e=>String(e.job_id)))].sort();
+  const context:SelectionContext={identities:{mode:'first-v1-bootstrap'},
+    personalReferences:refs,personalDecisionJobIds:decisionIds};
+  const verified=await verifyGitProjection(options.source,context);
+  const {bundle}=verified,proof=await verifyProjectionProof(bundle,verified.proof,context);
+  const selected=await selectModelC(bundle,context);
+  if(other.personal_job_refs!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id)))
+    throw Error('UNRESOLVED_PERSONAL_REFERENCE');
+  const observation=catalogObservation(proof,selected.catalogContentDigest,undefined);
+  const run=options.stagedPublication?.runId??'import:'+await sha256(canonical({
+    commit:bundle.manifest.commitSha,projection:proof.projectionInputDigest,expected:0,
+  }));
+  if(options.stagedPublication) {
+    if(!run.startsWith('ingest-v2:'))throw Error('PHASED_V2_STAGING_REQUIRED');
+    await verifyTrustedV2Stage(catalog,run,bundle,selected,proof,options.stagedPublication.trustedPlan);
+  }
+  const environmentDigest=await sha256(canonical({...proof.inputs,selectionContextDigest:'0'.repeat(64)}));
+  const referenceDigest=await sha256(canonical(refs));
+  const plans=await planCatalog(emptyInitialCatalog(),selected,bundle.chunks.flat(),
+    run,proof,observation.catalogRevision,1,environmentDigest,referenceDigest);
+  const portions=splitInitialPublication(plans);
+  const groups=await initialPreparedGroups(catalog,run,portions.preparation);
+  const foreignRuns=await catalog.prepare('SELECT count(*) AS n FROM catalog_runs WHERE id!=?')
+    .bind(run).first<number>('n');
+  if(foreignRuns)throw Error('PHASED_OTHER_CATALOG_RUN_PRESENT');
+  const receipts=await preparedReceipts(catalog,run);
+  if(receipts.length===0) {
+    // No receipts means no irreversible partial schema state is accepted.
+    for(const table of ['catalog_runs','catalog_company_identity','catalog_source_identity',
+      'catalog_vacancy_identity','catalog_aliases','catalog_stage_vacancies']){
+      if(await catalog.prepare('SELECT count(*) AS n FROM '+table).first<number>('n'))
+        throw Error('NONEMPTY_BOOTSTRAP_REFUSED');
+    }
+  }
+  for(const [i,r] of receipts.entries()){
+    if(!groups[i]||r.chunk_index!==i||r.chunk_digest!==groups[i]!.digest||
+      r.rows_bound!==groups[i]!.bound)
+      throw Error('PHASED_PREPARATION_CONFLICT');
+  }
+  return {run,groups,receipts,final:portions.final,sourceCommit:proof.observedGitCommit,
+    manifestDigest:proof.sourceManifestDigest,projectionDigest:proof.projectionInputDigest};
+}
+function checkPhasedDay(budget:ImportOptions['budget'],testDay?:string){
+  if(!Number.isSafeInteger(budget.availableRows)||budget.availableRows<0||budget.availableRows>30000)
+    throw Error('PHASED_WRITE_BUDGET_INVALID');
+  // UTC dates other than today are allowed only for explicit ephemeral lab
+  // simulations, never the remote operator path.
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(budget.day)||
+    (budget.day!==new Date().toISOString().slice(0,10)&&testDay!==budget.day))
+    throw Error('PHASED_BUDGET_DAY_INVALID');
+}
+async function phasedReservation(db:D1Database,budget:ImportOptions['budget'],units:number,guard:Step){
+  if(units>budget.availableRows)throw Error('WRITE_BUDGET_INSUFFICIENT');
+  const charged=Number(await db.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+    .bind(budget.day).first('charged')??0);
+  if(charged+units>budget.availableRows)throw Error('WRITE_BUDGET_INSUFFICIENT');
+  return [
+    db.prepare('INSERT INTO catalog_write_days VALUES (?,0) ON CONFLICT DO NOTHING').bind(budget.day),
+    db.prepare('INSERT INTO catalog_write_reservations VALUES (?,?,?,?)')
+      .bind(randomUUID(),budget.day,units,budget.availableRows),
+    db.prepare(guard.sql).bind(...guard.values),
+  ];
+}
+const initialGuard=(run:string):Step=>statement(
+  "INSERT INTO catalog_import_assert VALUES (CASE WHEN NOT EXISTS(SELECT 1 FROM catalog_head) AND NOT EXISTS(SELECT 1 FROM catalog_runs WHERE id!=?) THEN 1 ELSE 0 END)",[run],{catalog_import_assert:2});
+
+/** Durable, offline-only preparation. One receipt-bound group per invocation.
+ * Replaying a committed receipt does not insert rows or reserve budget again.
+ * The source/projection/complete ledger is independently rebuilt from Git
+ * before every mutation. No Worker route invokes this helper.
+ */
+export async function prepareModelCInitialChunk(catalog:D1Database,personal:D1Database,
+  options:ImportOptions & {localTestDay?:string}) {
+  checkPhasedDay(options.budget,options.localTestDay);
+  const plan=await initialPlan(catalog,personal,options);
+  const next=plan.groups[plan.receipts.length];
+  if(!next)return {status:'PREPARED' as const,run:plan.run,
+    completed:plan.groups.length,total:plan.groups.length,charged:0};
+  const guard=initialGuard(plan.run);
+  const reserve=await phasedReservation(catalog,options.budget,next.bound,guard);
+  const statements=[...reserve,...prepared(catalog,next.steps),
+    catalog.prepare('INSERT INTO catalog_prepared_chunks VALUES (?,?,?,?)')
+      .bind(plan.run,next.index,next.digest,next.bound)];
+  await catalog.batch(statements);
+  const observed=await preparedReceipts(catalog,plan.run);
+  if(observed.length!==next.index+1||observed.at(-1)?.chunk_digest!==next.digest)
+    throw Error('PHASED_PREPARE_RECEIPT_UNVERIFIED');
+  return {status:observed.length===plan.groups.length?'PREPARED' as const:'PREPARING' as const,
+    run:plan.run,completed:observed.length,total:plan.groups.length,
+    charged:next.bound,day:options.budget.day};
+}
+/** The ephemeral final commit is still performed by importModelC itself.
+ * Cleanup is post-CATALOG/PERSONAL/journal and can occupy a later Free day.
+ */
+export async function cleanupModelCInitial(catalog:D1Database,options:{
+ run:string;budget:ImportOptions['budget'];executionTarget:'local-ephemeral';localTestDay?:string;
+}){
+  if(options.executionTarget!=='local-ephemeral')throw Error('PHASED_CLEANUP_LOCAL_ONLY');
+  checkPhasedDay(options.budget,options.localTestDay);
+  const published=await catalog.prepare("SELECT count(*) AS n FROM catalog_head h JOIN catalog_runs r ON r.id=h.run_id WHERE h.run_id=? AND r.state='PUBLISHED'")
+    .bind(options.run).first<number>('n');
+  if(published!==1)throw Error('PHASED_CLEANUP_REQUIRES_PUBLISHED_HEAD');
+  if(options.run.startsWith('ingest-v2:')){
+    const journal=await observeIngestJournal(catalog,options.run);
+    if(journal.phase!=='COMPLETED')throw Error('PHASED_CLEANUP_REQUIRES_COMPLETED_JOURNAL');
+  }
+  const cleanup=await cleanupPlan(catalog,options.run);
+  if(!cleanup.length)return {status:'CLEANUP_REPLAY' as const,charged:0};
+  const bound=(await estimateWrites(catalog,cleanup)).total+20;
+  const reserve=await phasedReservation(catalog,options.budget,bound,statement(
+    "INSERT INTO catalog_import_assert VALUES (CASE WHEN EXISTS(SELECT 1 FROM catalog_head WHERE run_id=?) THEN 1 ELSE 0 END)",[options.run],{catalog_import_assert:2}));
+  await catalog.batch([...reserve,...prepared(catalog,cleanup)]);
+  return {status:'CLEANED' as const,charged:bound,day:options.budget.day};
+}
+
 export async function importModelC(catalog:D1Database, personal:D1Database, options:ImportOptions) {
   const metrics=emptyMetrics();
   try {return await importAttempt(catalog,personal,options,metrics);}
