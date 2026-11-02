@@ -351,7 +351,8 @@ async function initialPlan(catalog:D1Database,personal:D1Database,options:Import
       r.rows_bound!==groups[i]!.bound)
       throw Error('PHASED_PREPARATION_CONFLICT');
   }
-  return {run,groups,receipts,final:portions.final,sourceCommit:proof.observedGitCommit,
+  return {run,groups,receipts,final:portions.final,allSteps:plans,
+    selected,bundle,sourceCommit:proof.observedGitCommit,
     manifestDigest:proof.sourceManifestDigest,projectionDigest:proof.projectionInputDigest};
 }
 function checkPhasedDay(budget:ImportOptions['budget'],testDay?:string){
@@ -377,6 +378,55 @@ async function phasedReservation(db:D1Database,budget:ImportOptions['budget'],un
 }
 const initialGuard=(run:string):Step=>statement(
   "INSERT INTO catalog_import_assert VALUES (CASE WHEN NOT EXISTS(SELECT 1 FROM catalog_head) AND NOT EXISTS(SELECT 1 FROM catalog_runs WHERE id!=?) THEN 1 ELSE 0 END)",[run],{catalog_import_assert:2});
+
+
+/** Read-only real Git schedule preview: derived from the exact importer SQL
+ * planner, D1 index weights, and the same PERSONAL append/reconciliation
+ * estimate as the regular importer. It makes NO D1 mutations.
+ */
+export async function previewModelCInitialSchedule(catalog:D1Database,personal:D1Database,
+ options:ImportOptions){
+ const plan=await initialPlan(catalog,personal,options);
+ const privateData=await read(personal,personalTables);
+ const personalSteps=await planPersonal(privateData,plan.selected,plan.bundle.chunks.flat(),
+   options.owner,plan.bundle.manifest.commitSha);
+ const privateBound=await bound(personal,personalSteps.length
+   ? [...personalGuard(privateData),...personalSteps]:[]);
+ const newPrivateRows=personalSteps.filter(s=>personalTables.some(t=>
+   s.sql.startsWith('INSERT INTO '+t+' '))).length;
+ const newRefs=personalSteps.filter(s=>s.sql.startsWith('INSERT INTO personal_job_refs ')).length;
+ const reconBound=await bound(personal,personalGuard(privateData))+
+   newPrivateRows*2+(privateData.personal_job_refs!.length+newRefs)*4+12;
+ const finalCatalogBound=(await estimateWrites(catalog,plan.final)).total;
+ const journalBound=options.stagedPublication?40:0;
+ const finalCombinedBound=finalCatalogBound+privateBound+reconBound+20+journalBound;
+ const cleanupBound=(await estimateWrites(catalog,cleanupFor(plan.run,plan.allSteps))).total+20;
+ const days:{day:number;groups:number[];reservedBound:number}[]=[];
+ for(const group of plan.groups) {
+   const last=days.at(-1);
+   if(last && last.reservedBound+group.bound<=30000){
+     last.groups.push(group.index);last.reservedBound+=group.bound;
+   } else days.push({day:days.length+1,groups:[group.index],reservedBound:group.bound});
+ }
+ return {status:'PHASED_INITIAL_OFFLINE_PLAN' as const,
+  sourceCommit:plan.sourceCommit,manifestDigest:plan.manifestDigest,
+  projectionDigest:plan.projectionDigest,
+  selectedCount:plan.selected.catalog.length,
+  identityCount:plan.selected.ledger.identities.length,
+  aliasCount:plan.selected.ledger.mappings.length,
+  ordinaryDailyBound:30000,
+  preparationBound:plan.groups.reduce((n,g)=>n+g.bound,0),
+  preparationGroups:plan.groups.map(g=>({index:g.index,writeBound:g.bound})),
+  preparationDays:days,
+  finalCatalogBound,privateBound,reconciliationBound:reconBound,
+  journalBound,finalCombinedBound,cleanupBound,
+  finalDay:days.length+1,cleanupDay:days.length+2,
+  boundPerDayVerified:days.every(d=>d.reservedBound<=30000)&&
+   finalCombinedBound<=30000&&cleanupBound<=30000,
+  externalV2ServiceStagingBudgetIncluded:false,
+  remoteD1SemanticsVerified:false,
+  remoteExecutionAuthorized:false};
+}
 
 /** Durable, offline-only preparation. One receipt-bound group per invocation.
  * Replaying a committed receipt does not insert rows or reserve budget again.
