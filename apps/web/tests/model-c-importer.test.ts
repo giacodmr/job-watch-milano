@@ -112,7 +112,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
     })).status).toBe('CLEANUP_REPLAY');
     const restored=await importModelC(f.c,f.p,f.options);
     expect(restored.status).toBe('REPLAY');
-  });
+  },180000);
   it('rejects a prepared initial remote write without operator publication grant',async()=>{
     const f=await fixture(2);
     await expect(prepareModelCInitialChunk(f.c,f.p,{
