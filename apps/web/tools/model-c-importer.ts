@@ -502,7 +502,7 @@ export async function cleanupModelCInitial(catalog:D1Database,options:{
     const journal=await observeIngestJournal(catalog,options.run);
     if(journal.phase!=='COMPLETED')throw Error('PHASED_CLEANUP_REQUIRES_COMPLETED_JOURNAL');
   }
-  const cleanup=await cleanupPlan(catalog,options.run);
+  const cleanup=await cleanupPlan(catalog,options.run,true);
   if(!cleanup.length)return {status:'CLEANUP_REPLAY' as const,charged:0};
   const bound=(await estimateWrites(catalog,cleanup)).total+20;
   const reserve=await phasedReservation(catalog,options.budget,bound,statement(
@@ -904,10 +904,13 @@ const cleanupTables=['catalog_stage_aliases','catalog_stage_vacancies','catalog_
 function cleanupFor(run:string,publication:Step[]) {
   return cleanupTables.map(t=>statement('DELETE FROM '+t+' WHERE run_id=?',[run],{[t]:publication.reduce((n,s)=>n+(s.sql.startsWith('INSERT INTO '+t+' ')?s.writes[t]??0:0),0)}));
 }
-async function cleanupPlan(db:D1Database, run?:string) {
+async function cleanupPlan(db:D1Database, run?:string,includePreparedInitial=false) {
   const steps:Step[]=[];
   for (const t of cleanupTables) {
-    const rows=(await db.prepare('SELECT s.run_id,count(*) AS n FROM '+t+" s JOIN catalog_runs r ON s.run_id=r.id WHERE r.state IN ('PUBLISHED','ABORTED')"+(run?' AND s.run_id=?':'')+' GROUP BY s.run_id').bind(...(run?[run]:[])).all<{run_id:string;n:number}>()).results;
+    // A multi-day initial run has a dedicated, separately reserved cleanup.
+    // An ordinary replay/delta MUST NOT spend that future day's allowance.
+    const excludePrepared=includePreparedInitial?'':" AND NOT EXISTS (SELECT 1 FROM catalog_prepared_chunks pc WHERE pc.run_id=s.run_id)";
+    const rows=(await db.prepare('SELECT s.run_id,count(*) AS n FROM '+t+" s JOIN catalog_runs r ON s.run_id=r.id WHERE r.state IN ('PUBLISHED','ABORTED')"+excludePrepared+(run?' AND s.run_id=?':'')+' GROUP BY s.run_id').bind(...(run?[run]:[])).all<{run_id:string;n:number}>()).results;
     for (const r of rows) steps.push(statement('DELETE FROM '+t+' WHERE run_id=?',[r.run_id],{[t]:r.n}));
   }
   return steps;
