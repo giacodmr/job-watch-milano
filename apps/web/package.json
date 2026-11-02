@@ -22,7 +22,8 @@
     "sync:measure": "node tools/measure-local.mjs",
     "worker:check:private": "wrangler deploy --config wrangler.private.template.jsonc --dry-run --outdir .worker-private-build",
     "preflight:private": "node tools/private-gate-preflight.mjs",
-    "preflight:bootstrap:local": "node tools/model-c-bootstrap-runner.mjs"
+    "preflight:bootstrap:local": "node tools/model-c-bootstrap-runner.mjs",
+    "worker:check:password": "wrangler deploy --config wrangler.password.template.jsonc --dry-run --outdir .worker-password-build"
   },
   "dependencies": {
     "react": "19.3.1",
