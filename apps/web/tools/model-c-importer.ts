@@ -235,10 +235,44 @@ export function inspectCatalogPlan(steps:readonly Step[], metrics:ImportMetrics=
  * Model C readers require a trusted published HEAD before exposing jobs.
  * The original generic importer keeps rejecting abandoned partial targets.
  */
-function splitInitialPublication(steps:readonly Step[]) {
+function splitInitialPublication(steps:readonly Step[],selected:Selected) {
   const preparation:Step[]=[], final:Step[]=[];
   for(const step of steps){
     const sql=step.sql;
+    // The legacy atomic plan uses set-based INSERT...SELECT for the full
+    // identity/alias ledger. These immutable inserts are now PREPARATION,
+    // and therefore must be sliced by *stable exact keys*. LIMIT/OFFSET
+    // would skip rows after previous batches insert, so never use it here.
+    if(sql.startsWith('INSERT INTO catalog_vacancy_identity(')){
+      if(step.values.length!==1||!sql.includes(' WHERE run_id=? AND NOT EXISTS'))
+        throw Error('PHASED_IDENTITY_SQL_UNRECOGNIZED');
+      const ids=selected.ledger.identities.map(i=>i.jobId).sort();
+      if(ids.length!==step.writes.catalog_vacancy_identity)
+        throw Error('PHASED_IDENTITY_COUNT_MISMATCH');
+      for(let i=0;i<ids.length;i+=50){
+        const keys=ids.slice(i,i+50);
+        const restricted=sql.replace(' WHERE run_id=? AND NOT EXISTS',
+          ' WHERE run_id=? AND s.job_id IN ('+keys.map(()=>'?').join(',')+') AND NOT EXISTS');
+        preparation.push(statement(restricted,[step.values[0]!,...keys],
+          {catalog_vacancy_identity:keys.length}));
+      }
+      continue;
+    }
+    if(sql.startsWith('INSERT INTO catalog_aliases(')){
+      if(step.values.length!==1||!sql.includes(' WHERE run_id=?'))
+        throw Error('PHASED_ALIAS_SQL_UNRECOGNIZED');
+      const keys=selected.ledger.mappings.map(i=>i.key).sort();
+      if(keys.length!==step.writes.catalog_aliases)
+        throw Error('PHASED_ALIAS_COUNT_MISMATCH');
+      for(let i=0;i<keys.length;i+=50){
+        const group=keys.slice(i,i+50);
+        const restricted=sql.replace(' WHERE run_id=?',
+          ' WHERE run_id=? AND alias_key IN ('+group.map(()=>'?').join(',')+')');
+        preparation.push(statement(restricted,[step.values[0]!,...group],
+          {catalog_aliases:group.length}));
+      }
+      continue;
+    }
     if(sql.startsWith('INSERT INTO catalog_cas_guard ')||
        sql.startsWith('INSERT INTO catalog_import_assert ')||
        sql.startsWith("UPDATE catalog_runs SET state='READY'")||
@@ -332,7 +366,7 @@ async function initialPlan(catalog:D1Database,personal:D1Database,options:Import
   const referenceDigest=await sha256(canonical(refs));
   const plans=await planCatalog(emptyInitialCatalog(),selected,bundle.chunks.flat(),
     run,proof,observation.catalogRevision,1,environmentDigest,referenceDigest);
-  const portions=splitInitialPublication(plans);
+  const portions=splitInitialPublication(plans,selected);
   const groups=await initialPreparedGroups(catalog,run,portions.preparation);
   const foreignRuns=await catalog.prepare('SELECT count(*) AS n FROM catalog_runs WHERE id!=?')
     .bind(run).first<number>('n');
@@ -578,7 +612,7 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const fullPublication:Step[]=same?[]:await planCatalog(old,selected,bundle.chunks.flat(),run,proof,contentRevision,ledgerRevision,environmentDigest,referenceDigest,legacy);
   let publication:Step[]=fullPublication;
   if(options.preparedInitial && !same) {
-    const portions=splitInitialPublication(fullPublication);
+    const portions=splitInitialPublication(fullPublication,selected);
     await verifyInitialPreparedReceipts(catalog,run,portions.preparation);
     publication=portions.final;
   }
