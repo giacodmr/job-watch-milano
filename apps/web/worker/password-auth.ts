@@ -67,7 +67,7 @@ export async function checkPassword(password:string,config:Config){
 }
 function headers(extra:Record<string,string>={}):Headers{
   return new Headers({'Cache-Control':'no-store, private','X-Content-Type-Options':'nosniff',
-    'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY',
+    'Referrer-Policy':'same-origin','X-Frame-Options':'DENY',
     'Content-Security-Policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; style-src 'unsafe-inline'",
     ...extra});
 }

@@ -47,6 +47,15 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     expect(()=>passwordConfig({...env,APP_ENV:'private'})).toThrow('password_runtime_disabled');
     expect(()=>passwordConfig({...env,PRIVATE_OWNER_ID:'synthetic-owner'})).toThrow('password_config_missing');
   });
+  it('continues to reject missing, null and foreign Origins after the browser referrer fix',async()=>{
+    for(const originHeader of [undefined,'null','https://evil.example']){
+      const response=await worker.fetch(request('/login',{method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded',...(originHeader===undefined?{}:{Origin:originHeader})},
+        body:new URLSearchParams({password}).toString()}),env);
+      expect(response.status).toBe(403);
+      expect(response.headers.get('set-cookie')).toBeNull();
+    }
+  });
   it('rejects malformed and wrong canonical credentials and legacy-only or incomplete configurations',async()=>{
     const config=passwordConfig(env);
     const independent={...env,PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
@@ -92,6 +101,7 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     expect(r.status).toBe(200);
     expect(await r.text()).toContain('Job Watch');
     expect(r.headers.get('content-security-policy')).toContain("form-action 'self'");
+    expect(r.headers.get('referrer-policy')).toBe('same-origin');
     expect(r.headers.get('cache-control')).toContain('no-store');
     const head=await worker.fetch(request('/login',{method:'HEAD'}),env);
     expect(head.status).toBe(200);
