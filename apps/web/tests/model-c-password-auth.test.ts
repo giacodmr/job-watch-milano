@@ -122,7 +122,7 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     expect(await checkPassword('bad-credentials',config)).toBe(false);
     const login=await worker.fetch(authenticate(password),env);
     expect(login.status).toBe(303);
-    expect(login.headers.get('Location')).toBe('/');
+    expect(login.headers.get('Location')).toBe('/opportunita');
     const setCookie=login.headers.get('set-cookie')||'';
     expect(setCookie).toContain('__Host-jobwatch_session=');
     expect(setCookie).toContain('Secure; HttpOnly; SameSite=Strict');
@@ -133,9 +133,38 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     const status=await worker.fetch(withCookie('/api/model-c/private/status',active),env);
     expect(status.status).toBe(200);
     expect(await status.json()).toEqual({accessVerified:true,readOnly:true,environment:'private'});
-    const asset=await worker.fetch(withCookie('/',active),env);
-    expect(asset.status).toBe(200);
-    expect(await asset.text()).toContain('only for an authenticated visitor');
+    const landing=await worker.fetch(withCookie('/',active),env);
+    expect(landing.status).toBe(303);
+    expect(landing.headers.get('Location')).toBe('/opportunita');
+    expect(landing.headers.get('set-cookie')).toBeNull();
+    const head=await worker.fetch(withCookie('/',active,{method:'HEAD'}),env);
+    expect(head.status).toBe(303);
+    expect(head.headers.get('Location')).toBe('/opportunita');
+    expect(await head.text()).toBe('');
+    for(const path of ['/opportunita','/candidature']){
+      const asset=await worker.fetch(withCookie(path,active),env);
+      expect(asset.status).toBe(200);
+      expect(await asset.text()).toContain('only for an authenticated visitor');
+    }
+  });
+  it('keeps the password-only root protected for expired sessions and unsafe methods',async()=>{
+    const independent={...env,PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
+    const login=await worker.fetch(authenticate(password),independent);
+    const active=cookie(login);
+    const key=Buffer.from(independent.PASSWORD_SESSION_KEY!,'base64url');
+    const expired=await new SignJWT({sub:'single-owner',type:'password'})
+      .setProtectedHeader({alg:'HS256'})
+      .setIssuer('job-watch-password').setAudience(host)
+      .setIssuedAt(-1200).setExpirationTime(-600).setJti('expired-landing')
+      .sign(key);
+    for(const method of ['GET','HEAD']){
+      const response=await worker.fetch(withCookie('/',
+        '__Host-jobwatch_session='+expired,{method}),independent);
+      expect(response.status).toBe(303);
+      expect(response.headers.get('Location')).toBe('/login');
+    }
+    const invalidMethod=await worker.fetch(withCookie('/',active,{method:'POST'}),independent);
+    expect(invalidMethod.status).toBe(405);
   });
   it('rejects forged sessions, unknown cookies, cross-site password POSTs and owner override',async()=>{
     const login=await worker.fetch(authenticate(password),env);
