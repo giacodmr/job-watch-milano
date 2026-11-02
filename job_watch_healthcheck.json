@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-11-02T01:37:22Z",
+  "generated_at": "2026-11-02T07:05:20Z",
   "run_id": "3e9611399418c4ed2c32b84e",
   "snapshot": {
     "run_id": "3e9611399418c4ed2c32b84e",
@@ -35,25 +35,19 @@
   },
   "batches": {
     "JW1": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 68,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 68,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW2": {
       "status": "NEEDS_REVIEW",
@@ -74,34 +68,23 @@
           "action": "SEMANTIC_REVIEW",
           "count": 3,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
     "JW3": {
-      "status": "NEEDS_REVIEW",
+      "status": "COMPLETE_WITH_WARNINGS",
       "processable_semantic_pending": 12,
       "jd_retry_deferred": 0,
       "jd_unavailable": 0,
-      "daily_complete": false,
+      "daily_complete": true,
       "full_semantic_complete": false,
-      "gpt_run_certified": false,
+      "gpt_run_certified": true,
       "actionable_delta_pending": 0,
       "reporting_pending": 0,
       "historical_backlog_remaining": 12,
       "failed": 0,
       "not_checked": 0,
-      "remaining_work": [
-        {
-          "batch": "JW3",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        }
-      ]
+      "remaining_work": []
     },
     "JW4": {
       "status": "NEEDS_REVIEW",
@@ -122,11 +105,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 2,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW4",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     }
@@ -165,7 +143,7 @@
   "source_failures": 0,
   "partial_sources": 107,
   "error_counts": {
-    "record": 15,
+    "record": 16,
     "source": 107,
     "batch": 0,
     "global": 0
@@ -1268,6 +1246,15 @@
       "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Nike",
       "job_key": "Nike::R-91871"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "semantic_patch",
+      "code": "INVALID_REVIEW",
+      "message": "Incomplete surfaced history",
+      "batch": "JW1",
+      "job_key": "Mastercard::/job/London-England-Angel-Lane/Manager--Business-Management---Enablement--SME-Europe_R-288523-1"
     }
   ],
   "stage_reports": {
@@ -1300,6 +1287,9 @@
     },
     "snapshot": {
       "status": "COMPLETE"
+    },
+    "semantic_patch": {
+      "status": "COMPLETE_WITH_WARNINGS"
     },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
@@ -1337,36 +1327,16 @@
   },
   "remaining_work": [
     {
-      "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
       "batch": "JW2",
       "action": "SEMANTIC_REVIEW",
       "count": 3,
       "reason": "Review exact current fingerprints in daily worklist"
     },
     {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW3",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
       "batch": "JW4",
       "action": "SEMANTIC_REVIEW",
       "count": 2,
       "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW4",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
     }
   ],
   "unresolved_user_decisions": [

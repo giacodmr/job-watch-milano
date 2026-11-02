@@ -32,6 +32,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE_WITH_WARNINGS"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1164,6 +1167,15 @@
       "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Nike",
       "job_key": "Nike::R-91871"
+    },
+    {
+      "category": "LOCAL_RECORD_ERROR",
+      "scope": "record",
+      "stage": "semantic_patch",
+      "code": "INVALID_REVIEW",
+      "message": "Incomplete surfaced history",
+      "batch": "JW1",
+      "job_key": "Mastercard::/job/London-England-Angel-Lane/Manager--Business-Management---Enablement--SME-Europe_R-288523-1"
     }
   ]
 }
