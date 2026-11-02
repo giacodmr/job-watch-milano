@@ -100,6 +100,14 @@ describe('verified incremental importer on ephemeral D1',()=>{
     expect(await count(f.c,'catalog_vacancy_identity')).toBe(3000);
     expect(await count(f.c,'catalog_vacancy_current')).toBe(3000);
     expect(await count(f.c,'catalog_stage_vacancies')).toBeGreaterThan(0);
+    const normalReplayDay=f.options.budget.day;
+    const chargedBeforeNormalReplay=Number(await f.c.prepare(
+      'SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(normalReplayDay).first('charged')??0);
+    expect((await importModelC(f.c,f.p,f.options)).status).toBe('REPLAY');
+    expect(await count(f.c,'catalog_stage_vacancies')).toBeGreaterThan(0);
+    expect(Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(normalReplayDay).first('charged')??0)).toBe(chargedBeforeNormalReplay);
     const cleanDay='2026-09-30';
     const cleaned=await cleanupModelCInitial(f.c,{
       run:[...runIds][0]!,budget:{day:cleanDay,availableRows:30000},
