@@ -25,13 +25,16 @@ D1 schemas already exist (CATALOG v7 / PERSONAL v3) but must not be written to b
   telemetry, or a deployable config. The committed `wrangler.password.template.jsonc`
   intentionally has **no** D1 bindings, hostname, owner or secrets and has
   `workers_dev=false`, `preview_urls=false`.
-- Provision these three values **as Cloudflare Worker secrets**, not plaintext
-  `vars`: `PASSWORD_PBKDF2_SALT` (16 random bytes, base64url),
-  `PASSWORD_PBKDF2_VERIFIER` (PBKDF2-HMAC-SHA256, 100000 iterations, 32 bytes, base64url),
-  `PASSWORD_SESSION_KEY` (32 random bytes, base64url). The separate login credential is the
-  password itself, **which is NEVER stored in the Worker**: keep it in a password manager.
-  Run `node tools/generate-password-secrets.mjs` **only in a private local terminal**,
-  never in CI, a Codex chat transcript, a recorded shell, or screenshots.
+- Provision three **Worker secrets**, never plaintext vars: `PASSWORD_HMAC_KEY`
+  (32 CSPRNG bytes, canonical base64url), `PASSWORD_HMAC_VERIFIER` (32-byte HMAC tag),
+  and independent `PASSWORD_SESSION_KEY` (32 CSPRNG bytes, canonical base64url).
+  The credential is `jw1_` + canonical base64url of **32 CSPRNG bytes**; it is never
+  stored in the Worker. No human-selected, reused or predictable password is supported.
+  Shape checks cannot establish entropy: provision only using the trusted offline generator.
+  Run `node tools/generate-password-secrets.mjs /absolute/new/private-directory`
+  in a private trusted terminal, outside Git and CI. It creates a 0700 directory and
+  two exclusive 0600 files (`worker-secrets.json`, `login-password.txt`) and prints
+  **no secret values**. Put the credential into a password manager privately.
 - Both D1s are initially empty: do not provision an owner, seed demo data, import the
   catalog, or perform APP writes under this PR.
 
@@ -46,10 +49,11 @@ D1 schemas already exist (CATALOG v7 / PERSONAL v3) but must not be written to b
   choose a unique namespace in the account for the future pilot.
   This is why the offline generator produces a random 256-bit password; **do not**
   substitute a short or reused password.
-- Password is checked with WebCrypto PBKDF2-SHA256. A production Worker Free CPU smoke
-  test is mandatory: **10 ms CPU/request** is the Free cap, and 100000 PBKDF2
-  iterations must fit in the actual runtime. If they do not, STOP, do not lower the
-  KDF cost silently or upgrade to Paid.
+- Credential verification uses native WebCrypto HMAC-SHA256 `verify`, with a
+  domain-separated message `job-watch-login:v1\0` + credential. The verifier and HMAC
+  key are protected server secrets; JWT signing uses a distinct key (reuse fails closed).
+  Malformed/noncanonical credentials fail closed. No PBKDF2 fallback exists.
+  Actual remote CPU must still fit **10 ms/request**: `CLOUD_GATE_PENDING`.
 - Session is a signed HS256 JWT, four-hour expiry, scoped to the exact hostname, stored
   in a `__Host-` cookie (`Secure; HttpOnly; SameSite=Strict; Path=/`, no Domain).
   No Owner ID or personal email is read from cookies; the owner mapping is server-side.
@@ -94,7 +98,7 @@ Also test, in a locally isolated Worker:
 5. Access RS256 and the old private/local templates regressions PASS.
 6. Test logout behavior and the four-hour stolen-token limitation explicitly.
 
-## M51 local CPU evidence and Free-plan decision
+## Historical M51 PBKDF2 evidence (superseded by HMAC below)
 
 The benchmark uses the real bundled Worker in **local workerd**, two disposable local
 D1 bindings and a local Rate Limiting binding. It uses public synthetic fixtures,
@@ -127,12 +131,12 @@ STOP on CPU exceptions/1102 or insufficient margin; do not upgrade or lower PBKD
 iterations. The remote test must exercise the actual limiter and protected asset
 router on the exact final bundle before any real data or private go-live.
 
-If PBKDF2 cannot meet Free CPU, a minimal zero-cost **proposal only** is a dedicated
+At M51, the proposed zero-cost correction was a dedicated
 server-verified HMAC-SHA256 credential design for an exclusively machine-generated
 256-bit random login credential, with separate verifier/session keys and the same
 cookie, Origin and limiter controls. Fast verification is inappropriate for a
 human-chosen password. This alternative requires explicit approval and review; it
-is not implemented or activated by this PR.
+is now implemented by the CPU-login correction below; it remains undeployed.
 
 Primary references: [Free CPU](https://developers.cloudflare.com/workers/platform/limits/#cpu-time),
 [limiter locality](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/#locality),
@@ -257,3 +261,70 @@ rate limiter, CPU and edge asset routing) are completed. The failed smoke used
 must be approved explicitly for the next bounded smoke. Never invent remote
 CPU evidence or silently activate exposure.
 
+
+## CPU-login correction and secure credential rotation
+
+Scope: main `c579a255c3fe90e684d7e6260f0ee8c686c3638e`; password verifier only.
+Cloudflare Access, owner mapping, cookies, session expiry, Origin/Host validation,
+read-only gates, assets and D1 routing stay unchanged. No remote operations in this PR.
+
+After review and merge, **separate explicit Gate B authorization** is required:
+1. Verify the existing Worker remains unexposed (`workers.dev=false`, previews=false),
+   Free plan, zero cost, account-wide quotas and a fresh bounded smoke budget.
+2. Generate a NEW credential, HMAC key/verifier and JWT session key privately with
+   the offline tool. Rotate all three together; do not reuse the former credential.
+   New session key invalidates every copied old JWT. Never run the generator in CI,
+   transcript capture or screen sharing; never print/cat the resulting files.
+3. Deploy the new bundle and three secrets together from the private file, while
+   exposure remains disabled. Remove `PASSWORD_PBKDF2_SALT` and
+   `PASSWORD_PBKDF2_VERIFIER` remotely while disabled. Legacy-only config returns
+   503; mixed config uses only the new HMAC verifier, never PBKDF2 fallback.
+4. Verify bindings and secret NAMES only, then expose the approved hostname for the
+   bounded smoke. Measure cold/warm valid, wrong canonical and limited logins using
+   edge CPU telemetry, not wall time. Complete logout, CSRF, asset/API protection
+   and zero-write checks. Disable exposure on failure; no Paid upgrade.
+5. Keep only the accepted credential in a password manager; remove temporary local
+   secret files through the operator's secure storage policy. Do not restore the old
+   PBKDF2 configuration or old session key as an exposed rollback: rollback is to
+   **disabled exposure** until a separately reviewed fix.
+
+Local profiling uses a synthetic, test-only entry point, exporting the signing helper
+only through an esbuild plugin. No profiling routes or telemetry are added to the
+production Worker. Each phase includes configuration and HTTP harness overhead;
+results are not additive exclusive spans. Rate uses the real local binding.
+`npm run profile:password:local -- --baseline` loads the prior auth source from the
+pinned main commit; omit `--baseline` for HMAC. The full comparable benchmark also
+supports `npm run benchmark:password:local -- --baseline`. Both are local-only,
+use public synthetic credentials and never accept real secret files.
+
+The native HMAC verifier is appropriate only for uniformly random 256-bit credentials,
+not human passwords. No runtime can infer randomness from a string's appearance.
+Cookie theft remains replayable for up to four hours unless the JWT key is rotated.
+The rate limiter remains approximate per edge location and fail-closed.
+
+References: [Workers Web Crypto](https://developers.cloudflare.com/workers/runtime-apis/web-crypto/),
+[OWASP random-token verification](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html).
+
+### Local comparative measurements — 2026-11-02
+
+Apple M1 Pro / macOS arm64, Node 24.15.0, workerd 1.20261023.1.
+Pinned PBKDF2 baseline and HMAC use the same canonical synthetic credential.
+Full harness: five warm-ups, 30 requests per login case, 60 session reads.
+Phase harness: five warm-ups per phase, 60 requests per phase. Configuration/HTTP
+transport overhead is included in every phase; `ps` CPU is aggregate/coarse.
+
+| Scenario | PBKDF2 CPU mean ms | HMAC CPU mean ms | PBKDF2 wall p50 ms | HMAC wall p50 ms |
+|---|---:|---:|---:|---:|
+| Configuration | 0.50 | 0.50 | 1.03 | 1.26 |
+| Configuration + limiter | 0.83 | 1.17 | 1.67 | 2.25 |
+| Configuration + credential verification | 8.33 | 0.50 | 9.04 | 1.20 |
+| Configuration + JWT signing | 0.50 | 0.67 | 0.85 | 1.43 |
+| Full invalid canonical login | 9.00 | 1.00 | 9.91 | 1.61 |
+| Full valid login | 9.00 | 1.00 | 10.24 | 1.73 |
+
+Valid login wall p95: baseline 10–12 ms in local runs; HMAC 2.93 ms.
+Local limiter: five 303 responses, then seven 429 responses; no session issued
+on denied credentials. Approximate process CPU improvement is 9x for warm valid
+login, not a precise per-isolate speed guarantee. Cold compilation, scheduling,
+shared edge hardware and remote limiter behavior are not certified here.
+**CLOUD_GATE_PENDING** remains mandatory, including cold first-login CPU.
