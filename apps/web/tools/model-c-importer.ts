@@ -252,8 +252,8 @@ function splitInitialPublication(steps:readonly Step[]) {
   }
   if(!final.some(s=>s.sql.includes('catalog_head'))||
      !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_runs '))||
-     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_vacancy_identity '))||
-     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_aliases ')))
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_vacancy_identity'))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_aliases')))
      throw Error('PHASED_INITIAL_PLAN_INCOMPLETE');
   // Preserve the ordering of all SQL in its own set. The CATALOG final
   // transaction still contains the CAS guard, stage assertions and HEAD.
