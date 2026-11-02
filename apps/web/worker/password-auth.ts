@@ -170,7 +170,7 @@ export async function handlePasswordWorker(request:Request,env:PasswordAuthEnv){
         const page=loginPage(url.searchParams.get('error')==='1');
         return request.method==='HEAD'?new Response(null,{status:page.status,headers:page.headers}):page;
       }
-      if(request.method==='POST')return processLogin(request,env,config);
+      if(request.method==='POST')return await processLogin(request,env,config);
       return answer('method_not_allowed',405,{Allow:'GET, HEAD, POST'});
     }
     let principal:AuthenticatedPrincipal;

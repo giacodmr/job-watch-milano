@@ -18,6 +18,7 @@ export async function inspectPrivateRepositoryGate(){
   const errors=[];
   const privateConfig=parseJsonc(await read('wrangler.private.template.jsonc'));
   const localConfig=parseJsonc(await read('wrangler.jsonc'));
+  const passwordConfig=parseJsonc(await read('wrangler.password.template.jsonc'));
   ensure(privateConfig.vars?.APP_ENV==='private','PRIVATE_ENV_NOT_ENFORCED',errors);
   ensure(privateConfig.workers_dev===false,'WORKERS_DEV_NOT_DISABLED',errors);
   ensure(privateConfig.preview_urls===false,'PREVIEWS_NOT_DISABLED',errors);
@@ -44,6 +45,25 @@ export async function inspectPrivateRepositoryGate(){
     'LOCAL_CONFIG_CHANGED',errors);
   ensure((localConfig.d1_databases??[]).every(db=>db.remote===false),
     'LOCAL_CONFIG_HAS_REMOTE_D1',errors);
+  ensure(passwordConfig.vars?.APP_ENV==='password'&&
+    Object.keys(passwordConfig.vars).length===1,'PASSWORD_TEMPLATE_CONFIG_INVALID',errors);
+  ensure(passwordConfig.workers_dev===false&&passwordConfig.preview_urls===false&&
+    passwordConfig.routes===undefined&&passwordConfig.route===undefined,
+    'PASSWORD_TEMPLATE_EXPOSES_HOST',errors);
+  ensure(passwordConfig.assets?.run_worker_first===true&&
+    passwordConfig.assets?.binding==='ASSETS'&&
+    passwordConfig.assets?.not_found_handling==='single-page-application',
+    'PASSWORD_STATIC_ASSETS_BYPASS',errors);
+  ensure(passwordConfig.d1_databases===undefined&&passwordConfig.account_id===undefined&&
+    passwordConfig.kv_namespaces===undefined,'PASSWORD_TEMPLATE_HAS_REMOTE_BINDINGS',errors);
+  ensure(passwordConfig.send_metrics===false&&passwordConfig.observability?.enabled===false,
+    'PASSWORD_TEMPLATE_LOGGING_ENABLED',errors);
+  const limiters=passwordConfig.ratelimits;
+  ensure(Array.isArray(limiters)&&limiters.length===1&&
+    limiters[0].name==='PASSWORD_RATE_LIMITER'&&
+    /^[1-9][0-9]*$/.test(limiters[0].namespace_id)&&
+    limiters[0].simple?.limit===5&&limiters[0].simple?.period===60,
+    'PASSWORD_RATE_LIMITER_CONFIG_INVALID',errors);
   const migrations=[];
   for(const [scope,expected] of [['catalog',7],['personal',3]]){
     const dir='model-c/'+scope+'/migrations';

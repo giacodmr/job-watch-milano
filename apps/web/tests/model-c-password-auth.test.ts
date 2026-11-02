@@ -1,4 +1,4 @@
-import {beforeAll,describe,expect,it} from 'vitest';
+import {beforeAll,describe,expect,it,vi} from 'vitest';
 import {pbkdf2Sync,randomBytes} from 'node:crypto';
 import worker from '../worker/index';
 import {SignJWT} from 'jose';
@@ -34,9 +34,16 @@ beforeAll(()=>{
 });
 describe('Isolated password authentication for Job Watch private pilot',()=>{
   it('fails closed without configured secrets, a limiter or separate databases',()=>{
-    expect(()=>passwordConfig({...env,PASSWORD_RATE_LIMITER:undefined})).toThrow('password_config_missing');
+    const withoutLimiter={...env};
+    delete withoutLimiter.PASSWORD_RATE_LIMITER;
+    const withoutPersonal={...env};
+    delete withoutPersonal.PERSONAL;
+    const catalog=env.CATALOG;
+    if(!catalog)throw Error('missing_test_catalog');
+    expect(()=>passwordConfig(withoutLimiter)).toThrow('password_config_missing');
+    expect(()=>passwordConfig(withoutPersonal)).toThrow('password_config_missing');
     expect(()=>passwordConfig({...env,PASSWORD_SESSION_KEY:'invalid'})).toThrow('password_config_missing');
-    expect(()=>passwordConfig({...env,PERSONAL:env.CATALOG})).toThrow('password_config_missing');
+    expect(()=>passwordConfig({...env,PERSONAL:catalog})).toThrow('password_config_missing');
     expect(()=>passwordConfig({...env,APP_ENV:'private'})).toThrow('password_runtime_disabled');
     expect(()=>passwordConfig({...env,PRIVATE_OWNER_ID:'synthetic-owner'})).toThrow('password_config_missing');
   });
@@ -120,14 +127,20 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     expect(csrf.status).toBe(403);
   });
   it('keeps APP mutations and service ingestion disabled even with a valid session',async()=>{
-    const login=await worker.fetch(authenticate(password),env),active=cookie(login);
+    const flags={...env,PRIVATE_APP_WRITE_GATE:'gate-b-approved',
+      PRIVATE_QUOTA_ATTESTED:'gate-b-approved',
+      PRIVATE_INGESTION_QUOTA_REMAINING:'30000',
+      PRIVATE_INGESTION_QUOTA_VALID_UNTIL:new Date(Date.now()+60000).toISOString()};
+    const login=await worker.fetch(authenticate(password),flags),active=cookie(login);
     const cmd=await worker.fetch(withCookie('/api/model-c/personal/commands/saved',active,{
-      method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'{}'}),env);
+      method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'{}'}),flags);
     expect(cmd.status).toBe(405);
     const service=await worker.fetch(withCookie('/api/model-c/sync/v2/runs',active),env);
     expect(service.status).toBe(404);
     const legacy=await worker.fetch(withCookie('/api/jobs',active),env);
     expect(legacy.status).toBe(404);
+    const ownerQuery=await worker.fetch(withCookie('/api/model-c/personal/summary?owner_id=another-owner',active),flags);
+    expect(ownerQuery.status).toBe(400);
   });
   it('requires same-origin logout POST and deletes only the host session cookie',async()=>{
     const login=await worker.fetch(authenticate(password),env),active=cookie(login);
@@ -147,5 +160,102 @@ describe('Isolated password authentication for Job Watch private pilot',()=>{
     const denied=await handlePasswordWorker(authenticate(password),throttled);
     expect(denied.status).toBe(429);
     expect(denied.headers.get('retry-after')).toBe('60');
+  });
+  it('authenticates every SPA, asset and API route before any database or asset access',async()=>{
+    const catalog=env.CATALOG,personal=env.PERSONAL,assets=env.ASSETS;
+    if(!catalog||!personal||!assets)throw Error('missing_test_bindings');
+    const dbRead=vi.fn(()=>{throw Error('unexpected_database_read');});
+    const assetRead=vi.fn(()=>{throw Error('unexpected_asset_read');});
+    const guard=(db:D1Database)=>new Proxy(db,{get(target,key,receiver){
+      return key==='prepare'?dbRead:Reflect.get(target,key,receiver);
+    }});
+    const guarded={...env,CATALOG:guard(catalog),PERSONAL:guard(personal),
+      ASSETS:new Proxy(assets,{get(target,key,receiver){
+        return key==='fetch'?assetRead:Reflect.get(target,key,receiver);
+      }})};
+    for(const path of ['/','/opportunita','/candidature','/assets/main.js','/assets/main.css',
+      '/api/model-c/catalog/snapshot','/api/model-c/personal/summary',
+      '/api/model-c/opportunities/jobs','/api/jobs','/api/model-c/sync/v2/runs',
+      '/api/model-c/personal/commands/saved']){
+      for(const method of ['GET','HEAD','POST','OPTIONS']){
+        const response=await worker.fetch(request(path,{method,headers:{
+          'Cf-Access-Jwt-Assertion':'untrusted','X-HTTP-Method-Override':'GET',
+          'Cookie':'owner_id=another-owner; session=untrusted',
+        }}),guarded);
+        expect([303,401]).toContain(response.status);
+      }
+    }
+    expect(dbRead).not.toHaveBeenCalled();
+    expect(assetRead).not.toHaveBeenCalled();
+  });
+  it('rejects duplicate host cookies and signed sessions with invalid claims or signatures',async()=>{
+    const config=passwordConfig(env),now=Math.floor(Date.now()/1000);
+    const key=Buffer.from(env.PASSWORD_SESSION_KEY!,'base64url');
+    const token=async(overrides:Record<string,unknown>={},signingKey=key,alg='HS256')=>
+      new SignJWT({sub:'single-owner',type:'password',iss:'job-watch-password',
+        aud:host,iat:now,exp:now+14400,jti:'synthetic-session',...overrides})
+        .setProtectedHeader({alg}).sign(signingKey);
+    const valid=await token();
+    for(const value of [
+      '__Host-jobwatch_session='+valid+'; __Host-jobwatch_session='+valid,
+      '__Host-jobwatch_session=',
+      '__Host-jobwatch_session='+await token({aud:'wrong.example.test'}),
+      '__Host-jobwatch_session='+await token({iss:'wrong-issuer'}),
+      '__Host-jobwatch_session='+await token({sub:'another-owner'}),
+      '__Host-jobwatch_session='+await token({type:'service'}),
+      '__Host-jobwatch_session='+await token({jti:''}),
+      '__Host-jobwatch_session='+await token({exp:now-1}),
+      '__Host-jobwatch_session='+await token({},randomBytes(32)),
+      '__Host-jobwatch_session='+await token({},randomBytes(48),'HS384'),
+    ])await expect(authenticatePasswordRequest(withCookie('/',value),config))
+      .rejects.toMatchObject({code:'password_auth_required',status:401});
+  });
+  it('bounds login bodies and rejects duplicate fields, invalid types and cross-site logout',async()=>{
+    const independent={...env,PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
+    for(const [body,extra,status] of [
+      ['password='+password,{'content-length':'2048'},413],
+      ['password='+'z'.repeat(1025),{},400],
+      ['password='+password,{'content-type':'application/json'},403],
+      ['password='+password,{'Origin':'https://evil.example'},403],
+      ['password='+password+'&password='+password,{},303],
+    ] as const){
+      const response=await worker.fetch(request('/login',{method:'POST',body,headers:{
+        Origin:origin,'content-type':'application/x-www-form-urlencoded',...extra,
+      }}),independent);
+      expect(response.status).toBe(status);
+      expect(response.headers.get('set-cookie')).toBeNull();
+    }
+    const login=await worker.fetch(authenticate(password),independent),active=cookie(login);
+    const csrf=await worker.fetch(withCookie('/logout',active,{
+      method:'POST',headers:{Origin:'https://evil.example'}}),independent);
+    expect(csrf.status).toBe(403);
+    for(const method of ['PUT','DELETE','PATCH','OPTIONS']){
+      expect((await worker.fetch(request('/login',{method}),independent)).status).toBe(405);
+      expect((await worker.fetch(withCookie('/logout',active,{method}),independent)).status).toBe(405);
+    }
+  });
+  it('contains an aborted login body inside the sanitized fail-closed response',async()=>{
+    const independent={...env,PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
+    const init={method:'POST',duplex:'half' as const,
+      headers:{Origin:origin,'Content-Type':'application/x-www-form-urlencoded'},
+      body:new ReadableStream<Uint8Array>({start(controller){
+        controller.error(Error('sensitive_stream_detail'));
+      }})};
+    const response=await handlePasswordWorker(request('/login',init),independent);
+    expect(response.status).toBe(503);
+    expect(await response.text()).toBe('password_runtime_unavailable');
+  });
+  it('documents browser-only logout and proves key rotation invalidates copied sessions',async()=>{
+    const independent={...env,PASSWORD_RATE_LIMITER:{limit:async()=>({success:true})}};
+    const login=await worker.fetch(authenticate(password),independent),active=cookie(login);
+    const logout=await worker.fetch(withCookie('/logout',active,{
+      method:'POST',headers:{Origin:origin}}),independent);
+    expect(logout.headers.get('set-cookie')).toContain('Max-Age=0');
+    // Deliberate pilot limitation: logout cannot revoke a stolen JWT copy.
+    expect((await worker.fetch(withCookie('/api/model-c/private/status',active),independent)).status).toBe(200);
+    const rotated={...independent,PASSWORD_SESSION_KEY:randomBytes(32).toString('base64url')};
+    expect((await worker.fetch(withCookie('/api/model-c/private/status',active),rotated)).status).toBe(401);
+    const fresh=await worker.fetch(authenticate(password),rotated);
+    expect((await worker.fetch(withCookie('/api/model-c/private/status',cookie(fresh)),rotated)).status).toBe(200);
   });
 });
