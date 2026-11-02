@@ -26,6 +26,34 @@ describe('physically separate, inactive Model C schemas',()=>{
     const tables=(await c.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT GLOB '_*'").all<{name:string}>()).results;
     for(const t of tables){const cols=(await c.db.prepare('PRAGMA table_info('+t.name+')').all<{name:string}>()).results.map(v=>v.name);for(const forbidden of ['owner_id','decision','fit_score','reportable','summary','reason','jd','description','payload_json'])expect(cols).not.toContain(forbidden);}
   });
+  it('upgrades populated CATALOG v7 with only additive immutable preparation receipts',async()=>{
+    const db=await runtime.getD1Database('DB'+sequence++);
+    const migrations=(await migrationSources('catalog')).slice(0,7);
+    for(const migration of migrations)await db.batch([
+      db.prepare('CREATE TABLE IF NOT EXISTS model_c_migrations (name TEXT PRIMARY KEY NOT NULL,sha256 TEXT NOT NULL CHECK(length(sha256)=64))'),
+      ...migration.statements.map(sql=>db.prepare(sql)),
+      db.prepare('INSERT INTO model_c_migrations(name,sha256) VALUES (?,?)').bind(migration.name,migration.sha256),
+    ]);
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(7);
+    await stageCatalog(db);
+    const oldRuns=(await db.prepare('SELECT * FROM catalog_runs').all()).results;
+    const oldIdentity=(await db.prepare('SELECT * FROM catalog_vacancy_identity').all()).results;
+    expect((await applySchema(db,'catalog')).applied).toBe(1);
+    expect(await db.prepare('SELECT version FROM model_c_schema').first('version')).toBe(7);
+    expect((await db.prepare('SELECT * FROM catalog_runs').all()).results).toEqual(oldRuns);
+    expect((await db.prepare('SELECT * FROM catalog_vacancy_identity').all()).results).toEqual(oldIdentity);
+    const run=String(oldRuns[0]!.id);
+    await db.prepare('INSERT INTO catalog_prepared_chunks VALUES (?,?,?,?)')
+      .bind(run,0,'a'.repeat(64),100).run();
+    await expect(db.prepare('UPDATE catalog_prepared_chunks SET rows_bound=99')
+      .run()).rejects.toThrow('immutable_prepared_chunk');
+    await expect(db.prepare('DELETE FROM catalog_prepared_chunks')
+      .run()).rejects.toThrow('retained_prepared_chunk');
+    expect(await db.prepare('SELECT rows_bound FROM catalog_prepared_chunks')
+      .first<number>('rows_bound')).toBe(100);
+    expect((await db.prepare('PRAGMA foreign_key_check').all()).results).toHaveLength(0);
+    expect((await applySchema(db,'catalog')).applied).toBe(0);
+  });
   it('upgrades an existing populated PERSONAL v2 via additive migration without altering imported facts',async()=>{
     const db=await runtime.getD1Database('DB'+sequence++);
     for(const migration of (await migrationSources('personal')).slice(0,2)) {
