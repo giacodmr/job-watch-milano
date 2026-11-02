@@ -48,3 +48,5 @@ jobs:
           # The importer runs only with preflightOnly=true and no remote D1 binding.
           export JOB_WATCH_PRIVATE_OWNER_ID="offline-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           npm run preflight:bootstrap:local -- --commit "$SOURCE_SHA"
+      - name: Test existing Model C publication, Free budget, v2 ingestion and D1 REST contracts
+        run: npx vitest run tests/model-c-importer.test.ts tests/model-c-free-bootstrap.test.ts tests/model-c-m49-production-ingestion.test.ts tests/model-c-m50-d1-rest.test.ts
