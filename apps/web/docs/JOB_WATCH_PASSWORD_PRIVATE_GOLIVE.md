@@ -218,3 +218,42 @@ Only after the user separately approves: import one minimal pinned CATALOG snaps
 with trusted publication/recovery; independently initialize PERSONAL owner; enable
 APP writes (CAS/idempotency/quotas) with another explicit gate. Automated ingestion
 is not a prerequisite for the first read-only go-live.
+
+## First remote pilot: expected uninitialized databases (2026-11-02)
+
+The first bounded remote smoke confirmed valid/invalid password login, protected HTML,
+JS, CSS and API assets, authenticated asset fetches and CATALOG read access.
+The remote Worker was correctly disabled after the smoke stopped at
+`GET /api/model-c/personal/summary`: HTTP 404
+`PERSONAL_CONTEXT_UNAVAILABLE`. This is **expected** while PERSONAL v3 has no
+owner context. CATALOG v7 also has no published snapshot. No real data was lost:
+the databases were migrated but never populated.
+
+This acceptance fix deliberately **does not** change the owner-scoped PERSONAL SQL
+reader, forge a personal revision, invent an empty verified history, seed an owner,
+or return HTTP 200 for `/personal/summary`. An authenticated browser now shows an
+explicit, distinct "Registro personale non ancora inizializzato" state instead
+of a generic API-failure panel. CATALOG `snapshot:null` and combined opportunities
+`items:[]` remain valid, non-synthetic empty states.
+
+**Updated remote smoke interpretation:**
+
+- Authenticated `GET /api/model-c/catalog/snapshot`: HTTP 200
+  `snapshot:null` is **PASS_EMPTY** (only when no published catalog exists).
+- Authenticated `GET /api/model-c/opportunities/jobs`: HTTP 200,
+  `snapshot:null` and empty items is **PASS_EMPTY**.
+- Authenticated `GET /api/model-c/personal/summary` (and `/personal/jobs`):
+  HTTP 404 with exactly `PERSONAL_CONTEXT_UNAVAILABLE` is
+  **PASS_UNINITIALIZED**, but **not** proof of initialized, queryable owner data.
+- Missing authentication remains **401** for every API; no owner override;
+  invalid schema/DB failure remains **NO-GO** (do not normalize these).
+- A future real owner import must replace these expected states with independently
+  verified positive reads. No cloud writes are allowed by this UI fix.
+
+The Worker remains **not exposed** until the already-authorized scope is
+reconfirmed for a new attempt and remaining negative tests (logout, actual edge
+rate limiter, CPU and edge asset routing) are completed. The failed smoke used
+24 of its prior 60 HTTP requests; whether any remaining requests may be reused
+must be approved explicitly for the next bounded smoke. Never invent remote
+CPU evidence or silently activate exposure.
+
