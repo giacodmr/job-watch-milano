@@ -3,7 +3,7 @@
 import {resolve} from 'node:path';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {applySchema} from './model-c-schema';
-import {importModelC} from './model-c-importer';
+import {importModelC,previewModelCInitialSchedule} from './model-c-importer';
 
 const blocked=['REMOTE_SEMANTICS_UNVERIFIED','REMOTE_QUOTA_UNVERIFIED',
   'REMOTE_EXECUTION_NOT_AUTHORIZED'] as const;
@@ -34,6 +34,11 @@ async function main(){
       budget:{day:new Date().toISOString().slice(0,10),availableRows:95000},
     });
     if(report.status!=='PREFLIGHT')throw Error('UNEXPECTED_PREFLIGHT_STATE');
+    const phased=await previewModelCInitialSchedule(catalog,personal,{
+      source:{repo,commit:process.argv[3]!},bootstrap:'empty-target',owner,
+      executionTarget:'local-ephemeral',
+      budget:{day:new Date().toISOString().slice(0,10),availableRows:30000},
+    });
     // Numbers only: deterministic aggregate diagnostics, with no owner ID,
     // source contents, application decisions or SQL parameter values.
     const phaseBounds=report.metrics.writeBounds;
@@ -68,6 +73,7 @@ async function main(){
       catalogSingleBatchBound:singleCatalogBatchBound,
       catalogAtomicBatchBudgetLimit:ordinaryDailyWriteLimit,
       multiDayBootstrapAssessment,
+      phasedInitialSchedule:phased,
       publicationStatements:report.metrics.publicationStatements,
       publicationBytes:report.metrics.publicationBytes,
       maxStatementSqlBytes:report.metrics.maxStatementSqlBytes,
