@@ -7,6 +7,7 @@ import type { ModelCLocalEnv } from './model-c-local-api';
 import {authenticatePrivateRequest,privateRequestPolicy,privateWriteEnabled,PrivateAuthError} from './private-access';
 import type {PrivateAccessEnv} from './private-access';
 import {handlePrivateRuntime} from './private-runtime';
+import {handlePasswordWorker} from './password-auth';
 import {handlePrivateServiceIngestion} from './model-c-ingest-v2-production';
 
 export interface Env extends ModelCLocalEnv,PrivateAccessEnv {
@@ -30,6 +31,7 @@ function json(
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    if(env.APP_ENV==='password')return handlePasswordWorker(request,env);
     if(env.APP_ENV==='private'){
       // M49: service-only staging never reaches interactive Access/APP routes.
       // The committed config denies it; enabled requests require a distinct

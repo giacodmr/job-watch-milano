@@ -15,7 +15,11 @@ import {join} from 'node:path';
 
 const delay=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms));
 async function chromeBinary():Promise<string|null>{
-  for(const path of ['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium','/usr/bin/chromium-browser']){
+  const candidates=process.platform==='darwin'?
+    ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+     '/Applications/Chromium.app/Contents/MacOS/Chromium']:
+    ['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium','/usr/bin/chromium-browser'];
+  for(const path of candidates){
     try {await access(path);return path;}catch{ /* try another installed browser */ }
   }
   return null;
