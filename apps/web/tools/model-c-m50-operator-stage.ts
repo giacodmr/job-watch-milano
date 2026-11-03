@@ -137,7 +137,7 @@ export async function stageM50InitialV2WithOperator(
      'SELECT chunk_index,chunk_digest,idempotency_key,record_count FROM catalog_ingest_v2_chunks WHERE run_id=? AND chunk_index=?'
    ).bind(run.runId,chunk.index).first<ChunkReceipt>();
    if(!receipt)deny('M50_INITIAL_STAGE_CHUNK_OUTCOME_UNKNOWN');
-   if(!sameChunk(receipt,chunk))deny('M50_INITIAL_STAGE_CHUNK_CONFLICT');
+   if(!sameChunk(receipt!,chunk))deny('M50_INITIAL_STAGE_CHUNK_CONFLICT');
    added++;received++;estimatedUpperBound+=8;
  }
  const verifiedRows=(await chunkRows(catalog,run.runId)).results;
