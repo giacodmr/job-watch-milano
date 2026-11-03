@@ -50,8 +50,21 @@ describe('password gate with the real local workerd Static Assets router',()=>{
       headers:{Origin:origin,'Content-Type':'application/x-www-form-urlencoded'},
       body:new URLSearchParams({password}).toString()});
     expect(login.status,await login.clone().text()).toBe(303);
+    expect(login.headers.get('location')).toBe('/opportunita');
     const cookie=login.headers.get('set-cookie')?.split(';')[0];
     if(!cookie)throw Error('missing_synthetic_session');
+    for(const method of ['GET','HEAD']){
+      const landing=await runtime.dispatchFetch(origin+'/',{
+        method,redirect:'manual',headers:{Cookie:cookie}});
+      expect(landing.status).toBe(303);
+      expect(landing.headers.get('location')).toBe('/opportunita');
+      expect(await landing.text()).toBe('');
+    }
+    for(const path of ['/opportunita','/candidature']){
+      const page=await runtime.dispatchFetch(origin+path,{headers:{Cookie:cookie}});
+      expect(page.status).toBe(200);
+      expect(await page.text()).toContain('Protected synthetic SPA');
+    }
     for(const path of ['/assets/app.js','/assets/app.css']){
       const asset=await runtime.dispatchFetch(origin+path,{headers:{Cookie:cookie}});
       expect(asset.status).toBe(200);

@@ -71,7 +71,7 @@ export function WorkspaceShell({children,section='candidature'}:{children:ReactN
         <span className="c-nav-disabled" aria-disabled="true">Pipeline e ATS</span>
         <span className="c-nav-disabled" aria-disabled="true"><JWIcon name="archive"/> Archivio</span>
       </nav>
-      <p className="c-nav-footer">{privateAccessVerified?'Ambiente privato · Accesso protetto da Cloudflare Access · Sola lettura':'Consultazione · Modifiche consentite solo se autorizzate dal server.'}</p>
+      <p className="c-nav-footer">{privateAccessVerified?'Ambiente privato · Accesso verificato · Sola lettura':'Consultazione · Modifiche consentite solo se autorizzate dal server.'}</p>
     </aside>
     <div className="c-main-column">
       <div className="c-topbar">

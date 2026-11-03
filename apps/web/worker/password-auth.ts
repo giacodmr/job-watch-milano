@@ -67,7 +67,7 @@ export async function checkPassword(password:string,config:Config){
 }
 function headers(extra:Record<string,string>={}):Headers{
   return new Headers({'Cache-Control':'no-store, private','X-Content-Type-Options':'nosniff',
-    'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY',
+    'Referrer-Policy':'same-origin','X-Frame-Options':'DENY',
     'Content-Security-Policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; style-src 'unsafe-inline'",
     ...extra});
 }
@@ -160,7 +160,7 @@ async function processLogin(request:Request,env:PasswordAuthEnv,config:Config){
   const password=fields.get('password')!;
   if(!await checkPassword(password,config))return redirect('/login?error=1');
   const token=await sessionToken(config);
-  return redirect('/',sessionCookie(token));
+  return redirect('/opportunita',sessionCookie(token));
 }
 export async function handlePasswordWorker(request:Request,env:PasswordAuthEnv){
   try{
@@ -193,6 +193,10 @@ export async function handlePasswordWorker(request:Request,env:PasswordAuthEnv){
     // All APP writes remain denied: privateWriteEnabled(APP_ENV=password) is false.
     // The service ingestion route is not exposed in this runtime.
     privateRequestPolicy(request,false);
+    // Keep the legacy '/' homepage for APP_ENV=local. Only this authenticated
+    // password runtime uses the Model C Opportunities page as its landing.
+    if(url.pathname==='/' && (request.method==='GET'||request.method==='HEAD'))
+      return new Response(null,{status:303,headers:headers({Location:'/opportunita'})});
     return await handlePrivateRuntime(request,env,principal);
   }catch(e){
     const status=e instanceof PrivateAuthError?e.status:503;
