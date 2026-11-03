@@ -2,7 +2,7 @@ import {expect,it} from 'vitest';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {encodeM50RestQuery,createM50RemoteOperatorPair,
  isM50AuthorizedRemotePair,isM50AuthorizedRemoteInitialPair} from '../tools/model-c-m50-d1-rest';
-import {importModelC} from '../tools/model-c-importer';
+import {importModelC,prepareModelCInitialChunk,cleanupModelCInitial} from '../tools/model-c-importer';
 const catalogId='11111111-1111-4111-8111-111111111111';
 const personalId='22222222-2222-4222-8222-222222222222';
 const accountId='a'.repeat(32);
@@ -48,6 +48,16 @@ it('denies unknown operator authority without issuing any HTTP request',async()=
  const initial=createM50RemoteOperatorPair({...good,initialBootstrapApproved:true,remoteBatchSemanticsVerified:true});
  expect(isM50AuthorizedRemoteInitialPair(initial.capability,initial.catalog,initial.personal,
    {day:new Date().toISOString().slice(0,10),availableRows:30000})).toBe(true);
+ const budget={day:new Date().toISOString().slice(0,10),availableRows:30000};
+ await expect(prepareModelCInitialChunk(initial.catalog,initial.personal,{
+   source:{repo:'.',commit:'a'.repeat(40)},owner:'synthetic-owner',
+   executionTarget:'remote',bootstrap:'empty-target',remoteOperatorCapability:initial.capability,
+   budget,localTestDay:'2001-01-01',
+ })).rejects.toThrow('PHASED_REMOTE_SYNTHETIC_DAY_DENIED');
+ await expect(cleanupModelCInitial(initial.catalog,{
+   run:'import:synthetic',budget,executionTarget:'remote',personal:initial.personal,
+   remoteOperatorCapability:initial.capability,
+ })).rejects.toThrow('PHASED_CLEANUP_OPERATOR_NOT_AUTHORIZED');
  const noParity=createM50RemoteOperatorPair({...good,initialBootstrapApproved:true,remoteBatchSemanticsVerified:false});
  expect(isM50AuthorizedRemoteInitialPair(noParity.capability,noParity.catalog,noParity.personal)).toBe(false);
  const noInitialGrant=createM50RemoteOperatorPair({...good,initialBootstrapApproved:false,remoteBatchSemanticsVerified:true});
