@@ -26,16 +26,39 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 56,
+    "records": 57,
     "daily_semantic_pending": 0,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 50,
-    "full_semantic_pending": 50,
-    "processable_semantic_pending": 47,
+    "historical_backlog_remaining": 25,
+    "full_semantic_pending": 25,
+    "processable_semantic_pending": 22,
     "jd_retry_deferred": 3,
     "jd_unavailable": 0
   },
   "records": [
+    {
+      "batch": "JW1",
+      "job_key": "Revolut::554c4b14-c988-4c35-bd06-702acf4f36f7",
+      "action": "NEW_INTERESTING",
+      "needs_semantic_review": false,
+      "company": "Revolut",
+      "source_id": "554c4b14-c988-4c35-bd06-702acf4f36f7",
+      "title": "Graduate Programme 2027: Product Owner (Technical)",
+      "location": "Barcelona, Spain | Dubai, United Arab Emirates | Krakow, Poland | Lisbon, Portugal | London, United Kingdom | Madrid, Spain | Poland - Remote | Porto - Remote, Portugal | Portugal - Remote | Spain - Remote | UAE - Remote, United Arab Emirates | UK - Remote, United Kingdom",
+      "priority_company": false,
+      "canonical_url": "https://www.revolut.com/careers/position/554c4b14-c988-4c35-bd06-702acf4f36f7/",
+      "fingerprint": "e74c282a8ca088fd",
+      "current_status": "STILL_OPEN",
+      "threshold": 80,
+      "first_seen_at": "2026-10-29T12:04:35Z",
+      "decision": {
+        "fit_score": 83,
+        "reportable": true,
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "l68_status": "NO",
+        "rationale": "Strong early-career fintech product strategy, London option and 2025 graduation match. Qualification of LUISS Management MSc as a relevant degree, start only in 2027, UK work authorization and London salary require confirmation before applying."
+      }
+    },
     {
       "batch": "JW1",
       "job_key": "Mastercard::R-287484",
