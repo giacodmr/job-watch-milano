@@ -18,12 +18,15 @@ type Config={
  apiToken:string;gateBApproved:boolean;accountFreePlanVerified:boolean;
  operatorQuotaVerified:boolean;remainingWriteUnits:number;quotaDay:string;
  validUntil:string;
+ initialBootstrapApproved?:boolean;
+ remoteBatchSemanticsVerified?:boolean;
  transport?:HttpTransport;
 };
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const account=/^[a-f0-9]{32}$/i;
 const authorized=new WeakMap<object,{catalog:D1Database;personal:D1Database;
- remainingWriteUnits:number;quotaDay:string;expiresAt:number}>();
+ remainingWriteUnits:number;quotaDay:string;expiresAt:number;
+ initialBootstrapApproved:boolean;remoteBatchSemanticsVerified:boolean}>();
 const fail=(code:string):never=>{throw Error(code);};
 const flat=(value:unknown):value is Record<string,unknown>=>
  !!value&&typeof value==='object'&&!Array.isArray(value);
@@ -163,7 +166,9 @@ export function createM50RemoteOperatorPair(config:Config){
  const capability=Object.freeze({});
  authorized.set(capability,{catalog,personal,
   remainingWriteUnits:config.remainingWriteUnits,quotaDay:config.quotaDay,
-  expiresAt:Date.parse(config.validUntil)});
+  expiresAt:Date.parse(config.validUntil),
+  initialBootstrapApproved:config.initialBootstrapApproved===true,
+  remoteBatchSemanticsVerified:config.remoteBatchSemanticsVerified===true});
  return {catalog,personal,capability,remoteExecutionAuthorized:true as const};
 }
 /** Runtime-only capability tied to the EXACT two D1 transport instances. */
@@ -177,4 +182,12 @@ export function isM50AuthorizedRemotePair(capability:object|undefined,
    (!budget||(budget.day===refs.quotaDay&&
      Number.isSafeInteger(budget.availableRows)&&budget.availableRows>=0&&
      budget.availableRows<=refs.remainingWriteUnits));
+}
+
+/** Additional initial-bootstrap authority. Never implied by ordinary remote publication. */
+export function isM50AuthorizedRemoteInitialPair(capability:object|undefined,
+ catalog:D1Database,personal:D1Database,budget?:{availableRows:number;day:string}){
+ if(!isM50AuthorizedRemotePair(capability,catalog,personal,budget))return false;
+ const entry=authorized.get(capability!);
+ return entry?.initialBootstrapApproved===true&&entry?.remoteBatchSemanticsVerified===true;
 }
