@@ -1,0 +1,56 @@
+# Read-only, one-shot GitHub-side preflight for a pinned collector snapshot.
+# No Cloudflare credentials, D1 remote API, deployment, PR, or main writes.
+name: Job Watch — first real import offline preflight
+on:
+  push:
+    branches:
+      - codex/job-watch-real-import-preflight
+    paths:
+      - .github/workflows/job_watch_real_import_preflight.yml
+      - apps/web/tools/model-c-bootstrap-cli.ts
+      - apps/web/tools/model-c-importer.ts
+      - apps/web/tools/model-c-m50-trusted-controller.ts
+      - apps/web/tools/model-c-remote-plan.ts
+      - apps/web/model-c/catalog/migrations/0008_phased_initial_preparation.sql
+permissions:
+  contents: read
+concurrency:
+  group: job-watch-real-import-offline-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Check out complete pinned Git history
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Set up Node 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install locked web dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Verify source commit exists
+        env:
+          SOURCE_SHA: 6b46f1e6f6ea3d466cb39f4d27e23f71ed1a8570
+        run: |
+          git -C ../.. cat-file -e "${SOURCE_SHA}^{commit}"
+          git -C ../.. merge-base --is-ancestor "$SOURCE_SHA" HEAD
+      - name: Run offline Model C first-import preflight
+        env:
+          SOURCE_SHA: 6b46f1e6f6ea3d466cb39f4d27e23f71ed1a8570
+        run: |
+          # A test-only namespace for ephemeral D1; not the production owner.
+          # The importer runs only with preflightOnly=true and no remote D1 binding.
+          export JOB_WATCH_PRIVATE_OWNER_ID="offline-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          npm run preflight:bootstrap:local -- --commit "$SOURCE_SHA"
+      - name: Test existing Model C publication, Free budget, v2 ingestion and D1 REST contracts
+        run: npx vitest run tests/model-c-importer.test.ts tests/model-c-free-bootstrap.test.ts tests/model-c-m49-production-ingestion.test.ts tests/model-c-m50-d1-rest.test.ts

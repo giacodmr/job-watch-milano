@@ -5,8 +5,9 @@ import { resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { applySchema, captureSynthetic } from '../tools/model-c-schema';
-import { importModelC, ModelCImportError, inspectCatalogPlan } from '../tools/model-c-importer';
+import { importModelC, ModelCImportError, inspectCatalogPlan, prepareModelCInitialChunk, cleanupModelCInitial } from '../tools/model-c-importer';
 import {executePersonalCommand} from '../worker/data/model-c-personal-write';
+import {getModelCCatalogSnapshot} from '../worker/data/model-c-catalog';
 import {getModelCPersonalJob} from '../worker/data/model-c-personal';
 import type { ImportOptions } from '../tools/model-c-importer';
 import { verifyGitProjection } from '../tools/model-c-git';
@@ -62,6 +63,106 @@ afterAll(async()=>{await runtime?.dispose();for(const d of dirs)await rm(d,{recu
   if(process.env.MODEL_C_METRICS_FILE)await writeFile(process.env.MODEL_C_METRICS_FILE,JSON.stringify({syntheticOnly:true,measurement:'actual D1 meta.rows_written; schema setup and fixture seed excluded',scenarios:measurements,preflights},null,2)+'\n');});
 
 describe('verified incremental importer on ephemeral D1',()=>{
+
+  it('prepares an initial full ledger in immutable receipt-bound groups across simulated UTC days and publishes only at HEAD',async()=>{
+    const f=await fixture(3000);
+    let status:'PREPARING'|'PREPARED'='PREPARING';
+    let segments=0;const runIds=new Set<string>(),days:string[]=[];
+    while(status!=='PREPARED' && segments<40) {
+      const day='2026-10-'+String(1+segments).padStart(2,'0');
+      const out=await prepareModelCInitialChunk(f.c,f.p,{
+        ...f.options,budget:{day,availableRows:30000},localTestDay:day,
+      });
+      status=out.status;segments++;runIds.add(out.run);days.push(day);
+      expect(await count(f.c,'catalog_head')).toBe(0);
+      expect(await count(f.c,'catalog_vacancy_current')).toBe(0);
+      expect((await getModelCCatalogSnapshot(f.c)).snapshot).toBeNull();
+      expect(Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+        .bind(day).first('charged'))).toBeLessThanOrEqual(30000);
+    }
+    expect(status).toBe('PREPARED');
+    expect(segments).toBeGreaterThan(1);
+    expect(runIds.size).toBe(1);
+    const receiptCount=await count(f.c,'catalog_prepared_chunks');
+    expect(receiptCount).toBe(segments);
+    const replay=await prepareModelCInitialChunk(f.c,f.p,{
+      ...f.options,budget:{day:days[0]!,availableRows:30000},localTestDay:days[0]!,
+    });
+    expect(replay).toMatchObject({status:'PREPARED',charged:0});
+    expect(await count(f.c,'catalog_prepared_chunks')).toBe(receiptCount);
+    const before=await importModelC(f.c,f.p,{...f.options,preparedInitial:true,preflightOnly:true});
+    expect(before.status).toBe('PREFLIGHT');
+    if(before.status!=='PREFLIGHT')throw Error('INVALID_PREPARED_PREFLIGHT');
+    expect(before.metrics.requiredBound).toBeLessThan(30000);
+    const published=await importModelC(f.c,f.p,{...f.options,preparedInitial:true});
+    expect(published.status).toBe('PUBLISHED');
+    expect(await count(f.c,'catalog_head')).toBe(1);
+    expect(await count(f.c,'catalog_vacancy_identity')).toBe(3000);
+    expect(await count(f.c,'catalog_vacancy_current')).toBe(3000);
+    expect(await count(f.c,'catalog_stage_vacancies')).toBeGreaterThan(0);
+    const normalReplayDay=f.options.budget.day;
+    const chargedBeforeNormalReplay=Number(await f.c.prepare(
+      'SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(normalReplayDay).first('charged')??0);
+    expect((await importModelC(f.c,f.p,f.options)).status).toBe('REPLAY');
+    expect(await count(f.c,'catalog_stage_vacancies')).toBeGreaterThan(0);
+    expect(Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(normalReplayDay).first('charged')??0)).toBe(chargedBeforeNormalReplay);
+    const cleanDay='2026-09-30';
+    const cleaned=await cleanupModelCInitial(f.c,{
+      run:[...runIds][0]!,budget:{day:cleanDay,availableRows:30000},
+      executionTarget:'local-ephemeral',localTestDay:cleanDay,
+    });
+    expect(cleaned.status).toBe('CLEANED');
+    expect(cleaned.charged).toBeLessThanOrEqual(30000);
+    expect(await count(f.c,'catalog_stage_vacancies')).toBe(0);
+    expect((await cleanupModelCInitial(f.c,{
+      run:[...runIds][0]!,budget:{day:cleanDay,availableRows:30000},
+      executionTarget:'local-ephemeral',localTestDay:cleanDay,
+    })).status).toBe('CLEANUP_REPLAY');
+    const restored=await importModelC(f.c,f.p,f.options);
+    expect(restored.status).toBe('REPLAY');
+  },180000);
+  it('recovers a lost preparation acknowledgement without a second reservation or changing HEAD',async()=>{
+    const f=await fixture(4);
+    let lost=false;
+    const uncertain=intercept(f.c,async(sql,actual)=>{
+      if(!lost&&sql.some(x=>x.startsWith('INSERT INTO catalog_prepared_chunks'))){
+        lost=true;await actual();throw Error('SYNTHETIC_PREPARE_ACK_LOST');
+      }
+      return actual();
+    });
+    await expect(prepareModelCInitialChunk(uncertain,f.p,f.options))
+      .rejects.toThrow('SYNTHETIC_PREPARE_ACK_LOST');
+    expect(lost).toBe(true);
+    expect(await count(f.c,'catalog_prepared_chunks')).toBe(1);
+    const day=f.options.budget.day;
+    const charged=Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(day).first('charged'));
+    const replay=await prepareModelCInitialChunk(f.c,f.p,f.options);
+    expect(replay).toMatchObject({status:'PREPARED',charged:0});
+    expect(Number(await f.c.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+      .bind(day).first('charged'))).toBe(charged);
+    expect((await getModelCCatalogSnapshot(f.c)).snapshot).toBeNull();
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    const newer=commit(f.repo);
+    await expect(prepareModelCInitialChunk(f.c,f.p,{
+      ...f.options,source:{...f.options.source,commit:newer},
+    })).rejects.toThrow('PHASED_OTHER_CATALOG_RUN_PRESENT');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+  },60000);
+  it('rejects a prepared initial remote write without operator publication grant',async()=>{
+    const f=await fixture(2);
+    await expect(prepareModelCInitialChunk(f.c,f.p,{
+      ...f.options,executionTarget:'remote',
+    })).rejects.toThrow('PHASED_INITIAL_LOCAL_ONLY');
+    await expect(importModelC(f.c,f.p,{
+      ...f.options,executionTarget:'remote',preparedInitial:true,
+    })).rejects.toThrow('REMOTE_IMPORT_NOT_AUTHORIZED');
+    expect(await count(f.c,'catalog_head')).toBe(0);
+    expect(await count(f.c,'catalog_prepared_chunks')).toBe(0);
+  });
+
   it('never interprets a remote execution target as permission to mutate D1',async()=>{
     const f=await fixture(1);
     for(const extra of [{executionTarget:'remote' as const},
@@ -585,7 +686,7 @@ describe('M47 trusted Git replay vs persisted M46 staging, isolated D1',()=>{
       preflightOnly:true,oneTimeFreeBootstrap:true,executionTarget:'remote'});
     if(preflight.status!=='PREFLIGHT')throw Error('SYNTHETIC_PREFLIGHT_REQUIRED');
     const setup={
-      catalog:{migrationFiles:7,localRowsWritten:f.schemaCosts.catalog.rowsWritten,
+      catalog:{migrationFiles:8,localRowsWritten:f.schemaCosts.catalog.rowsWritten,
         remoteUpperBound:f.schemaCosts.catalog.rowsWritten+100},
       personal:{migrationFiles:3,localRowsWritten:f.schemaCosts.personal.rowsWritten,
         remoteUpperBound:f.schemaCosts.personal.rowsWritten+100},

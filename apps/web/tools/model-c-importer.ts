@@ -31,6 +31,9 @@ export interface ImportOptions {
   // A staging marker/JWT can never satisfy this runtime guard.
   remoteOperatorCapability?: object;
   preflightOnly?: boolean;
+  // Offline-only initial CATALOG preparation. Never authorizes remote writes.
+  // Prepared identities/aliases remain invisible until the atomic HEAD switch.
+  preparedInitial?: boolean;
   // Optional M47 lab-only: bind an M46 staged run to the independently
   // replayed full Git snapshot before ANY importer writes. Never a service grant.
   stagedPublication?: {runId:string;trustedPlan:Awaited<ReturnType<typeof prepareSafeRemoteBootstrapPlan>>};
@@ -109,6 +112,10 @@ function ledger(data:Record<string,Row[]>):IdentityLedger {
     identities:data.catalog_vacancy_identity!.map(r=>({jobId:String(r.id),companyId:String(r.company_id),originJobKey:String(r.origin_job_key)})).sort((a,b)=>a.jobId<b.jobId?-1:1),
     mappings:data.catalog_aliases!.map(r=>({key:String(r.alias_key),jobId:String(r.job_id)})).sort((a,b)=>a.key<b.key?-1:1),
   };
+}
+function emptyInitialCatalog():Awaited<ReturnType<typeof trustedCatalog>> {
+  const data=Object.fromEntries(catalogTables.map(t=>[t,[]])) as Record<string,Row[]>;
+  return {data,head:undefined,ledger:{identities:[],mappings:[]},previous:undefined};
 }
 async function trustedCatalog(db:D1Database) {
   const data=await read(db,catalogTables), head=data.catalog_head![0], fullLedger=ledger(data);
@@ -222,6 +229,288 @@ export function inspectCatalogPlan(steps:readonly Step[], metrics:ImportMetrics=
   if (steps.length>8000 || metrics.publicationBytes>8*1024*1024) throw Error('ATOMIC_PUBLICATION_LIMIT');
   return metrics;
 }
+
+/** Initial bootstrap only. Never advance an existing published CATALOG this way.
+ * The immutable identity/alias base may be populated ahead of HEAD because
+ * Model C readers require a trusted published HEAD before exposing jobs.
+ * The original generic importer keeps rejecting abandoned partial targets.
+ */
+function splitInitialPublication(steps:readonly Step[],selected:Selected) {
+  const preparation:Step[]=[], final:Step[]=[];
+  for(const step of steps){
+    const sql=step.sql;
+    // The legacy atomic plan uses set-based INSERT...SELECT for the full
+    // identity/alias ledger. These immutable inserts are now PREPARATION,
+    // and therefore must be sliced by *stable exact keys*. LIMIT/OFFSET
+    // would skip rows after previous batches insert, so never use it here.
+    if(sql.startsWith('INSERT INTO catalog_vacancy_identity(')){
+      if(step.values.length!==1||!sql.includes(' WHERE run_id=? AND NOT EXISTS'))
+        throw Error('PHASED_IDENTITY_SQL_UNRECOGNIZED');
+      const ids=selected.ledger.identities.map(i=>i.jobId).sort();
+      if(ids.length!==step.writes.catalog_vacancy_identity)
+        throw Error('PHASED_IDENTITY_COUNT_MISMATCH');
+      for(let i=0;i<ids.length;i+=50){
+        const keys=ids.slice(i,i+50);
+        const restricted=sql.replace(' WHERE run_id=? AND NOT EXISTS',
+          ' WHERE run_id=? AND s.job_id IN ('+keys.map(()=>'?').join(',')+') AND NOT EXISTS');
+        preparation.push(statement(restricted,[step.values[0]!,...keys],
+          {catalog_vacancy_identity:keys.length}));
+      }
+      continue;
+    }
+    if(sql.startsWith('INSERT INTO catalog_aliases(')){
+      if(step.values.length!==1||!sql.includes(' WHERE run_id=?'))
+        throw Error('PHASED_ALIAS_SQL_UNRECOGNIZED');
+      const keys=selected.ledger.mappings.map(i=>i.key).sort();
+      if(keys.length!==step.writes.catalog_aliases)
+        throw Error('PHASED_ALIAS_COUNT_MISMATCH');
+      for(let i=0;i<keys.length;i+=50){
+        const group=keys.slice(i,i+50);
+        const restricted=sql.replace(' WHERE run_id=?',
+          ' WHERE run_id=? AND alias_key IN ('+group.map(()=>'?').join(',')+')');
+        preparation.push(statement(restricted,[step.values[0]!,...group],
+          {catalog_aliases:group.length}));
+      }
+      continue;
+    }
+    if(sql.startsWith('INSERT INTO catalog_cas_guard ')||
+       sql.startsWith('INSERT INTO catalog_import_assert ')||
+       sql.startsWith("UPDATE catalog_runs SET state='READY'")||
+       sql.startsWith('INSERT INTO catalog_company_current ')||
+       sql.startsWith('INSERT INTO catalog_source_current ')||
+       sql.startsWith('INSERT INTO catalog_vacancy_current ')||
+       sql.startsWith('INSERT INTO catalog_head ')||
+       sql.startsWith('UPDATE catalog_head '))
+      final.push(step);
+    else preparation.push(step);
+  }
+  if(!final.some(s=>s.sql.includes('catalog_head'))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_runs '))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_vacancy_identity'))||
+     !preparation.some(s=>s.sql.startsWith('INSERT INTO catalog_aliases')))
+     throw Error('PHASED_INITIAL_PLAN_INCOMPLETE');
+  // Preserve the ordering of all SQL in its own set. The CATALOG final
+  // transaction still contains the CAS guard, stage assertions and HEAD.
+  return {preparation,final};
+}
+type InitialPreparedGroup={index:number;steps:Step[];bound:number;digest:string};
+async function initialPreparedGroups(db:D1Database,run:string,steps:Step[]) {
+  const maxGroup=8500;
+  const groups:Step[][]=[];let group:Step[]=[],bound=0;
+  for(const step of steps) {
+    const cost=(await estimateWrites(db,[step])).total;
+    if(cost>maxGroup)throw Error('PHASED_PREPARE_STEP_TOO_LARGE');
+    if(group.length && cost+bound>maxGroup){groups.push(group);group=[];bound=0;}
+    group.push(step);bound+=cost;
+  }
+  if(group.length)groups.push(group);
+  if(!groups.length)throw Error('PHASED_PREPARATION_EMPTY');
+  const result:InitialPreparedGroup[]=[];
+  for(const [index,part] of groups.entries()){
+    const predicted=(await estimateWrites(db,part)).total;
+    // Reserve conservatively for the receipt, reservation trigger, budget-day
+    // record and atomic anti-concurrency assertion in the same D1 batch.
+    const units=predicted+24;
+    if(units>9000)throw Error('PHASED_PREPARE_GROUP_BUDGET_EXCEEDED');
+    result.push({index,steps:part,bound:units,
+      digest:await sha256(canonical({run,index,steps:part}))});
+  }
+  return result;
+}
+async function preparedReceipts(db:D1Database,run:string){
+  const rows=(await db.prepare('SELECT chunk_index,chunk_digest,rows_bound FROM catalog_prepared_chunks WHERE run_id=? ORDER BY chunk_index')
+    .bind(run).all<{chunk_index:number;chunk_digest:string;rows_bound:number}>()).results;
+  return rows;
+}
+async function verifyInitialPreparedReceipts(db:D1Database,run:string,steps:Step[]) {
+  const groups=await initialPreparedGroups(db,run,steps);
+  const receipts=await preparedReceipts(db,run);
+  if(receipts.length!==groups.length||
+     receipts.some((r,i)=>r.chunk_index!==i||r.chunk_digest!==groups[i]!.digest||r.rows_bound!==groups[i]!.bound))
+     throw Error('PHASED_PREPARATION_INCOMPLETE_OR_CONFLICT');
+  const matches=await db.prepare('SELECT count(*) AS n FROM catalog_runs WHERE id=? AND state=?')
+    .bind(run,'STAGING').first<number>('n');
+  if(matches!==1)throw Error('PHASED_PREPARED_RUN_UNTRUSTED');
+  if(await db.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n'))
+    throw Error('PHASED_INITIAL_ALREADY_PUBLISHED');
+  return groups;
+}
+async function initialPlan(catalog:D1Database,personal:D1Database,options:ImportOptions) {
+  if(options.executionTarget!=='local-ephemeral'||options.v1||
+     options.bootstrap!=='empty-target'||options.oneTimeFreeBootstrap)
+    throw Error('PHASED_INITIAL_LOCAL_ONLY');
+  if(catalog===personal || await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version')!==7||
+     await personal.prepare("SELECT version FROM model_c_schema WHERE scope='PERSONAL'").first<number>('version')!==3)
+    throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
+  const existing=await catalog.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n');
+  if(existing)throw Error('PHASED_INITIAL_ALREADY_PUBLISHED');
+  const other=await read(personal,personalTables);
+  const refs=references(other,options.owner);
+  const decisionIds=[...new Set(other.personal_decision_events!.map(e=>String(e.job_id)))].sort();
+  const context:SelectionContext={identities:{mode:'first-v1-bootstrap'},
+    personalReferences:refs,personalDecisionJobIds:decisionIds};
+  const verified=await verifyGitProjection(options.source,context);
+  const {bundle}=verified,proof=await verifyProjectionProof(bundle,verified.proof,context);
+  const selected=await selectModelC(bundle,context);
+  if(other.personal_job_refs!.some(r=>!selected.ledger.identities.some(i=>i.jobId===r.job_id)))
+    throw Error('UNRESOLVED_PERSONAL_REFERENCE');
+  const observation=catalogObservation(proof,selected.catalogContentDigest,undefined);
+  const run=options.stagedPublication?.runId??'import:'+await sha256(canonical({
+    commit:bundle.manifest.commitSha,projection:proof.projectionInputDigest,expected:0,
+  }));
+  if(options.stagedPublication) {
+    if(!run.startsWith('ingest-v2:'))throw Error('PHASED_V2_STAGING_REQUIRED');
+    await verifyTrustedV2Stage(catalog,run,bundle,selected,proof,options.stagedPublication.trustedPlan);
+  }
+  const environmentDigest=await sha256(canonical({...proof.inputs,selectionContextDigest:'0'.repeat(64)}));
+  const referenceDigest=await sha256(canonical(refs));
+  const plans=await planCatalog(emptyInitialCatalog(),selected,bundle.chunks.flat(),
+    run,proof,observation.catalogRevision,1,environmentDigest,referenceDigest);
+  const portions=splitInitialPublication(plans,selected);
+  const groups=await initialPreparedGroups(catalog,run,portions.preparation);
+  const foreignRuns=await catalog.prepare('SELECT count(*) AS n FROM catalog_runs WHERE id!=?')
+    .bind(run).first<number>('n');
+  if(foreignRuns)throw Error('PHASED_OTHER_CATALOG_RUN_PRESENT');
+  const receipts=await preparedReceipts(catalog,run);
+  if(receipts.length===0) {
+    // No receipts means no irreversible partial schema state is accepted.
+    for(const table of ['catalog_runs','catalog_company_identity','catalog_source_identity',
+      'catalog_vacancy_identity','catalog_aliases','catalog_stage_vacancies']){
+      if(await catalog.prepare('SELECT count(*) AS n FROM '+table).first<number>('n'))
+        throw Error('NONEMPTY_BOOTSTRAP_REFUSED');
+    }
+  }
+  for(const [i,r] of receipts.entries()){
+    if(!groups[i]||r.chunk_index!==i||r.chunk_digest!==groups[i]!.digest||
+      r.rows_bound!==groups[i]!.bound)
+      throw Error('PHASED_PREPARATION_CONFLICT');
+  }
+  return {run,groups,receipts,final:portions.final,allSteps:plans,
+    selected,bundle,sourceCommit:proof.observedGitCommit,
+    manifestDigest:proof.sourceManifestDigest,projectionDigest:proof.projectionInputDigest};
+}
+function checkPhasedDay(budget:ImportOptions['budget'],testDay?:string){
+  if(!Number.isSafeInteger(budget.availableRows)||budget.availableRows<0||budget.availableRows>30000)
+    throw Error('PHASED_WRITE_BUDGET_INVALID');
+  // UTC dates other than today are allowed only for explicit ephemeral lab
+  // simulations, never the remote operator path.
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(budget.day)||
+    (budget.day!==new Date().toISOString().slice(0,10)&&testDay!==budget.day))
+    throw Error('PHASED_BUDGET_DAY_INVALID');
+}
+async function phasedReservation(db:D1Database,budget:ImportOptions['budget'],units:number,guard:Step){
+  if(units>budget.availableRows)throw Error('WRITE_BUDGET_INSUFFICIENT');
+  const charged=Number(await db.prepare('SELECT charged FROM catalog_write_totals WHERE day=?')
+    .bind(budget.day).first('charged')??0);
+  if(charged+units>budget.availableRows)throw Error('WRITE_BUDGET_INSUFFICIENT');
+  return [
+    db.prepare('INSERT INTO catalog_write_days VALUES (?,0) ON CONFLICT DO NOTHING').bind(budget.day),
+    db.prepare('INSERT INTO catalog_write_reservations VALUES (?,?,?,?)')
+      .bind(randomUUID(),budget.day,units,budget.availableRows),
+    db.prepare(guard.sql).bind(...guard.values),
+  ];
+}
+const initialGuard=(run:string):Step=>statement(
+  "INSERT INTO catalog_import_assert VALUES (CASE WHEN NOT EXISTS(SELECT 1 FROM catalog_head) AND NOT EXISTS(SELECT 1 FROM catalog_runs WHERE id!=?) THEN 1 ELSE 0 END)",[run],{catalog_import_assert:2});
+
+
+/** Read-only real Git schedule preview: derived from the exact importer SQL
+ * planner, D1 index weights, and the same PERSONAL append/reconciliation
+ * estimate as the regular importer. It makes NO D1 mutations.
+ */
+export async function previewModelCInitialSchedule(catalog:D1Database,personal:D1Database,
+ options:ImportOptions){
+ const plan=await initialPlan(catalog,personal,options);
+ const privateData=await read(personal,personalTables);
+ const personalSteps=await planPersonal(privateData,plan.selected,plan.bundle.chunks.flat(),
+   options.owner,plan.bundle.manifest.commitSha);
+ const privateBound=await bound(personal,personalSteps.length
+   ? [...personalGuard(privateData),...personalSteps]:[]);
+ const newPrivateRows=personalSteps.filter(s=>personalTables.some(t=>
+   s.sql.startsWith('INSERT INTO '+t+' '))).length;
+ const newRefs=personalSteps.filter(s=>s.sql.startsWith('INSERT INTO personal_job_refs ')).length;
+ const reconBound=await bound(personal,personalGuard(privateData))+
+   newPrivateRows*2+(privateData.personal_job_refs!.length+newRefs)*4+12;
+ const finalCatalogBound=(await estimateWrites(catalog,plan.final)).total;
+ const journalBound=options.stagedPublication?40:0;
+ const finalCombinedBound=finalCatalogBound+privateBound+reconBound+20+journalBound;
+ const cleanupBound=(await estimateWrites(catalog,cleanupFor(plan.run,plan.allSteps))).total+20;
+ const days:{day:number;groups:number[];reservedBound:number}[]=[];
+ for(const group of plan.groups) {
+   const last=days.at(-1);
+   if(last && last.reservedBound+group.bound<=30000){
+     last.groups.push(group.index);last.reservedBound+=group.bound;
+   } else days.push({day:days.length+1,groups:[group.index],reservedBound:group.bound});
+ }
+ return {status:'PHASED_INITIAL_OFFLINE_PLAN' as const,
+  sourceCommit:plan.sourceCommit,manifestDigest:plan.manifestDigest,
+  projectionDigest:plan.projectionDigest,
+  selectedCount:plan.selected.catalog.length,
+  identityCount:plan.selected.ledger.identities.length,
+  aliasCount:plan.selected.ledger.mappings.length,
+  ordinaryDailyBound:30000,
+  preparationBound:plan.groups.reduce((n,g)=>n+g.bound,0),
+  preparationGroups:plan.groups.map(g=>({index:g.index,writeBound:g.bound})),
+  preparationDays:days,
+  finalCatalogBound,privateBound,reconciliationBound:reconBound,
+  journalBound,finalCombinedBound,cleanupBound,
+  finalDay:days.length+1,cleanupDay:days.length+2,
+  boundPerDayVerified:days.every(d=>d.reservedBound<=30000)&&
+   finalCombinedBound<=30000&&cleanupBound<=30000,
+  externalV2ServiceStagingBudgetIncluded:false,
+  remoteD1SemanticsVerified:false,
+  remoteExecutionAuthorized:false};
+}
+
+/** Durable, offline-only preparation. One receipt-bound group per invocation.
+ * Replaying a committed receipt does not insert rows or reserve budget again.
+ * The source/projection/complete ledger is independently rebuilt from Git
+ * before every mutation. No Worker route invokes this helper.
+ */
+export async function prepareModelCInitialChunk(catalog:D1Database,personal:D1Database,
+  options:ImportOptions & {localTestDay?:string}) {
+  checkPhasedDay(options.budget,options.localTestDay);
+  const plan=await initialPlan(catalog,personal,options);
+  const next=plan.groups[plan.receipts.length];
+  if(!next)return {status:'PREPARED' as const,run:plan.run,
+    completed:plan.groups.length,total:plan.groups.length,charged:0};
+  const guard=initialGuard(plan.run);
+  const reserve=await phasedReservation(catalog,options.budget,next.bound,guard);
+  const statements=[...reserve,...prepared(catalog,next.steps),
+    catalog.prepare('INSERT INTO catalog_prepared_chunks VALUES (?,?,?,?)')
+      .bind(plan.run,next.index,next.digest,next.bound)];
+  await catalog.batch(statements);
+  const observed=await preparedReceipts(catalog,plan.run);
+  if(observed.length!==next.index+1||observed.at(-1)?.chunk_digest!==next.digest)
+    throw Error('PHASED_PREPARE_RECEIPT_UNVERIFIED');
+  return {status:observed.length===plan.groups.length?'PREPARED' as const:'PREPARING' as const,
+    run:plan.run,completed:observed.length,total:plan.groups.length,
+    charged:next.bound,day:options.budget.day};
+}
+/** The ephemeral final commit is still performed by importModelC itself.
+ * Cleanup is post-CATALOG/PERSONAL/journal and can occupy a later Free day.
+ */
+export async function cleanupModelCInitial(catalog:D1Database,options:{
+ run:string;budget:ImportOptions['budget'];executionTarget:'local-ephemeral';localTestDay?:string;
+}){
+  if(options.executionTarget!=='local-ephemeral')throw Error('PHASED_CLEANUP_LOCAL_ONLY');
+  checkPhasedDay(options.budget,options.localTestDay);
+  const published=await catalog.prepare("SELECT count(*) AS n FROM catalog_head h JOIN catalog_runs r ON r.id=h.run_id WHERE h.run_id=? AND r.state='PUBLISHED'")
+    .bind(options.run).first<number>('n');
+  if(published!==1)throw Error('PHASED_CLEANUP_REQUIRES_PUBLISHED_HEAD');
+  if(options.run.startsWith('ingest-v2:')){
+    const journal=await observeIngestJournal(catalog,options.run);
+    if(journal.phase!=='COMPLETED')throw Error('PHASED_CLEANUP_REQUIRES_COMPLETED_JOURNAL');
+  }
+  const cleanup=await cleanupPlan(catalog,options.run,true);
+  if(!cleanup.length)return {status:'CLEANUP_REPLAY' as const,charged:0};
+  const bound=(await estimateWrites(catalog,cleanup)).total+20;
+  const reserve=await phasedReservation(catalog,options.budget,bound,statement(
+    "INSERT INTO catalog_import_assert VALUES (CASE WHEN EXISTS(SELECT 1 FROM catalog_head WHERE run_id=?) THEN 1 ELSE 0 END)",[options.run],{catalog_import_assert:2}));
+  await catalog.batch([...reserve,...prepared(catalog,cleanup)]);
+  return {status:'CLEANED' as const,charged:bound,day:options.budget.day};
+}
+
 export async function importModelC(catalog:D1Database, personal:D1Database, options:ImportOptions) {
   const metrics=emptyMetrics();
   try {return await importAttempt(catalog,personal,options,metrics);}
@@ -245,7 +534,12 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==7 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
-  const old=await trustedCatalog(catalog), privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
+  if(options.preparedInitial && options.executionTarget!=='local-ephemeral')
+    throw Error('PREPARED_REMOTE_EXECUTION_NOT_AUTHORIZED');
+  const headExists=await catalog.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n');
+  const old=options.preparedInitial && !headExists
+    ? emptyInitialCatalog() : await trustedCatalog(catalog);
+  const privateData=await read(personal,personalTables), privateDigest=await digestRows(privateData);
   const appRevisionAtStart=Number(await personal.prepare(
     'SELECT revision FROM personal_app_heads WHERE owner_id=?').bind(options.owner).first('revision')??0);
   const ensureStableApp=async()=>{
@@ -315,10 +609,16 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   const expected=Number(old.head?.sync_revision??0), syncRevision=same?expected:expected+1;
   const contentRevision=observation.catalogRevision, ledgerChanged=await sha256(canonical(old.ledger))!==selected.ledgerDigest;
   const ledgerRevision=old.head?Number(old.head.ledger_revision)+(ledgerChanged?1:0):1;
-  const publication:Step[]=same?[]:await planCatalog(old,selected,bundle.chunks.flat(),run,proof,contentRevision,ledgerRevision,environmentDigest,referenceDigest,legacy);
-  const cleanup=await cleanupPlan(catalog,same?run:undefined);
+  const fullPublication:Step[]=same?[]:await planCatalog(old,selected,bundle.chunks.flat(),run,proof,contentRevision,ledgerRevision,environmentDigest,referenceDigest,legacy);
+  let publication:Step[]=fullPublication;
+  if(options.preparedInitial && !same) {
+    const portions=splitInitialPublication(fullPublication,selected);
+    await verifyInitialPreparedReceipts(catalog,run,portions.preparation);
+    publication=portions.final;
+  }
+  const cleanup=options.preparedInitial ? [] : await cleanupPlan(catalog,same?run:undefined);
   // New run's staged rows will also be cleaned after publication.
-  if (!same) cleanup.push(...cleanupFor(run,publication));
+  if (!same && !options.preparedInitial) cleanup.push(...cleanupFor(run,publication));
   for(const step of cleanup)step.phase='cleanup';
   const receipt={id:'receipt:'+run,catalog_sync_revision:syncRevision,catalog_content_revision:contentRevision,observed_commit:bundle.manifest.commitSha,
     ledger_digest:selected.ledgerDigest,head_digest:await sha256(canonical({syncRevision,run,contentRevision,ledgerRevision,ledgerDigest:selected.ledgerDigest}))};
@@ -604,10 +904,13 @@ const cleanupTables=['catalog_stage_aliases','catalog_stage_vacancies','catalog_
 function cleanupFor(run:string,publication:Step[]) {
   return cleanupTables.map(t=>statement('DELETE FROM '+t+' WHERE run_id=?',[run],{[t]:publication.reduce((n,s)=>n+(s.sql.startsWith('INSERT INTO '+t+' ')?s.writes[t]??0:0),0)}));
 }
-async function cleanupPlan(db:D1Database, run?:string) {
+async function cleanupPlan(db:D1Database, run?:string,includePreparedInitial=false) {
   const steps:Step[]=[];
   for (const t of cleanupTables) {
-    const rows=(await db.prepare('SELECT s.run_id,count(*) AS n FROM '+t+" s JOIN catalog_runs r ON s.run_id=r.id WHERE r.state IN ('PUBLISHED','ABORTED')"+(run?' AND s.run_id=?':'')+' GROUP BY s.run_id').bind(...(run?[run]:[])).all<{run_id:string;n:number}>()).results;
+    // A multi-day initial run has a dedicated, separately reserved cleanup.
+    // An ordinary replay/delta MUST NOT spend that future day's allowance.
+    const excludePrepared=includePreparedInitial?'':" AND NOT EXISTS (SELECT 1 FROM catalog_prepared_chunks pc WHERE pc.run_id=s.run_id)";
+    const rows=(await db.prepare('SELECT s.run_id,count(*) AS n FROM '+t+" s JOIN catalog_runs r ON s.run_id=r.id WHERE r.state IN ('PUBLISHED','ABORTED')"+excludePrepared+(run?' AND s.run_id=?':'')+' GROUP BY s.run_id').bind(...(run?[run]:[])).all<{run_id:string;n:number}>()).results;
     for (const r of rows) steps.push(statement('DELETE FROM '+t+' WHERE run_id=?',[r.run_id],{[t]:r.n}));
   }
   return steps;

@@ -30,7 +30,11 @@ export type OfflineBootstrapPreflight=z.infer<typeof preflightSchema>;
 export type OfflineSchemaCosts=z.infer<typeof setupSchema>;
 export async function prepareSafeRemoteBootstrapPlan(preflight:unknown,setup:unknown){
   const plan=preflightSchema.parse(preflight),schema=setupSchema.parse(setup);
-  if(schema.catalog.migrationFiles!==7||schema.personal.migrationFiles!==3||
+  // Seven CATALOG migrations are the already-provisioned pilot baseline; the
+  // additive receipt sidecar is migration eight, without a schema-version bump.
+  // Both are accepted for *offline planning only*. The staged initial
+  // publisher independently requires the new receipt table and remains remote-denied.
+  if(![7,8].includes(schema.catalog.migrationFiles)||schema.personal.migrationFiles!==3||
     schema.catalog.remoteUpperBound<schema.catalog.localRowsWritten||
     schema.personal.remoteUpperBound<schema.personal.localRowsWritten)
     throw Error('REMOTE_SCHEMA_COST_NOT_BOUNDED');

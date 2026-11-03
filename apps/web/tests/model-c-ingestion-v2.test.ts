@@ -58,7 +58,7 @@ beforeAll(async()=>{
   compatibilityDate:'2026-10-29',d1Databases:{
     CATALOG:'m47-v2-local-catalog',PERSONAL:'m47-v2-local-personal'}}));
  catalog=await runtime.getD1Database('CATALOG');personal=await runtime.getD1Database('PERSONAL');
- expect((await applySchema(catalog,'catalog')).applied).toBe(7);
+ expect((await applySchema(catalog,'catalog')).applied).toBe(8);
  expect((await applySchema(personal,'personal')).applied).toBe(3);
  const pair=await generateKeyPair('RS256',{extractable:true});key=pair.privateKey;
  const jwk=await exportJWK(pair.publicKey);

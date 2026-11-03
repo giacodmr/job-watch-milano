@@ -38,7 +38,7 @@ beforeAll(async()=>{root=await mkdtemp(resolve(tmpdir(),'m47-persist-'));runtime
 afterAll(async()=>{await runtime?.dispose();if(root)await rm(root,{recursive:true,force:true});});
 it('recovers partial v2 staging after two genuine Miniflare disposals',async()=>{
  let {c,p}=await databases();
- expect((await applySchema(c,'catalog')).applied).toBe(7);
+ expect((await applySchema(c,'catalog')).applied).toBe(8);
  expect((await applySchema(p,'personal')).applied).toBe(3);
  const pair=await generateKeyPair('RS256');
  const jwk=await exportJWK(pair.publicKey);

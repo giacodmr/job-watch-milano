@@ -102,7 +102,7 @@ afterAll(async()=>runtime?.dispose());
 it.each(scenarios.map((name,index)=>({name,index})))(
  'v2 fail-closed vector $index: $name',async({index})=>{
  const db=await runtime.getD1Database('C'+index);
- expect((await applySchema(db,'catalog')).applied).toBe(7);
+ expect((await applySchema(db,'catalog')).applied).toBe(8);
  const p=await packet(index,index===9?1:0),token=await jwt();
  const harness=(catalog:D1Database=db,quota=true)=>
   createOfflineV2IngestionHarness({catalog,keys,
