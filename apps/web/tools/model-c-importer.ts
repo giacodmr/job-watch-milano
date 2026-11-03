@@ -473,6 +473,9 @@ export async function prepareModelCInitialChunk(catalog:D1Database,personal:D1Da
   options:ImportOptions & {localTestDay?:string}) {
   if(options.executionTarget==='remote'&&options.localTestDay!==undefined)
     throw Error('PHASED_REMOTE_SYNTHETIC_DAY_DENIED');
+  if(options.executionTarget==='remote'&&
+     !options.stagedPublication?.runId.startsWith('ingest-v2:'))
+    throw Error('PHASED_REMOTE_V2_STAGING_REQUIRED');
   checkPhasedDay(options.budget,options.localTestDay);
   const plan=await initialPlan(catalog,personal,options);
   const next=plan.groups[plan.receipts.length];
