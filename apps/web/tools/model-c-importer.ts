@@ -471,11 +471,15 @@ export async function previewModelCInitialSchedule(catalog:D1Database,personal:D
  */
 export async function prepareModelCInitialChunk(catalog:D1Database,personal:D1Database,
   options:ImportOptions & {localTestDay?:string}) {
-  if(options.executionTarget==='remote'&&options.localTestDay!==undefined)
-    throw Error('PHASED_REMOTE_SYNTHETIC_DAY_DENIED');
-  if(options.executionTarget==='remote'&&
-     !options.stagedPublication?.runId.startsWith('ingest-v2:'))
-    throw Error('PHASED_REMOTE_V2_STAGING_REQUIRED');
+  if(options.executionTarget==='remote'){
+    if(options.localTestDay!==undefined)
+      throw Error('PHASED_REMOTE_SYNTHETIC_DAY_DENIED');
+    if(!isM50AuthorizedRemoteInitialPair(
+      options.remoteOperatorCapability,catalog,personal,options.budget))
+      throw Error('PHASED_INITIAL_OPERATOR_NOT_AUTHORIZED');
+    if(!options.stagedPublication?.runId.startsWith('ingest-v2:'))
+      throw Error('PHASED_REMOTE_V2_STAGING_REQUIRED');
+  }
   checkPhasedDay(options.budget,options.localTestDay);
   const plan=await initialPlan(catalog,personal,options);
   const next=plan.groups[plan.receipts.length];
