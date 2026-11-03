@@ -155,7 +155,7 @@ describe('verified incremental importer on ephemeral D1',()=>{
     const f=await fixture(2);
     await expect(prepareModelCInitialChunk(f.c,f.p,{
       ...f.options,executionTarget:'remote',
-    })).rejects.toThrow('PHASED_INITIAL_LOCAL_ONLY');
+    })).rejects.toThrow('PHASED_INITIAL_OPERATOR_NOT_AUTHORIZED');
     await expect(importModelC(f.c,f.p,{
       ...f.options,executionTarget:'remote',preparedInitial:true,
     })).rejects.toThrow('REMOTE_IMPORT_NOT_AUTHORIZED');
