@@ -7,7 +7,7 @@ import {importModelC,ModelCImportError} from './model-c-importer';
 import type {ImportOptions} from './model-c-importer';
 import {observeIngestJournal} from './model-c-publication-journal';
 import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
-import {isM50AuthorizedRemotePair} from './model-c-m50-d1-rest';
+import {isM50AuthorizedRemotePair,isM50AuthorizedRemoteInitialPair} from './model-c-m50-d1-rest';
 
 type Stage=NonNullable<ImportOptions['stagedPublication']>;
 export type M50LocalPublication={
@@ -70,7 +70,9 @@ export async function publishM50WithRemoteOperator(catalog:D1Database,
    denied('M50_REMOTE_OPERATOR_CAPABILITY_INVALID');
  if(options.oneTimeFreeBootstrap)
    denied('M50_REMOTE_INITIAL_BOOTSTRAP_NOT_AUTHORIZED');
- if(options.preparedInitial)
+ if(options.preparedInitial &&
+    (options.bootstrap!=='empty-target'||
+     !isM50AuthorizedRemoteInitialPair(capability,catalog,personal,options.budget)))
    denied('M50_PREPARED_INITIAL_REMOTE_NOT_AUTHORIZED');
  return publishWithOperator(catalog,personal,options,'remote',capability);
 }

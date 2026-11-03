@@ -23,6 +23,7 @@
     "worker:check:private": "wrangler deploy --config wrangler.private.template.jsonc --dry-run --outdir .worker-private-build",
     "preflight:private": "node tools/private-gate-preflight.mjs",
     "preflight:bootstrap:local": "node tools/model-c-bootstrap-runner.mjs",
+    "operator:bootstrap:remote": "node tools/model-c-m50-operator-runner.mjs",
     "worker:check:password": "wrangler deploy --config wrangler.password.template.jsonc --dry-run --outdir .worker-password-build",
     "profile:password:local": "node tools/password-auth-profile.mjs",
     "benchmark:password:local": "node tools/password-auth-benchmark.mjs"

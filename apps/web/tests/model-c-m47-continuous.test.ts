@@ -271,35 +271,58 @@ it('publishes, replays, retains and verifies thirty consecutive v2 revisions wit
    }
    expect(result.status).toBe('RECOVERED');
   }else if(i===0){
-   // Existing HTTP v2 receipts -> trusted Git -> durable phased preparation
-   // -> local M50 controller -> CATALOG HEAD/CAS -> PERSONAL -> COMPLETED.
-   // A small first cycle fits one preparation group; 3000-identity/day
-   // interruption and resume are independently exercised in importer tests.
-   let preparation=await prepareModelCInitialChunk(c,p,{
-    ...opts,stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
+   // Real Miniflare D1 behind the same REST envelope used by the remote
+   // operator. This tests phased preparation + initial HEAD publication;
+   // there are NO remote Cloudflare requests in the test.
+   const catalogId='11111111-1111-4111-8111-111111111111';
+   const personalId='22222222-2222-4222-8222-222222222222';
+   const restErrors:string[]=[];
+   const transport=async(req:Request)=>{
+    const database=new URL(req.url).pathname.includes(catalogId)?c:
+     new URL(req.url).pathname.includes(personalId)?p:null;
+    if(!database)return new Response('{}',{status:404});
+    const wire=await req.json() as {batch:{sql:string;params:string[]}[]};
+    try{
+     const results=await database.batch(wire.batch.map(q=>
+       database.prepare(q.sql).bind(...q.params)));
+     return Response.json({success:true,result:results});
+    }catch(e){
+     restErrors.push(e instanceof Error?e.message.slice(0,180):'UNKNOWN_SQLITE_ERROR');
+     return Response.json({success:false,result:[]},{status:400});
+    }
+   };
+   const operator=createM50RemoteOperatorPair({
+    accountId:'3'.repeat(32),catalogDatabaseId:catalogId,personalDatabaseId:personalId,
+    apiToken:'SYNTHETIC_TEST_ONLY_OPERATOR_TOKEN',gateBApproved:true,
+    accountFreePlanVerified:true,operatorQuotaVerified:true,
+    initialBootstrapApproved:true,remoteBatchSemanticsVerified:true,
+    remainingWriteUnits:30000,quotaDay:new Date().toISOString().slice(0,10),
+    validUntil:new Date(Date.now()+120000).toISOString(),transport,
    });
+   const initialOptions:ImportOptions={...opts,executionTarget:'remote',
+    remoteOperatorCapability:operator.capability,
+    stagedPublication:{runId:packets.run.runId,trustedPlan:plan}};
+   let preparation=await prepareModelCInitialChunk(operator.catalog,operator.personal,initialOptions);
    for(let rounds=0;preparation.status==='PREPARING'&&rounds<16;rounds++)
-    preparation=await prepareModelCInitialChunk(c,p,{
-      ...opts,stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
-    });
-   expect(preparation.status).toBe('PREPARED');
+    preparation=await prepareModelCInitialChunk(operator.catalog,operator.personal,initialOptions);
+   if(preparation.status!=='PREPARED')throw Error('M50_REMOTE_INITIAL_PREPARATION_UNVERIFIED_'+preparation.status+
+      '_SYNTHETIC_ERROR'+(restErrors[0]??'NONE'));
    expect(await count('catalog_head')).toBe(0);
    expect((await getModelCCatalogSnapshot(c)).snapshot).toBeNull();
    const preparedReceipts=await count('catalog_prepared_chunks');
    expect(preparedReceipts).toBeGreaterThan(0);
-   const replay=await prepareModelCInitialChunk(c,p,{
-     ...opts,stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
-   });
+   const replay=await prepareModelCInitialChunk(operator.catalog,operator.personal,initialOptions);
    expect(replay).toMatchObject({status:'PREPARED',charged:0});
    expect(await count('catalog_prepared_chunks')).toBe(preparedReceipts);
-   const controlled=await publishM50Locally(c,p,{
+   const controlled=await publishM50WithRemoteOperator(operator.catalog,operator.personal,{
     source,owner:opts.owner,budget:opts.budget,bootstrap:'empty-target',
     preparedInitial:true,
     stagedPublication:{runId:packets.run.runId,trustedPlan:plan},
-   });
+   },operator.capability);
    if(controlled.status!=='PUBLISHED')
-     throw Error('M50_PHASED_INITIAL_PUBLISH_NOT_CONFIRMED_'+controlled.status+
-       ('failureCode' in controlled?'_'+controlled.failureCode:''));
+     throw Error('M50_REMOTE_PHASED_INITIAL_PUBLISH_NOT_CONFIRMED_'+controlled.status+
+       ('failureCode' in controlled?'_'+controlled.failureCode:'')+
+       '_SYNTHETIC_ERROR'+(restErrors[0]??'NONE'));
    result=controlled;
   }else if(i===1){
    // Mock ONLY Cloudflare's REST envelope; all SQL executes against the SAME

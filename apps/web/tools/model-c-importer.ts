@@ -4,7 +4,7 @@ import {verifyTrustedStagingAgainstSnapshot,verifyPublishedStageReplay} from './
 import {verifyTrustedV2Stage,verifyPublishedV2StageReplay} from './model-c-v2-trusted-stage';
 import {advanceCompleteIngestJournal,advanceCompleteV2IngestJournal,advanceIngestJournal,nextJournalStatement,observeIngestJournal} from './model-c-publication-journal';
 import {inspectPublishedModelCRecovery} from './model-c-import-recovery';
-import {isM50AuthorizedRemotePair} from './model-c-m50-d1-rest';
+import {isM50AuthorizedRemotePair,isM50AuthorizedRemoteInitialPair} from './model-c-m50-d1-rest';
 import type {prepareSafeRemoteBootstrapPlan} from './model-c-remote-plan';
 import { canonical, sha256 } from '../shared/canonical';
 import { selectModelC } from '../shared/model-c-selection';
@@ -336,9 +336,11 @@ async function verifyInitialPreparedReceipts(db:D1Database,run:string,steps:Step
   return groups;
 }
 async function initialPlan(catalog:D1Database,personal:D1Database,options:ImportOptions) {
-  if(options.executionTarget!=='local-ephemeral'||options.v1||
-     options.bootstrap!=='empty-target'||options.oneTimeFreeBootstrap)
-    throw Error('PHASED_INITIAL_LOCAL_ONLY');
+  if(!(options.executionTarget==='local-ephemeral'||
+      (options.executionTarget==='remote'&&
+       isM50AuthorizedRemoteInitialPair(options.remoteOperatorCapability,catalog,personal,options.budget)))||
+     options.v1||options.bootstrap!=='empty-target'||options.oneTimeFreeBootstrap)
+    throw Error('PHASED_INITIAL_OPERATOR_NOT_AUTHORIZED');
   if(catalog===personal || await catalog.prepare("SELECT version FROM model_c_schema WHERE scope='CATALOG'").first<number>('version')!==7||
      await personal.prepare("SELECT version FROM model_c_schema WHERE scope='PERSONAL'").first<number>('version')!==3)
     throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
@@ -469,6 +471,15 @@ export async function previewModelCInitialSchedule(catalog:D1Database,personal:D
  */
 export async function prepareModelCInitialChunk(catalog:D1Database,personal:D1Database,
   options:ImportOptions & {localTestDay?:string}) {
+  if(options.executionTarget==='remote'){
+    if(options.localTestDay!==undefined)
+      throw Error('PHASED_REMOTE_SYNTHETIC_DAY_DENIED');
+    if(!isM50AuthorizedRemoteInitialPair(
+      options.remoteOperatorCapability,catalog,personal,options.budget))
+      throw Error('PHASED_INITIAL_OPERATOR_NOT_AUTHORIZED');
+    if(!options.stagedPublication?.runId.startsWith('ingest-v2:'))
+      throw Error('PHASED_REMOTE_V2_STAGING_REQUIRED');
+  }
   checkPhasedDay(options.budget,options.localTestDay);
   const plan=await initialPlan(catalog,personal,options);
   const next=plan.groups[plan.receipts.length];
@@ -491,9 +502,14 @@ export async function prepareModelCInitialChunk(catalog:D1Database,personal:D1Da
  * Cleanup is post-CATALOG/PERSONAL/journal and can occupy a later Free day.
  */
 export async function cleanupModelCInitial(catalog:D1Database,options:{
- run:string;budget:ImportOptions['budget'];executionTarget:'local-ephemeral';localTestDay?:string;
+ run:string;budget:ImportOptions['budget'];executionTarget:'local-ephemeral'|'remote';localTestDay?:string;
+ personal?:D1Database;remoteOperatorCapability?:object;
 }){
-  if(options.executionTarget!=='local-ephemeral')throw Error('PHASED_CLEANUP_LOCAL_ONLY');
+  if(options.executionTarget==='remote'){
+    if(options.localTestDay!==undefined||!options.personal||!options.run.startsWith('ingest-v2:')||
+      !isM50AuthorizedRemoteInitialPair(options.remoteOperatorCapability,catalog,options.personal,options.budget))
+      throw Error('PHASED_CLEANUP_OPERATOR_NOT_AUTHORIZED');
+  }else if(options.executionTarget!=='local-ephemeral')throw Error('PHASED_CLEANUP_LOCAL_ONLY');
   checkPhasedDay(options.budget,options.localTestDay);
   const published=await catalog.prepare("SELECT count(*) AS n FROM catalog_head h JOIN catalog_runs r ON r.id=h.run_id WHERE h.run_id=? AND r.state='PUBLISHED'")
     .bind(options.run).first<number>('n');
@@ -534,7 +550,9 @@ async function importAttempt(catalog:D1Database, personal:D1Database, options:Im
   if (catalog===personal || await catalog.prepare('SELECT version FROM model_c_schema WHERE scope=\'CATALOG\'').first('version')!==7 ||
     await personal.prepare('SELECT version FROM model_c_schema WHERE scope=\'PERSONAL\'').first('version')!==3) throw Error('SEPARATE_MODEL_C_DATABASES_REQUIRED');
   if (!options.owner || options.owner.length>200) throw Error('INVALID_PERSONAL_OWNER');
-  if(options.preparedInitial && options.executionTarget!=='local-ephemeral')
+  if(options.preparedInitial && options.executionTarget!=='local-ephemeral' &&
+     !(options.executionTarget==='remote'&&
+       isM50AuthorizedRemoteInitialPair(options.remoteOperatorCapability,catalog,personal,options.budget)))
     throw Error('PREPARED_REMOTE_EXECUTION_NOT_AUTHORIZED');
   const headExists=await catalog.prepare("SELECT count(*) AS n FROM catalog_head").first<number>('n');
   const old=options.preparedInitial && !headExists
