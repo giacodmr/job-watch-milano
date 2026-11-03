@@ -1,0 +1,81 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-41687574181-1",
+  "batch": "jw2",
+  "created_at": "2026-11-03T17:47:38Z",
+  "fetch_errors": {
+    "KPMG::1357800957": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10590108": "7a25d38e48610d62",
+    "Amazon::10591961": "9f30301013e16486",
+    "Amazon::10592074": "8b71bf9917d9098f",
+    "Amazon::10592153": "99a0d4ba3607ab6e",
+    "Amazon::10593434": "865e76989f13ad87",
+    "Amazon::10593520": "8961ca97d7b8cd18",
+    "Amazon::10593694": "bde290247e84483d",
+    "KPMG::1355336657": "dbd4434bab70c4de",
+    "KPMG::1357800957": "65f0c7ecb6cf4f25",
+    "KPMG::1360917357": "403642682d1ee9d2",
+    "KPMG::1365690457": "8bd5ff5fcc87e22b",
+    "KPMG::1365756057": "70f4425020a85920",
+    "KPMG::1365769457": "c52ada9c621afb79",
+    "KPMG::1373782057": "c7253f60a144d606",
+    "KPMG::1376242057": "748186269d2d6b45",
+    "KPMG::768523602": "528cdf8b281942f7"
+  },
+  "job_keys": [
+    "KPMG::1355336657",
+    "KPMG::768523602",
+    "KPMG::1365690457",
+    "KPMG::1365769457",
+    "KPMG::1365756057",
+    "KPMG::1360917357",
+    "KPMG::1373782057",
+    "KPMG::1376242057",
+    "KPMG::1357800957",
+    "Amazon::10592074",
+    "Amazon::10593520",
+    "Amazon::10590108",
+    "Amazon::10591961",
+    "Amazon::10592153",
+    "Amazon::10593434",
+    "Amazon::10593694"
+  ],
+  "packet_sha256": "ed0e95a0476825a08a871b62b1377dc583bf0d00ab2efec897e3c80518868840",
+  "ready_count": 15,
+  "record_count": 16,
+  "request_id": "jw-20261103-final25-jw2-select20",
+  "request_sha256": "a4b21352bf149c09d54c44fad2501ff21a3a7d18beb970a97644d950ab7109a9",
+  "select_run_attempt": 1,
+  "select_run_id": 41687574181,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "0de57fa9fd2e1e0a034bd0200e7e8c1a97707f95c1d66cb0d20a6629858e63b5",
+    "job_memory_jw2.json": "40b26a478862b93d21f1e2d2b7aadcc4f3a5beabb97544fe9af33436b3bc7aa8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "0de57fa9fd2e1e0a034bd0200e7e8c1a97707f95c1d66cb0d20a6629858e63b5",
+    "job_memory_jw2.json": "e7da3113702283f668ee18da592f05dcbbf870eafd53e1ffa5f5c0f399f2e629",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "KPMG::1357800957": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "65f0c7ecb6cf4f25",
+        "source_url": "https://careers.kpmg.it/job/Roma-Junior-Intelligent-Automation-Digital-Transformation/1357800957/"
+      },
+      "last_failure_at": "2026-11-03T17:47:38Z",
+      "retry_from": "2026-11-04",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 13256540450
+}
