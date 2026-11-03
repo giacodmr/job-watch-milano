@@ -54,6 +54,11 @@ it('denies unknown operator authority without issuing any HTTP request',async()=
    executionTarget:'remote',bootstrap:'empty-target',remoteOperatorCapability:initial.capability,
    budget,localTestDay:'2001-01-01',
  })).rejects.toThrow('PHASED_REMOTE_SYNTHETIC_DAY_DENIED');
+ await expect(prepareModelCInitialChunk(initial.catalog,initial.personal,{
+   source:{repo:'.',commit:'a'.repeat(40)},owner:'synthetic-owner',
+   executionTarget:'remote',bootstrap:'empty-target',remoteOperatorCapability:initial.capability,
+   budget,
+ })).rejects.toThrow('PHASED_REMOTE_V2_STAGING_REQUIRED');
  await expect(cleanupModelCInitial(initial.catalog,{
    run:'import:synthetic',budget,executionTarget:'remote',personal:initial.personal,
    remoteOperatorCapability:initial.capability,
