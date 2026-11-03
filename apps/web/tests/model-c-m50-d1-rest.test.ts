@@ -1,7 +1,7 @@
 import {expect,it} from 'vitest';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {encodeM50RestQuery,createM50RemoteOperatorPair,
- isM50AuthorizedRemotePair} from '../tools/model-c-m50-d1-rest';
+ isM50AuthorizedRemotePair,isM50AuthorizedRemoteInitialPair} from '../tools/model-c-m50-d1-rest';
 import {importModelC} from '../tools/model-c-importer';
 const catalogId='11111111-1111-4111-8111-111111111111';
 const personalId='22222222-2222-4222-8222-222222222222';
@@ -44,6 +44,14 @@ it('denies unknown operator authority without issuing any HTTP request',async()=
  expect(calls).toBe(0);
  const pair=createM50RemoteOperatorPair(good);
  expect(isM50AuthorizedRemotePair(pair.capability,pair.catalog,pair.personal)).toBe(true);
+ expect(isM50AuthorizedRemoteInitialPair(pair.capability,pair.catalog,pair.personal)).toBe(false);
+ const initial=createM50RemoteOperatorPair({...good,initialBootstrapApproved:true,remoteBatchSemanticsVerified:true});
+ expect(isM50AuthorizedRemoteInitialPair(initial.capability,initial.catalog,initial.personal,
+   {day:new Date().toISOString().slice(0,10),availableRows:30000})).toBe(true);
+ const noParity=createM50RemoteOperatorPair({...good,initialBootstrapApproved:true,remoteBatchSemanticsVerified:false});
+ expect(isM50AuthorizedRemoteInitialPair(noParity.capability,noParity.catalog,noParity.personal)).toBe(false);
+ const noInitialGrant=createM50RemoteOperatorPair({...good,initialBootstrapApproved:false,remoteBatchSemanticsVerified:true});
+ expect(isM50AuthorizedRemoteInitialPair(noInitialGrant.capability,noInitialGrant.catalog,noInitialGrant.personal)).toBe(false);
  expect(isM50AuthorizedRemotePair({},pair.catalog,pair.personal)).toBe(false);
  expect(isM50AuthorizedRemotePair(pair.capability,pair.personal,pair.catalog)).toBe(false);
  expect(isM50AuthorizedRemotePair(pair.capability,pair.catalog,pair.personal,
