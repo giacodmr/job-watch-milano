@@ -65,7 +65,7 @@ export async function inspectPrivateRepositoryGate(){
     limiters[0].simple?.limit===5&&limiters[0].simple?.period===60,
     'PASSWORD_RATE_LIMITER_CONFIG_INVALID',errors);
   const migrations=[];
-  for(const [scope,expected] of [['catalog',7],['personal',3]]){
+  for(const [scope,expected] of [['catalog',8],['personal',3]]){
     const dir='model-c/'+scope+'/migrations';
     const names=(await readdir(resolve(root,dir))).filter(n=>n.endsWith('.sql')).sort();
     ensure(names.length===expected,'UNEXPECTED_'+scope.toUpperCase()+'_SCHEMA_VERSION',errors);
