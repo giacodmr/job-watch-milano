@@ -1,0 +1,845 @@
+{
+  "version": "1.0",
+  "snapshot": {
+    "run_id": "cb180e7bd8d979bffd9ac85a",
+    "source_generated_at": {
+      "JW1": "2026-11-03T03:29:32Z",
+      "JW2": "2026-11-03T03:32:10Z",
+      "JW3": "2026-11-03T03:33:07Z",
+      "JW4": "2026-11-03T03:35:57Z"
+    },
+    "priority_snapshot_at": {
+      "Amazon": "2026-11-03T03:36:17.031650+00:00"
+    },
+    "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
+    "source_sha256": {
+      "current_jobs_jw1.json": "4816c3a177de76ce543cf6634b155e511991c9f79bb2f4cf99cee000c410cd7f",
+      "current_jobs_jw2.json": "0de57fa9fd2e1e0a034bd0200e7e8c1a97707f95c1d66cb0d20a6629858e63b5",
+      "current_jobs_jw3.json": "48fedef19379473025eb89b6940be2542a3c553e8a47df357fb0621c04555f73",
+      "current_jobs_jw4.json": "62a873db04731fb9badfcfc6db5eb4ba7d567535933e6ab14d2ad481ed85667b",
+      "amazon_target_check.json": "7929aa5a795abb269b58b32f9a5ea6c8b551d586c5605e8b91e099d8536b16cf",
+      "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
+      "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+      "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
+    }
+  },
+  "semantic_decisions": {
+    "jw1": {
+      "Revolut::554c4b14-c988-4c35-bd06-702acf4f36f7": {
+        "fingerprint": "e74c282a8ca088fd",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "INTERESTING",
+        "fit_score": 83,
+        "experience_required": "Graduate 2027 track: first-class/equivalent degree in relevant quantitative/economics or STEM-related field, 2025–2027 graduation, prior product/technology internship or work, full-time start in 2027.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "First-class/equivalent degree in relevant field such as economics, computing or STEM",
+            "Graduation in 2025–2027",
+            "Prior internship or work in product management, technology or related field",
+            "Can start full time in 2027 and attend London office 3 days per week"
+          ],
+          "preferred": [
+            "Startup/entrepreneurship experience",
+            "Other language skills"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Work with senior Product Owners on product roadmaps, market/user analytics, requirements, release delivery, experimentation and stakeholder communication.",
+        "role_level_assessment": "EARLY_MID",
+        "seniority_evidence": "Graduate 2027 track: first-class/equivalent degree in relevant quantitative/economics or STEM-related field, 2025–2027 graduation, prior product/technology internship or work, full-time start in 2027.",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": null,
+        "salary_source": null,
+        "reportable": true,
+        "rationale": "Strong early-career fintech product strategy, London option and 2025 graduation match. Qualification of LUISS Management MSc as a relevant degree, start only in 2027, UK work authorization and London salary require confirmation before applying.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Revolut::48244271-6656-42f9-ab2c-caf4531593d3": {
+        "fingerprint": "bf0ce74a04f3946a",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 78,
+        "experience_required": "Graduate Programme 2027 with first-class/equivalent relevant quantitative/economics or STEM degree, 2025–2027 graduation and prior product/technology work; London office at least 3 days/week.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Relevant first-class/equivalent degree including economics or STEM fields",
+            "Graduation in 2025–2027",
+            "Previous product/technology experience",
+            "Start early/late 2027 and regular office attendance"
+          ],
+          "preferred": [
+            "Entrepreneurial experience",
+            "Other language skills"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Support UX-oriented product roadmaps, requirements, customer research, testing and launch execution.",
+        "role_level_assessment": "EARLY_MID",
+        "seniority_evidence": "Graduate Programme 2027 with first-class/equivalent relevant quantitative/economics or STEM degree, 2025–2027 graduation and prior product/technology work; London office at least 3 days/week.",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Consumer fintech product trajectory relevant, but UX product specialisation less directly matched than business strategy, London relocation and 2027 start, with degree eligibility not certain; below international threshold.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Revolut::0c42d512-de5d-4f45-a69a-a94308e70d6d": {
+        "fingerprint": "944bd8ec663f0f4e",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 16,
+        "experience_required": "At least six years market risk overseeing algorithmic trading and quantitative risk limits, VaR stress testing, ICAAP and markets modelling.",
+        "mandatory_years_experience": 6,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "6+ years market risk in trading business",
+            "VaR/stress-testing modelling",
+            "Equities, crypto or fixed-income trading risk",
+            "STEM degree"
+          ],
+          "preferred": [
+            "SQL and Python"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own risk limits, hedging-market risk models, oversight of trading portfolios and stress tests.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least six years market risk overseeing algorithmic trading and quantitative risk limits, VaR stress testing, ICAAP and markets modelling.",
+        "final_experience_status": "OUT_GT5_MANDATORY",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Senior quantitative market risk specialist beyond Management/CRM consulting experience and target function.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Revolut::11b55d5e-5e18-450e-becd-07c768229fea": {
+        "fingerprint": "590486ea8e517818",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 18,
+        "experience_required": "Seven-plus years outsourcing or third-party risk and UK financial services resilience regulation experience.",
+        "mandatory_years_experience": 7,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "7+ years third-party risk or supply-chain risk",
+            "UK outsourcing and operational resilience rules",
+            "Vendor due-diligence and exit plans"
+          ],
+          "preferred": [
+            "Risk certification"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own bank outsourcing governance, third-party risk registers, intragroup SLAs, stress/exit plans.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "Seven-plus years outsourcing or third-party risk and UK financial services resilience regulation experience.",
+        "final_experience_status": "OUT_GT5_MANDATORY",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "UK specialist regulatory outsourcing and seven-plus years risk experience do not match early-career strategy.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Revolut::ef7bd853-526b-47ec-b506-d25ca9298dcc": {
+        "fingerprint": "204f3ce58a971bbd",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 44,
+        "experience_required": "Seven-plus years B2B/B2C brand, product or consumer marketing, ideally crypto sector, senior GTM ownership.",
+        "mandatory_years_experience": 7,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "7+ years product/brand marketing",
+            "Cross-channel GTM launches",
+            "Consumer messaging and cross-functional marketing roadmap"
+          ],
+          "preferred": [
+            "Crypto domain",
+            "Tier-1 strategy consulting"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own crypto product launch strategy, marketing performance, creative briefing and positioning.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "Seven-plus years B2B/B2C brand, product or consumer marketing, ideally crypto sector, senior GTM ownership.",
+        "final_experience_status": "OUT_GT5_MANDATORY",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Relevant marketing analytics and fintech brand, but seven-plus specialist product-marketing years and crypto launch ownership exceed experience.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Revolut::4e086d88-9d5d-4581-873b-ff4d2128681a": {
+        "fingerprint": "9827ce7204299aac",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 35,
+        "experience_required": "Four-plus years comparable telesales leadership role and one-plus year direct management of a sales team.",
+        "mandatory_years_experience": 4,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "4+ years comparable sales role",
+            "1+ year managing/coaching sales team",
+            "Quota/telesales commercial record"
+          ],
+          "preferred": [
+            "Payments sector"
+          ]
+        },
+        "people_management_required": true,
+        "individual_contributor_possible": false,
+        "decision_scope_and_ownership": "Lead up to 15 Product Sales Executives, sales quotas, coaching and operational performance.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Four-plus years comparable telesales leadership role and one-plus year direct management of a sales team.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Pure quota-carrying sales leadership with prior people management; London, not corporate/business strategy.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Revolut::3b6bddef-0ba9-4400-8cef-3ec317191d29": {
+        "fingerprint": "8beddaca8d7f56b6",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 69,
+        "experience_required": "Five-plus years relevant total experience, including three-plus years operations, strategy consulting or finance, and direct B2B sales-enablement programs.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years relevant professional experience",
+            "3+ years in operations/strategy consulting/finance",
+            "B2B sales enablement and workflow ownership"
+          ],
+          "preferred": [
+            "SQL/Python",
+            "KPI dashboard pilot testing"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own sales process improvement, ROI/velocity dashboards, sales enablement pilots and onboarding operating model.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Five-plus years relevant total experience, including three-plus years operations, strategy consulting or finance, and direct B2B sales-enablement programs.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Excellent operational KPI and enablement responsibilities but five-plus years total, three-plus relevant and B2B enablement track record exceed the user's current tenure; London is not a strong enough match.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "American Express::26015598": {
+        "fingerprint": "ad886643f82e0a3f",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 59,
+        "experience_required": "At least three years leading enterprise technology solution delivery teams, business privacy platform integration; UK work eligibility required, no visa sponsorship.",
+        "mandatory_years_experience": 3,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "3+ years leading enterprise technology solution delivery",
+            "Cross-business platform integration and vendor programme management",
+            "UK work eligibility without sponsorship",
+            "Quantitative Bachelor's degree preferred"
+          ],
+          "preferred": [
+            "Global privacy/web digital advertising domain"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Coordinate privacy technology vendors, enterprise programme dependencies, integrations, governance and adoption.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "At least three years leading enterprise technology solution delivery teams, business privacy platform integration; UK work eligibility required, no visa sponsorship.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Strong American Express brand and process management, but three-plus years technical delivery, quantitative degree preference and explicitly no UK visa sponsorship create major eligibility/seniority uncertainty.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      }
+    },
+    "jw2": {
+      "KPMG::1366017857": {
+        "fingerprint": "00b8c55739387919",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 39,
+        "experience_required": "Three to four years already in forensic accounting, regulatory compliance investigations, fraud auditing and evidentiary case management.",
+        "mandatory_years_experience": 3,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "3–4 years forensic accounting",
+            "Fraud investigations and regulatory misconduct",
+            "Financial reporting and audit procedures"
+          ],
+          "preferred": [
+            "F-tech tools"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Investigate financial misconduct, digital evidence and fraud risk and support clients in litigation/compliance.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Three to four years already in forensic accounting, regulatory compliance investigations, fraud auditing and evidentiary case management.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "€31,000–€41,000 gross annual base",
+        "salary_source": "Official JD published compensation",
+        "reportable": false,
+        "rationale": "Milan and consulting overlap, but forensic audit specialism, three-four years experience and employer explicitly outside target make it unsuitable.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "KPMG::1373621957": {
+        "fingerprint": "724198ddbc453527",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 65,
+        "experience_required": "Junior banking treasury/payments advisory placement; degree in economics/finance/business; European interbank systems knowledge; vacancy explicitly offers paid internship.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Business/economics/finance degree",
+            "English",
+            "MS Office",
+            "Knowledge of TARGET2/T2S/TIPS payments systems"
+          ],
+          "preferred": [
+            "PRINCE2/Agile/Jira and treasury back-office systems"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Support banking treasury processes, payment-system project planning, steering committee reporting, UAT and rollout readiness.",
+        "role_level_assessment": "ENTRY_JUNIOR",
+        "seniority_evidence": "Junior banking treasury/payments advisory placement; degree in economics/finance/business; European interbank systems knowledge; vacancy explicitly offers paid internship.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "Paid internship €800/month curricular or €1,000/month extracurricular",
+        "salary_source": "Official JD published compensation",
+        "reportable": false,
+        "rationale": "Strong payments/PMO content in Milan, but clearly an internship paying only €800–€1,000/month and employer KPMG is excluded; unsuitable for experienced hire.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "KPMG::1373622257": {
+        "fingerprint": "25b66af856e3b1fc",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 44,
+        "experience_required": "At least two years direct ALM, liquidity, IRRBB/CSRBB bank risk management and quantitative financial-model work.",
+        "mandatory_years_experience": 2,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "2+ years liquidity or IRRBB/CSRBB risk",
+            "ALM and regulatory EVE/NII/LCR/NSFR",
+            "Financial risk models"
+          ],
+          "preferred": [
+            "Python/R/Matlab/Stata"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Evaluate interest-rate, spread and liquidity models, forecasts and stress tests for financial institutions.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "At least two years direct ALM, liquidity, IRRBB/CSRBB bank risk management and quantitative financial-model work.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "€31,000–€41,000 gross annual base",
+        "salary_source": "Official JD published compensation",
+        "reportable": false,
+        "rationale": "Specialist bank quantitative risk with mandatory two years in domain, not corporate strategy; employer excluded.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "KPMG::1373622457": {
+        "fingerprint": "8af16ab33136c85d",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 55,
+        "experience_required": "At least two years bank risk governance, RAF, ICAAP, RWA/stress test and capital planning.",
+        "mandatory_years_experience": 2,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "2+ years bank risk planning or risk management",
+            "RAF/ICAAP and stress tests",
+            "Regulatory risk and capital reporting"
+          ],
+          "preferred": [
+            "Python/R/Matlab/Stata"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Advise bank risk appetite, risk governance, capital and RWA multi-year forecasting.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "At least two years bank risk governance, RAF, ICAAP, RWA/stress test and capital planning.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "€31,000–€41,000 gross annual base",
+        "salary_source": "Official JD published compensation",
+        "reportable": false,
+        "rationale": "Governance/KPI planning has transferability, but two-plus years bank risk domain and excluded KPMG mean this is not a priority role.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "KPMG::1371333157": {
+        "fingerprint": "c1b9a783ec6d1cd0",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 49,
+        "experience_required": "Previous enterprise ServiceNow implementation and administration: ITSM/ITOM/CSM modules, workflow customization and client platform delivery.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "ServiceNow configuration and implementation",
+            "ITSM/ITOM/CSM digital workflows",
+            "Platform technical analysis and UAT"
+          ],
+          "preferred": [
+            "International consulting"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Design, configure and deploy enterprise IT workflow automations in ServiceNow.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "Previous enterprise ServiceNow implementation and administration: ITSM/ITOM/CSM modules, workflow customization and client platform delivery.",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": "€31,000–€41,000 Senior Consultant / €38,000–€51,000 Assistant Manager",
+        "salary_source": "Official JD published compensation",
+        "reportable": false,
+        "rationale": "CRM implementation understanding is transferable but ServiceNow platform configuration is a necessary specialist skill; employer excluded.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "KPMG::1373665057": {
+        "fingerprint": "8747c54c203013c3",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 34,
+        "experience_required": "Entry-level financial statement audit for graduates, with January/February 2027 apprenticeship start.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Economics/Finance graduate",
+            "Financial audit and accounting controls",
+            "English"
+          ],
+          "preferred": [
+            "Data and AI enabled audit"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Audit client financial statements, internal controls, IFRS/Italian GAAP, accounting risk.",
+        "role_level_assessment": "ENTRY_JUNIOR",
+        "seniority_evidence": "Entry-level financial statement audit for graduates, with January/February 2027 apprenticeship start.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": "€26,200–€29,200 gross annual entry base",
+        "salary_source": "Official JD published compensation",
+        "reportable": false,
+        "rationale": "Auditing, KPMG exclusion, and published base under €33k financial floor are unattractive compared with current consulting track.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Salesforce::/job/Italy---Milan/Account-Solution-Engineer_JR364013": {
+        "fingerprint": "af67c27057c257d6",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 63,
+        "experience_required": "At least five years Salesforce presales/solution engineering, hands-on Salesforce and Computer Science or related bachelor degree.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years as Solutions Engineer",
+            "Hands-on Salesforce presales design and tailored demos",
+            "Technical RFP and sales-cycle leadership",
+            "Computer Science or related degree"
+          ],
+          "preferred": [
+            "Consumer goods/Telco industry knowledge"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own strategic enterprise Salesforce solution demonstrations, technical objections and pre-sales solution cycle.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least five years Salesforce presales/solution engineering, hands-on Salesforce and Computer Science or related bachelor degree.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Milan Salesforce employer plus Marketing Cloud familiarity are strong, but five-plus years direct solution-engineering, technical demo and CS degree required, not current consultant level.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "BearingPoint::8639000": {
+        "fingerprint": "950fa6c9aabae0f9",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 31,
+        "experience_required": "Significant hands-on SAP SD projects: S/4HANA configuration, order-to-cash, implementation, integration and go-live.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Hands-on SAP S/4HANA SD customization",
+            "Order-to-Cash ERP implementation",
+            "Technical functional configuration"
+          ],
+          "preferred": [
+            "Other EU languages"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Lead Salesforce-distribution unrelated SAP SD order-to-cash configuration and enterprise implementations.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "Significant hands-on SAP SD projects: S/4HANA configuration, order-to-cash, implementation, integration and go-live.",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Consulting/project management similar, but SAP SD functional customizing and S/4HANA direct implementation are absent.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Salesforce::/job/Italy---Milan/Solutions-Builder-8_JR366179": {
+        "fingerprint": "b8a6fe15f67bc4ba",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 55,
+        "experience_required": "Three-plus years software engineering/technical delivery, one production platform and fluency in Python, JavaScript/TypeScript, Java or Apex.",
+        "mandatory_years_experience": 3,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "3+ years software/technical delivery",
+            "Customer-facing engineering experience",
+            "Production coding and debugging Python/JS/Java/Apex",
+            "LLM/agent production implementation"
+          ],
+          "preferred": [
+            "Data 360, Snowflake, Databricks"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own agentic AI production troubleshooting, code fixes, data pipelines, customer platform integration and delivery.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Three-plus years software engineering/technical delivery, one production platform and fluency in Python, JavaScript/TypeScript, Java or Apex.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "AI agents and Salesforce customer contact fit conceptually, but role is forward-deployed software engineering, not business analyst/CRM strategy; missing 3+ years production coding.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Salesforce::/job/Italy---Milan/FDE-Voice---Italy_JR366178": {
+        "fingerprint": "b1fea93eca5ace54",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 49,
+        "experience_required": "Three-plus years production software engineering/technical delivery in enterprise agentic voice/contact-center integrations and language-specific quality.",
+        "mandatory_years_experience": 3,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "3+ years engineering/technical delivery",
+            "Python/JavaScript/Java/Apex development",
+            "Voice/contact center telephony integration",
+            "LLM agents in production"
+          ],
+          "preferred": [
+            "Salesforce Service Cloud Voice"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Build and operate production voice-agent solutions, speech/telephony integrations and AI agent pipelines.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Three-plus years production software engineering/technical delivery in enterprise agentic voice/contact-center integrations and language-specific quality.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Milan/AI/Salesforce brand appealing but requires full software engineering, voice integration and coding expertise.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "BearingPoint::8641076": {
+        "fingerprint": "64f843e1f47852ec",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 22,
+        "experience_required": "At least five years SAP EWM consultant delivery with S/4HANA warehouse configuration and process integrations.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years SAP EWM consulting",
+            "Warehouse/logistics SAP S/4HANA implementation",
+            "EWM customizing and system testing"
+          ],
+          "preferred": [
+            "International delivery"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Design and configure warehouse planning and execution SAP systems.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least five years SAP EWM consultant delivery with S/4HANA warehouse configuration and process integrations.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Mandatory senior SAP EWM implementation experience with no overlap in the user's CRM/business strategy focus.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "BearingPoint::8641010": {
+        "fingerprint": "8418fde82361e574",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 27,
+        "experience_required": "At least five years SAP FI/CO implementation/configuration and finance accounting process transformation.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years SAP FI/CO consulting",
+            "S/4HANA finance controlling configuration",
+            "Finance ERP go-live and data migration"
+          ],
+          "preferred": [
+            "Other EU languages"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Implement enterprise SAP financial accounting and cost controlling systems.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least five years SAP FI/CO implementation/configuration and finance accounting process transformation.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Business consulting skills transferable but SAP FI/CO technical configuration and five years specialised tenure not met.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "BearingPoint::8641038": {
+        "fingerprint": "9deec7fdfda78e0b",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 28,
+        "experience_required": "At least five years SAP FI/CO profitability analysis/CO-PA configuration in S/4HANA.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years SAP FI/CO-PA consulting",
+            "S/4HANA margin and profitability analytics",
+            "SAP configuration and deployment"
+          ],
+          "preferred": [
+            "Procurement integration"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Implement ERP margin and management accounting profitability reporting.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least five years SAP FI/CO profitability analysis/CO-PA configuration in S/4HANA.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Analytical finance topic is tangentially relevant but direct SAP CO-PA five-year implementation expertise missing.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "BearingPoint::8640901": {
+        "fingerprint": "2d99fc1ba963dd09",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 23,
+        "experience_required": "At least five years SAP MM S/4HANA consulting/implementation and procurement-inventory configurations.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years SAP MM consultant",
+            "Procurement and inventory ERP customization",
+            "S/4HANA implementation"
+          ],
+          "preferred": [
+            "Other ERP integrations"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Configure SAP procurement, purchasing and inventory systems for enterprise clients.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least five years SAP MM S/4HANA consulting/implementation and procurement-inventory configurations.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Senior ERP procurement specialist skills and years not present in Marketing Cloud/business consulting profile.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "BearingPoint::8639054": {
+        "fingerprint": "2126caa711c356ec",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 21,
+        "experience_required": "At least five years SAP PP consulting, production planning/MRP configuration and deployment.",
+        "mandatory_years_experience": 5,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "5+ years SAP PP consulting",
+            "S/4HANA manufacturing production planning",
+            "MRP configuration and SAP deployment"
+          ],
+          "preferred": [
+            "Manufacturing process knowledge"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Implement production planning, capacity and shop-floor ERP systems.",
+        "role_level_assessment": "SENIOR",
+        "seniority_evidence": "At least five years SAP PP consulting, production planning/MRP configuration and deployment.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Manufacturing ERP configuration and five-plus years functional expertise are incompatible with early-career strategy.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "Experian::744000158675792": {
+        "fingerprint": "0364c68181452eef",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 56,
+        "experience_required": "Four-plus years strategic enterprise B2B sales/account management in Telco, managing complex deal cycles and C-level relationships.",
+        "mandatory_years_experience": 4,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "4+ years B2B enterprise sales or account management",
+            "Telecom sector account portfolio",
+            "Complex SaaS/data sales and negotiation with C-level"
+          ],
+          "preferred": [
+            "Spanish telecom relationships"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Own strategic telecommunications customer accounts, analytics product sales, revenue target and contract closing.",
+        "role_level_assessment": "MID",
+        "seniority_evidence": "Four-plus years strategic enterprise B2B sales/account management in Telco, managing complex deal cycles and C-level relationships.",
+        "final_experience_status": "TARGET_0_5",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Milan location, data/credit and enterprise strategy attractive, but direct quota sales and four-plus years complex Telco relationships do not meet current consulting seniority.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      },
+      "KPMG::1376301357": {
+        "fingerprint": "499b9aca2f2a723b",
+        "analysis_status": "ANALYZED",
+        "analysis_method": "chatgpt_semantic_full_jd",
+        "decision": "REJECT",
+        "fit_score": 50,
+        "experience_required": "Junior e-learning project consulting, administering Moodle, instructional design tools (Articulate, Vyond), SCORM and client-training workflows.",
+        "mandatory_years_experience": null,
+        "preferred_years_experience": null,
+        "mandatory_vs_preferred_requirements": {
+          "mandatory": [
+            "Moodle e-learning platform management",
+            "Instructional design and Articulate/Vyond multimedia tools",
+            "SCORM 1.2/2004 familiarity",
+            "English, PowerPoint and client communications"
+          ],
+          "preferred": [
+            "Learning analytics and HR transformation"
+          ]
+        },
+        "people_management_required": false,
+        "individual_contributor_possible": true,
+        "decision_scope_and_ownership": "Design and operate digital corporate training solutions, multimedia client deliverables, platform tracking and reporting.",
+        "role_level_assessment": "ENTRY_JUNIOR",
+        "seniority_evidence": "Junior e-learning project consulting, administering Moodle, instructional design tools (Articulate, Vyond), SCORM and client-training workflows.",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "salary": null,
+        "salary_source": null,
+        "reportable": false,
+        "rationale": "Consulting/project exposure aligns, but Moodle/SCORM instructional design focus and excluded KPMG not target for next move.",
+        "analyzed_at": "2026-11-03T17:36:28.141Z",
+        "l68_status": "NO"
+      }
+    }
+  }
+}
