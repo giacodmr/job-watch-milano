@@ -1,0 +1,69 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-42014401625-1",
+  "batch": "jw1",
+  "created_at": "2026-11-05T10:53:45Z",
+  "fetch_errors": {
+    "Intesa Sanpaolo::1453954533": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "American Express::26011297": "41431239a34128ef",
+    "American Express::26015130": "d3c84b0e1a1a3f37",
+    "American Express::26015132": "838f071fee5f8607",
+    "ING Italia::REQ-10093109": "a48ab33a7d3c9a10",
+    "ING Italia::REQ-10124302": "f8643acf9cb6acbd",
+    "Intesa Sanpaolo::1453954533": "452451699ab7c341",
+    "Intesa Sanpaolo::1454145033": "82c12d613cb25716",
+    "Mastercard::R-291881": "1fececcedd8c2825",
+    "Satispay::3cf1c7e0-36b7-4513-b56f-e15b3d543de5": "759a432d7afc9490",
+    "Satispay::6854842b-f324-4702-8ade-c852f8fffbe4": "3c16ddae0539f338"
+  },
+  "job_keys": [
+    "Mastercard::R-291881",
+    "American Express::26011297",
+    "ING Italia::REQ-10124302",
+    "Intesa Sanpaolo::1454145033",
+    "American Express::26015130",
+    "American Express::26015132",
+    "ING Italia::REQ-10093109",
+    "Satispay::3cf1c7e0-36b7-4513-b56f-e15b3d543de5",
+    "Intesa Sanpaolo::1453954533",
+    "Satispay::6854842b-f324-4702-8ade-c852f8fffbe4"
+  ],
+  "packet_sha256": "e961912f89ae154705678a69185a429a545a0d9c8540edb871ef7176df2c74e2",
+  "ready_count": 9,
+  "record_count": 10,
+  "request_id": "manual-20261105-1150-jw1-select01",
+  "request_sha256": "f718f096c970766c63d969dca769369425fe8ba71cd3e51d518cc4777cf69d9e",
+  "select_run_attempt": 1,
+  "select_run_id": 42014401625,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "ef34dffde55e554edfc51e0d8b155e9616d58a1c245d12c599d9da4deace6356",
+    "job_memory_jw1.json": "f34bc268289762b89778838c17cd5fa23f01b9750d4bd9b4489f6aacd491d9af",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "ef34dffde55e554edfc51e0d8b155e9616d58a1c245d12c599d9da4deace6356",
+    "job_memory_jw1.json": "60c4c448557c81af403973b350ca48a150ed9582002fa2619380f8024069e3e1",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Intesa Sanpaolo::1453954533": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "452451699ab7c341",
+        "source_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-Senior-Data-Protection-Security/1453954533/"
+      },
+      "last_failure_at": "2026-11-05T10:53:45Z",
+      "retry_from": "2026-11-06",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 13409135501
+}
