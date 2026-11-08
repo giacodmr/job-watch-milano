@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261108-jw1-apply25a",
+  "request_sha256": "d3d96f394ee2dda7e1832ff5f50aa02cf02fc0624e764dacf18bf33e3e4690bb",
+  "parent_request_id": "manual-20261108-jw1-select25a",
+  "packet_sha256": "baeb8ac75109d37618e9135bf1ec7052958b09a6f608effbeb64e5d14659cfe8",
+  "select_run_id": 42470976464,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "f00c06d146f73196d872e8e1f9fe6fb02a2f3fc2d990f0cc29c2cc58bc08bc8b",
+    "job_memory_jw1.json": "b6aecc894f9eacfe6e2438318dd230dbeebf5691585c7b17337a4a35f25cdf4d",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 4,
+  "applied_keys": [
+    "FinecoBank::153599",
+    "Revolut::991a3d60-7692-4832-a68a-45036419474f",
+    "UniCredit::117299",
+    "UniCredit::117315"
+  ],
+  "retry": {
+    "Intesa Sanpaolo::1453954533": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "d4b583b2b194daa8021287e8400156e51c7ddcb4bf8e1e59c83d91c5e1d7a708",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 9,
+      "JW2": 24,
+      "JW3": 3,
+      "JW4": 6
+    },
+    "total": 42
+  },
+  "replayed": false
+}
