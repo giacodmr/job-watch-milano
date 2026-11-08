@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261108-jw3-apply25b",
+  "request_sha256": "c51799a0aedcc8793829a95ca7df59a828e125237d77d6a8b04c89dbd729c6bb",
+  "parent_request_id": "manual-20261108-jw3-select25b",
+  "packet_sha256": "b934e81265587f97fbb0ca7daff648ae272fdc175ed3670bbf8632225645a790",
+  "select_run_id": 42471163102,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "f825b6bb0a73d47352b407e5a33a5757e59fff2733281895ea9dadac798aba1d",
+    "job_memory_jw3.json": "b9a30ffb82f7d0e4007e1101d49f1afff391763c102241c02f533dc1535c3ba7",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw3",
+  "status": "PARTIAL",
+  "applied_count": 3,
+  "applied_keys": [
+    "Octopus Energy Italy::dad16f94-e755-4160-b5f6-32ce1fa8eec2",
+    "Prysmian::R-36633",
+    "Prysmian::R-37338"
+  ],
+  "retry": {
+    "Italgas::1454747833": "review_not_submitted",
+    "Webuild::1435453533": "review_not_submitted"
+  },
+  "accepted_patch_sha256": "84e197cdda92294a8ef815ba1d344999d79ad25fa92d233d1d9a7ffc75ca7d48",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 9,
+      "JW2": 24,
+      "JW3": 6,
+      "JW4": 6
+    },
+    "total": 45
+  },
+  "replayed": false
+}
