@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261111-third-jw1-apply05",
+  "request_sha256": "89cf1eace6e1f89abcf7c5fbfca400a57be0d664fde7b603e0b9b2fdb88de5dd",
+  "parent_request_id": "manual-20261111-third-jw1-select31",
+  "packet_sha256": "c7b035205ea20269696c3d18a2ce8a85cbe1dcda04a90e50cb94491df29d7e95",
+  "select_run_id": 43025541866,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "20baf179b88c28bd4b81d48c977cd56bf54b983d3533c0fc473054766f0b4e61",
+    "job_memory_jw1.json": "5b64a536a565531e18d8646fa95a0db85a824aaf957fbeeb4b709dac58fdcf1b",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 5,
+  "applied_keys": [
+    "American Express::26013624",
+    "ING Italia::REQ-10124429",
+    "Intesa Sanpaolo::1454872833",
+    "Revolut::1d3d4fe5-9d2a-4a16-8a6e-bc098917fb18",
+    "Revolut::991a3d60-7692-4832-a68a-45036419474f"
+  ],
+  "retry": {
+    "Scalapay::5013758101": "jd_fetch_failed",
+    "Intesa Sanpaolo::1453954533": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "b94089dc80fb7d53f9e9cfbaca077017519c4201955af880813c483c6bb2a097",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 7,
+      "JW2": 32,
+      "JW3": 5,
+      "JW4": 9
+    },
+    "total": 53
+  },
+  "replayed": false
+}
