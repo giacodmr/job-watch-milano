@@ -1,0 +1,49 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261111-third-jw2-apply14",
+  "request_sha256": "4580556d4a719f5283febbcc2b0814efc715adeab00051ec52a2477ae4e26b0d",
+  "parent_request_id": "manual-20261111-third-jw2-select31",
+  "packet_sha256": "d089c673f02ff5681d228b6f52b1dc9338bd6c689cfa11c854ddae5d1670d292",
+  "select_run_id": 43025537118,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "861f5aa0fa135fe9a992b4d5c5c2bb25ef767b07e11994be0752ff26531cfa59",
+    "job_memory_jw2.json": "5b7573e685271474cead11da41133dbde214d8498b98d52f0ce934f058d2af8d",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 14,
+  "applied_keys": [
+    "Amazon::10596475",
+    "Amazon::10599507",
+    "Amazon::10599661",
+    "Amazon::10599694",
+    "Cisco::/job/Milan-Italy/Splunk-Solutions-Engineer---Italy_2029816-1",
+    "KPMG::1333129157",
+    "KPMG::1361396857",
+    "KPMG::1365975257",
+    "KPMG::1374589857",
+    "KPMG::1374607557",
+    "KPMG::1377043557",
+    "KPMG::1377067157",
+    "KPMG::828570902",
+    "ServiceNow::744000160668919"
+  ],
+  "retry": {
+    "KPMG::1376586957": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "8ac5507b65c741a5512fe47b30faf2d307cbb2d57505574e3b9c156de0147e68",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 2,
+      "JW2": 32,
+      "JW3": 5,
+      "JW4": 9
+    },
+    "total": 48
+  },
+  "replayed": false
+}
