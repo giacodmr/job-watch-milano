@@ -1,0 +1,87 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43206821373-1",
+  "batch": "jw2",
+  "created_at": "2026-11-12T11:10:42Z",
+  "fetch_errors": {
+    "Amazon::10595470": "official page does not expose a matching job description",
+    "Amazon::10601216": "official page does not expose a matching job description",
+    "KPMG::1376586957": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10595470": "50fdbc4342fb9044",
+    "Amazon::10596271": "f4d6b33435d1a13c",
+    "Amazon::10601216": "6dd2257fbf6f63c8",
+    "Amazon::10602019": "87d812f295a2c473",
+    "Amazon::10602162": "985ed406a118c025",
+    "Amazon::10602163": "d5823cfbbcc40c7c",
+    "Amazon::10602518": "94580e5ccc6814d4",
+    "KPMG::1376586957": "74991a5bfc2e039b"
+  },
+  "job_keys": [
+    "KPMG::1376586957",
+    "Amazon::10595470",
+    "Amazon::10601216",
+    "Amazon::10602019",
+    "Amazon::10602162",
+    "Amazon::10602163",
+    "Amazon::10596271",
+    "Amazon::10602518"
+  ],
+  "packet_sha256": "a7ace305346aaee7fd23657e41fc66c2bca5fd2b82909511407f4ce9f79571b1",
+  "ready_count": 5,
+  "record_count": 8,
+  "request_id": "jw-20261112-1148-jw2-s8",
+  "request_sha256": "ef32a35b5dd744bfb329116449aa287737436083f1878935fe6416c85d6d2c12",
+  "select_run_attempt": 1,
+  "select_run_id": 43206821373,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "747f6e9f10e39e4f32cd501a1e76d4852ac11319fbc409a3cc9439512f2a9656",
+    "job_memory_jw2.json": "bd1d9b2dfe17d56c3d0b3fde995e803dc7afaba876edaec1abcbe98c3ca443ad",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "747f6e9f10e39e4f32cd501a1e76d4852ac11319fbc409a3cc9439512f2a9656",
+    "job_memory_jw2.json": "77b4d4c75394688a743245d53d8bbd2d0f48e525e9ed3990bcfe5ee4d09d1598",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10595470": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "50fdbc4342fb9044",
+        "source_url": "https://www.amazon.jobs/en/jobs/10595470/controls-design-engineer-epms-electrical-power-monitoring-system"
+      },
+      "last_failure_at": "2026-11-12T11:10:42Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    },
+    "Amazon::10601216": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "6dd2257fbf6f63c8",
+        "source_url": "https://www.amazon.jobs/en/jobs/10601216/communications-specialist-international-stores-communications-12-month-ftc-international-stores-comms-hub"
+      },
+      "last_failure_at": "2026-11-12T11:10:42Z",
+      "retry_from": "2026-11-13",
+      "status": "RETRY_PENDING"
+    },
+    "KPMG::1376586957": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "74991a5bfc2e039b",
+        "source_url": "https://careers.kpmg.it/job/Roma-Technician-Tech-Risk-Roma/1376586957/"
+      },
+      "last_failure_at": "2026-11-12T11:10:42Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 13938936225
+}
