@@ -1,0 +1,59 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43201858797-1",
+  "batch": "jw1",
+  "created_at": "2026-11-12T10:37:15Z",
+  "fetch_errors": {
+    "Scalapay::5013758101": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "ING Italia::REQ-10124512": "ba214ed3e07b5961",
+    "Mastercard::R-293481": "f73f030a5b5e4cd0",
+    "Satispay::acad9995-a033-4d5a-83a5-6ae1db7761c6": "bdd01f49dda2bb47",
+    "Scalapay::5013758101": "bea4a06f674017f6",
+    "Zurich::1374719457": "037d93afe4e2e152"
+  },
+  "job_keys": [
+    "Mastercard::R-293481",
+    "Zurich::1374719457",
+    "ING Italia::REQ-10124512",
+    "Satispay::acad9995-a033-4d5a-83a5-6ae1db7761c6",
+    "Scalapay::5013758101"
+  ],
+  "packet_sha256": "aa3b37003ee0aabed2c75492575c69df46cfa3faf70755c43e53dbaa9f71a7ee",
+  "ready_count": 4,
+  "record_count": 5,
+  "request_id": "jw-20261112-1133-jw1-select05",
+  "request_sha256": "e8eb337387d15ad40be7692cc5b7dc99ca96ea372d9d3bb140a6fbf8c083d2bc",
+  "select_run_attempt": 1,
+  "select_run_id": 43201858797,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "4c62ecc705018ec65b7c5e0bb60b378dc44434c143d8063cd90a491f913f5d67",
+    "job_memory_jw1.json": "50be00786432bc84c7cdc2c369db46c9adce3f2b34424211205ac8f775ef94c7",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "4c62ecc705018ec65b7c5e0bb60b378dc44434c143d8063cd90a491f913f5d67",
+    "job_memory_jw1.json": "d37f6504a5f43e0dbe9a0f78658852ccea96ddd5d0cb5ba16732582a3d0fe572",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Scalapay::5013758101": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "bea4a06f674017f6",
+        "source_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5013758101"
+      },
+      "last_failure_at": "2026-11-12T10:37:15Z",
+      "retry_from": "2026-11-13",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 13934998705
+}
