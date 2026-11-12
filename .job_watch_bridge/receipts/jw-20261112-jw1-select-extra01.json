@@ -1,0 +1,51 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43202961773-1",
+  "batch": "jw1",
+  "created_at": "2026-11-12T10:44:20Z",
+  "fetch_errors": {
+    "Intesa Sanpaolo::1453954533": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Intesa Sanpaolo::1453954533": "452451699ab7c341"
+  },
+  "job_keys": [
+    "Intesa Sanpaolo::1453954533"
+  ],
+  "packet_sha256": "58ecdcba34e9f64016e5c9acdf8a48eb4e750b63ac9ec893e8d63c43d19afad6",
+  "ready_count": 0,
+  "record_count": 1,
+  "request_id": "jw-20261112-jw1-select-extra01",
+  "request_sha256": "2207381108f9f22e6873aa8a2d87d2aa5e4c084999e1f12d0b4bd64514e979be",
+  "select_run_attempt": 1,
+  "select_run_id": 43202961773,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "4c62ecc705018ec65b7c5e0bb60b378dc44434c143d8063cd90a491f913f5d67",
+    "job_memory_jw1.json": "ed0c9782f5de772e581ffffde43094f7e1f5f45d4dea49242679217c4ad1d0e8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "4c62ecc705018ec65b7c5e0bb60b378dc44434c143d8063cd90a491f913f5d67",
+    "job_memory_jw1.json": "121b8e7f712ecab4bc61500de145a7822020c5442e03e5189562f77bbdaf2056",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Intesa Sanpaolo::1453954533": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "452451699ab7c341",
+        "source_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-Senior-Data-Protection-Security/1453954533/"
+      },
+      "last_failure_at": "2026-11-12T10:44:20Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 13934984437
+}
