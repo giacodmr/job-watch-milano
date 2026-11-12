@@ -1,0 +1,37 @@
+{
+  "version": "2.0",
+  "request_id": "jw-20261112-jw4-apply01",
+  "request_sha256": "17452ce57c0728c00d8d88d420d4103c1dabf86af44e0e5f564e84ba84b7ec86",
+  "parent_request_id": "jw-20261112-jw4-select03",
+  "packet_sha256": "53edf4135822e87cc32ebd96d9d84773ecb950468d991ffebc8f00027d8a2158",
+  "select_run_id": 43203103285,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "c8d1b2164b00027d27a74ce03cc272c105eff9061c5f342c900aa3d573b81798",
+    "job_memory_jw4.json": "48f320c3c20799663112c31bfaec1dd6312c933192b3d52057fe110dd3ecefb2",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 1,
+  "applied_keys": [
+    "Ferrero::1437083733"
+  ],
+  "retry": {
+    "Campari Group::1446524433": "review_not_submitted",
+    "Campari Group::1456362433": "review_not_submitted"
+  },
+  "accepted_patch_sha256": "a866db174030ca46d06538a0f227157511c189366eb56139e21f9e526f786f3d",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 11,
+      "JW2": 8,
+      "JW3": 7,
+      "JW4": 8
+    },
+    "total": 34
+  },
+  "replayed": false
+}
