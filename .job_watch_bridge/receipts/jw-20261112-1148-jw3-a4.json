@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "jw-20261112-1148-jw3-a4",
+  "request_sha256": "acc048c5383c9d6c110b1bb5739765e6e1ca63b2dac401741cfcb75e370d6c45",
+  "parent_request_id": "jw-20261112-1148-jw3-s7",
+  "packet_sha256": "a43d9041da0be1cec5b43b5fb52726afe25fb1d74988f47c2554e77bdd8e637f",
+  "select_run_id": 43206828265,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "038de7b9d0f1f437727ddb8bc6b31eb2c50b1949768d6daade85f718c6222260",
+    "job_memory_jw3.json": "42e07fafd14142fd44cad08e2353a353915573dc2436a80aa8391c54082e0494",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw3",
+  "status": "PARTIAL",
+  "applied_count": 4,
+  "applied_keys": [
+    "Webuild::1255465001",
+    "Webuild::1447669533",
+    "Webuild::1456357733",
+    "Webuild::1456357833"
+  ],
+  "retry": {
+    "Webuild::1268956601": "review_not_submitted",
+    "Webuild::1261642801": "review_not_submitted",
+    "Webuild::1456343233": "review_not_submitted"
+  },
+  "accepted_patch_sha256": "7e6b4084ee8abcc6a75b947ab3e3a6d944d735720b0af3125868cf47e010a83f",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 5,
+      "JW2": 0,
+      "JW3": 7,
+      "JW4": 2
+    },
+    "total": 14
+  },
+  "replayed": false
+}
