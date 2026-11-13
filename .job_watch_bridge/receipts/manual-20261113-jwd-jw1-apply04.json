@@ -1,0 +1,37 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261113-jwd-jw1-apply04",
+  "request_sha256": "bf58fd5a53413e96f44b7e91d1fee171d7aa9e19d39fefee47893f32ae15e623",
+  "parent_request_id": "manual-20261113-jwd-jw1-select20",
+  "packet_sha256": "b03ac2d8ef61f50bad3ceedc316c0f31cf61e5d79b10fbed7dd3eba1d4cee072",
+  "select_run_id": 43397462387,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "3b81e474b7fbbbee9c371ce1107e64988b1a87efd617222ff3649cb285cca0b2",
+    "job_memory_jw1.json": "92107095927f55be4fd35e35b7ea6e0046a09c59dbb0b6537cd5c1970419adac",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "COMPLETE",
+  "applied_count": 4,
+  "applied_keys": [
+    "Mastercard::R-295597",
+    "Revolut::f8d78386-b14f-4a55-a8d0-103fca1604d0",
+    "Satispay::d3d85586-ec5d-4611-83b7-7ea41265dfa3",
+    "UniCredit::117544"
+  ],
+  "retry": {},
+  "accepted_patch_sha256": "8eb336dd38d2dbb0249f64ce0fa1de3eb08c31ddf16bc1cb39b2292c80ade1d7",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 6,
+      "JW2": 9,
+      "JW3": 2,
+      "JW4": 6
+    },
+    "total": 23
+  },
+  "replayed": false
+}
