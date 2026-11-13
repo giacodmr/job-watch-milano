@@ -1,0 +1,55 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43397466731-1",
+  "batch": "jw3",
+  "created_at": "2026-11-13T08:59:55Z",
+  "fetch_errors": {
+    "MET Group::744000161261729": "HTTP 400"
+  },
+  "fingerprints": {
+    "MET Group::744000161261729": "5946e7060b3900d1",
+    "Prysmian::R-38391": "42ac23d53f4d564f",
+    "Webuild::1382999233": "4b33ef6995367070"
+  },
+  "job_keys": [
+    "MET Group::744000161261729",
+    "Prysmian::R-38391",
+    "Webuild::1382999233"
+  ],
+  "packet_sha256": "7d68a002caa905b2cf224ea8f72f97bc44c27ee8fcde230d9b481844f9e7694e",
+  "ready_count": 2,
+  "record_count": 3,
+  "request_id": "manual-20261113-jwd-jw3-select20",
+  "request_sha256": "6d89d4c2beb1a21a24605bb6e90d184068836bb6c48c55e97e8b3a074f5fb958",
+  "select_run_attempt": 1,
+  "select_run_id": 43397466731,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "95dacce6c3cfec21049cf86af1a896cd84570ca3db640a7d2458c64784455653",
+    "job_memory_jw3.json": "578d2cdaee2c3cd4dd757e175f99d0e0807804d47308a3284d00bfee9b54e482",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "95dacce6c3cfec21049cf86af1a896cd84570ca3db640a7d2458c64784455653",
+    "job_memory_jw3.json": "8a42116fd1e2e5a5033270e4f401218fc1cade3a28ad62ed3d04b5d21dffab0b",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "MET Group::744000161261729": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "5946e7060b3900d1",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000161261729"
+      },
+      "last_failure_at": "2026-11-13T08:59:55Z",
+      "retry_from": "2026-11-14",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14023118674
+}
