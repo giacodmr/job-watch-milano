@@ -1,0 +1,67 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43400055664-1",
+  "batch": "jw2",
+  "created_at": "2026-11-13T09:17:41Z",
+  "fetch_errors": {
+    "Amazon::10601216": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10599988": "56074bd67c2acaac",
+    "Amazon::10601216": "6dd2257fbf6f63c8",
+    "Amazon::10603073": "a78d75f9d4523977",
+    "Amazon::10603113": "8a4857a4593b4474",
+    "Amazon::10603315": "898df1d0a8514771",
+    "Amazon::10603516": "641e0cf98b351c65",
+    "KPMG::1367089757": "10bcec8901ba766e",
+    "KPMG::1374931357": "a0ed0c6fa79226ac",
+    "ServiceNow::744000161341129": "b4854f858c214209"
+  },
+  "job_keys": [
+    "Amazon::10603516",
+    "Amazon::10603113",
+    "ServiceNow::744000161341129",
+    "Amazon::10603073",
+    "Amazon::10599988",
+    "Amazon::10603315",
+    "KPMG::1367089757",
+    "KPMG::1374931357",
+    "Amazon::10601216"
+  ],
+  "packet_sha256": "427faebd3f0b3f9cd75b54c4e87278eb288f7c9116246622c8a2f961fe2c17cc",
+  "ready_count": 8,
+  "record_count": 9,
+  "request_id": "manual-20261113-next20-jw2-select",
+  "request_sha256": "c6d28202fa5492237d24ff43cd69b28b19df670f251fdf44538928125b9b1f5c",
+  "select_run_attempt": 1,
+  "select_run_id": 43400055664,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "85918788deffdafe4cfbb894ade8cc8b036917c7f498a6f51228f5896e0f5c4d",
+    "job_memory_jw2.json": "714c1154f96919842ff4bc470055d4e206eec426ce89505d3933adf6e84b53e8",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "85918788deffdafe4cfbb894ade8cc8b036917c7f498a6f51228f5896e0f5c4d",
+    "job_memory_jw2.json": "ec864335b8e07ddb12867b472f9e1d618c2006226a90e8896ad88b121ed319b6",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10601216": {
+      "attempts": 3,
+      "evidence": {
+        "fingerprint": "6dd2257fbf6f63c8",
+        "source_url": "https://www.amazon.jobs/en/jobs/10601216/communications-specialist-international-stores-communications-12-month-ftc-international-stores-comms-hub"
+      },
+      "last_failure_at": "2026-11-13T09:17:41Z",
+      "retry_from": "2026-11-14",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14025085609
+}
