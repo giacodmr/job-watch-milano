@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "c2800357bc15b8a8646bdb24",
+    "run_id": "d685c0491addd5382a3cf17f",
     "source_generated_at": {
-      "JW1": "2026-11-14T02:51:32Z",
-      "JW2": "2026-11-14T02:53:51Z",
-      "JW3": "2026-11-14T02:54:10Z",
-      "JW4": "2026-11-14T02:55:17Z"
+      "JW1": "2026-11-15T01:49:33Z",
+      "JW2": "2026-11-15T01:51:44Z",
+      "JW3": "2026-11-15T01:52:27Z",
+      "JW4": "2026-11-15T01:54:40Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-11-14T02:55:25.870818+00:00"
+      "Amazon": "2026-11-15T01:54:57.316808+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "fa25129bc0820816e0b4f2380d1be76ec766edacde9d4568e5ce004f37642520",
-      "current_jobs_jw2.json": "d6a0a2cf0a73ecf5c61055767f43875f00a5dbe8c1676d2a8e5893dc61f0f986",
-      "current_jobs_jw3.json": "64a162ccc8c4fda6b9816bb7a59a9414426bd74146f3547f5723f2d2c44d5524",
-      "current_jobs_jw4.json": "2074fadb14e5ec87e0e0a7f7545be283a3ffaa1619650a47c9f8b713a4ea0216",
-      "amazon_target_check.json": "da9ec6a3dfb7a6d185486ee1d317ea7ab2145a40aa19cfe7d205a53c3e0afd78",
+      "current_jobs_jw1.json": "21009b0f6bb342f3bdb11057700e52aceae271f07e9952e0593edc1137f3aa90",
+      "current_jobs_jw2.json": "e40e573ecf249ad4bb18682b12da6c1326f2c78628e8228240bbd958032e649a",
+      "current_jobs_jw3.json": "c1809580c0342cf70e95e8ac8eebf0323212275e34e0623ebb3d1a5fe7dd3415",
+      "current_jobs_jw4.json": "fb8d7eab36169ea1a871f8b006e9e0f4e34787ff156843530d0e9802cf548ebc",
+      "amazon_target_check.json": "edbb2071054b22f33c568012eaed750aea2494667a86f0b158d58892f22f9e06",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,14 +26,14 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 70,
-    "daily_semantic_pending": 0,
+    "records": 67,
+    "daily_semantic_pending": 4,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 21,
-    "full_semantic_pending": 21,
-    "processable_semantic_pending": 20,
+    "historical_backlog_remaining": 23,
+    "full_semantic_pending": 27,
+    "processable_semantic_pending": 24,
     "jd_retry_deferred": 0,
-    "jd_unavailable": 1
+    "jd_unavailable": 3
   },
   "records": [
     {
@@ -198,6 +198,30 @@
       "first_seen_at": "2026-09-20T14:44:18Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-286677",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Mastercard",
+      "source_id": "R-286677",
+      "title": "Senior Specialist, Product Management",
+      "location": "London, England (Angel Lane)",
+      "priority_company": true,
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
+      "fingerprint": "063d273694a2c008",
+      "current_status": "STILL_OPEN",
+      "threshold": 80,
+      "user_decision": "TO_REVIEW",
+      "user_decision_reason": "Strong product-strategy, analytics and business-case adjacency; retain for explicit review.",
+      "first_seen_at": "2026-09-19T10:11:09Z",
+      "decision": {
+        "fit_score": 84,
+        "reportable": true,
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "rationale": "Strong product strategy, analytics and business-case adjacency; direct PM depth is the main gap."
+      }
     },
     {
       "batch": "JW2",
@@ -479,23 +503,6 @@
       "current_status": "UNKNOWN",
       "user_decision": "TO_REVIEW",
       "first_seen_at": "2026-09-26T04:41:20Z",
-      "decision": {},
-      "lifecycle": "CLOSED_OR_UNVERIFIED"
-    },
-    {
-      "batch": "JW1",
-      "job_key": "Mastercard::R-286677",
-      "action": "TO_REVIEW",
-      "needs_semantic_review": false,
-      "company": "Mastercard",
-      "source_id": "R-286677",
-      "title": "Senior Specialist, Product Management",
-      "location": "London, England (Angel Lane)",
-      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
-      "fingerprint": "063d273694a2c008",
-      "current_status": "UNKNOWN",
-      "user_decision": "TO_REVIEW",
-      "first_seen_at": "2026-09-19T10:11:09Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
@@ -1161,32 +1168,6 @@
     },
     {
       "batch": "JW2",
-      "job_key": "Amazon::10454840",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "Amazon",
-      "source_id": "10454840",
-      "title": "Program Manager - FTC, EU DSP Payments",
-      "location": "GB, London",
-      "target_city": "London",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10454840/program-manager-ftc-eu-dsp-payments",
-      "fingerprint": "f214250ffa20dfa7",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "role_family": "Product / Program / Project",
-      "first_seen_at": "2026-11-11T01:57:31Z",
-      "decision": {
-        "fit_score": 87,
-        "reportable": true,
-        "salary_source": "Not disclosed in official JD",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO",
-        "rationale": "Match forte con Excel, Power Query, stakeholder e miglioramento processi, seniority realmente early career. Contract FTC e sede Londra sono le principali riserve; salary non pubblicato."
-      }
-    },
-    {
-      "batch": "JW2",
       "job_key": "Amazon::10522280",
       "action": "REMINDER",
       "needs_semantic_review": false,
@@ -1209,110 +1190,6 @@
         "final_experience_status": "REVIEW_UNCLEAR",
         "l68_status": "NO",
         "rationale": "Exceptional AI business transformation and seller experience strategic match; senior product ownership and engineering roadmaps are demanding; Luxembourg relocation. Strong stretch worth consideration."
-      }
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Amazon::10561453",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "Amazon",
-      "source_id": "10561453",
-      "title": "Senior Program Manager, Planning Efficiency",
-      "location": "GB, London",
-      "target_city": "London",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10561453/senior-program-manager-planning-efficiency",
-      "fingerprint": "eec94689a185b7e9",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "role_family": "Product / Program / Project",
-      "first_seen_at": "2026-11-11T01:57:32Z",
-      "decision": {
-        "fit_score": 83,
-        "reportable": true,
-        "salary_source": "Official Amazon JD: not disclosed",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO",
-        "rationale": "Solid project/operations/financial-analysis match at Amazon, but Senior PM responsibilities, technical transport systems and London make it a stretch."
-      }
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Amazon::10587810",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "Amazon",
-      "source_id": "10587810",
-      "title": "Senior Finance Analyst, AWS EMEA Commercial Sales Finance",
-      "location": "GB, London",
-      "target_city": "London",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10587810/senior-finance-analyst-aws-emea-commercial-sales-finance",
-      "fingerprint": "3fafa4d5d8d94117",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "role_family": "Finance / Economics",
-      "first_seen_at": "2026-11-10T04:10:19Z",
-      "decision": {
-        "fit_score": 84,
-        "reportable": true,
-        "salary_source": "Official Amazon job description: compensation not disclosed",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO",
-        "rationale": "Good AWS strategy/finance business partnering, Excel/Power BI, KPI and stakeholder fit, but direct FP&A work is a mandatory experience gap; London and five office days/week create relocation tradeoff."
-      }
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Amazon::10597470",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "Amazon",
-      "source_id": "10597470",
-      "title": "Analyst, Middle Mile Planning, LTP MM Analytics",
-      "location": "LU, Luxembourg",
-      "target_city": "Luxembourg",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10597470/analyst-middle-mile-planning-ltp-mm-analytics",
-      "fingerprint": "cf6d6b5dce4104f4",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "role_family": "Operations / Supply Chain / Planning",
-      "first_seen_at": "2026-11-11T01:57:31Z",
-      "decision": {
-        "fit_score": 88,
-        "reportable": true,
-        "salary_source": "Official Amazon JD: not disclosed",
-        "final_experience_status": "TARGET_0_5",
-        "l68_status": "NO",
-        "rationale": "Strong analytics, Excel, BI and business planning fit; logistics-domain learning and Luxembourg relocation are principal tradeoffs."
-      }
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Amazon::10601219",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "Amazon",
-      "source_id": "10601219",
-      "title": "Sr. Program Manager, Environment, WW Sustainability, WW Sustainability",
-      "location": "GB, London",
-      "target_city": "London",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10601219/sr-program-manager-environment-ww-sustainability-ww-sustainability",
-      "fingerprint": "6db2eaa989a245a7",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "role_family": "Product / Program / Project",
-      "first_seen_at": "2026-11-11T01:57:31Z",
-      "decision": {
-        "fit_score": 81,
-        "reportable": true,
-        "salary_source": "Official Amazon JD: not disclosed",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO",
-        "rationale": "Strong strategic operations, business case and KPI fit, but Senior PM title, sustainability specialization and London make it a credible stretch."
       }
     },
     {
@@ -1365,56 +1242,6 @@
         "final_experience_status": "REVIEW_UNCLEAR",
         "l68_status": "NO",
         "rationale": "B2B product strategy, business-process automation and cross-functional performance directly fit profile; senior roadmap ownership is an important stretch and Luxembourg required."
-      }
-    },
-    {
-      "batch": "JW1",
-      "job_key": "American Express::26016061",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "American Express",
-      "source_id": "26016061",
-      "title": "Manager- Digital Strategy",
-      "location": "LONDON, LONDON, United Kingdom",
-      "priority_company": false,
-      "canonical_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016061",
-      "fingerprint": "34fbbab22b786c06",
-      "current_status": "STILL_OPEN",
-      "threshold": 80,
-      "first_seen_at": "2026-11-11T01:54:57Z",
-      "decision": {
-        "fit_score": 84,
-        "reportable": true,
-        "salary": "Competitive base and bonus; monetary range not disclosed",
-        "salary_source": "Official American Express JD",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO",
-        "rationale": "Payments, customer strategy, digital channels and cross-functional transformation fit well, but London and explicit no-UK-visa-sponsorship requirement are material eligibility risks."
-      }
-    },
-    {
-      "batch": "JW1",
-      "job_key": "ING Italia::REQ-10124429",
-      "action": "REMINDER",
-      "needs_semantic_review": false,
-      "company": "ING Italia",
-      "source_id": "REQ-10124429",
-      "title": "Mortgages Product Expert",
-      "location": "MILAN",
-      "priority_company": false,
-      "canonical_url": "https://ing.wd3.myworkdayjobs.com/ICSGBLCOR/job/MILAN/Mortgages-Product-Expert_REQ-10124429",
-      "fingerprint": "f60aa8e9b8954b0f",
-      "current_status": "STILL_OPEN",
-      "threshold": 70,
-      "first_seen_at": "2026-11-10T04:07:38Z",
-      "decision": {
-        "fit_score": 82,
-        "reportable": true,
-        "salary": "Base RAL from €48,000 gross per year + variable",
-        "salary_source": "ING Italia official job description",
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "l68_status": "NO",
-        "rationale": "Highly aligned with Milano, MSc Management, customer-journey/process transformation, product strategy, KPI analytics and employer change into banking, with €48k floor. Main gap is mandatory mortgage regulation/product knowledge and bank-sector experience: verify transferable credentials before applying."
       }
     },
     {
@@ -1491,6 +1318,70 @@
         "l68_status": "NO",
         "rationale": "Ottima adiacenza con KPI, BI, analisi e automazione/GenAI. Stretch tecnico su SQL/ETL end-to-end e necessità di trasferimento a Lussemburgo."
       }
+    },
+    {
+      "batch": "JW2",
+      "job_key": "KPMG::1372478457",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "KPMG",
+      "source_id": "1372478457",
+      "title": "Senior Consultant People & Change",
+      "location": "Milano, IT 14 nov 2026",
+      "priority_company": false,
+      "canonical_url": "https://careers.kpmg.it/job/Milano-Senior-Consultant-People-&-Change/1372478457/",
+      "fingerprint": "7657700d6ccb9bd8",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:14:46Z"
+    },
+    {
+      "batch": "JW2",
+      "job_key": "KPMG::820295402",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "KPMG",
+      "source_id": "820295402",
+      "title": "IT Strategy Senior Consultant | Financial Services | CIO Advisory",
+      "location": "Roma, IT 14 nov 2026",
+      "priority_company": false,
+      "canonical_url": "https://careers.kpmg.it/job/Roma-IT-Strategy-Senior-Consultant-Financial-Services-CIO-Advisory/820295402/",
+      "fingerprint": "723d2904eda21cdd",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-09-19T10:14:46Z"
+    },
+    {
+      "batch": "JW3",
+      "job_key": "Webuild::1447669533",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Webuild",
+      "source_id": "1447669533",
+      "title": "Supplier Development & Quality Engineer",
+      "location": "Nov 12, 2026 Milano, Italia",
+      "priority_company": false,
+      "canonical_url": "https://jobs.webuildgroup.com/job/Milano-Supplier-Development-&-Quality-Engineer/1447669533/",
+      "fingerprint": "bfcfe4b2cc0f41e1",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-10-16T23:32:58Z"
+    },
+    {
+      "batch": "JW4",
+      "job_key": "Dolce & Gabbana::1369661233",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Dolce & Gabbana",
+      "source_id": "1369661233",
+      "title": "E-Commerce Business Analyst (Salesforce Commerce Cloud & OMS)",
+      "location": "Information & Communication Technology Milano, MI, IT",
+      "priority_company": false,
+      "canonical_url": "https://jobs.dolcegabbana.com/job/Milano-E-Commerce-Business-Analyst-%28Salesforce-Commerce-Cloud-&-OMS%29-MI/1369661233/",
+      "fingerprint": "8e4326b6ee33eb4b",
+      "current_status": "UPDATED",
+      "threshold": 70,
+      "first_seen_at": "2026-11-05T02:24:06Z"
     }
   ],
   "lifecycle_updates": [],
@@ -1510,10 +1401,6 @@
     {
       "batch": "JW4",
       "action": "AUTONOMOUS_SEARCH"
-    },
-    {
-      "action": "RETRY_PRIORITY_COLLECTION",
-      "company": "Mastercard"
     }
   ]
 }
