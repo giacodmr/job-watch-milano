@@ -1,5 +1,5 @@
 JOB WATCH RUN
-Run: ccb2171e39ed623862578a4a
+Run: 456f30f6241562d4c212f6dd
 State: NEEDS_REVIEW
 Collection: COMPLETE_WITH_WARNINGS
 JW1: NEEDS_REVIEW
@@ -7,22 +7,27 @@ JW2: NEEDS_REVIEW
 JW3: NEEDS_REVIEW
 JW4: NEEDS_REVIEW
 Amazon: VERIFIED
-Mastercard: VERIFIED
+Mastercard: FAILED
 
-Daily actionable remaining: 0
-Historical backlog: 9
-Processable semantic pending: 0
-JD retry deferred: 4
+Daily actionable remaining: 19
+Historical backlog: 13
+Processable semantic pending: 27
+JD retry deferred: 0
 JD unavailable: 5
-Source failures: 4
-Partial sources: 113
-record errors: 17
-source errors: 117
+Source failures: 32
+Partial sources: 115
+record errors: 18
+source errors: 148
 batch errors: 0
 global errors: 0
 DAILY_COMPLETE: false
 FULL_SEMANTIC_COMPLETE: false
+Remaining: {'batch': 'JW1', 'action': 'SEMANTIC_REVIEW', 'count': 1, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW1', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW1', 'action': 'RETRY_PRIORITY_COLLECTION', 'company': 'Mastercard', 'reason': 'No usable priority inventory; retry official source'}
+Remaining: {'batch': 'JW2', 'action': 'SEMANTIC_REVIEW', 'count': 16, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW2', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW3', 'action': 'SEMANTIC_REVIEW', 'count': 1, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW3', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW4', 'action': 'SEMANTIC_REVIEW', 'count': 1, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW4', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
