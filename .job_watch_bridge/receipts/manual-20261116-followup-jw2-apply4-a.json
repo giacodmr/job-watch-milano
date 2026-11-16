@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261116-followup-jw2-apply4-a",
+  "request_sha256": "db59f13825e949e9850b80c5cf6ba593508eba093cc3df35c34d31c263f29080",
+  "parent_request_id": "manual-20261116-followup-jw2-select5-a",
+  "packet_sha256": "84a4dddb872c6778610e6c903ddf5e2cb12c6f812ec55e3bed6c01ee2058439a",
+  "select_run_id": 43963732521,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "3564b76a5452981b74ea61c87afff8efd9375fc67fe3a04c755455f1f58203cc",
+    "job_memory_jw2.json": "7afd0858ad73ff1ac6c42b1ab42ed0dc0a40a835ff1e12d06afe76e2b94289a5",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw2",
+  "status": "PARTIAL",
+  "applied_count": 4,
+  "applied_keys": [
+    "Amazon::10596553",
+    "Amazon::10605547",
+    "KPMG::1333364257",
+    "eBay::R0077463"
+  ],
+  "retry": {
+    "Amazon::10601216": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "1308b77614949fc3a5b9ebdb54178c929dfc992463ddad95c9b76c489e11f953",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 4,
+      "JW3": 2,
+      "JW4": 1
+    },
+    "total": 7
+  },
+  "replayed": false
+}
