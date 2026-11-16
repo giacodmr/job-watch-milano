@@ -1,0 +1,59 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43963732521-1",
+  "batch": "jw2",
+  "created_at": "2026-11-16T21:48:27Z",
+  "fetch_errors": {
+    "Amazon::10601216": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10596553": "ca5b217f3c8967fe",
+    "Amazon::10601216": "6dd2257fbf6f63c8",
+    "Amazon::10605547": "4729d12670311c20",
+    "KPMG::1333364257": "63b3af772483223e",
+    "eBay::R0077463": "7b9d2ad49f4c3d82"
+  },
+  "job_keys": [
+    "eBay::R0077463",
+    "KPMG::1333364257",
+    "Amazon::10596553",
+    "Amazon::10601216",
+    "Amazon::10605547"
+  ],
+  "packet_sha256": "84a4dddb872c6778610e6c903ddf5e2cb12c6f812ec55e3bed6c01ee2058439a",
+  "ready_count": 4,
+  "record_count": 5,
+  "request_id": "manual-20261116-followup-jw2-select5-a",
+  "request_sha256": "b042dce2652a56197810beadd4c40644513f5b7ecefd94ff8c32b2e39bef9009",
+  "select_run_attempt": 1,
+  "select_run_id": 43963732521,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "3564b76a5452981b74ea61c87afff8efd9375fc67fe3a04c755455f1f58203cc",
+    "job_memory_jw2.json": "7afd0858ad73ff1ac6c42b1ab42ed0dc0a40a835ff1e12d06afe76e2b94289a5",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "3564b76a5452981b74ea61c87afff8efd9375fc67fe3a04c755455f1f58203cc",
+    "job_memory_jw2.json": "b3dc894fc660306ee4edac78f2d1d23c1a2bf3573442461320044a984285419f",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Amazon::10601216": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "6dd2257fbf6f63c8",
+        "source_url": "https://www.amazon.jobs/en/jobs/10601216/communications-specialist-international-stores-communications-12-month-ftc-international-stores-comms-hub"
+      },
+      "last_failure_at": "2026-11-16T21:48:27Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14275038825
+}
