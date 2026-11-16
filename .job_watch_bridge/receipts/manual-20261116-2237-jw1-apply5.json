@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261116-2237-jw1-apply5",
+  "request_sha256": "bc88eac149471aede934e0f344c1d6ee16d0ab3cbdc72ebf56c8eba972bdc9f8",
+  "parent_request_id": "manual-20261116-2235-jw1-select7",
+  "packet_sha256": "1e0aac0bddab5fc4c06274840ab9a88960b0d43d70b7fca27a19b4e9d4e83a1a",
+  "select_run_id": 43961567446,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "5bb5f230f31f807f0812f2718b15e4ca69d6bbc147e8d65d80c89dd33644b705",
+    "job_memory_jw1.json": "69813e330d79fd1d48c10f6bc77ab61c38e4e43e307a34ea4028e5f8890ae8d4",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 5,
+  "applied_keys": [
+    "American Express::26014320",
+    "PayPal::274923376678",
+    "Satispay::79f982d4-60d1-4165-99b8-162c772518e0",
+    "UniCredit::117548",
+    "UniCredit::117550"
+  ],
+  "retry": {
+    "Scalapay::5013758101": "jd_fetch_failed",
+    "Banca Sella::JR-002487": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "2d4ea218b961206f3d635766d1612523e412de153f7b598580695ca8f3af7f89",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 5,
+      "JW2": 8,
+      "JW3": 2,
+      "JW4": 1
+    },
+    "total": 16
+  },
+  "replayed": false
+}
