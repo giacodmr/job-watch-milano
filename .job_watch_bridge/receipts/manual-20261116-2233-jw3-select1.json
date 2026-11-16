@@ -1,0 +1,51 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-43961104907-1",
+  "batch": "jw3",
+  "created_at": "2026-11-16T21:33:58Z",
+  "fetch_errors": {
+    "MET Group::744000161261729": "HTTP 400"
+  },
+  "fingerprints": {
+    "MET Group::744000161261729": "5946e7060b3900d1"
+  },
+  "job_keys": [
+    "MET Group::744000161261729"
+  ],
+  "packet_sha256": "f2ffa6fc23cf64adc7a35c198c2489eb792acfa8dc7ba9a282fe5aeae021006d",
+  "ready_count": 0,
+  "record_count": 1,
+  "request_id": "manual-20261116-2233-jw3-select1",
+  "request_sha256": "bef16c60fb44b6747b8ed7506e700b3150bdce80a2699cea09d4afb50373ecbc",
+  "select_run_attempt": 1,
+  "select_run_id": 43961104907,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "7604abaa548efd5aae54dcf0421c6d20537df6eeae160bff5a676e834a539f24",
+    "job_memory_jw3.json": "101c616e73dbd05f034564b80a9aad691edcb1eb6ced1d4f2a12077a7e7a7a6e",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "7604abaa548efd5aae54dcf0421c6d20537df6eeae160bff5a676e834a539f24",
+    "job_memory_jw3.json": "7fc4ec8954ef4ee04902718a128f99a08eee4bb99fb8867e6d398743fb0f8826",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "MET Group::744000161261729": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "5946e7060b3900d1",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000161261729"
+      },
+      "last_failure_at": "2026-11-16T21:33:58Z",
+      "retry_from": "2026-11-17",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14273841744
+}
