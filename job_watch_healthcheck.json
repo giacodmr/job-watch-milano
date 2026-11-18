@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-11-18T09:44:37Z",
+  "generated_at": "2026-11-18T09:47:36Z",
   "run_id": "883a9279421e63d63c984a16",
   "snapshot": {
     "run_id": "883a9279421e63d63c984a16",
@@ -57,19 +57,26 @@
       ]
     },
     "JW2": {
-      "status": "COMPLETE_WITH_WARNINGS",
-      "processable_semantic_pending": 25,
+      "status": "NEEDS_REVIEW",
+      "processable_semantic_pending": 17,
       "jd_retry_deferred": 0,
       "jd_unavailable": 3,
-      "daily_complete": true,
+      "daily_complete": false,
       "full_semantic_complete": false,
-      "gpt_run_certified": true,
+      "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 28,
+      "reporting_pending": 2,
+      "historical_backlog_remaining": 20,
       "failed": 7,
       "not_checked": 0,
-      "remaining_work": []
+      "remaining_work": [
+        {
+          "batch": "JW2",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 2,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+        }
+      ]
     },
     "JW3": {
       "status": "NEEDS_REVIEW",
@@ -140,11 +147,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 0,
-  "processable_semantic_pending": 26,
+  "daily_actionable_remaining": 2,
+  "processable_semantic_pending": 18,
   "jd_retry_deferred": 3,
   "jd_unavailable": 5,
-  "historical_backlog_remaining": 34,
+  "historical_backlog_remaining": 26,
   "source_failures": 33,
   "partial_sources": 114,
   "error_counts": {
@@ -1723,6 +1730,12 @@
       "action": "RETRY_PRIORITY_COLLECTION",
       "company": "Mastercard",
       "reason": "No usable priority inventory; retry official source"
+    },
+    {
+      "batch": "JW2",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 2,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
       "batch": "JW3",
