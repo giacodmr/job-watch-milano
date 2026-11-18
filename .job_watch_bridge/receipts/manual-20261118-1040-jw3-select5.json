@@ -1,0 +1,70 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-44277048624-1",
+  "batch": "jw3",
+  "created_at": "2026-11-18T09:33:55Z",
+  "fetch_errors": {
+    "MET Group::744000161261729": "HTTP 400",
+    "Webuild::1417842133": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Italgas::1408405933": "fbb65ed26174143a",
+    "MET Group::744000161261729": "5946e7060b3900d1",
+    "Octopus Energy Italy::b76f2306-2617-4fa7-9e8f-3a980d9fd59f": "be02d19d17132e29",
+    "Webuild::1417842133": "eb861644dcee13a1",
+    "Webuild::1417852333": "ef25e83c77d075ba"
+  },
+  "job_keys": [
+    "MET Group::744000161261729",
+    "Italgas::1408405933",
+    "Octopus Energy Italy::b76f2306-2617-4fa7-9e8f-3a980d9fd59f",
+    "Webuild::1417852333",
+    "Webuild::1417842133"
+  ],
+  "packet_sha256": "53067fe928a085efe6764fc8d6c59111e95b0f9467bcbf656fb46bcae3a64c3c",
+  "ready_count": 3,
+  "record_count": 5,
+  "request_id": "manual-20261118-1040-jw3-select5",
+  "request_sha256": "5347c2c65a38e552f4f6109410cd6afdef5f67ab109cdadf052deb83ac683183",
+  "select_run_attempt": 1,
+  "select_run_id": 44277048624,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "5cd55e0974bd8601738866a8e1f188ce6ab4418a613a2e51481b19bfde284212",
+    "job_memory_jw3.json": "d90afbe0ec742a88c8d47bfe25778451548169d543759400c78afec370469c6a",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "5cd55e0974bd8601738866a8e1f188ce6ab4418a613a2e51481b19bfde284212",
+    "job_memory_jw3.json": "58652b850d0e98fa93a552e2e91c805cb2250927cdb9e223dd9f3b3d15273a0a",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "MET Group::744000161261729": {
+      "attempts": 3,
+      "evidence": {
+        "fingerprint": "5946e7060b3900d1",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000161261729"
+      },
+      "last_failure_at": "2026-11-18T09:33:55Z",
+      "retry_from": "2026-11-19",
+      "status": "RETRY_PENDING"
+    },
+    "Webuild::1417842133": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "eb861644dcee13a1",
+        "source_url": "https://jobs.webuildgroup.com/job/Milano-Manager-Internal-Audit%C2%A0-%C2%A0Corporate%2C-Western-Countries-and-Innovation/1417842133/"
+      },
+      "last_failure_at": "2026-11-18T09:33:55Z",
+      "retry_from": "2026-11-19",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14413549948
+}
