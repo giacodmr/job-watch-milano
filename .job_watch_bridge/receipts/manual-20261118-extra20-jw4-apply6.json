@@ -1,0 +1,40 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261118-extra20-jw4-apply6",
+  "request_sha256": "65d89472a262160874726752bda8a3e5f76c36ec9fafc22f4e5d9ba34b8408dc",
+  "parent_request_id": "manual-20261118-extra20-jw4-select6",
+  "packet_sha256": "4144e09d60ba5e6d48262705d3c7b803f106e1144bd8c9a9fd34b371eaeb1c48",
+  "select_run_id": 44277992289,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "6858d2438de5460ba7337e900b8211fe168e31d50c5329cf468bd4c3a60e7205",
+    "job_memory_jw4.json": "add11f05ad85193c11f290b417a7b09bee2364e17aa12e4ee3d34b2080bc6708",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 5,
+  "applied_keys": [
+    "Boehringer Ingelheim::1444150833",
+    "Bolton Group::1455947433",
+    "Ferrero::1449044433",
+    "NielsenIQ::744000162119496",
+    "Prada Group::1456414133"
+  ],
+  "retry": {
+    "EssilorLuxottica::1444441333": "semantic_decision_role_level_invalid"
+  },
+  "accepted_patch_sha256": "2e608f597476291dff1a97d8087d5254b0ce62f7a5290d6d2d4d2b9c42de6eec",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 0,
+      "JW2": 25,
+      "JW3": 6,
+      "JW4": 6
+    },
+    "total": 37
+  },
+  "replayed": false
+}
