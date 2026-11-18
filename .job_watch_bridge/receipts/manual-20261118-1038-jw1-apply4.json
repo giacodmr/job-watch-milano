@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261118-1038-jw1-apply4",
+  "request_sha256": "fb3ba84622c6ddfe81e4e3b0ebfdcbc85e10749b6ffe1536add6a6248aa0d71b",
+  "parent_request_id": "manual-20261118-1035-jw1-select5",
+  "packet_sha256": "a887fd5fe15f096053ba012019d45b18a87189b3e8b85c4891fc2efde1fadbff",
+  "select_run_id": 44276667465,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "f4077241bba2059e781d6b31f293043467bfab058e87fa87f1877b6cc06bcf9f",
+    "job_memory_jw1.json": "124ed7ec8d43af6b9ac5019a893c75052d964e17a819373a768e601ec70021b4",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 4,
+  "applied_keys": [
+    "American Express::26015370",
+    "American Express::26016344",
+    "Mollie::a2c37d67-7dc9-4ded-86b1-f327fcf016d2",
+    "Worldline::306032"
+  ],
+  "retry": {
+    "Moneyfarm::EAF8239980": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "92ad03192cfd8abf86e1e4ac2dcd06d556913aaf4c23b195d51d1391ceed7138",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 4,
+      "JW2": 25,
+      "JW3": 11,
+      "JW4": 6
+    },
+    "total": 46
+  },
+  "replayed": false
+}
