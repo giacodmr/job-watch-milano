@@ -1,27 +1,33 @@
 JOB WATCH RUN
-Run: 883a9279421e63d63c984a16
+Run: 1f35788f731fdb0820eea160
 State: NEEDS_REVIEW
 Collection: COMPLETE_WITH_WARNINGS
 JW1: NEEDS_REVIEW
-JW2: COMPLETE_WITH_WARNINGS
+JW2: NEEDS_REVIEW
 JW3: NEEDS_REVIEW
 JW4: NEEDS_REVIEW
 Amazon: VERIFIED
 Mastercard: FAILED
 
-Daily actionable remaining: 0
-Historical backlog: 10
-Processable semantic pending: 0
-JD retry deferred: 5
+Daily actionable remaining: 17
+Historical backlog: 26
+Processable semantic pending: 38
+JD retry deferred: 0
 JD unavailable: 5
-Source failures: 33
-Partial sources: 114
-record errors: 18
-source errors: 148
+Source failures: 31
+Partial sources: 117
+record errors: 19
+source errors: 149
 batch errors: 0
 global errors: 0
 DAILY_COMPLETE: false
 FULL_SEMANTIC_COMPLETE: false
+Remaining: {'batch': 'JW1', 'action': 'SEMANTIC_REVIEW', 'count': 3, 'reason': 'Review exact current fingerprints in daily worklist'}
+Remaining: {'batch': 'JW1', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
 Remaining: {'batch': 'JW1', 'action': 'RETRY_PRIORITY_COLLECTION', 'company': 'Mastercard', 'reason': 'No usable priority inventory; retry official source'}
+Remaining: {'batch': 'JW2', 'action': 'SEMANTIC_REVIEW', 'count': 11, 'reason': 'Review exact current fingerprints in daily worklist'}
+Remaining: {'batch': 'JW2', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW3', 'action': 'SEMANTIC_REVIEW', 'count': 1, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW3', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW4', 'action': 'SEMANTIC_REVIEW', 'count': 2, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW4', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
