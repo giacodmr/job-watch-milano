@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-11-20T03:59:00Z",
+  "generated_at": "2026-11-20T07:01:26Z",
   "run_id": "7eb731524f1747c975e4eb9c",
   "snapshot": {
     "run_id": "7eb731524f1747c975e4eb9c",
@@ -50,11 +50,6 @@
       "remaining_work": [
         {
           "batch": "JW1",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
-        },
-        {
-          "batch": "JW1",
           "action": "RETRY_PRIORITY_COLLECTION",
           "company": "Mastercard",
           "reason": "No usable priority inventory; retry official source"
@@ -70,7 +65,7 @@
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 1,
-      "reporting_pending": 1,
+      "reporting_pending": 0,
       "historical_backlog_remaining": 31,
       "failed": 5,
       "not_checked": 0,
@@ -80,17 +75,6 @@
           "action": "SEMANTIC_REVIEW",
           "count": 1,
           "reason": "Review exact current fingerprints in daily worklist"
-        },
-        {
-          "batch": "JW2",
-          "action": "REPORT_OPPORTUNITIES",
-          "count": 1,
-          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-        },
-        {
-          "batch": "JW2",
-          "action": "AUTONOMOUS_SEARCH",
-          "reason": "Search official sources; record actual query/date/source/result in activity"
         }
       ]
     },
@@ -163,7 +147,7 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 2,
+  "daily_actionable_remaining": 1,
   "processable_semantic_pending": 55,
   "jd_retry_deferred": 0,
   "jd_unavailable": 5,
@@ -1686,6 +1670,9 @@
     "snapshot": {
       "status": "COMPLETE"
     },
+    "semantic_patch": {
+      "status": "COMPLETE"
+    },
     "semantic_sync:JW1": {
       "status": "COMPLETE"
     },
@@ -1723,11 +1710,6 @@
   "remaining_work": [
     {
       "batch": "JW1",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
-    },
-    {
-      "batch": "JW1",
       "action": "RETRY_PRIORITY_COLLECTION",
       "company": "Mastercard",
       "reason": "No usable priority inventory; retry official source"
@@ -1737,17 +1719,6 @@
       "action": "SEMANTIC_REVIEW",
       "count": 1,
       "reason": "Review exact current fingerprints in daily worklist"
-    },
-    {
-      "batch": "JW2",
-      "action": "REPORT_OPPORTUNITIES",
-      "count": 1,
-      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
-    },
-    {
-      "batch": "JW2",
-      "action": "AUTONOMOUS_SEARCH",
-      "reason": "Search official sources; record actual query/date/source/result in activity"
     },
     {
       "batch": "JW3",
