@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "997ce615bcbee78d4c5e65c2",
+    "run_id": "9327de749c3dbcc9b53ef51c",
     "source_generated_at": {
-      "JW1": "2026-11-21T03:18:00Z",
-      "JW2": "2026-11-21T03:21:09Z",
-      "JW3": "2026-11-21T03:21:24Z",
-      "JW4": "2026-11-21T03:23:22Z"
+      "JW1": "2026-11-21T03:28:09Z",
+      "JW2": "2026-11-21T03:31:42Z",
+      "JW3": "2026-11-21T03:31:55Z",
+      "JW4": "2026-11-21T03:33:19Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-11-21T03:23:46.845381+00:00"
+      "Amazon": "2026-11-21T03:33:42.341100+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "50bb663334a155bb21dc88fa6bc87abe3a0b46404f8528ceabf5d745dadf9b39",
-      "current_jobs_jw2.json": "0b0d7156dc45241436591f883b69d1af68ea7e0a6a182998d4d61545bce3efb0",
-      "current_jobs_jw3.json": "1eca646eb41c3802b62e45ff44a5e13c5d0acdf2fdc5e4066744cb41782d2a1a",
-      "current_jobs_jw4.json": "3db0be68b23294a18327f98dd51d152e76e9e718fd60023a2e10eb1d30c21741",
-      "amazon_target_check.json": "e25dc75d5c0c4240fb0edb45b0bc85cb4f74ca5f4d384cb42f3fef6f344c8543",
+      "current_jobs_jw1.json": "e533ae593184ffd5d492d2b27e38eebc7a8f1c9f028c1c34c4781b4bb69d0c04",
+      "current_jobs_jw2.json": "2daa9f541d423212f3f4315118992920dbc67ae77e9a24030501bf2513b9a79f",
+      "current_jobs_jw3.json": "96f3016077ac907fa99c35129543684803850b1c2fbb66ed8e499964f0efe539",
+      "current_jobs_jw4.json": "e080922792bccd1faa34d3e082a645357a23883b7a63c2b85b0e53a203559e0e",
+      "amazon_target_check.json": "34c981a772821d874c0162cc55328a6ddcf47298b458c4c226f4768f4d4047f7",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -27,11 +27,11 @@
   "instructions_file": "DAILY.md",
   "summary": {
     "records": 59,
-    "daily_semantic_pending": 1,
+    "daily_semantic_pending": 0,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 77,
-    "full_semantic_pending": 78,
-    "processable_semantic_pending": 73,
+    "historical_backlog_remaining": 76,
+    "full_semantic_pending": 76,
+    "processable_semantic_pending": 71,
     "jd_retry_deferred": 0,
     "jd_unavailable": 5
   },
@@ -452,6 +452,23 @@
       "current_status": "UNKNOWN",
       "user_decision": "TO_REVIEW",
       "first_seen_at": "2026-09-26T04:41:20Z",
+      "decision": {},
+      "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-286677",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Mastercard",
+      "source_id": "R-286677",
+      "title": "Senior Specialist, Product Management",
+      "location": "London England Angel Lane | London, England (Angel Lane)",
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
+      "fingerprint": "3c025b31204d3551",
+      "current_status": "UNKNOWN",
+      "user_decision": "TO_REVIEW",
+      "first_seen_at": "2026-09-19T10:11:09Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
@@ -1190,22 +1207,6 @@
         "l68_status": "NO",
         "rationale": "Strong match to candidate Excel VBA/Power Query, Power BI and data reporting/automation, stakeholder requirements and analytics/AI interests. Mandatory SQL or ETL can plausibly be met through Power Query/SAS ETL only if project evidence is robust; financial-modeling gap and relocation to Luxembourg remain. Career fit strong enough to surface as a conditional"
       }
-    },
-    {
-      "batch": "JW4",
-      "job_key": "IQVIA::R1580992",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "IQVIA",
-      "source_id": "R1580992",
-      "title": "Marketing Specialist",
-      "location": "Milan, Italy",
-      "priority_company": false,
-      "canonical_url": "https://iqvia.wd1.myworkdayjobs.com/IQVIA/job/Milan-Italy/Marketing-Specialist_R1580992",
-      "fingerprint": "d90156daf0d263a6",
-      "current_status": "NEW",
-      "threshold": 70,
-      "first_seen_at": "2026-11-21T03:23:22Z"
     }
   ],
   "lifecycle_updates": [],
