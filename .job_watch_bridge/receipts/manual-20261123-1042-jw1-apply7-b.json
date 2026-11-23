@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261123-1042-jw1-apply7-b",
+  "request_sha256": "90f459f3d18620b363173a0eaa3e2296f413446698a87e06ea53b43990a8617b",
+  "parent_request_id": "manual-20261123-1040-jw1-select10-b",
+  "packet_sha256": "95cfce2758d42f41d44eaf97ce336051d8da51b5c63c4ad821bdd9bb55cc8875",
+  "select_run_id": 45148323356,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "5c579f67099d6b32d87ee1f9790edd01eb881ac73f27a4ad4138e71463fc5c1d",
+    "job_memory_jw1.json": "582d1725611431242f46ce855b1863c809238a4e4093d36ed4beb8d85a72b56a",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw1",
+  "status": "PARTIAL",
+  "applied_count": 7,
+  "applied_keys": [
+    "Banca Ifis::281282334",
+    "Banca Ifis::281562992",
+    "Intesa Sanpaolo::1458751433",
+    "Intesa Sanpaolo::1459022033",
+    "Satispay::07892b08-7040-4c2a-8a87-fed6baa7b878",
+    "Satispay::10c786c6-e87d-4522-b789-d2922cbba5a5",
+    "Satispay::f7ee1f63-c19d-4fb7-82aa-874bc03a50d1"
+  ],
+  "retry": {
+    "Mastercard::R-286677": "jd_fetch_failed",
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200": "jd_fetch_failed",
+    "Moneyfarm::EAF8239980": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "16a5ad53bd77f1875a9a8eec8de2fff777c23972989f47a066d4ef2137634e63",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 13,
+      "JW2": 33,
+      "JW3": 5,
+      "JW4": 16
+    },
+    "total": 67
+  },
+  "replayed": false
+}
