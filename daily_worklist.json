@@ -27,12 +27,12 @@
   "instructions_file": "DAILY.md",
   "summary": {
     "records": 57,
-    "daily_semantic_pending": 1,
+    "daily_semantic_pending": 0,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 74,
+    "historical_backlog_remaining": 75,
     "full_semantic_pending": 75,
-    "processable_semantic_pending": 70,
-    "jd_retry_deferred": 0,
+    "processable_semantic_pending": 67,
+    "jd_retry_deferred": 3,
     "jd_unavailable": 5
   },
   "records": [
@@ -198,6 +198,25 @@
       "first_seen_at": "2026-09-20T14:44:18Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-286677",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": true,
+      "company": "Mastercard",
+      "source_id": "R-286677",
+      "title": "Senior Specialist, Product Management",
+      "location": "London England Angel Lane | London, England (Angel Lane)",
+      "priority_company": true,
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
+      "fingerprint": "3c025b31204d3551",
+      "current_status": "STILL_OPEN",
+      "threshold": 80,
+      "user_decision": "TO_REVIEW",
+      "user_decision_reason": "Strong product-strategy, analytics and business-case adjacency; retain for explicit review.",
+      "first_seen_at": "2026-09-19T10:11:09Z",
+      "technical_status": "RETRY_PENDING"
     },
     {
       "batch": "JW2",
@@ -1142,22 +1161,6 @@
       "first_seen_at": "2026-09-19T10:16:41Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
-    },
-    {
-      "batch": "JW1",
-      "job_key": "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "BBVA Italy",
-      "source_id": "/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200",
-      "title": "GLOBAL BANKER CORPORATE COVERAGE",
-      "location": "CORSO VITTORIO EMANUELE II, 9 20122 MILAN - ITALIA",
-      "priority_company": false,
-      "canonical_url": "https://bbva.wd3.myworkdayjobs.com/BBVA/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200",
-      "fingerprint": "0333c02acb0350c7",
-      "current_status": "NEW",
-      "threshold": 70,
-      "first_seen_at": "2026-11-23T03:13:34Z"
     }
   ],
   "lifecycle_updates": [],

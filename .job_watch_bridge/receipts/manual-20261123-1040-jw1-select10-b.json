@@ -1,0 +1,91 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-45148323356-1",
+  "batch": "jw1",
+  "created_at": "2026-11-23T09:35:09Z",
+  "fetch_errors": {
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200": "HTTP 429",
+    "Mastercard::R-286677": "HTTP 429",
+    "Moneyfarm::EAF8239980": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200": "0333c02acb0350c7",
+    "Banca Ifis::281282334": "6369e9e2ac24067e",
+    "Banca Ifis::281562992": "0e1c4e2ce0745fee",
+    "Intesa Sanpaolo::1458751433": "5654d6030ddcb22e",
+    "Intesa Sanpaolo::1459022033": "009b414ff4e4c90e",
+    "Mastercard::R-286677": "3c025b31204d3551",
+    "Moneyfarm::EAF8239980": "52de3f8e5e7315fc",
+    "Satispay::07892b08-7040-4c2a-8a87-fed6baa7b878": "7a6b124fd56e9c99",
+    "Satispay::10c786c6-e87d-4522-b789-d2922cbba5a5": "83458ee941345e63",
+    "Satispay::f7ee1f63-c19d-4fb7-82aa-874bc03a50d1": "3246234bbaf13b83"
+  },
+  "job_keys": [
+    "Mastercard::R-286677",
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200",
+    "Satispay::f7ee1f63-c19d-4fb7-82aa-874bc03a50d1",
+    "Satispay::10c786c6-e87d-4522-b789-d2922cbba5a5",
+    "Moneyfarm::EAF8239980",
+    "Banca Ifis::281282334",
+    "Satispay::07892b08-7040-4c2a-8a87-fed6baa7b878",
+    "Intesa Sanpaolo::1458751433",
+    "Intesa Sanpaolo::1459022033",
+    "Banca Ifis::281562992"
+  ],
+  "packet_sha256": "95cfce2758d42f41d44eaf97ce336051d8da51b5c63c4ad821bdd9bb55cc8875",
+  "ready_count": 7,
+  "record_count": 10,
+  "request_id": "manual-20261123-1040-jw1-select10-b",
+  "request_sha256": "94755deb9cb3ee9dab8cfb8821dddfcda6c5c255a472110f328e17ceefe26eac",
+  "select_run_attempt": 1,
+  "select_run_id": 45148323356,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "5c579f67099d6b32d87ee1f9790edd01eb881ac73f27a4ad4138e71463fc5c1d",
+    "job_memory_jw1.json": "582d1725611431242f46ce855b1863c809238a4e4093d36ed4beb8d85a72b56a",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw1.json": "5c579f67099d6b32d87ee1f9790edd01eb881ac73f27a4ad4138e71463fc5c1d",
+    "job_memory_jw1.json": "1310a9f33775c37ce6a40ba003eff0d985fff2478a0e59036680d18a822a4310",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "BBVA Italy::/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "0333c02acb0350c7",
+        "source_url": "https://bbva.wd3.myworkdayjobs.com/BBVA/job/CORSO-VITTORIO-EMANUELE-II-9-20122-MILAN---ITALIA/GLOBAL-BANKER-CORPORATE-COVERAGE_JR00120200"
+      },
+      "last_failure_at": "2026-11-23T09:35:09Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    },
+    "Mastercard::R-286677": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "3c025b31204d3551",
+        "source_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677"
+      },
+      "last_failure_at": "2026-11-23T09:35:09Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    },
+    "Moneyfarm::EAF8239980": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "52de3f8e5e7315fc",
+        "source_url": "https://apply.workable.com/j/EAF8239980/apply"
+      },
+      "last_failure_at": "2026-11-23T09:35:09Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14805665733
+}
