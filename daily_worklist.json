@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 56,
+    "records": 57,
     "daily_semantic_pending": 1,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 84,
-    "full_semantic_pending": 85,
-    "processable_semantic_pending": 80,
+    "historical_backlog_remaining": 74,
+    "full_semantic_pending": 75,
+    "processable_semantic_pending": 70,
     "jd_retry_deferred": 0,
     "jd_unavailable": 5
   },
@@ -388,6 +388,34 @@
         "final_experience_status": "REVIEW_UNCLEAR",
         "l68_status": "NO",
         "rationale": "Full-JD review: Senior Financial Analyst, Amazon Ads EU Sales Finance is within the user's business/strategy/analytics/commercial target, and the official mandatory qualifications do not establish a >5-year minimum. The role remains reportable; any qualitative tenure ambiguity is retained in final_experience_status."
+      }
+    },
+    {
+      "batch": "JW2",
+      "job_key": "Amazon::10558910",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Amazon",
+      "source_id": "10558910",
+      "title": "Category Manager, Packaging, Global Procurement Operations (GPO)",
+      "location": "GB, London",
+      "target_city": "London",
+      "priority_company": true,
+      "canonical_url": "https://www.amazon.jobs/en/jobs/10558910/category-manager-packaging-global-procurement-operations-gpo",
+      "fingerprint": "fb0f3120a747db3e",
+      "current_status": "STILL_OPEN",
+      "threshold": 80,
+      "user_decision": "TO_REVIEW",
+      "user_decision_reason": "Strong category management and commercial/procurement analytics fit; retain for explicit review.",
+      "role_family": "Retail / Vendor / Category / Brand",
+      "first_seen_at": "2026-10-01T08:41:12Z",
+      "decision": {
+        "fit_score": 65,
+        "reportable": false,
+        "salary_source": "Amazon official job description: compensation not disclosed",
+        "final_experience_status": "REVIEW_UNCLEAR",
+        "l68_status": "NO",
+        "rationale": "Transferable analytics, Excel, stakeholder engagement and process improvement; substantial gap in mandatory supply-chain/procurement experience, supplier negotiation and SQL. London move not justified by the match. Existing TO_REVIEW user choice preserved."
       }
     },
     {
