@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "e69df7e3c0528dbc6f4d56f8",
+    "run_id": "df3e9c5cb9841d4a6e35d696",
     "source_generated_at": {
-      "JW1": "2026-11-23T02:35:03Z",
-      "JW2": "2026-11-23T02:38:00Z",
-      "JW3": "2026-11-23T02:38:14Z",
-      "JW4": "2026-11-23T02:39:25Z"
+      "JW1": "2026-11-23T02:48:12Z",
+      "JW2": "2026-11-23T02:50:24Z",
+      "JW3": "2026-11-23T02:51:13Z",
+      "JW4": "2026-11-23T02:52:04Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-11-23T02:39:45.263164+00:00"
+      "Amazon": "2026-11-23T02:52:25.971730+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "7873e1951cdcb120e0197f0d14ea97073406bd5c74fa3226c5dfef8f89740384",
-      "current_jobs_jw2.json": "e0cbe76014c695723c14f24ab68067a1f0029cc63fc36736cf8c547ab36e649b",
-      "current_jobs_jw3.json": "f3a578e5e58d84777f480312b41f13cd66dd7cd50714f63616fca4f69f05200d",
-      "current_jobs_jw4.json": "051a53bac4f4daf791252f19ff245d03047d84624f93d5996199932393ee7f5b",
-      "amazon_target_check.json": "d1314d9c400d90c1fe6e03c1f45462123f77dc5bf130d2aa47783c4ef2408336",
+      "current_jobs_jw1.json": "fd3216592e0ff9949ef27472319738a26efdfc36b9c3bbe48c8cb8ca8a2ddc8e",
+      "current_jobs_jw2.json": "dc8ea3e80ec3dcbf8adb9ad86d072559ea48ab71f18f4f556df6442900db74b5",
+      "current_jobs_jw3.json": "39bc60f4174db72fc0e1791968236c8eda3771b1b587304a4989f078339ca742",
+      "current_jobs_jw4.json": "529bd387e905874e6208a8d48923190f7962684b9b761bdc3573f58856b813d3",
+      "amazon_target_check.json": "df62a09671023b3e7298d85eae2eee226d306d64d15e73061c15ddc019a40355",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 58,
-    "daily_semantic_pending": 2,
+    "records": 57,
+    "daily_semantic_pending": 0,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 84,
-    "full_semantic_pending": 86,
-    "processable_semantic_pending": 81,
+    "historical_backlog_remaining": 85,
+    "full_semantic_pending": 85,
+    "processable_semantic_pending": 80,
     "jd_retry_deferred": 0,
     "jd_unavailable": 5
   },
@@ -452,6 +452,23 @@
       "current_status": "UNKNOWN",
       "user_decision": "TO_REVIEW",
       "first_seen_at": "2026-09-26T04:41:20Z",
+      "decision": {},
+      "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-286677",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Mastercard",
+      "source_id": "R-286677",
+      "title": "Senior Specialist, Product Management",
+      "location": "London England Angel Lane | London, England (Angel Lane)",
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
+      "fingerprint": "3c025b31204d3551",
+      "current_status": "UNKNOWN",
+      "user_decision": "TO_REVIEW",
+      "first_seen_at": "2026-09-19T10:11:09Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
@@ -1140,40 +1157,6 @@
         "l68_status": "NO",
         "rationale": "Strong Milan match to CRM/Client Strategy, Salesforce, analysis, stakeholder management and consultative seller growth; mandatory sales/business-development track record is a real gap to validate."
       }
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Amazon::10579627",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Amazon",
-      "source_id": "10579627",
-      "title": "Program Manager, GOES Infrastructure PMO",
-      "location": "GB, London",
-      "target_city": "London",
-      "priority_company": true,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10579627/program-manager-goes-infrastructure-pmo",
-      "fingerprint": "5a2332f3d96751e5",
-      "current_status": "NEW",
-      "threshold": 80,
-      "role_family": "Product / Program / Project",
-      "first_seen_at": "2026-11-23T02:38:00Z"
-    },
-    {
-      "batch": "JW2",
-      "job_key": "Amazon::10606486",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Amazon",
-      "source_id": "10606486",
-      "title": "Media Relations Manager, Media Relations & Issues UK",
-      "location": "GB, London",
-      "priority_company": false,
-      "canonical_url": "https://www.amazon.jobs/en/jobs/10606486/media-relations-manager-media-relations-issues-uk",
-      "fingerprint": "92df9b135200d126",
-      "current_status": "NEW",
-      "threshold": 80,
-      "first_seen_at": "2026-11-23T02:38:00Z"
     }
   ],
   "lifecycle_updates": [],
