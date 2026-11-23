@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generated_at": "2026-11-23T11:23:40Z",
+  "generated_at": "2026-11-23T11:28:07Z",
   "run_id": "45126c3e0f79bb68af69544b",
   "snapshot": {
     "run_id": "45126c3e0f79bb68af69544b",
@@ -69,18 +69,24 @@
     },
     "JW2": {
       "status": "NEEDS_REVIEW",
-      "processable_semantic_pending": 13,
+      "processable_semantic_pending": 3,
       "jd_retry_deferred": 3,
       "jd_unavailable": 3,
       "daily_complete": false,
       "full_semantic_complete": false,
       "gpt_run_certified": false,
       "actionable_delta_pending": 0,
-      "reporting_pending": 0,
-      "historical_backlog_remaining": 19,
+      "reporting_pending": 1,
+      "historical_backlog_remaining": 9,
       "failed": 5,
       "not_checked": 0,
       "remaining_work": [
+        {
+          "batch": "JW2",
+          "action": "REPORT_OPPORTUNITIES",
+          "count": 1,
+          "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
+        },
         {
           "batch": "JW2",
           "action": "AUTONOMOUS_SEARCH",
@@ -157,11 +163,11 @@
       "NOT_CHECKED": 0
     }
   },
-  "daily_actionable_remaining": 1,
-  "processable_semantic_pending": 20,
+  "daily_actionable_remaining": 2,
+  "processable_semantic_pending": 10,
   "jd_retry_deferred": 8,
   "jd_unavailable": 6,
-  "historical_backlog_remaining": 33,
+  "historical_backlog_remaining": 23,
   "source_failures": 27,
   "partial_sources": 116,
   "error_counts": {
@@ -1706,6 +1712,12 @@
       "action": "RETRY_PRIORITY_COLLECTION",
       "company": "Mastercard",
       "reason": "No usable priority inventory; retry official source"
+    },
+    {
+      "batch": "JW2",
+      "action": "REPORT_OPPORTUNITIES",
+      "count": 1,
+      "reason": "Show decided opportunities/material updates; persist surfaced fingerprints"
     },
     {
       "batch": "JW2",
