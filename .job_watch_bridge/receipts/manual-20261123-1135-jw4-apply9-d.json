@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "request_id": "manual-20261123-1135-jw4-apply9-d",
+  "request_sha256": "8e6833332a53435dcfeeb4c0718521d5a136fa5e82dbbd63fbdd2cac6fcd8d42",
+  "parent_request_id": "manual-20261123-1125-jw4-select10-d",
+  "packet_sha256": "4d13be956f491245cee5461b18aeee2adafa7a2ca1cae965d618f0a4f2059ddf",
+  "select_run_id": 45151850627,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw4.json": "4941cffc1a6aeff7ef121a0cec3b8f22c8fef7162dfa3b9e92dcb4be61495f5f",
+    "job_memory_jw4.json": "35cfe4429e793f6a5e6ad6a177895348c393a8be988a70f451d11b633c5d29d6",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "action": "apply",
+  "batch": "jw4",
+  "status": "PARTIAL",
+  "applied_count": 9,
+  "applied_keys": [
+    "Campari Group::1450289633",
+    "EssilorLuxottica::1453848933",
+    "Ferrero::1420263433",
+    "Ferrero::1440150033",
+    "Ferrero::1440963733",
+    "Ferrero::1459333033",
+    "Prada Group::1458377833",
+    "Prada Group::1458523233",
+    "Prada Group::1458897633"
+  ],
+  "retry": {
+    "Johnson & Johnson::/job/Pomezia-Roma-Italy/Medical-Affairs-Sr-Manager_R-093352-1": "jd_fetch_failed"
+  },
+  "accepted_patch_sha256": "620e5ddfb7159c90406c0272e11c34940bae0c429d3c3bcbe598aa2137f55a84",
+  "pending_before": {
+    "by_batch": {
+      "JW1": 6,
+      "JW2": 23,
+      "JW3": 5,
+      "JW4": 15
+    },
+    "total": 49
+  },
+  "replayed": false
+}
