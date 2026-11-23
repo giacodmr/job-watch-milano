@@ -126,6 +126,15 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
+      "message": "NotCheckable: Fineco public API job 156616 has invalid company Intervieweb link; retained 0 validated observed jobs",
+      "batch": "JW1",
+      "company": "FinecoBank"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
       "message": "NotCheckable: Official inventory was attempted but the runner request failed (ConnectTimeout); no exhaustive parser for Custom dynamic career site; ATS unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "illimity"
@@ -161,8 +170,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs",
       "batch": "JW1",
       "company": "Banca Sella"
     },
@@ -216,7 +225,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 103370 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 102983 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Marsh"
     },
@@ -234,7 +243,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "Worldline corporate list shows 65 postings, but public recruiting API declares 190 records and returned 136 distinct IDs in 190 rows; publisher scope/order cannot be reconciled. Retained 12 Milan/Rome official detail-verified requisitions only.",
+      "message": "Worldline corporate list shows 65 postings, but public recruiting API declares 191 records and returned 145 distinct IDs in 191 rows; publisher scope/order cannot be reconciled. Retained 10 Milan/Rome official detail-verified requisitions only.",
       "batch": "JW1",
       "company": "Worldline"
     },
@@ -279,7 +288,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 649767 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 649766 bytes) but no safe exhaustive collector is implemented yet for Custom global careers platform with faceted search; ATS backend unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Société Générale Italia"
     },
@@ -288,7 +297,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 83436 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 83437 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "Banca Mediolanum"
     },
@@ -324,7 +333,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 106248 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 106256 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "batch": "JW1",
       "company": "MetLife"
     },
@@ -332,19 +341,10 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs",
       "batch": "JW1",
       "company": "Fiserv"
-    },
-    {
-      "category": "SOURCE_ERROR",
-      "scope": "source",
-      "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://worldpay.wd5.myworkdayjobs.com/wday/cxs/worldpay/Worldpay_External_Careers_Site/jobs; retained 0 validated observed jobs",
-      "batch": "JW1",
-      "company": "Worldpay"
     },
     {
       "category": "SOURCE_ERROR",
@@ -369,7 +369,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 77893 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 77922 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Deloitte / Monitor Deloitte"
     },
@@ -405,7 +405,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 102670 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 103644 bytes) but no safe exhaustive collector is implemented yet for Phenom (Marsh McLennan career platform); retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Oliver Wyman"
     },
@@ -432,7 +432,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 151699 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 151774 bytes) but no safe exhaustive collector is implemented yet for Avature (white-label Bain career flow); retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Bain & Company"
     },
@@ -441,7 +441,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 1403806 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 1403805 bytes) but no safe exhaustive collector is implemented yet for Google Careers custom platform; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Google"
     },
@@ -459,7 +459,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 683689 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 682039 bytes) but no safe exhaustive collector is implemented yet for SAP SuccessFactors backend + Microsoft custom candidate portal; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Microsoft"
     },
@@ -485,8 +485,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://cisco.wd5.myworkdayjobs.com/wday/cxs/cisco/Cisco_Careers/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://cisco.wd5.myworkdayjobs.com/wday/cxs/cisco/Cisco_Careers/jobs",
       "batch": "JW2",
       "company": "Cisco"
     },
@@ -513,7 +513,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 96445 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 96023 bytes) but no safe exhaustive collector is implemented yet for Expedia Group custom career front-end (backend not independently confirmed); retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Expedia Group"
     },
@@ -585,7 +585,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 34974 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 34978 bytes) but no safe exhaustive collector is implemented yet for Custom; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "Be Shaping the Future"
     },
@@ -602,8 +602,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://fticonsulting.wd108.myworkdayjobs.com/wday/cxs/fticonsulting/FTIConsultingCareers/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://fticonsulting.wd108.myworkdayjobs.com/wday/cxs/fticonsulting/FTIConsultingCareers/jobs",
       "batch": "JW2",
       "company": "FTI Consulting"
     },
@@ -612,7 +612,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "9 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
+      "message": "6 Bolt role link(s) disappeared between inventory enumeration and detail verification; remaining official inventory was processed.",
       "batch": "JW2",
       "company": "Bolt"
     },
@@ -621,7 +621,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 110657 bytes) but no safe exhaustive collector is implemented yet for TikTok LifeAtTikTok custom careers platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 110658 bytes) but no safe exhaustive collector is implemented yet for TikTok LifeAtTikTok custom careers platform; retained 0 validated observed jobs",
       "batch": "JW2",
       "company": "TikTok"
     },
@@ -702,7 +702,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 163129 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 163131 bytes) but no safe exhaustive collector is implemented yet for enterprise career portal (vendor unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Enel"
     },
@@ -746,15 +746,6 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://snam.wd103.myworkdayjobs.com/wday/cxs/snam/Carriere/jobs; retained 0 validated observed jobs",
-      "batch": "JW3",
-      "company": "Snam"
-    },
-    {
-      "category": "SOURCE_ERROR",
-      "scope": "source",
-      "stage": "collection",
       "code": "SOURCE_PARTIAL",
       "message": "NotCheckable: Official inventory was attempted but TLS validation failed; no exhaustive parser for custom recruitment portal; retained 0 validated observed jobs",
       "batch": "JW3",
@@ -783,7 +774,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 77758 bytes) but no safe exhaustive collector is implemented yet for LinkedIn-mediated / official portal transition; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 77757 bytes) but no safe exhaustive collector is implemented yet for LinkedIn-mediated / official portal transition; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Fastweb + Vodafone Italia"
     },
@@ -855,7 +846,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 45401 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 45402 bytes) but no safe exhaustive collector is implemented yet for enterprise global jobs portal (vendor unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "RWE Italia"
     },
@@ -963,6 +954,15 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs",
+      "batch": "JW3",
+      "company": "GE Vernova"
+    },
+    {
+      "category": "SOURCE_ERROR",
+      "scope": "source",
+      "stage": "collection",
+      "code": "SOURCE_PARTIAL",
       "message": "NotCheckable: Official inventory is reachable (200, 874363 bytes) but no safe exhaustive collector is implemented yet for branded global career portal (vendor unconfirmed); retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Schneider Electric"
@@ -972,7 +972,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 141716 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 141703 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Siemens Energy"
     },
@@ -999,7 +999,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 652916 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 652918 bytes) but no safe exhaustive collector is implemented yet for Custom official careers; retained 0 validated observed jobs",
       "batch": "JW3",
       "company": "Cellnex Italia"
     },
@@ -1043,8 +1043,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_PARTIAL",
-      "message": "429 Client Error: Too Many Requests for url: https://sky.wd3.myworkdayjobs.com/wday/cxs/sky/sky_careers/jobs",
+      "code": "SOURCE_FAILED",
+      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://sky.wd3.myworkdayjobs.com/wday/cxs/sky/sky_careers/jobs; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Sky Italia"
     },
@@ -1053,7 +1053,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 2171726 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 2171725 bytes) but no safe exhaustive collector is implemented yet for Custom LVMH group careers platform; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "LVMH"
     },
@@ -1062,7 +1062,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 221040 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 219382 bytes) but no safe exhaustive collector is implemented yet for Eightfold.ai (PCS); retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Kering"
     },
@@ -1071,7 +1071,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 250354 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 250355 bytes) but no safe exhaustive collector is implemented yet for Custom AstraZeneca careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "AstraZeneca"
     },
@@ -1116,7 +1116,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 280863 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 287035 bytes) but no safe exhaustive collector is implemented yet for Phenom career frontend + SAP SuccessFactors Recruiting/Onboarding; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Philip Morris International"
     },
@@ -1134,7 +1134,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 1089739 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 1089889 bytes) but no safe exhaustive collector is implemented yet for Custom IKEA careers platform; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "IKEA"
     },
@@ -1169,8 +1169,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://cc.wd3.myworkdayjobs.com/wday/cxs/cc/ChanelCareers/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://cc.wd3.myworkdayjobs.com/wday/cxs/cc/ChanelCareers/jobs",
       "batch": "JW4",
       "company": "Chanel"
     },
@@ -1179,7 +1179,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 284061 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 229328 bytes) but no safe exhaustive collector is implemented yet for Custom/Radancy-style P&G careers frontend; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "Procter & Gamble"
     },
@@ -1241,8 +1241,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://diageo.wd3.myworkdayjobs.com/wday/cxs/diageo/Diageo_Careers/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://diageo.wd3.myworkdayjobs.com/wday/cxs/diageo/Diageo_Careers/jobs",
       "batch": "JW4",
       "company": "Diageo"
     },
@@ -1305,7 +1305,7 @@
       "scope": "source",
       "stage": "collection",
       "code": "SOURCE_PARTIAL",
-      "message": "NotCheckable: Official inventory is reachable (200, 220297 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
+      "message": "NotCheckable: Official inventory is reachable (200, 220284 bytes) but no safe exhaustive collector is implemented yet for Custom AbbVie careers platform; application ATS not conclusively identified; retained 0 validated observed jobs",
       "batch": "JW4",
       "company": "AbbVie"
     },
@@ -1349,8 +1349,8 @@
       "category": "SOURCE_ERROR",
       "scope": "source",
       "stage": "collection",
-      "code": "SOURCE_FAILED",
-      "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://smithnephew.wd5.myworkdayjobs.com/wday/cxs/smithnephew/External/jobs; retained 0 validated observed jobs",
+      "code": "SOURCE_PARTIAL",
+      "message": "429 Client Error: Too Many Requests for url: https://smithnephew.wd5.myworkdayjobs.com/wday/cxs/smithnephew/External/jobs",
       "batch": "JW4",
       "company": "Smith+Nephew"
     },
@@ -1386,7 +1386,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Mastercard",
       "job_key": "Mastercard::R-275678"
     },
@@ -1395,16 +1395,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
-      "company": "Mastercard",
-      "job_key": "Mastercard::R-286677"
-    },
-    {
-      "category": "LOCAL_RECORD_ERROR",
-      "scope": "record",
-      "stage": "reconciliation",
-      "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Mastercard",
       "job_key": "Mastercard::R-287484"
     },
@@ -1413,7 +1404,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Mastercard",
       "job_key": "Mastercard::R-290390"
     },
@@ -1422,7 +1413,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Mastercard",
       "job_key": "Mastercard::R-291258"
     },
@@ -1431,7 +1422,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Mastercard",
       "job_key": "Mastercard::R-291603"
     },
@@ -1440,7 +1431,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Mastercard",
       "job_key": "Mastercard::R-292626"
     },
@@ -1449,7 +1440,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Visa",
       "job_key": "Visa::/job/GB---London-United-Kingdom/Business-Analyst-Consultant_REF082090W"
     },
@@ -1458,7 +1449,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Visa",
       "job_key": "Visa::/job/GB---London-United-Kingdom/Product-Manager_REF087419W-1"
     },
@@ -1467,7 +1458,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Visa",
       "job_key": "Visa::/job/IT---Milan-Italy/Consulting-Analyst_REF081405W"
     },
@@ -1494,7 +1485,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://hrhub.wd3.myworkdayjobs.com/wday/cxs/hrhub/Euronext_Career_Page/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "Euronext",
       "job_key": "Euronext::R27644"
     },
@@ -1503,7 +1494,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://fticonsulting.wd108.myworkdayjobs.com/wday/cxs/fticonsulting/FTIConsultingCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "FTI Consulting",
       "job_key": "FTI Consulting::/job/London-United-Kingdom/Senior-Consultant--Business-Transformation---TMT---Corporate-Finance_JR261380"
     },
@@ -1512,7 +1503,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://fticonsulting.wd108.myworkdayjobs.com/wday/cxs/fticonsulting/FTIConsultingCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "FTI Consulting",
       "job_key": "FTI Consulting::/job/London-United-Kingdom/XMLNAME-2027-Graduate-Scheme--Economic---Financial-Consulting_JR260937"
     },
@@ -1521,7 +1512,7 @@
       "scope": "record",
       "stage": "reconciliation",
       "code": "ROLE_UNRESOLVED",
-      "message": "429 Client Error: Too Many Requests for url: https://fticonsulting.wd108.myworkdayjobs.com/wday/cxs/fticonsulting/FTIConsultingCareers/jobs",
+      "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
       "company": "FTI Consulting",
       "job_key": "FTI Consulting::/job/London-United-Kingdom/XMLNAME-2027-Graduate-Scheme--Global-Insurance-Services_JR260773"
     },
