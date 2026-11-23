@@ -1,0 +1,68 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-45164555140-1",
+  "batch": "jw3",
+  "created_at": "2026-11-23T11:22:24Z",
+  "fetch_errors": {
+    "MET Group::744000161261729": "HTTP 400",
+    "Webuild::1417842133": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "MET Group::744000161261729": "5946e7060b3900d1",
+    "Webuild::1203820601": "706fc1388c5dd167",
+    "Webuild::1395177733": "f7d84f2f0c032aa5",
+    "Webuild::1417842133": "eb861644dcee13a1"
+  },
+  "job_keys": [
+    "MET Group::744000161261729",
+    "Webuild::1417842133",
+    "Webuild::1203820601",
+    "Webuild::1395177733"
+  ],
+  "packet_sha256": "65159c1ce9a01a4ade959ef6c2178d24630daa959fba827e2b7e2ca41a6c32b8",
+  "ready_count": 2,
+  "record_count": 4,
+  "request_id": "manual-20261123-1240-jw3-select04-g",
+  "request_sha256": "e1649be79a4e059c1d21c37d6b636f1378a3404e16c8ca2c3876d4999c6996a3",
+  "select_run_attempt": 1,
+  "select_run_id": 45164555140,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "db5608f0a7daf8bd6e5e1eba362c02b0f0501c8e5fc72b263883659af97bf5c8",
+    "job_memory_jw3.json": "cd0df44282901afe50ffe264ef32a577cd2c7e8fcc9a6ffd93068c5649b6667c",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw3.json": "db5608f0a7daf8bd6e5e1eba362c02b0f0501c8e5fc72b263883659af97bf5c8",
+    "job_memory_jw3.json": "2eb23c9834e169beefce04c0232ea57d54ed16b52068252477c2a29b3916ec86",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "MET Group::744000161261729": {
+      "attempts": 4,
+      "evidence": {
+        "fingerprint": "5946e7060b3900d1",
+        "source_url": "https://api.smartrecruiters.com/v1/companies/metgroup/postings/744000161261729"
+      },
+      "last_failure_at": "2026-11-23T11:22:24Z",
+      "retry_from": null,
+      "status": "JD_UNAVAILABLE"
+    },
+    "Webuild::1417842133": {
+      "attempts": 2,
+      "evidence": {
+        "fingerprint": "eb861644dcee13a1",
+        "source_url": "https://jobs.webuildgroup.com/job/Milano-Manager-Internal-Audit%C2%A0-%C2%A0Corporate%2C-Western-Countries-and-Innovation/1417842133/"
+      },
+      "last_failure_at": "2026-11-23T11:22:24Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14814391744
+}
