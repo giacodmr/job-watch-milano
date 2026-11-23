@@ -1,0 +1,91 @@
+{
+  "action": "select",
+  "artifact_name": "job-watch-packet-45151442845-1",
+  "batch": "jw2",
+  "created_at": "2026-11-23T09:56:14Z",
+  "fetch_errors": {
+    "Eight Sleep::4bb1a9f1-bbad-4729-bccb-7a17f5601a79": "no Ashby tenant",
+    "Eight Sleep::80518ba7-3b58-4131-b5c2-78c1b660b9ef": "no Ashby tenant",
+    "KPMG::1372843757": "official page does not expose a matching job description"
+  },
+  "fingerprints": {
+    "Amazon::10579627": "5a2332f3d96751e5",
+    "Amazon::10596745": "e31fb1dedd859b0d",
+    "Amazon::10605850": "c8ffc222762b5cf6",
+    "Amazon::10607875": "1552737e55998c9d",
+    "Amazon::10608059": "aeccf4d6d923c290",
+    "Amazon::10610554": "2a32028236be7b26",
+    "Eight Sleep::4bb1a9f1-bbad-4729-bccb-7a17f5601a79": "b1fa1559aa9781a8",
+    "Eight Sleep::80518ba7-3b58-4131-b5c2-78c1b660b9ef": "3a185f3e6abec523",
+    "KPMG::1372843757": "a7efc423501a7965",
+    "KPMG::1375576157": "be140dc53ea92cef"
+  },
+  "job_keys": [
+    "Amazon::10610554",
+    "Amazon::10605850",
+    "Amazon::10579627",
+    "Amazon::10607875",
+    "Amazon::10596745",
+    "KPMG::1372843757",
+    "KPMG::1375576157",
+    "Eight Sleep::80518ba7-3b58-4131-b5c2-78c1b660b9ef",
+    "Eight Sleep::4bb1a9f1-bbad-4729-bccb-7a17f5601a79",
+    "Amazon::10608059"
+  ],
+  "packet_sha256": "7bb638a9654c17fe09910a756b4a08f25c04a100cb5545e85683a44162f57d78",
+  "ready_count": 7,
+  "record_count": 10,
+  "request_id": "manual-20261123-1115-jw2-select10-c",
+  "request_sha256": "86c1cfeddd2a7a58b28c2e67cf396af0cd82dc59c6214d1804a6a600a95dd15f",
+  "select_run_attempt": 1,
+  "select_run_id": 45151442845,
+  "snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5d1a506e4a47b52564f07e7368d3655cdbb2bccbb5c4f0caf6784f7947c9c4d4",
+    "job_memory_jw2.json": "cf48e3b01b6fa2a4bd49ef9b77017c46a909051c882b7f3d9326e7c43edf1472",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "source_snapshot": {
+    "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16",
+    "current_jobs_jw2.json": "5d1a506e4a47b52564f07e7368d3655cdbb2bccbb5c4f0caf6784f7947c9c4d4",
+    "job_memory_jw2.json": "82dd65d914212120ae59ff924af427e5fc52da6e8b89115651b880c50d4b5801",
+    "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
+    "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945"
+  },
+  "status": "PARTIAL",
+  "technical_retry": {
+    "Eight Sleep::4bb1a9f1-bbad-4729-bccb-7a17f5601a79": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "b1fa1559aa9781a8",
+        "source_url": "https://jobs.ashbyhq.com/eightsleep/4bb1a9f1-bbad-4729-bccb-7a17f5601a79"
+      },
+      "last_failure_at": "2026-11-23T09:56:14Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    },
+    "Eight Sleep::80518ba7-3b58-4131-b5c2-78c1b660b9ef": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "3a185f3e6abec523",
+        "source_url": "https://jobs.ashbyhq.com/eightsleep/80518ba7-3b58-4131-b5c2-78c1b660b9ef"
+      },
+      "last_failure_at": "2026-11-23T09:56:14Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    },
+    "KPMG::1372843757": {
+      "attempts": 1,
+      "evidence": {
+        "fingerprint": "a7efc423501a7965",
+        "source_url": "https://careers.kpmg.it/job/Milano-Data-Governance-Manager/1372843757/"
+      },
+      "last_failure_at": "2026-11-23T09:56:14Z",
+      "retry_from": "2026-11-24",
+      "status": "RETRY_PENDING"
+    }
+  },
+  "version": "2.0",
+  "artifact_id": 14805888242
+}
