@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "cab1032524dc933dd02c0055",
+    "run_id": "3165cdfe9be38da4cf62c3d2",
     "source_generated_at": {
-      "JW1": "2026-11-24T06:06:28Z",
-      "JW2": "2026-11-24T06:08:36Z",
-      "JW3": "2026-11-24T06:09:16Z",
-      "JW4": "2026-11-24T06:10:25Z"
+      "JW1": "2026-11-24T06:22:19Z",
+      "JW2": "2026-11-24T06:24:06Z",
+      "JW3": "2026-11-24T06:24:45Z",
+      "JW4": "2026-11-24T06:25:43Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-11-24T06:10:49.558883+00:00"
+      "Amazon": "2026-11-24T06:26:09.401612+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "a435421c1605cf3281a67b9672dfceaa78798a4d3cd856bc216d47d15fe303ad",
-      "current_jobs_jw2.json": "093a63af64213dadea895aea929de47e8026c1062329296237aff3842eb0058e",
-      "current_jobs_jw3.json": "b1c7d6742fe042d8d92b5e9f05bf440a2fdee46a17a1a4345ac8c4c64bb352d3",
-      "current_jobs_jw4.json": "354e85372e427273c09ff37efd33958501d765e072c9155daf3beaa02570f1e4",
-      "amazon_target_check.json": "63d1249d0a2867f640739df80c2addb16efd5151126ebdc5db910cc3a6c29f51",
+      "current_jobs_jw1.json": "662be5a6f9664cd5c96757c9e34b52b6cf22b621695431d2339cbd69bb690bad",
+      "current_jobs_jw2.json": "3f9a38782128aab6fd8a8d3a96152f44c3694eefb667d4b642d73198c29f2032",
+      "current_jobs_jw3.json": "a343923e76c7b23e5a1e81eb63c08d2da32bd543a6b4c28fd7ac7f4271f65743",
+      "current_jobs_jw4.json": "c495b1cc9aed55619bb0fdaa6e6bfa38f28f7202edd6b3f84abcd2a30809f1c2",
+      "amazon_target_check.json": "8cd550f7d7d2bf5e8664277128f5ee99d9bd0227242107e37695f21899d63c84",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 65,
-    "daily_semantic_pending": 4,
+    "records": 62,
+    "daily_semantic_pending": 1,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 56,
-    "full_semantic_pending": 60,
-    "processable_semantic_pending": 55,
+    "historical_backlog_remaining": 53,
+    "full_semantic_pending": 54,
+    "processable_semantic_pending": 49,
     "jd_retry_deferred": 0,
     "jd_unavailable": 5
   },
@@ -224,30 +224,6 @@
       "first_seen_at": "2026-09-20T14:44:18Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
-    },
-    {
-      "batch": "JW1",
-      "job_key": "Mastercard::R-286677",
-      "action": "TO_REVIEW",
-      "needs_semantic_review": false,
-      "company": "Mastercard",
-      "source_id": "R-286677",
-      "title": "Senior Specialist, Product Management",
-      "location": "London, England (Angel Lane)",
-      "priority_company": true,
-      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
-      "fingerprint": "063d273694a2c008",
-      "current_status": "UPDATED",
-      "threshold": 80,
-      "user_decision": "TO_REVIEW",
-      "user_decision_reason": "Strong product-strategy, analytics and business-case adjacency; retain for explicit review.",
-      "first_seen_at": "2026-09-19T10:11:09Z",
-      "decision": {
-        "fit_score": 84,
-        "reportable": true,
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "rationale": "Strong product strategy, analytics and business-case adjacency; direct PM depth is the main gap."
-      }
     },
     {
       "batch": "JW2",
@@ -557,6 +533,23 @@
       "current_status": "UNKNOWN",
       "user_decision": "TO_REVIEW",
       "first_seen_at": "2026-09-26T04:41:20Z",
+      "decision": {},
+      "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-286677",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Mastercard",
+      "source_id": "R-286677",
+      "title": "Senior Specialist, Product Management",
+      "location": "London, England (Angel Lane)",
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
+      "fingerprint": "063d273694a2c008",
+      "current_status": "UNKNOWN",
+      "user_decision": "TO_REVIEW",
+      "first_seen_at": "2026-09-19T10:11:09Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
@@ -1270,68 +1263,20 @@
       }
     },
     {
-      "batch": "JW3",
-      "job_key": "Prysmian::R-38188",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Prysmian",
-      "source_id": "R-38188",
-      "title": "Project HSE Specialist",
-      "location": "Milan, IT",
-      "priority_company": false,
-      "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Project-HSE-Specialist_R-38188",
-      "fingerprint": "369f64fee2cea856",
-      "current_status": "NEW",
-      "threshold": 70,
-      "first_seen_at": "2026-11-24T06:09:16Z"
-    },
-    {
-      "batch": "JW3",
-      "job_key": "Prysmian::R-38520",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Prysmian",
-      "source_id": "R-38520",
-      "title": "Category Buyer (Onshore Equipment & Indirect)",
-      "location": "Milan, IT",
-      "priority_company": false,
-      "canonical_url": "https://prysmiangroup.wd3.myworkdayjobs.com/Careers/job/Milan-IT/Category-Buyer--Onshore-Equipment---Indirect-_R-38520",
-      "fingerprint": "f724b161f7bf32a6",
-      "current_status": "NEW",
-      "threshold": 70,
-      "first_seen_at": "2026-11-24T06:09:16Z"
-    },
-    {
       "batch": "JW4",
-      "job_key": "Sanofi::/job/Milano/Regulatory-Affairs-Manager_R2878722-1",
+      "job_key": "Sky Italia::R0060823",
       "action": "NEW_CANDIDATE",
       "needs_semantic_review": true,
-      "company": "Sanofi",
-      "source_id": "/job/Milano/Regulatory-Affairs-Manager_R2878722-1",
-      "title": "Regulatory Affairs Manager",
-      "location": "Milano",
+      "company": "Sky Italia",
+      "source_id": "R0060823",
+      "title": "Manager - Content Acquisition (Maternity Leave)",
+      "location": "Milan, Monte Penice",
       "priority_company": false,
-      "canonical_url": "https://sanofi.wd3.myworkdayjobs.com/SanofiCareers/job/Milano/Regulatory-Affairs-Manager_R2878722-1",
-      "fingerprint": "6013e06fdb90fb1d",
+      "canonical_url": "https://sky.wd3.myworkdayjobs.com/sky_careers/job/Milan-Monte-Penice/Manager---Content-Acquisition--Maternity-Leave-_R0060823",
+      "fingerprint": "7ed4f006d28533bd",
       "current_status": "NEW",
       "threshold": 70,
-      "first_seen_at": "2026-11-24T06:10:24Z"
-    },
-    {
-      "batch": "JW4",
-      "job_key": "Sanofi::/job/Milano/aT1D-Field-Readiness-Associate---Veneto---Friuli-Venezia-Giulia---Trentino-Alto-Adige_R2875263-1",
-      "action": "NEW_CANDIDATE",
-      "needs_semantic_review": true,
-      "company": "Sanofi",
-      "source_id": "/job/Milano/aT1D-Field-Readiness-Associate---Veneto---Friuli-Venezia-Giulia---Trentino-Alto-Adige_R2875263-1",
-      "title": "aT1D Field Readiness Associate - Veneto - Friuli Venezia Giulia - Trentino Alto Adige",
-      "location": "Milano",
-      "priority_company": false,
-      "canonical_url": "https://sanofi.wd3.myworkdayjobs.com/SanofiCareers/job/Milano/aT1D-Field-Readiness-Associate---Veneto---Friuli-Venezia-Giulia---Trentino-Alto-Adige_R2875263-1",
-      "fingerprint": "398980d348ba0d6d",
-      "current_status": "NEW",
-      "threshold": 70,
-      "first_seen_at": "2026-11-24T06:10:24Z"
+      "first_seen_at": "2026-11-24T06:25:43Z"
     }
   ],
   "lifecycle_updates": [],
@@ -1351,6 +1296,10 @@
     {
       "batch": "JW4",
       "action": "AUTONOMOUS_SEARCH"
+    },
+    {
+      "action": "RETRY_PRIORITY_COLLECTION",
+      "company": "Mastercard"
     }
   ]
 }
