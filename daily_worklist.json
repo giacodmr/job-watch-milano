@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "c9938a60704628f4285a156c",
+    "run_id": "4b1cbbbb6b6bf1dee0f0d720",
     "source_generated_at": {
-      "JW1": "2026-11-25T05:09:40Z",
-      "JW2": "2026-11-25T05:11:11Z",
-      "JW3": "2026-11-25T05:11:59Z",
-      "JW4": "2026-11-25T05:12:55Z"
+      "JW1": "2026-11-25T05:17:19Z",
+      "JW2": "2026-11-25T05:18:59Z",
+      "JW3": "2026-11-25T05:19:11Z",
+      "JW4": "2026-11-25T05:20:11Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-11-25T05:13:16.924694+00:00"
+      "Amazon": "2026-11-25T05:20:33.406340+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "2f4d799fa5613898b3298e295b38a70f3cbe81cb091ece1b4f04049ea8d35750",
-      "current_jobs_jw2.json": "b59ee41fc394777623688ff48b0bb229ce052f91ffdef117496a0e8f08a17f81",
-      "current_jobs_jw3.json": "26b515f846d40e14fef85853724d2cba1fb54f4bad81860ceffc44feefc819e7",
-      "current_jobs_jw4.json": "16993124b4b02d525bc1327e202a7f4904f04ddc01aa8366cfdd45b84a663d9c",
-      "amazon_target_check.json": "6da9b67c6a1689eff3cb66c1d503ce6e46c8463a4c7149891fcc43b8d294e447",
+      "current_jobs_jw1.json": "afff270fd21bdbbf69595b72689f3041027866ed0873d8e4c487f25ed3cd5796",
+      "current_jobs_jw2.json": "d805abd4410dbb2734d17bfc705dc8a239b5f54f5e72641ae9a740ac77f66061",
+      "current_jobs_jw3.json": "157ad65ae8a09d978e38ac501977190790f7141238e2617ea536f56f15e4ab4c",
+      "current_jobs_jw4.json": "e1877e2c5cb2395e8eaf26cd4b09df7730f7925da2fb4e0d60a8658a3d0ebc2d",
+      "amazon_target_check.json": "0004e860f63592164b62d15f9922f1fce1693bdecbd34e3b89ff2fe9cf28e44c",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 62,
-    "daily_semantic_pending": 1,
+    "records": 64,
+    "daily_semantic_pending": 4,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 101,
-    "full_semantic_pending": 102,
-    "processable_semantic_pending": 97,
+    "historical_backlog_remaining": 92,
+    "full_semantic_pending": 96,
+    "processable_semantic_pending": 91,
     "jd_retry_deferred": 0,
     "jd_unavailable": 5
   },
@@ -229,25 +229,19 @@
       "batch": "JW1",
       "job_key": "Mastercard::R-286677",
       "action": "TO_REVIEW",
-      "needs_semantic_review": false,
+      "needs_semantic_review": true,
       "company": "Mastercard",
       "source_id": "R-286677",
       "title": "Senior Specialist, Product Management",
-      "location": "London, England (Angel Lane)",
+      "location": "London England Angel Lane | London, England (Angel Lane)",
       "priority_company": true,
       "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
-      "fingerprint": "063d273694a2c008",
+      "fingerprint": "3c025b31204d3551",
       "current_status": "UPDATED",
       "threshold": 80,
       "user_decision": "TO_REVIEW",
       "user_decision_reason": "Strong product-strategy, analytics and business-case adjacency; retain for explicit review.",
-      "first_seen_at": "2026-09-19T10:11:09Z",
-      "decision": {
-        "fit_score": 84,
-        "reportable": true,
-        "final_experience_status": "REVIEW_UNCLEAR",
-        "rationale": "Strong product strategy, analytics and business-case adjacency; direct PM depth is the main gap."
-      }
+      "first_seen_at": "2026-09-19T10:11:09Z"
     },
     {
       "batch": "JW2",
@@ -1261,20 +1255,52 @@
       }
     },
     {
-      "batch": "JW1",
-      "job_key": "Fiserv::R-10399378",
+      "batch": "JW4",
+      "job_key": "MSD::/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Lombardia--MI--BS--BG-_R428361-1",
       "action": "NEW_CANDIDATE",
       "needs_semantic_review": true,
-      "company": "Fiserv",
-      "source_id": "R-10399378",
-      "title": "Project Manager",
-      "location": "Milan, Italy",
+      "company": "MSD",
+      "source_id": "/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Lombardia--MI--BS--BG-_R428361-1",
+      "title": "Customer Rep., Sales MAH Lombardia (MI, BS, BG)",
+      "location": "ITA - Lombardia - Milano Segrate (Palazzo)",
       "priority_company": false,
-      "canonical_url": "https://fiserv.wd5.myworkdayjobs.com/EXT/job/Milan-Italy/Senior-Project-Manager_R-10399378",
-      "fingerprint": "a408b0128a1c41ea",
+      "canonical_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Lombardia--MI--BS--BG-_R428361-1",
+      "fingerprint": "d3a953fbf5079199",
       "current_status": "NEW",
       "threshold": 70,
-      "first_seen_at": "2026-11-25T05:09:40Z"
+      "first_seen_at": "2026-11-25T05:20:11Z"
+    },
+    {
+      "batch": "JW4",
+      "job_key": "MSD::/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Piemonte_R427905-1",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "MSD",
+      "source_id": "/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Piemonte_R427905-1",
+      "title": "Customer Rep., Sales MAH Piemonte",
+      "location": "ITA - Lombardia - Milano Segrate (Palazzo)",
+      "priority_company": false,
+      "canonical_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Piemonte_R427905-1",
+      "fingerprint": "8a475e54945b83d0",
+      "current_status": "NEW",
+      "threshold": 70,
+      "first_seen_at": "2026-11-25T05:20:11Z"
+    },
+    {
+      "batch": "JW4",
+      "job_key": "MSD::R428362",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "MSD",
+      "source_id": "R428362",
+      "title": "Customer Rep., Sales MAH Mantova",
+      "location": "ITA - Lombardia - Milano Segrate (Palazzo)",
+      "priority_company": false,
+      "canonical_url": "https://msd.wd5.myworkdayjobs.com/SearchJobs/job/ITA---Lombardia---Milano-Segrate-Palazzo/Customer-Rep--Sales-MAH-Mantova_R428362",
+      "fingerprint": "f71f6860b9cff4a2",
+      "current_status": "NEW",
+      "threshold": 70,
+      "first_seen_at": "2026-11-25T05:20:11Z"
     }
   ],
   "lifecycle_updates": [],
@@ -1294,6 +1320,10 @@
     {
       "batch": "JW4",
       "action": "AUTONOMOUS_SEARCH"
+    },
+    {
+      "action": "RETRY_PRIORITY_COLLECTION",
+      "company": "Mastercard"
     }
   ]
 }

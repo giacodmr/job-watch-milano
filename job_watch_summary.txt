@@ -1,5 +1,5 @@
 JOB WATCH RUN
-Run: c9938a60704628f4285a156c
+Run: 4b1cbbbb6b6bf1dee0f0d720
 State: NEEDS_REVIEW
 Collection: COMPLETE_WITH_WARNINGS
 JW1: NEEDS_REVIEW
@@ -7,24 +7,26 @@ JW2: NEEDS_REVIEW
 JW3: NEEDS_REVIEW
 JW4: NEEDS_REVIEW
 Amazon: VERIFIED
-Mastercard: VERIFIED
+Mastercard: FAILED
 
-Daily actionable remaining: 2
-Historical backlog: 101
-Processable semantic pending: 97
+Daily actionable remaining: 5
+Historical backlog: 92
+Processable semantic pending: 91
 JD retry deferred: 0
 JD unavailable: 5
-Source failures: 16
-Partial sources: 120
+Source failures: 23
+Partial sources: 118
 record errors: 17
-source errors: 137
+source errors: 142
 batch errors: 0
 global errors: 0
 DAILY_COMPLETE: false
 FULL_SEMANTIC_COMPLETE: false
 Remaining: {'batch': 'JW1', 'action': 'SEMANTIC_REVIEW', 'count': 1, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW1', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW1', 'action': 'RETRY_PRIORITY_COLLECTION', 'company': 'Mastercard', 'reason': 'No usable priority inventory; retry official source'}
 Remaining: {'batch': 'JW2', 'action': 'REPORT_OPPORTUNITIES', 'count': 1, 'reason': 'Show decided opportunities/material updates; persist surfaced fingerprints'}
 Remaining: {'batch': 'JW2', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
 Remaining: {'batch': 'JW3', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
+Remaining: {'batch': 'JW4', 'action': 'SEMANTIC_REVIEW', 'count': 3, 'reason': 'Review exact current fingerprints in daily worklist'}
 Remaining: {'batch': 'JW4', 'action': 'AUTONOMOUS_SEARCH', 'reason': 'Search official sources; record actual query/date/source/result in activity'}
