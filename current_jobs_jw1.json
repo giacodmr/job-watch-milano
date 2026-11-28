@@ -2,7 +2,7 @@
   "version": "1.8",
   "batch": "JW1",
   "batch_name": "Finance, Payments, Banking & Insurance",
-  "generated_at": "2026-11-28T04:12:59Z",
+  "generated_at": "2026-11-28T04:20:39Z",
   "collector_scope": [
     "Lever",
     "Ashby",
@@ -33,28 +33,28 @@
   "summary": {
     "companies_total": 56,
     "collector_supported": 56,
-    "VERIFIED": 24,
-    "PARTIAL": 26,
-    "FAILED": 6,
+    "VERIFIED": 23,
+    "PARTIAL": 24,
+    "FAILED": 9,
     "NOT_CHECKED": 0,
-    "target_jobs_open": 241,
-    "NEW": 0,
-    "STILL_OPEN": 240,
-    "UPDATED": 1,
+    "target_jobs_open": 245,
+    "NEW": 3,
+    "STILL_OPEN": 242,
+    "UPDATED": 0,
     "CLOSED": 0,
-    "UNKNOWN": 142
+    "UNKNOWN": 141
   },
   "companies": [
     {
       "company": "Mastercard",
       "mapping_level": "FULL",
       "ats_family": "Workday",
-      "coverage": "PARTIAL",
-      "collector": "workday_cxs_metadata",
-      "inventory_count": 200,
-      "target_jobs_count": 4,
-      "source_url": "https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
-      "reason": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+      "coverage": "FAILED",
+      "collector": "collect_workday",
+      "inventory_count": null,
+      "target_jobs_count": 0,
+      "source_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers",
+      "reason": "HTTPError: 429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs; retained 0 validated observed jobs",
       "jobs": [
         {
           "source_id": "R-295597",
@@ -72,7 +72,7 @@
           "first_seen_at": "2026-11-13T02:36:50Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "82a6230c5b3471ad",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-278772",
@@ -90,7 +90,7 @@
           "first_seen_at": "2026-11-10T04:07:38Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "1586936ee2e82d85",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "/job/London-England-Angel-Lane/Managing-Consultant--Services-Business-Development_R-288200-1",
@@ -108,7 +108,7 @@
           "first_seen_at": "2026-09-24T04:42:15Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "a202cd7accacd4c9",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-277857",
@@ -161,8 +161,18 @@
           "apply_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
           "fingerprint": "3c025b31204d3551",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "status": "UPDATED",
-          "last_seen_at": "2026-11-28T04:12:59Z"
+          "status": "UNKNOWN",
+          "last_seen_at": "2026-11-28T04:12:59Z",
+          "reconciliation_state": "UNRESOLVED",
+          "reconciliation_error": {
+            "category": "LOCAL_RECORD_ERROR",
+            "scope": "record",
+            "stage": "reconciliation",
+            "code": "ROLE_UNRESOLVED",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+            "company": "Mastercard",
+            "job_key": "Mastercard::R-286677"
+          }
         },
         {
           "source_id": "R-290390",
@@ -187,7 +197,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::R-290390"
           }
@@ -215,7 +225,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::R-287484"
           }
@@ -243,7 +253,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::R-275678"
           }
@@ -271,7 +281,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::R-291603"
           }
@@ -299,7 +309,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::/job/London-England-Angel-Lane/Senior-Analyst--Finance-Business-Partner--UK-I_R-290041-1"
           }
@@ -327,7 +337,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::R-291258"
           }
@@ -355,7 +365,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
             "company": "Mastercard",
             "job_key": "Mastercard::R-292626"
           }
@@ -366,23 +376,22 @@
         "category": "SOURCE_ERROR",
         "scope": "source",
         "stage": "collection",
-        "code": "SOURCE_PARTIAL",
-        "message": "429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs",
+        "code": "SOURCE_FAILED",
+        "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Mastercard"
-      },
-      "active_decision_reconciled": true
+      }
     },
     {
       "company": "Visa",
       "mapping_level": "FULL",
       "ats_family": "Workday",
-      "coverage": "PARTIAL",
-      "collector": "workday_cxs_metadata",
-      "inventory_count": 200,
+      "coverage": "FAILED",
+      "collector": "collect_workday",
+      "inventory_count": null,
       "target_jobs_count": 0,
-      "source_url": "https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
-      "reason": "429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
+      "source_url": "https://visa.wd5.myworkdayjobs.com/Visa",
+      "reason": "HTTPError: 429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs; retained 0 validated observed jobs",
       "jobs": [
         {
           "source_id": "/job/IT---Rome-Italy/Sr-Manager--Government-Sales-Executive_REF090036W",
@@ -435,7 +444,7 @@
             "scope": "record",
             "stage": "reconciliation",
             "code": "ROLE_UNRESOLVED",
-            "message": "Role not found in official inventory/listing; absence not sufficient to prove closure",
+            "message": "429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
             "company": "Visa",
             "job_key": "Visa::/job/IT---Milan-Italy/Consulting-Analyst_REF081405W"
           },
@@ -449,8 +458,8 @@
         "category": "SOURCE_ERROR",
         "scope": "source",
         "stage": "collection",
-        "code": "SOURCE_PARTIAL",
-        "message": "429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs",
+        "code": "SOURCE_FAILED",
+        "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Visa"
       }
@@ -480,7 +489,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016753",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016753",
           "first_seen_at": "2026-11-28T03:52:45Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6a5bd179a38a49ae",
           "status": "STILL_OPEN"
         },
@@ -498,7 +507,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016775",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016775",
           "first_seen_at": "2026-11-27T04:09:20Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0b05da4869b11644",
           "status": "STILL_OPEN"
         },
@@ -516,7 +525,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016895",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016895",
           "first_seen_at": "2026-11-27T04:09:20Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b5dab84515f006ba",
           "status": "STILL_OPEN"
         },
@@ -534,7 +543,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26014016",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26014016",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0c33872986813493",
           "status": "STILL_OPEN"
         },
@@ -552,7 +561,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016132",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016132",
           "first_seen_at": "2026-11-25T04:54:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5374ea573e3a6c32",
           "status": "STILL_OPEN"
         },
@@ -570,7 +579,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26013376",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26013376",
           "first_seen_at": "2026-11-21T03:37:39Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "af08a09a06c34f1a",
           "status": "STILL_OPEN"
         },
@@ -588,7 +597,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26014320",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26014320",
           "first_seen_at": "2026-11-07T01:52:15Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c7c163f428641ef2",
           "status": "STILL_OPEN"
         },
@@ -606,7 +615,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016272",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016272",
           "first_seen_at": "2026-11-19T03:15:18Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d091ea4d86f8a10b",
           "status": "STILL_OPEN"
         },
@@ -624,7 +633,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016344",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016344",
           "first_seen_at": "2026-11-18T03:41:27Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "67b4d75f239c8023",
           "status": "STILL_OPEN"
         },
@@ -642,7 +651,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016539",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26016539",
           "first_seen_at": "2026-11-16T23:43:13Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1f31db597f5d0fb6",
           "status": "STILL_OPEN"
         },
@@ -660,7 +669,7 @@
           "url": "https://careers.americanexpress.com/it/sites/CX_1/job/26015037",
           "apply_url": "https://careers.americanexpress.com/it/sites/CX_1/job/26015037",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bdfa1d8241194d13",
           "status": "STILL_OPEN"
         }
@@ -692,7 +701,7 @@
           "url": "https://fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/3847",
           "apply_url": "https://fa-ewwx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/3847",
           "first_seen_at": "2026-10-29T22:23:48Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f0cdaece5472c36e",
           "status": "STILL_OPEN"
         }
@@ -733,7 +742,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/junior-claims-handler-academy-0cb63ae3-9dde-4c19-97ae-695da9f9a306",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/junior-claims-handler-academy-0cb63ae3-9dde-4c19-97ae-695da9f9a306",
           "first_seen_at": "2026-11-25T04:54:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "7cc568d84075e58e",
           "status": "STILL_OPEN"
         },
@@ -751,7 +760,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/software-engineer-0d3e7ef3-d34b-4e6e-8383-1cbb98470a75",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/software-engineer-0d3e7ef3-d34b-4e6e-8383-1cbb98470a75",
           "first_seen_at": "2026-09-20T09:46:01Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f29719c6b4d91158",
           "status": "STILL_OPEN"
         },
@@ -769,7 +778,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/data-scientist-1b650a6c-4649-43f4-854b-a3decfb9a006",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/data-scientist-1b650a6c-4649-43f4-854b-a3decfb9a006",
           "first_seen_at": "2026-09-20T09:46:01Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "eb7009ea71d559ed",
           "status": "STILL_OPEN"
         },
@@ -787,7 +796,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/liquidatore-antifrode-21319cb1-e889-4b6d-8a46-316f60367d83",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/liquidatore-antifrode-21319cb1-e889-4b6d-8a46-316f60367d83",
           "first_seen_at": "2026-10-23T23:51:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "780ebea0d3395c5e",
           "status": "STILL_OPEN"
         },
@@ -805,7 +814,7 @@
           "url": "https://www.helloprima.com/it/carriere/offerte-lavoro/devops-engineer-2f486d8e-d9ee-4eb9-b04f-cdcbfb4889b3",
           "apply_url": "https://www.helloprima.com/it/carriere/offerte-lavoro/devops-engineer-2f486d8e-d9ee-4eb9-b04f-cdcbfb4889b3",
           "first_seen_at": "2026-10-01T04:46:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a3f65585f27d7ef3",
           "status": "STILL_OPEN"
         },
@@ -918,7 +927,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/45744663-4768-48d1-81c9-218eb54a2027",
           "apply_url": "https://jobs.ashbyhq.com/satispay/45744663-4768-48d1-81c9-218eb54a2027/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bb74bb9769fd780d",
           "status": "STILL_OPEN"
         },
@@ -936,7 +945,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/5ee73f71-9077-47bd-9674-d9b94c7f8808",
           "apply_url": "https://jobs.ashbyhq.com/satispay/5ee73f71-9077-47bd-9674-d9b94c7f8808/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "74b7350b0a8b8db9",
           "status": "STILL_OPEN"
         },
@@ -954,7 +963,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/45484473-f8e0-4457-983e-ae0ddadbfec1",
           "apply_url": "https://jobs.ashbyhq.com/satispay/45484473-f8e0-4457-983e-ae0ddadbfec1/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0bfab6eb1c00e663",
           "status": "STILL_OPEN"
         },
@@ -972,7 +981,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/72246089-bf9d-4ff2-a54d-75ace4594856",
           "apply_url": "https://jobs.ashbyhq.com/satispay/72246089-bf9d-4ff2-a54d-75ace4594856/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a19d3b4285825aaa",
           "status": "STILL_OPEN"
         },
@@ -990,7 +999,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/64c940b5-4dc6-4e3b-a26b-28ec7c2af0ab",
           "apply_url": "https://jobs.ashbyhq.com/satispay/64c940b5-4dc6-4e3b-a26b-28ec7c2af0ab/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "fe669a1dae48f3f4",
           "status": "STILL_OPEN"
         },
@@ -1008,7 +1017,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/4839cb24-caf3-4253-9520-9aae59ee79f6",
           "apply_url": "https://jobs.ashbyhq.com/satispay/4839cb24-caf3-4253-9520-9aae59ee79f6/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "393fd04efef97de2",
           "status": "STILL_OPEN"
         },
@@ -1026,7 +1035,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/5489d9d5-7d39-48a4-a5c1-111afeb4ca2d",
           "apply_url": "https://jobs.ashbyhq.com/satispay/5489d9d5-7d39-48a4-a5c1-111afeb4ca2d/application",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "770d3bae92dc2f6c",
           "status": "STILL_OPEN"
         },
@@ -1044,7 +1053,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/47b4fbeb-c796-478b-8645-d25686e084bb",
           "apply_url": "https://jobs.ashbyhq.com/satispay/47b4fbeb-c796-478b-8645-d25686e084bb/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "14347066bf3ead18",
           "status": "STILL_OPEN"
         },
@@ -1062,7 +1071,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/424a7547-f4ba-4dc6-acd1-9b0da74872fd",
           "apply_url": "https://jobs.ashbyhq.com/satispay/424a7547-f4ba-4dc6-acd1-9b0da74872fd/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ef9f4ae034f993bd",
           "status": "STILL_OPEN"
         },
@@ -1080,7 +1089,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/8b74b5c9-3798-40ff-9fa7-9db74e54c2aa",
           "apply_url": "https://jobs.ashbyhq.com/satispay/8b74b5c9-3798-40ff-9fa7-9db74e54c2aa/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "087219b1fddccc90",
           "status": "STILL_OPEN"
         },
@@ -1098,7 +1107,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/f97f126b-a3db-41ce-bf91-63f8f4400cda",
           "apply_url": "https://jobs.ashbyhq.com/satispay/f97f126b-a3db-41ce-bf91-63f8f4400cda/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "e7f7471415a402d0",
           "status": "STILL_OPEN"
         },
@@ -1116,7 +1125,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/f1e38957-2927-41d6-8e77-dcf77b498931",
           "apply_url": "https://jobs.ashbyhq.com/satispay/f1e38957-2927-41d6-8e77-dcf77b498931/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4d201710752be50a",
           "status": "STILL_OPEN"
         },
@@ -1134,7 +1143,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/cdbd208a-2e6f-46ab-ae46-f9edc5f1d4c1",
           "apply_url": "https://jobs.ashbyhq.com/satispay/cdbd208a-2e6f-46ab-ae46-f9edc5f1d4c1/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1efff5c82c2ddc00",
           "status": "STILL_OPEN"
         },
@@ -1152,7 +1161,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/10c786c6-e87d-4522-b789-d2922cbba5a5",
           "apply_url": "https://jobs.ashbyhq.com/satispay/10c786c6-e87d-4522-b789-d2922cbba5a5/application",
           "first_seen_at": "2026-11-21T03:09:58Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "83458ee941345e63",
           "status": "STILL_OPEN"
         },
@@ -1170,7 +1179,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/8f8cc48c-a4cd-42d3-83a7-e664e2af7186",
           "apply_url": "https://jobs.ashbyhq.com/satispay/8f8cc48c-a4cd-42d3-83a7-e664e2af7186/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5027a2c32d8714e0",
           "status": "STILL_OPEN"
         },
@@ -1188,7 +1197,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/01a49e81-494b-4b54-84c9-2b2c1c8690d0",
           "apply_url": "https://jobs.ashbyhq.com/satispay/01a49e81-494b-4b54-84c9-2b2c1c8690d0/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2ec43a043157012c",
           "status": "STILL_OPEN"
         },
@@ -1206,7 +1215,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/79f982d4-60d1-4165-99b8-162c772518e0",
           "apply_url": "https://jobs.ashbyhq.com/satispay/79f982d4-60d1-4165-99b8-162c772518e0/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d0b2aa8822695eff",
           "status": "STILL_OPEN"
         },
@@ -1224,7 +1233,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/e157f6af-6e42-4121-b6f8-16f55001ef70",
           "apply_url": "https://jobs.ashbyhq.com/satispay/e157f6af-6e42-4121-b6f8-16f55001ef70/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4eabc0c4d9bd95b0",
           "status": "STILL_OPEN"
         },
@@ -1242,7 +1251,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/d5165e4a-9e7d-4ddc-92ec-9a8fa464d7b5",
           "apply_url": "https://jobs.ashbyhq.com/satispay/d5165e4a-9e7d-4ddc-92ec-9a8fa464d7b5/application",
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "64f306b54f34d873",
           "status": "STILL_OPEN"
         },
@@ -1260,7 +1269,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/4f6b75ff-8209-4639-a408-daab23fc3b41",
           "apply_url": "https://jobs.ashbyhq.com/satispay/4f6b75ff-8209-4639-a408-daab23fc3b41/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "77ce22284976051e",
           "status": "STILL_OPEN"
         },
@@ -1278,7 +1287,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/794356e3-dcd9-4fdc-863a-f703feaf148c",
           "apply_url": "https://jobs.ashbyhq.com/satispay/794356e3-dcd9-4fdc-863a-f703feaf148c/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1c385db3070d08da",
           "status": "STILL_OPEN"
         },
@@ -1296,7 +1305,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/05d4af99-6eaa-415a-adc6-13872250632d",
           "apply_url": "https://jobs.ashbyhq.com/satispay/05d4af99-6eaa-415a-adc6-13872250632d/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "170662d75f741788",
           "status": "STILL_OPEN"
         },
@@ -1314,7 +1323,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/5fa625ec-38cc-4701-92e9-5891118f0eaa",
           "apply_url": "https://jobs.ashbyhq.com/satispay/5fa625ec-38cc-4701-92e9-5891118f0eaa/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c350374b05a01bcb",
           "status": "STILL_OPEN"
         },
@@ -1332,7 +1341,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/324a4022-2da1-4ef3-9f08-b02ff46a58f1",
           "apply_url": "https://jobs.ashbyhq.com/satispay/324a4022-2da1-4ef3-9f08-b02ff46a58f1/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5521733972a67bd3",
           "status": "STILL_OPEN"
         },
@@ -1350,7 +1359,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/f01e7171-d82f-47d4-b695-c9bc965a6e46",
           "apply_url": "https://jobs.ashbyhq.com/satispay/f01e7171-d82f-47d4-b695-c9bc965a6e46/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ec345d6e7a4e74ef",
           "status": "STILL_OPEN"
         },
@@ -1368,7 +1377,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/74fd92af-66df-4729-ad75-0832bf7502ec",
           "apply_url": "https://jobs.ashbyhq.com/satispay/74fd92af-66df-4729-ad75-0832bf7502ec/application",
           "first_seen_at": "2026-11-18T03:41:27Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "fa8ab3b8291c9dba",
           "status": "STILL_OPEN"
         },
@@ -1386,7 +1395,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/faceee33-175a-44c7-92cd-3d085020af37",
           "apply_url": "https://jobs.ashbyhq.com/satispay/faceee33-175a-44c7-92cd-3d085020af37/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "47a75977472c7766",
           "status": "STILL_OPEN"
         },
@@ -1404,7 +1413,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/0a709ad7-fa1b-4f91-950a-df4fe2a34b01",
           "apply_url": "https://jobs.ashbyhq.com/satispay/0a709ad7-fa1b-4f91-950a-df4fe2a34b01/application",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d00648c562bb5958",
           "status": "STILL_OPEN"
         },
@@ -1422,7 +1431,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/c055743f-1113-4fad-950a-f02b1bd556af",
           "apply_url": "https://jobs.ashbyhq.com/satispay/c055743f-1113-4fad-950a-f02b1bd556af/application",
           "first_seen_at": "2026-11-21T03:09:58Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5dbd3d67266d2fde",
           "status": "STILL_OPEN"
         },
@@ -1440,7 +1449,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/9e4676f6-b6d0-40c0-9108-a25c3f6205d3",
           "apply_url": "https://jobs.ashbyhq.com/satispay/9e4676f6-b6d0-40c0-9108-a25c3f6205d3/application",
           "first_seen_at": "2026-10-01T04:46:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "afc98afb0429e361",
           "status": "STILL_OPEN"
         },
@@ -1458,7 +1467,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/863fd1a3-c620-403e-9bac-08c06d8c297a",
           "apply_url": "https://jobs.ashbyhq.com/satispay/863fd1a3-c620-403e-9bac-08c06d8c297a/application",
           "first_seen_at": "2026-11-05T02:17:52Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "071f868b8db0c096",
           "status": "STILL_OPEN"
         },
@@ -1476,7 +1485,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/31e09fdd-2cd3-4156-a99d-c09a1733c50a",
           "apply_url": "https://jobs.ashbyhq.com/satispay/31e09fdd-2cd3-4156-a99d-c09a1733c50a/application",
           "first_seen_at": "2026-11-25T04:54:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4a16a1762604a8b0",
           "status": "STILL_OPEN"
         },
@@ -1494,7 +1503,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/bbe0dade-c817-4fae-9acb-558b5b3910f3",
           "apply_url": "https://jobs.ashbyhq.com/satispay/bbe0dade-c817-4fae-9acb-558b5b3910f3/application",
           "first_seen_at": "2026-10-06T11:27:16Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "06058d805c09fd6c",
           "status": "STILL_OPEN"
         },
@@ -1512,7 +1521,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/29ee4c79-44ff-48f6-a7e0-8b2608989026",
           "apply_url": "https://jobs.ashbyhq.com/satispay/29ee4c79-44ff-48f6-a7e0-8b2608989026/application",
           "first_seen_at": "2026-10-14T00:16:26Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1ee9aa92219f0064",
           "status": "STILL_OPEN"
         },
@@ -1530,7 +1539,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/40968d65-4071-4d14-8ead-f3c625130a54",
           "apply_url": "https://jobs.ashbyhq.com/satispay/40968d65-4071-4d14-8ead-f3c625130a54/application",
           "first_seen_at": "2026-11-19T03:15:18Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b68c47aedbd52b99",
           "status": "STILL_OPEN"
         },
@@ -1548,7 +1557,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/3cf1c7e0-36b7-4513-b56f-e15b3d543de5",
           "apply_url": "https://jobs.ashbyhq.com/satispay/3cf1c7e0-36b7-4513-b56f-e15b3d543de5/application",
           "first_seen_at": "2026-11-04T02:12:31Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "759a432d7afc9490",
           "status": "STILL_OPEN"
         },
@@ -1566,7 +1575,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/6022eee9-feb3-4158-b65f-fb8449437cbe",
           "apply_url": "https://jobs.ashbyhq.com/satispay/6022eee9-feb3-4158-b65f-fb8449437cbe/application",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "22fc33c67a93df73",
           "status": "STILL_OPEN"
         },
@@ -1584,7 +1593,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/2d697361-7ee7-4c92-b643-49eb25916416",
           "apply_url": "https://jobs.ashbyhq.com/satispay/2d697361-7ee7-4c92-b643-49eb25916416/application",
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "96906ac62e64a9eb",
           "status": "STILL_OPEN"
         },
@@ -1602,7 +1611,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/801f2ec6-a8de-4b55-bd66-eeae32eb6040",
           "apply_url": "https://jobs.ashbyhq.com/satispay/801f2ec6-a8de-4b55-bd66-eeae32eb6040/application",
           "first_seen_at": "2026-10-29T12:04:35Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6a789ad518b3fb04",
           "status": "STILL_OPEN"
         },
@@ -1620,7 +1629,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/cbaea0f1-baf1-4cfd-8942-6580a75c527c",
           "apply_url": "https://jobs.ashbyhq.com/satispay/cbaea0f1-baf1-4cfd-8942-6580a75c527c/application",
           "first_seen_at": "2026-10-29T12:04:35Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ce3e15c7700c9c47",
           "status": "STILL_OPEN"
         },
@@ -1638,7 +1647,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/3ba8a02f-61cb-4888-959e-44d5bbbc90e1",
           "apply_url": "https://jobs.ashbyhq.com/satispay/3ba8a02f-61cb-4888-959e-44d5bbbc90e1/application",
           "first_seen_at": "2026-10-29T12:04:35Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "8d4711be36295980",
           "status": "STILL_OPEN"
         },
@@ -1656,7 +1665,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/e1ddeef9-ad2f-4e35-8b9a-a9553f75fb48",
           "apply_url": "https://jobs.ashbyhq.com/satispay/e1ddeef9-ad2f-4e35-8b9a-a9553f75fb48/application",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f31dd6bb8c4c17c3",
           "status": "STILL_OPEN"
         },
@@ -1674,7 +1683,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/6854842b-f324-4702-8ade-c852f8fffbe4",
           "apply_url": "https://jobs.ashbyhq.com/satispay/6854842b-f324-4702-8ade-c852f8fffbe4/application",
           "first_seen_at": "2026-11-04T02:12:31Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "3c16ddae0539f338",
           "status": "STILL_OPEN"
         },
@@ -1692,7 +1701,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/cb02c52a-e2b0-4a39-8ec9-6f06e9641304",
           "apply_url": "https://jobs.ashbyhq.com/satispay/cb02c52a-e2b0-4a39-8ec9-6f06e9641304/application",
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "486c6e8231385c76",
           "status": "STILL_OPEN"
         },
@@ -1710,7 +1719,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/d3d85586-ec5d-4611-83b7-7ea41265dfa3",
           "apply_url": "https://jobs.ashbyhq.com/satispay/d3d85586-ec5d-4611-83b7-7ea41265dfa3/application",
           "first_seen_at": "2026-11-13T02:36:50Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d1ed089bae8b9b1d",
           "status": "STILL_OPEN"
         },
@@ -1728,7 +1737,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/07892b08-7040-4c2a-8a87-fed6baa7b878",
           "apply_url": "https://jobs.ashbyhq.com/satispay/07892b08-7040-4c2a-8a87-fed6baa7b878/application",
           "first_seen_at": "2026-11-19T03:15:18Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "7a6b124fd56e9c99",
           "status": "STILL_OPEN"
         },
@@ -1746,7 +1755,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/ba1373de-2479-4cdb-bd89-7bdf22d0a174",
           "apply_url": "https://jobs.ashbyhq.com/satispay/ba1373de-2479-4cdb-bd89-7bdf22d0a174/application",
           "first_seen_at": "2026-11-10T04:07:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "08843a75d1cd70ad",
           "status": "STILL_OPEN"
         },
@@ -1764,7 +1773,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/acad9995-a033-4d5a-83a5-6ae1db7761c6",
           "apply_url": "https://jobs.ashbyhq.com/satispay/acad9995-a033-4d5a-83a5-6ae1db7761c6/application",
           "first_seen_at": "2026-11-12T02:54:44Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bdd01f49dda2bb47",
           "status": "STILL_OPEN"
         },
@@ -1782,7 +1791,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/f4baa999-6fb5-4325-991d-63bce7fc26de",
           "apply_url": "https://jobs.ashbyhq.com/satispay/f4baa999-6fb5-4325-991d-63bce7fc26de/application",
           "first_seen_at": "2026-11-11T01:54:57Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6157a19f0f283cc5",
           "status": "STILL_OPEN"
         },
@@ -1800,7 +1809,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/f7ee1f63-c19d-4fb7-82aa-874bc03a50d1",
           "apply_url": "https://jobs.ashbyhq.com/satispay/f7ee1f63-c19d-4fb7-82aa-874bc03a50d1/application",
           "first_seen_at": "2026-11-19T22:38:50Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "3246234bbaf13b83",
           "status": "STILL_OPEN"
         },
@@ -1818,7 +1827,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/8025c526-5d37-49b5-99d5-075f8990b012",
           "apply_url": "https://jobs.ashbyhq.com/satispay/8025c526-5d37-49b5-99d5-075f8990b012/application",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f356602c208850a1",
           "status": "STILL_OPEN"
         },
@@ -1836,7 +1845,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/dfa1807b-5dd2-47c1-a83c-8316c2082e29",
           "apply_url": "https://jobs.ashbyhq.com/satispay/dfa1807b-5dd2-47c1-a83c-8316c2082e29/application",
           "first_seen_at": "2026-11-27T04:09:20Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4fc279715be31daf",
           "status": "STILL_OPEN"
         },
@@ -1854,7 +1863,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/0173e666-b35a-42da-88d4-1c5e7984c2c1",
           "apply_url": "https://jobs.ashbyhq.com/satispay/0173e666-b35a-42da-88d4-1c5e7984c2c1/application",
           "first_seen_at": "2026-11-25T04:54:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d03e4d88f3d62b36",
           "status": "STILL_OPEN"
         },
@@ -1872,7 +1881,7 @@
           "url": "https://jobs.ashbyhq.com/satispay/349c9883-c15e-47f8-99f7-b400a4338e8a",
           "apply_url": "https://jobs.ashbyhq.com/satispay/349c9883-c15e-47f8-99f7-b400a4338e8a/application",
           "first_seen_at": "2026-11-28T03:52:45Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1029555a5b87e85a",
           "status": "STILL_OPEN"
         }
@@ -1939,7 +1948,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4905135101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4905135101",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2c9299d8ac5de96d",
           "status": "STILL_OPEN"
         },
@@ -1957,7 +1966,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5049746101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5049746101",
           "first_seen_at": "2026-11-27T04:09:20Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c45c8e7105168c6c",
           "status": "STILL_OPEN"
         },
@@ -1975,7 +1984,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5013758101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5013758101",
           "first_seen_at": "2026-10-23T23:51:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bea4a06f674017f6",
           "status": "STILL_OPEN"
         },
@@ -1993,7 +2002,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5024631101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5024631101",
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "18bf2d51db865c31",
           "status": "STILL_OPEN"
         },
@@ -2011,7 +2020,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4860934101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4860934101",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "420156a5c7c4459a",
           "status": "STILL_OPEN"
         },
@@ -2029,7 +2038,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5024103101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/5024103101",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d1afda3f1f952284",
           "status": "STILL_OPEN"
         },
@@ -2047,7 +2056,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4955629101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4955629101",
           "first_seen_at": "2026-10-23T23:51:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "478fab6c082a2674",
           "status": "STILL_OPEN"
         },
@@ -2065,7 +2074,7 @@
           "url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4849960101",
           "apply_url": "https://job-boards.eu.greenhouse.io/scalapaysrl/jobs/4849960101",
           "first_seen_at": "2026-10-07T18:15:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "cc8b2ead1c28f353",
           "status": "STILL_OPEN"
         }
@@ -2097,7 +2106,7 @@
           "url": "https://apply.workable.com/j/6BD7278DBA/apply",
           "apply_url": "https://apply.workable.com/j/6BD7278DBA",
           "first_seen_at": "2026-11-06T02:19:10Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2e7c1d0db50ab211",
           "status": "STILL_OPEN"
         },
@@ -2115,7 +2124,7 @@
           "url": "https://apply.workable.com/j/6088C3156A/apply",
           "apply_url": "https://apply.workable.com/j/6088C3156A",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ce0e798d8c6e310a",
           "status": "STILL_OPEN"
         },
@@ -2133,7 +2142,7 @@
           "url": "https://apply.workable.com/j/DAAF75EBDA/apply",
           "apply_url": "https://apply.workable.com/j/DAAF75EBDA",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5bbd1358ad4982fc",
           "status": "STILL_OPEN"
         },
@@ -2151,7 +2160,7 @@
           "url": "https://apply.workable.com/j/5B34AEDBBF/apply",
           "apply_url": "https://apply.workable.com/j/5B34AEDBBF",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "56728ce0b1c18760",
           "status": "STILL_OPEN"
         },
@@ -2169,7 +2178,7 @@
           "url": "https://apply.workable.com/j/795EB5B945/apply",
           "apply_url": "https://apply.workable.com/j/795EB5B945",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "56e8ddf2058ca30a",
           "status": "STILL_OPEN"
         },
@@ -2187,7 +2196,7 @@
           "url": "https://apply.workable.com/j/32B82FA748/apply",
           "apply_url": "https://apply.workable.com/j/32B82FA748",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "52c9d5404b6423ff",
           "status": "STILL_OPEN"
         },
@@ -2205,7 +2214,7 @@
           "url": "https://apply.workable.com/j/EAF8239980/apply",
           "apply_url": "https://apply.workable.com/j/EAF8239980",
           "first_seen_at": "2026-11-18T03:41:27Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "52de3f8e5e7315fc",
           "status": "STILL_OPEN"
         }
@@ -2237,7 +2246,7 @@
           "url": "https://job-boards.greenhouse.io/adyen/jobs/8376508",
           "apply_url": "https://job-boards.greenhouse.io/adyen/jobs/8376508",
           "first_seen_at": "2026-11-27T04:09:20Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "632d9afb1d487327",
           "status": "STILL_OPEN"
         }
@@ -3282,7 +3291,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Network-Security-and-Endpoint-Security/1453059833/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Network-Security-and-Endpoint-Security/1453059833/",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c6df7c502c70cb29",
           "status": "STILL_OPEN"
         },
@@ -3300,7 +3309,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Junior-Network-Security-and-Endpoint-Security/1453021633/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Junior-Network-Security-and-Endpoint-Security/1453021633/",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2fe08a33716ea864",
           "status": "STILL_OPEN"
         },
@@ -3318,7 +3327,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-IT-Program-&-Project-Management-Core-Lending-&-Credit-Data-Feeding/1452850033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-IT-Program-&-Project-Management-Core-Lending-&-Credit-Data-Feeding/1452850033/",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d10ab64dc787e1e3",
           "status": "STILL_OPEN"
         },
@@ -3336,7 +3345,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-AI-Augmented-Developer-Digital-Backbone/1452850433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-AI-Augmented-Developer-Digital-Backbone/1452850433/",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "adaad3aa3a212239",
           "status": "STILL_OPEN"
         },
@@ -3354,7 +3363,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-FICC-Sales-Vice-President-Flow-Rates/1411721833/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-FICC-Sales-Vice-President-Flow-Rates/1411721833/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ef3e1801fc402f51",
           "status": "STILL_OPEN"
         },
@@ -3372,7 +3381,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-FICC-Sales-Vice-President-Flow-Credit/1411714833/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-FICC-Sales-Vice-President-Flow-Credit/1411714833/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "8cb759ce938abc6b",
           "status": "STILL_OPEN"
         },
@@ -3390,7 +3399,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Professional-Incentive-Systems/1442908533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Professional-Incentive-Systems/1442908533/",
           "first_seen_at": "2026-10-01T04:46:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ed19397d35879284",
           "status": "STILL_OPEN"
         },
@@ -3408,7 +3417,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Product-Legal-Senior-Specialist/1452436333/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Product-Legal-Senior-Specialist/1452436333/",
           "first_seen_at": "2026-10-29T12:04:35Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "923b40c351726c91",
           "status": "STILL_OPEN"
         },
@@ -3426,7 +3435,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Business-Analyst-Credit-&-Risk/1461426433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Business-Analyst-Credit-&-Risk/1461426433/",
           "first_seen_at": "2026-11-28T03:52:45Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "93bd179d59f6fbe0",
           "status": "STILL_OPEN"
         },
@@ -3444,7 +3453,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Augmented-Developer-Stage-extra-curriculare/1452139233/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Augmented-Developer-Stage-extra-curriculare/1452139233/",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "9828c06f522f04da",
           "status": "STILL_OPEN"
         },
@@ -3462,7 +3471,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Prompt-Engineer-Stage-extra-curriculare/1452140033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Prompt-Engineer-Stage-extra-curriculare/1452140033/",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "427c886364adbd90",
           "status": "STILL_OPEN"
         },
@@ -3480,7 +3489,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Private-Debt-Portfolio-Manager/1442244833/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Private-Debt-Portfolio-Manager/1442244833/",
           "first_seen_at": "2026-09-30T08:06:23Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a7ca594cc44a38e7",
           "status": "STILL_OPEN"
         },
@@ -3498,7 +3507,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Network-Architect-Enterprise-Networking-&-Cloud-Connectivity/1439073433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Network-Architect-Enterprise-Networking-&-Cloud-Connectivity/1439073433/",
           "first_seen_at": "2026-11-25T04:54:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f0bb2d809182a346",
           "status": "STILL_OPEN"
         },
@@ -3516,7 +3525,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Financial-Sanctions-Specialist/1451605733/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Financial-Sanctions-Specialist/1451605733/",
           "first_seen_at": "2026-11-21T03:09:58Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a7407aaebf24722d",
           "status": "STILL_OPEN"
         },
@@ -3534,7 +3543,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-CRM-&-Marketing-Automation-Internship/1460551633/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-CRM-&-Marketing-Automation-Internship/1460551633/",
           "first_seen_at": "2026-11-26T04:08:30Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ae0440e05cb39481",
           "status": "STILL_OPEN"
         },
@@ -3552,7 +3561,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano%2C-Torino-Financial-Sanctions-Stage-extra-curriculare/1460564733/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano%2C-Torino-Financial-Sanctions-Stage-extra-curriculare/1460564733/",
           "first_seen_at": "2026-11-26T04:08:30Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2cc90dd71ac1eb5f",
           "status": "STILL_OPEN"
         },
@@ -3570,7 +3579,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-AI-and-Applications-Audit-Expert/1460234733/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-AI-and-Applications-Audit-Expert/1460234733/",
           "first_seen_at": "2026-11-25T04:54:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0c068b2e84275a76",
           "status": "STILL_OPEN"
         },
@@ -3588,7 +3597,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Organizational-Analyst/1459671933/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Organizational-Analyst/1459671933/",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "eac59ed58fa37dc6",
           "status": "STILL_OPEN"
         },
@@ -3606,7 +3615,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Bologna-Junior-System-Engineer-Progettazione-e-Governance-Soluzioni-Contact-Center/1459638933/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Bologna-Junior-System-Engineer-Progettazione-e-Governance-Soluzioni-Contact-Center/1459638933/",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "27d3cbe7350d1c0f",
           "status": "STILL_OPEN"
         },
@@ -3624,7 +3633,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Audit-KYC-Remote-onboarding-Stage-extra-curriculare/1459657933/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Audit-KYC-Remote-onboarding-Stage-extra-curriculare/1459657933/",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "93fd2518ec581d23",
           "status": "STILL_OPEN"
         },
@@ -3642,7 +3651,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-IT-Program-and-Project-Management/1459678433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-IT-Program-and-Project-Management/1459678433/",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "974841ab4249ef3b",
           "status": "STILL_OPEN"
         },
@@ -3660,7 +3669,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Roma-Non-Life-Risk-Management-Senior-Specialist/1450882033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Roma-Non-Life-Risk-Management-Senior-Specialist/1450882033/",
           "first_seen_at": "2026-10-23T23:51:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "e0e4cbd289513982",
           "status": "STILL_OPEN"
         },
@@ -3678,7 +3687,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-AI-Specification-Engineer-Credit-Risk-Platform/1429695333/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-AI-Specification-Engineer-Credit-Risk-Platform/1429695333/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bf3f64d7b654c461",
           "status": "STILL_OPEN"
         },
@@ -3696,7 +3705,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-IT-Application-Architect-Senior-Digital-Report-&-Solutions-CIB/1429710333/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-IT-Application-Architect-Senior-Digital-Report-&-Solutions-CIB/1429710333/",
           "first_seen_at": "2026-11-05T02:17:52Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "668e7c7c78acbb7b",
           "status": "STILL_OPEN"
         },
@@ -3714,7 +3723,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-International-Development-extra-curricular-Internship/1450133333/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-International-Development-extra-curricular-Internship/1450133333/",
           "first_seen_at": "2026-10-22T23:58:31Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "e2a77945d0a1dfbf",
           "status": "STILL_OPEN"
         },
@@ -3732,7 +3741,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Trade-Finance-Sales/1449731433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Trade-Finance-Sales/1449731433/",
           "first_seen_at": "2026-10-21T23:59:41Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "804bdbdfd89e4701",
           "status": "STILL_OPEN"
         },
@@ -3750,7 +3759,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Affari-Legali-Contenzioso-e-Contrattualistica-Stage-Extracurriculare/1449952033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Affari-Legali-Contenzioso-e-Contrattualistica-Stage-Extracurriculare/1449952033/",
           "first_seen_at": "2026-10-21T23:59:41Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bca363c86f143c48",
           "status": "STILL_OPEN"
         },
@@ -3768,7 +3777,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-Loan-Capital-Markets-Business-Director/1449945033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-Loan-Capital-Markets-Business-Director/1449945033/",
           "first_seen_at": "2026-10-21T23:59:41Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0921218b73c8ad94",
           "status": "STILL_OPEN"
         },
@@ -3786,7 +3795,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Cyber-and-Infrastructure-Security-Audit-Stage-extra-curriculare/1449836733/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Cyber-and-Infrastructure-Security-Audit-Stage-extra-curriculare/1449836733/",
           "first_seen_at": "2026-10-21T23:59:41Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4fabde6308d396a2",
           "status": "STILL_OPEN"
         },
@@ -3804,7 +3813,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-High-Income-Senior-Portfolio-Manager/1458751433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-High-Income-Senior-Portfolio-Manager/1458751433/",
           "first_seen_at": "2026-11-19T22:38:50Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5654d6030ddcb22e",
           "status": "STILL_OPEN"
         },
@@ -3822,7 +3831,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Parma-Milano-Junior-Middleware-Engineer/1459022033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Parma-Milano-Junior-Middleware-Engineer/1459022033/",
           "first_seen_at": "2026-11-19T22:38:50Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "009b414ff4e4c90e",
           "status": "STILL_OPEN"
         },
@@ -3840,7 +3849,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Software-Engineer/1387893533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-Software-Engineer/1387893533/",
           "first_seen_at": "2026-11-18T03:41:27Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "3a5ec234cb83dcc5",
           "status": "STILL_OPEN"
         },
@@ -3858,7 +3867,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Categorie-Tutelate-Milano/1281992601/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Categorie-Tutelate-Milano/1281992601/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "de267b2511f06d01",
           "status": "STILL_OPEN"
         },
@@ -3876,7 +3885,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Supervisory-Analytics-Stage-extra-curriculare/1457502933/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Supervisory-Analytics-Stage-extra-curriculare/1457502933/",
           "first_seen_at": "2026-11-16T23:43:13Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4aa8fc8796fe05c8",
           "status": "STILL_OPEN"
         },
@@ -3894,7 +3903,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Industry-Business-Analyst-Stage-extracurriculare/1457577333/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Industry-Business-Analyst-Stage-extracurriculare/1457577333/",
           "first_seen_at": "2026-11-18T03:41:27Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "90c3a9982736333b",
           "status": "STILL_OPEN"
         },
@@ -3912,7 +3921,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Software-Engineer-Securities/1439027233/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Software-Engineer-Securities/1439027233/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6d53799371c64268",
           "status": "STILL_OPEN"
         },
@@ -3930,7 +3939,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Functional-Analyst-Advanced-Tech-Solutions/1439024933/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Functional-Analyst-Advanced-Tech-Solutions/1439024933/",
           "first_seen_at": "2026-11-10T04:07:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "62c4bd3f3a0c746a",
           "status": "STILL_OPEN"
         },
@@ -3948,7 +3957,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Bologna-Senior-System-Engineer-Progettazione-e-Governance-Soluzioni-Contact-Center/1439071533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Bologna-Senior-System-Engineer-Progettazione-e-Governance-Soluzioni-Contact-Center/1439071533/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a17e067d059a768b",
           "status": "STILL_OPEN"
         },
@@ -3966,7 +3975,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Software-Engineer-Forex-Money-Market-&-Collateral-Management/1439032533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Software-Engineer-Forex-Money-Market-&-Collateral-Management/1439032533/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "200a66b3f5178d16",
           "status": "STILL_OPEN"
         },
@@ -3984,7 +3993,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-System-Engineer-Apple-Endpoint-Management/1439064533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Senior-System-Engineer-Apple-Endpoint-Management/1439064533/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "18b5845f59ea5fae",
           "status": "STILL_OPEN"
         },
@@ -4002,7 +4011,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/MilanoTorinoBresciaBologna-Audit-AI%2C-Digital-Innovation-&-Training-Stage-extra-curriculare/1434986533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/MilanoTorinoBresciaBologna-Audit-AI%2C-Digital-Innovation-&-Training-Stage-extra-curriculare/1434986533/",
           "first_seen_at": "2026-10-14T23:53:22Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "db1ae8522b52cc2f",
           "status": "STILL_OPEN"
         },
@@ -4020,7 +4029,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Business-Analyst/1435603233/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Business-Analyst/1435603233/",
           "first_seen_at": "2026-10-14T23:53:22Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "23db4a113ad2242c",
           "status": "STILL_OPEN"
         },
@@ -4038,7 +4047,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-Private-Equity-Fondi-e-Co-investimenti-Senior-Portfolio-Manager/1456524733/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-Private-Equity-Fondi-e-Co-investimenti-Senior-Portfolio-Manager/1456524733/",
           "first_seen_at": "2026-11-12T02:54:44Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d17cb8fd3aeafc11",
           "status": "STILL_OPEN"
         },
@@ -4056,7 +4065,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Bergamo-Napoli-Augmented-Developer-Credit-Granting/1416408633/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Bergamo-Napoli-Augmented-Developer-Credit-Granting/1416408633/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "8232aeb472859837",
           "status": "STILL_OPEN"
         },
@@ -4074,7 +4083,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Auditor-quantitativo-modelli-gestionali-e-regolamentari/1455937933/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/MilanoTorino-Auditor-quantitativo-modelli-gestionali-e-regolamentari/1455937933/",
           "first_seen_at": "2026-11-11T01:54:57Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "77b4d99834a3f14e",
           "status": "STILL_OPEN"
         },
@@ -4092,7 +4101,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-Emerging-Markets-Hard-Currency-Bond-Trader-Business-Director/1435255033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-Emerging-Markets-Hard-Currency-Bond-Trader-Business-Director/1435255033/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bdcd852b1624b5d3",
           "status": "STILL_OPEN"
         },
@@ -4110,7 +4119,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Innovation-&-AI-Specialist/1455159433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Innovation-&-AI-Specialist/1455159433/",
           "first_seen_at": "2026-11-07T01:52:15Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4a63224eaf34d538",
           "status": "STILL_OPEN"
         },
@@ -4128,7 +4137,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-Incident-Response/1445081433/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-Incident-Response/1445081433/",
           "first_seen_at": "2026-10-07T18:15:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ae209f00caf91091",
           "status": "STILL_OPEN"
         },
@@ -4146,7 +4155,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milan-Capital-Markets-Structuring-Associate/1454872833/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milan-Capital-Markets-Structuring-Associate/1454872833/",
           "first_seen_at": "2026-11-06T02:19:10Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "48ff84e25fd050fc",
           "status": "STILL_OPEN"
         },
@@ -4164,7 +4173,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-ECM-Senior-Analyst-Mid-Cap/1454145033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-ECM-Senior-Analyst-Mid-Cap/1454145033/",
           "first_seen_at": "2026-11-05T02:17:52Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "82c12d613cb25716",
           "status": "STILL_OPEN"
         },
@@ -4182,7 +4191,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-Senior-Data-Protection-Security/1453954533/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-Senior-Data-Protection-Security/1453954533/",
           "first_seen_at": "2026-11-04T02:12:31Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "452451699ab7c341",
           "status": "STILL_OPEN"
         },
@@ -4200,7 +4209,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Senior-Access-Security-Technology-Operations/1453271333/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Senior-Access-Security-Technology-Operations/1453271333/",
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "505762e1946bd293",
           "status": "STILL_OPEN"
         },
@@ -4218,7 +4227,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Identity-Security-Engineer/1453271133/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Identity-Security-Engineer/1453271133/",
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f82204fafacd66bf",
           "status": "STILL_OPEN"
         },
@@ -4236,7 +4245,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Access-Security-Technology-Operations/1453271033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Torino-Milano-Napoli-Access-Security-Technology-Operations/1453271033/",
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "124a4af8aa52ac89",
           "status": "STILL_OPEN"
         },
@@ -4254,7 +4263,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Enabled-Red-Team-&-Penetration-Testing-Lead-Senior/1412888633/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Enabled-Red-Team-&-Penetration-Testing-Lead-Senior/1412888633/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4d1bfa549ce0b95e",
           "status": "STILL_OPEN"
         },
@@ -4272,7 +4281,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Enabled-Threat-Defense-Engineer/1412962633/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Enabled-Threat-Defense-Engineer/1412962633/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6124c640d2316b60",
           "status": "STILL_OPEN"
         },
@@ -4290,7 +4299,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-LLM-Security-Operations/1412897033/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-LLM-Security-Operations/1412897033/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2a6bf31f03bfa6ab",
           "status": "STILL_OPEN"
         },
@@ -4308,7 +4317,7 @@
           "url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Security-Architect-Senior/1412899833/",
           "apply_url": "https://jobs.intesasanpaolo.com/job/Milano-Torino-AI-Security-Architect-Senior/1412899833/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5cef728c8e661ee0",
           "status": "STILL_OPEN"
         }
@@ -4340,7 +4349,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/UniCredit-Leasing-Leasing-Sales-Manager/117681",
           "apply_url": null,
           "first_seen_at": "2026-11-24T05:58:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ec032f9da97f54ff",
           "status": "STILL_OPEN"
         },
@@ -4358,7 +4367,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Graduate-Program-Client-Solutions-Group-Payments-Solutions/87595",
           "apply_url": null,
           "first_seen_at": "2026-11-03T03:29:32Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ad1a202b8ce33ede",
           "status": "STILL_OPEN"
         },
@@ -4376,7 +4385,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Wealth-Customer-Assistant-contratto-di-apprendistato/70637",
           "apply_url": null,
           "first_seen_at": "2026-11-07T01:52:15Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "eb9301aee6599358",
           "status": "STILL_OPEN"
         },
@@ -4394,7 +4403,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Curricular-Internship-Wealth-Managment-Network-Milano/123459",
           "apply_url": null,
           "first_seen_at": "2026-11-28T03:52:45Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a96fb86c6fcd478e",
           "status": "STILL_OPEN"
         },
@@ -4412,7 +4421,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Internship-ESG-Start-Lab-Italy-Milano/115560",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "dcbf752c28c790f5",
           "status": "STILL_OPEN"
         },
@@ -4430,7 +4439,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Senior-Solution-Architect-Data-AI/117692",
           "apply_url": null,
           "first_seen_at": "2026-11-19T22:38:50Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "affc775897dc3ae6",
           "status": "STILL_OPEN"
         },
@@ -4448,7 +4457,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Senior-Cross-Commodity-Options-Trader-Client-Derivatives-Market-Making/117544",
           "apply_url": null,
           "first_seen_at": "2026-11-13T02:36:50Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1fd37e17c55ee76d",
           "status": "STILL_OPEN"
         },
@@ -4466,7 +4475,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Client-Risk-Management-Business-Management-Internship/117458",
           "apply_url": null,
           "first_seen_at": "2026-11-11T01:54:57Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b6f990e60ede2998",
           "status": "STILL_OPEN"
         },
@@ -4484,7 +4493,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Group-Client-Solutions-A-F-IG-Financing-Solutions-Italy-Associate/117299",
           "apply_url": null,
           "first_seen_at": "2026-11-04T02:12:31Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "322a2ae4fc2105be",
           "status": "STILL_OPEN"
         },
@@ -4502,7 +4511,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Internship-Client-Solutions-Group-Advisory-Financing-Solutions-Milan/114524",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "248e613569504089",
           "status": "STILL_OPEN"
         },
@@ -4520,7 +4529,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Network-Development-Specialist-senior/117698",
           "apply_url": null,
           "first_seen_at": "2026-11-21T03:09:58Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "baab877ac24636e9",
           "status": "STILL_OPEN"
         },
@@ -4538,7 +4547,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Network-Development-Specialist/114748",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "263e4f19eb4a20c0",
           "status": "STILL_OPEN"
         },
@@ -4556,7 +4565,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Wealth-Customer-Manager-Senior/114314",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b9e9ed714865105a",
           "status": "STILL_OPEN"
         },
@@ -4574,7 +4583,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Buddy-Advisors-Senior/103351",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "dcc0ce7f32812fe3",
           "status": "STILL_OPEN"
         },
@@ -4592,7 +4601,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Graduate-Program-Client-Solutions-Group-Correspondent-Banking/107092",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b66068f1fcff9f53",
           "status": "STILL_OPEN"
         },
@@ -4610,7 +4619,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Client-Risk-Management-Corporate-Digital-Development/107011",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d0ea3b2be7998227",
           "status": "STILL_OPEN"
         },
@@ -4628,7 +4637,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Gestore-Corporate-Junior/106810",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b65594c95208bd93",
           "status": "STILL_OPEN"
         },
@@ -4646,7 +4655,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Gestore-Corporate-Senior/106808",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1d3395b146706b8c",
           "status": "STILL_OPEN"
         },
@@ -4664,7 +4673,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Consulente-di-Portafoglio-Retail-Senior/101012",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "cdaaf743d5d3652a",
           "status": "STILL_OPEN"
         },
@@ -4682,7 +4691,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Consulente-di-Portafoglio-Retail-Junior/100968",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2b50a71c18e8644b",
           "status": "STILL_OPEN"
         },
@@ -4700,7 +4709,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Investment-Advisor-Wealth-Management/94533",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "645ae23a1e1c16d4",
           "status": "STILL_OPEN"
         },
@@ -4718,7 +4727,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Analyst-Graduate-Group-Advisory-Financing-Solutions-Milan-f-m-d/55940",
           "apply_url": null,
           "first_seen_at": "2026-11-26T04:08:30Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d4ede075b3af819f",
           "status": "STILL_OPEN"
         },
@@ -4736,7 +4745,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Diventa-BUDDY-ADVISOR-ogni-grande-futuro-inizia-da-un-primo-passo/70880",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1fe4bb8e8b30008f",
           "status": "STILL_OPEN"
         },
@@ -4754,7 +4763,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Consulente-di-Filiale-Posizione-riservata-alle-categorie-protette-ex-Legge-68-99-varie-piazze-sul-territorio-nazionale/100783",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "47b4ac99773b63f3",
           "status": "STILL_OPEN"
         },
@@ -4772,7 +4781,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Consulente-UniCredit-Direct-Posizione-riservata-alle-categorie-protette-ex-Legge-68-99-varie-piazze-sul-territorio-nazionale/94323",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "62a3ba071068ab01",
           "status": "STILL_OPEN"
         },
@@ -4790,7 +4799,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/UniCredit-Leasing-Financial-Regulatory-Disclosure-contratto-di-apprendistato/117550",
           "apply_url": null,
           "first_seen_at": "2026-11-14T02:19:02Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "e5c3aa0f098bb267",
           "status": "STILL_OPEN"
         },
@@ -4808,7 +4817,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/UniCredit-Leasing-Special-Project-Commercial-Initiatives-contratto-di-apprendistato/117548",
           "apply_url": null,
           "first_seen_at": "2026-11-14T02:19:02Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c8f5005cadd79a48",
           "status": "STILL_OPEN"
         },
@@ -4826,7 +4835,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/UniCredit-Core-Banking-Programme-in-Filiale-Retail/112287",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "3a65975648251e6f",
           "status": "STILL_OPEN"
         },
@@ -4844,7 +4853,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Consulente-UniCredit-Direct-contratto-di-apprendistato-Bologna-Milano-Verona/95682",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "7ac313093a6d5779",
           "status": "STILL_OPEN"
         },
@@ -4862,7 +4871,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/UniCredit-Core-Banking-Programme-in-UniCredit-Direct/88091",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "153d4595dcd84704",
           "status": "STILL_OPEN"
         },
@@ -4880,7 +4889,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Banker-Wealth-Management/34774",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a0909ff3737b9e08",
           "status": "STILL_OPEN"
         },
@@ -4898,7 +4907,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Curricular-Internship-buddy-UniCredit/79500",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "4f2873f184e1c555",
           "status": "STILL_OPEN"
         },
@@ -4916,7 +4925,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Banker-Private/8032",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2b57ab0ad603b190",
           "status": "STILL_OPEN"
         },
@@ -4934,7 +4943,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Internship-UniCredit-Leasing-Area-Digital-Information/88270",
           "apply_url": null,
           "first_seen_at": "2026-11-06T02:19:10Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f0736e80e33ff8a9",
           "status": "STILL_OPEN"
         },
@@ -4952,7 +4961,7 @@
           "url": "https://careers.unicredit.eu/en_GB/jobsuche/JobDetail/Consulente-buddy-Junior-Milano-Roma-e-Napoli-contratto-di-apprendistato/91525",
           "apply_url": null,
           "first_seen_at": "2026-10-29T21:35:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1e08befd1b9dbd49",
           "status": "STILL_OPEN"
         }
@@ -4963,12 +4972,12 @@
       "company": "FinecoBank",
       "mapping_level": "STRONG",
       "ats_family": "Fineco first-party public employee vacancies API with official Intervieweb application board",
-      "coverage": "PARTIAL",
-      "collector": "collect_fineco",
-      "inventory_count": null,
-      "target_jobs_count": 0,
+      "coverage": "VERIFIED",
+      "collector": "fineco_first_party_public_jobs_intervieweb_id_parity_v1",
+      "inventory_count": 5,
+      "target_jobs_count": 5,
       "source_url": "https://about.finecobank.com/it/careers/diventa-un-dipendente/",
-      "reason": "NotCheckable: Fineco public API job 156616 has invalid company Intervieweb link; retained 0 validated observed jobs",
+      "reason": null,
       "jobs": [
         {
           "source_id": "156616",
@@ -4984,9 +4993,9 @@
           "url": "https://finecobank.intervieweb.it/jobs/digital-analytics-madtech-specialist-156616/it/",
           "apply_url": "https://finecobank.intervieweb.it/jobs/digital-analytics-madtech-specialist-156616/it/",
           "first_seen_at": "2026-10-30T00:46:39Z",
-          "last_seen_at": "2026-11-28T04:01:27Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "643666b38c5b1d43",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "153599",
@@ -5002,9 +5011,9 @@
           "url": "https://finecobank.intervieweb.it/jobs/tecnico-center-addetto-data-153599/it/",
           "apply_url": "https://finecobank.intervieweb.it/jobs/tecnico-center-addetto-data-153599/it/",
           "first_seen_at": "2026-11-06T02:19:10Z",
-          "last_seen_at": "2026-11-28T04:01:27Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c7839d6961c75232",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "139250",
@@ -5020,9 +5029,9 @@
           "url": "https://finecobank.intervieweb.it/jobs/addettao-reclami-tempo-determinato-139250/it/",
           "apply_url": "https://finecobank.intervieweb.it/jobs/addettao-reclami-tempo-determinato-139250/it/",
           "first_seen_at": "2026-10-30T00:46:39Z",
-          "last_seen_at": "2026-11-28T04:01:27Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "76704f53a0e18a42",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "128062",
@@ -5038,9 +5047,9 @@
           "url": "https://finecobank.intervieweb.it/jobs/senior-application-security-devsecops-128062/it/",
           "apply_url": "https://finecobank.intervieweb.it/jobs/senior-application-security-devsecops-128062/it/",
           "first_seen_at": "2026-10-30T00:46:39Z",
-          "last_seen_at": "2026-11-28T04:01:27Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c247cddf2b1dbf09",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "118249",
@@ -5056,21 +5065,12 @@
           "url": "https://finecobank.intervieweb.it/jobs/international-project-manager-german-market-118249/it/",
           "apply_url": "https://finecobank.intervieweb.it/jobs/international-project-manager-german-market-118249/it/",
           "first_seen_at": "2026-10-30T00:46:39Z",
-          "last_seen_at": "2026-11-28T04:01:27Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "29fae02ba0666d08",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         }
       ],
-      "record_errors": [],
-      "collection_error": {
-        "category": "SOURCE_ERROR",
-        "scope": "source",
-        "stage": "collection",
-        "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Fineco public API job 156616 has invalid company Intervieweb link; retained 0 validated observed jobs",
-        "batch": "JW1",
-        "company": "FinecoBank"
-      }
+      "record_errors": []
     },
     {
       "company": "Banca Ifis",
@@ -5097,7 +5097,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=282383727",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=282383727",
           "first_seen_at": "2026-11-28T03:52:45Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0a42d79dba9ffb3b",
           "status": "STILL_OPEN"
         },
@@ -5115,7 +5115,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=282383531",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=282383531",
           "first_seen_at": "2026-11-28T03:52:45Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "7ecff1aac9df9e9c",
           "status": "STILL_OPEN"
         },
@@ -5133,7 +5133,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=281562992",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=281562992",
           "first_seen_at": "2026-11-21T03:09:58Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0e1c4e2ce0745fee",
           "status": "STILL_OPEN"
         },
@@ -5151,7 +5151,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=281282334",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=281282334",
           "first_seen_at": "2026-11-19T03:15:18Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6369e9e2ac24067e",
           "status": "STILL_OPEN"
         },
@@ -5169,7 +5169,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=280499258",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=280499258",
           "first_seen_at": "2026-11-11T01:54:57Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "3bad917566365712",
           "status": "STILL_OPEN"
         },
@@ -5187,7 +5187,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=277237558",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=277237558",
           "first_seen_at": "2026-10-01T04:46:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "87bf1ce40bd722f0",
           "status": "STILL_OPEN"
         },
@@ -5205,7 +5205,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278464717",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278464717",
           "first_seen_at": "2026-10-20T23:48:37Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "82150351acf70a18",
           "status": "STILL_OPEN"
         },
@@ -5223,7 +5223,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278464392",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278464392",
           "first_seen_at": "2026-10-20T23:48:37Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a3917680bc5afc2f",
           "status": "STILL_OPEN"
         },
@@ -5241,7 +5241,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278460086",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278460086",
           "first_seen_at": "2026-10-20T23:48:37Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "f8a6906bcc2ed6f6",
           "status": "STILL_OPEN"
         },
@@ -5259,7 +5259,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278458859",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=278458859",
           "first_seen_at": "2026-10-20T23:48:37Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "027bf56c34bec550",
           "status": "STILL_OPEN"
         },
@@ -5277,7 +5277,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=277460637",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=277460637",
           "first_seen_at": "2026-10-07T18:15:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "8d0e2fd16c8b048b",
           "status": "STILL_OPEN"
         },
@@ -5295,7 +5295,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=277215851",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=277215851",
           "first_seen_at": "2026-09-30T08:06:23Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "024e6b8476861f9c",
           "status": "STILL_OPEN"
         },
@@ -5313,7 +5313,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=275630285",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=275630285",
           "first_seen_at": "2026-09-20T09:46:01Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "75db19a67ffe55a3",
           "status": "STILL_OPEN"
         },
@@ -5331,7 +5331,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271912427",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=271912427",
           "first_seen_at": "2026-09-20T09:46:01Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "e5a6ec1fc70304b8",
           "status": "STILL_OPEN"
         },
@@ -5349,7 +5349,7 @@
           "url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=263879555",
           "apply_url": "https://posizioniaperte.bancaifis.it/annunci-lavoro/job-details?JobID=263879555",
           "first_seen_at": "2026-09-20T09:46:01Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0ff43fc4c7beb3ab",
           "status": "STILL_OPEN"
         }
@@ -5409,7 +5409,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.mediobanca.com/en/work-with-us/open-positions.html",
-      "reason": "NotCheckable: Official inventory is reachable (200, 192871 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 192874 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5417,7 +5417,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 192871 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 192874 bytes) but no safe exhaustive collector is implemented yet for Custom corporate open-positions list; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Mediobanca"
       }
@@ -5448,13 +5448,67 @@
       "company": "Banca Sella",
       "mapping_level": "FULL",
       "ats_family": "Workday",
-      "coverage": "FAILED",
-      "collector": "collect_workday",
-      "inventory_count": null,
-      "target_jobs_count": 0,
-      "source_url": "https://sellagroup.wd3.myworkdayjobs.com/it-IT/ID01/",
-      "reason": "HTTPError: 429 Client Error: Too Many Requests for url: https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs; retained 0 validated observed jobs",
+      "coverage": "PARTIAL",
+      "collector": "workday_cxs_metadata",
+      "inventory_count": 40,
+      "target_jobs_count": 11,
+      "source_url": "https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs",
+      "reason": "429 Client Error: Too Many Requests for url: https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs",
       "jobs": [
+        {
+          "source_id": "JR-002512",
+          "company": "Banca Sella",
+          "title": "Operatore/Operatrice  di Succursale Roma",
+          "location": "Roma, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Roma-Italy/Operatore-Operatrice--di-Succursale-Roma_JR-002512",
+          "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Roma-Italy/Operatore-Operatrice--di-Succursale-Roma_JR-002512",
+          "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Roma-Italy/Operatore-Operatrice--di-Succursale-Roma_JR-002512",
+          "first_seen_at": "2026-11-28T04:20:39Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
+          "fingerprint": "a2e1dbef500bf69f",
+          "status": "NEW"
+        },
+        {
+          "source_id": "JR-002509",
+          "company": "Banca Sella",
+          "title": "Senior Product Manager – Digital Asset Custody",
+          "location": "Milano, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Product-Manager---Digital-Asset-Custody_JR-002509",
+          "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Product-Manager---Digital-Asset-Custody_JR-002509",
+          "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Product-Manager---Digital-Asset-Custody_JR-002509",
+          "first_seen_at": "2026-11-28T04:20:39Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
+          "fingerprint": "22afe3141c764aa0",
+          "status": "NEW"
+        },
+        {
+          "source_id": "/job/Milano-Italy/Senior-Offensive-Security-Specialist---Red-Team---AI-Security_JR-002506-1",
+          "company": "Banca Sella",
+          "title": "Senior Offensive Security Specialist – Red Team & AI Security",
+          "location": "Milano, Italy",
+          "department": null,
+          "team": null,
+          "employment_type": null,
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Offensive-Security-Specialist---Red-Team---AI-Security_JR-002506-1",
+          "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Offensive-Security-Specialist---Red-Team---AI-Security_JR-002506-1",
+          "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Offensive-Security-Specialist---Red-Team---AI-Security_JR-002506-1",
+          "first_seen_at": "2026-11-28T04:20:39Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
+          "fingerprint": "d9fe3285a9d7d547",
+          "status": "NEW"
+        },
         {
           "source_id": "JR-002481",
           "company": "Banca Sella",
@@ -5469,9 +5523,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/HR-Generalist---internship_JR-002481",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/HR-Generalist---internship_JR-002481",
           "first_seen_at": "2026-11-24T06:29:55Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "e2355e9d2550a3b6",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002487",
@@ -5487,9 +5541,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Gestore-Small-Business----Milano_JR-002487",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Gestore-Small-Business----Milano_JR-002487",
           "first_seen_at": "2026-11-14T02:19:02Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "419fa877afb415c9",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-001946",
@@ -5505,9 +5559,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Data-Governance-Specialist_JR-001946",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Data-Governance-Specialist_JR-001946",
           "first_seen_at": "2026-09-25T04:43:36Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "47b8100018394215",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002463",
@@ -5523,9 +5577,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Addetto-a-Amministrativo-a-contabile---Trust---Family-Planning---Temporary_JR-002463",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Addetto-a-Amministrativo-a-contabile---Trust---Family-Planning---Temporary_JR-002463",
           "first_seen_at": "2026-10-22T23:58:31Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "48389430dfe6ba61",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002462",
@@ -5541,9 +5595,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Junior-Controller_JR-002462",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Junior-Controller_JR-002462",
           "first_seen_at": "2026-10-22T23:58:31Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "286ed180217207cb",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002452",
@@ -5559,9 +5613,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Data-Quality-Specialist---Risk-Models_JR-002452",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Data-Quality-Specialist---Risk-Models_JR-002452",
           "first_seen_at": "2026-10-21T23:59:41Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a78723ad5e6af57c",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002214",
@@ -5577,9 +5631,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/AML-Expert_JR-002214",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/AML-Expert_JR-002214",
           "first_seen_at": "2026-10-14T00:16:26Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1b8a83d05ccad10f",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002442",
@@ -5595,9 +5649,9 @@
           "url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Product-Specialist-POS---Acquiring_JR-002442",
           "apply_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Product-Specialist-POS---Acquiring_JR-002442",
           "first_seen_at": "2026-10-10T00:43:38Z",
-          "last_seen_at": "2026-11-24T06:29:55Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "dbbc8bd8e86b4102",
-          "status": "UNKNOWN"
+          "status": "STILL_OPEN"
         },
         {
           "source_id": "JR-002323",
@@ -5623,8 +5677,8 @@
         "category": "SOURCE_ERROR",
         "scope": "source",
         "stage": "collection",
-        "code": "SOURCE_FAILED",
-        "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs; retained 0 validated observed jobs",
+        "code": "SOURCE_PARTIAL",
+        "message": "429 Client Error: Too Many Requests for url: https://sellagroup.wd3.myworkdayjobs.com/wday/cxs/sellagroup/ID01/jobs",
         "batch": "JW1",
         "company": "Banca Sella"
       }
@@ -5638,7 +5692,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://gogenerali.com/home/jobs",
-      "reason": "NotCheckable: Official inventory is reachable (200, 71797 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 71796 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5646,7 +5700,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 71797 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 71796 bytes) but no safe exhaustive collector is implemented yet for Go Generali custom global career platform; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Generali"
       }
@@ -5682,7 +5736,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.allianz.com/global/en/search-results",
-      "reason": "NotCheckable: Official inventory is reachable (200, 545170 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 544342 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5690,7 +5744,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 545170 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 544342 bytes) but no safe exhaustive collector is implemented yet for Branded global careers search (dynamic; vendor not independently confirmed); retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Allianz"
       }
@@ -5742,7 +5796,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-Surety-Underwriter/1327920457/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-Surety-Underwriter/1327920457/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "29ca722f5e5aa06f",
           "status": "STILL_OPEN"
         },
@@ -5760,7 +5814,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-STAGE-Supporto-Underwriter-Polizze-Salute/1378620057/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-STAGE-Supporto-Underwriter-Polizze-Salute/1378620057/",
           "first_seen_at": "2026-11-27T04:09:20Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d47476ceaf33cace",
           "status": "STILL_OPEN"
         },
@@ -5778,7 +5832,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-ZURICH-BANK-Stage-Insurance-Products/1375684057/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-ZURICH-BANK-Stage-Insurance-Products/1375684057/",
           "first_seen_at": "2026-10-23T23:51:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5ebd14c37eee7e86",
           "status": "STILL_OPEN"
         },
@@ -5796,7 +5850,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-Accident-&-Health-Underwriting-development/1359026057/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-Accident-&-Health-Underwriting-development/1359026057/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "d7e9afb5dc8f0086",
           "status": "STILL_OPEN"
         },
@@ -5814,7 +5868,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-IT-Business-Analyst/1374719457/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-IT-Business-Analyst/1374719457/",
           "first_seen_at": "2026-10-28T01:11:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "037d93afe4e2e152",
           "status": "STILL_OPEN"
         },
@@ -5832,7 +5886,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-Claims-Handler-Motor-Fast-Flow/1376696357/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-Claims-Handler-Motor-Fast-Flow/1376696357/",
           "first_seen_at": "2026-11-05T02:17:52Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "bd4c64c53a2a2578",
           "status": "STILL_OPEN"
         },
@@ -5850,7 +5904,7 @@
           "url": "https://www.careers.zurich.com/job/Milan-Financial-Lines-Underwriter/1366164257/",
           "apply_url": "https://www.careers.zurich.com/job/Milan-Financial-Lines-Underwriter/1366164257/",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "2e89aa764e2a88d6",
           "status": "STILL_OPEN"
         }
@@ -5866,7 +5920,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://jobs.aon.com/jobs",
-      "reason": "NotCheckable: Official inventory is reachable (200, 377935 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 377936 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5874,7 +5928,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 377935 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 377936 bytes) but no safe exhaustive collector is implemented yet for Custom Aon global job portal; backend ATS unresolved; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Aon"
       }
@@ -5888,7 +5942,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.marsh.com/eu/en/search-results",
-      "reason": "NotCheckable: Official inventory is reachable (200, 102807 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 103569 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -5896,7 +5950,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 102807 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 103569 bytes) but no safe exhaustive collector is implemented yet for Custom branded dynamic careers search; ATS backend unresolved; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Marsh"
       }
@@ -6052,28 +6106,10 @@
       "coverage": "PARTIAL",
       "collector": "worldline_sf_official_recruiting_partial_validated_details_v1",
       "inventory_count": 65,
-      "target_jobs_count": 12,
+      "target_jobs_count": 11,
       "source_url": "https://jobs.worldline.com/viewalljobs/",
-      "reason": "Worldline corporate list shows 65 postings, but public recruiting API declares 190 records and returned 154 distinct IDs in 190 rows; publisher scope/order cannot be reconciled. Retained 12 Milan/Rome official detail-verified requisitions only.",
+      "reason": "Worldline corporate list shows 65 postings, but public recruiting API declares 190 records and returned 161 distinct IDs in 190 rows; publisher scope/order cannot be reconciled. Retained 11 Milan/Rome official detail-verified requisitions only.",
       "jobs": [
-        {
-          "source_id": "305595",
-          "company": "Worldline",
-          "title": "Senior Database Administrator",
-          "location": "Milan | Rome",
-          "department": "Production",
-          "team": null,
-          "employment_type": "Permanent",
-          "published_at": null,
-          "updated_at": null,
-          "canonical_url": "https://jobs.worldline.com/job/Senior-Database-Administrator/305595-en_US",
-          "url": "https://jobs.worldline.com/job/Senior-Database-Administrator/305595-en_US",
-          "apply_url": "https://jobs.worldline.com/job/Senior-Database-Administrator/305595-en_US",
-          "first_seen_at": "2026-10-29T22:23:48Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
-          "fingerprint": "0f858fbd8780310f",
-          "status": "STILL_OPEN"
-        },
         {
           "source_id": "305230",
           "company": "Worldline",
@@ -6088,7 +6124,7 @@
           "url": "https://jobs.worldline.com/job/Network-Reliability-Engineer-Professional/305230-en_US",
           "apply_url": "https://jobs.worldline.com/job/Network-Reliability-Engineer-Professional/305230-en_US",
           "first_seen_at": "2026-10-29T21:53:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5b2f86a1b13f65c8",
           "status": "STILL_OPEN"
         },
@@ -6106,7 +6142,7 @@
           "url": "https://jobs.worldline.com/job/Internship-Sales-Enablement-%28MF%29%29/305775-en_US",
           "apply_url": "https://jobs.worldline.com/job/Internship-Sales-Enablement-%28MF%29%29/305775-en_US",
           "first_seen_at": "2026-10-29T21:53:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "7c9874f747f9fec3",
           "status": "STILL_OPEN"
         },
@@ -6124,7 +6160,7 @@
           "url": "https://jobs.worldline.com/job/Internship-Agents-Network-Support-%28MF%29/305776-en_US",
           "apply_url": "https://jobs.worldline.com/job/Internship-Agents-Network-Support-%28MF%29/305776-en_US",
           "first_seen_at": "2026-10-29T22:23:48Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "0b274fd9c151f0be",
           "status": "STILL_OPEN"
         },
@@ -6142,7 +6178,7 @@
           "url": "https://jobs.worldline.com/job/Internship-Business-Development-%28MF%29/305812-en_US",
           "apply_url": "https://jobs.worldline.com/job/Internship-Business-Development-%28MF%29/305812-en_US",
           "first_seen_at": "2026-10-29T22:23:48Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "1bfe6a6437db5dee",
           "status": "STILL_OPEN"
         },
@@ -6160,7 +6196,7 @@
           "url": "https://jobs.worldline.com/job/Java-Fullstack-Software-Engineer-Mobile-Payment/305519-en_US",
           "apply_url": "https://jobs.worldline.com/job/Java-Fullstack-Software-Engineer-Mobile-Payment/305519-en_US",
           "first_seen_at": "2026-10-29T21:53:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "3451c332b62475aa",
           "status": "STILL_OPEN"
         },
@@ -6178,7 +6214,7 @@
           "url": "https://jobs.worldline.com/job/Legal-Counsel/305634-en_US",
           "apply_url": "https://jobs.worldline.com/job/Legal-Counsel/305634-en_US",
           "first_seen_at": "2026-10-29T21:53:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "978b8dc587836a2a",
           "status": "STILL_OPEN"
         },
@@ -6196,7 +6232,7 @@
           "url": "https://jobs.worldline.com/job/Software-Engineer-Payments-%28Java-Spring-Boot%29/305650-en_US",
           "apply_url": "https://jobs.worldline.com/job/Software-Engineer-Payments-%28Java-Spring-Boot%29/305650-en_US",
           "first_seen_at": "2026-10-30T00:46:39Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b04c7ceb0c9e1069",
           "status": "STILL_OPEN"
         },
@@ -6214,7 +6250,7 @@
           "url": "https://jobs.worldline.com/job/HR-Business-Partner/306042-en_US",
           "apply_url": "https://jobs.worldline.com/job/HR-Business-Partner/306042-en_US",
           "first_seen_at": "2026-11-19T03:29:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "7976053edcadba21",
           "status": "STILL_OPEN"
         },
@@ -6232,7 +6268,7 @@
           "url": "https://jobs.worldline.com/job/AML-Specialist-fixed-term-contract/306032-en_US",
           "apply_url": "https://jobs.worldline.com/job/AML-Specialist-fixed-term-contract/306032-en_US",
           "first_seen_at": "2026-11-18T03:41:27Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b0055b954658e3eb",
           "status": "STILL_OPEN"
         },
@@ -6250,7 +6286,7 @@
           "url": "https://jobs.worldline.com/job/Senior-Software-Engineer/303769-en_US",
           "apply_url": "https://jobs.worldline.com/job/Senior-Software-Engineer/303769-en_US",
           "first_seen_at": "2026-10-29T21:53:06Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "51a19341c6fae9db",
           "status": "STILL_OPEN"
         },
@@ -6268,9 +6304,27 @@
           "url": "https://jobs.worldline.com/job/Partnership-Support-Intern/305966-en_US",
           "apply_url": "https://jobs.worldline.com/job/Partnership-Support-Intern/305966-en_US",
           "first_seen_at": "2026-11-24T06:06:28Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5aff6e583f0a5495",
           "status": "STILL_OPEN"
+        },
+        {
+          "source_id": "305595",
+          "company": "Worldline",
+          "title": "Senior Database Administrator",
+          "location": "Milan | Rome",
+          "department": "Production",
+          "team": null,
+          "employment_type": "Permanent",
+          "published_at": null,
+          "updated_at": null,
+          "canonical_url": "https://jobs.worldline.com/job/Senior-Database-Administrator/305595-en_US",
+          "url": "https://jobs.worldline.com/job/Senior-Database-Administrator/305595-en_US",
+          "apply_url": "https://jobs.worldline.com/job/Senior-Database-Administrator/305595-en_US",
+          "first_seen_at": "2026-10-29T22:23:48Z",
+          "last_seen_at": "2026-11-28T04:12:59Z",
+          "fingerprint": "0f858fbd8780310f",
+          "status": "UNKNOWN"
         },
         {
           "source_id": "304386",
@@ -6351,7 +6405,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "Worldline corporate list shows 65 postings, but public recruiting API declares 190 records and returned 154 distinct IDs in 190 rows; publisher scope/order cannot be reconciled. Retained 12 Milan/Rome official detail-verified requisitions only.",
+        "message": "Worldline corporate list shows 65 postings, but public recruiting API declares 190 records and returned 161 distinct IDs in 190 rows; publisher scope/order cannot be reconciled. Retained 11 Milan/Rome official detail-verified requisitions only.",
         "batch": "JW1",
         "company": "Worldline"
       }
@@ -6407,7 +6461,7 @@
           "url": "https://jobs.mollie.com/vacancies/168dc355-a15e-4480-ad57-f731658e73ce",
           "apply_url": "https://jobs.ashbyhq.com/mollie/168dc355-a15e-4480-ad57-f731658e73ce/application",
           "first_seen_at": "2026-11-10T04:07:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "9524b7ae35bf9488",
           "status": "STILL_OPEN"
         },
@@ -6425,7 +6479,7 @@
           "url": "https://jobs.mollie.com/vacancies/1e73c5ec-31d5-4350-a1a7-ee6f6e769f7e",
           "apply_url": "https://jobs.ashbyhq.com/mollie/1e73c5ec-31d5-4350-a1a7-ee6f6e769f7e/application",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "a07f1c1fe6164b8a",
           "status": "STILL_OPEN"
         },
@@ -6443,7 +6497,7 @@
           "url": "https://jobs.mollie.com/vacancies/2e25199b-bd05-4594-aade-ee6a2112c648",
           "apply_url": "https://jobs.ashbyhq.com/mollie/2e25199b-bd05-4594-aade-ee6a2112c648/application",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "67527321352535b4",
           "status": "STILL_OPEN"
         },
@@ -6461,7 +6515,7 @@
           "url": "https://jobs.mollie.com/vacancies/469128ef-c306-413f-b2f8-145bffe5322c",
           "apply_url": "https://jobs.ashbyhq.com/mollie/469128ef-c306-413f-b2f8-145bffe5322c/application",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "5436de01511b9715",
           "status": "STILL_OPEN"
         },
@@ -6479,7 +6533,7 @@
           "url": "https://jobs.mollie.com/vacancies/49a59e10-b4d9-43aa-808e-8f4a1f9172b4",
           "apply_url": "https://jobs.ashbyhq.com/mollie/49a59e10-b4d9-43aa-808e-8f4a1f9172b4/application",
           "first_seen_at": "2026-11-11T01:54:57Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "6f0cb78213d75abb",
           "status": "STILL_OPEN"
         },
@@ -6497,7 +6551,7 @@
           "url": "https://jobs.mollie.com/vacancies/7e52baa0-6b68-4b93-b388-7c88feda7103",
           "apply_url": "https://jobs.ashbyhq.com/mollie/7e52baa0-6b68-4b93-b388-7c88feda7103/application",
           "first_seen_at": "2026-10-29T20:12:36Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "74229b1146c4dc0b",
           "status": "STILL_OPEN"
         },
@@ -6515,7 +6569,7 @@
           "url": "https://jobs.mollie.com/vacancies/a2c37d67-7dc9-4ded-86b1-f327fcf016d2",
           "apply_url": "https://jobs.ashbyhq.com/mollie/a2c37d67-7dc9-4ded-86b1-f327fcf016d2/application",
           "first_seen_at": "2026-11-16T23:43:13Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "9b639c0d4648248b",
           "status": "STILL_OPEN"
         },
@@ -6533,7 +6587,7 @@
           "url": "https://jobs.mollie.com/vacancies/a47018ac-0a29-4ba0-88cf-9616fdb03b71",
           "apply_url": "https://jobs.ashbyhq.com/mollie/a47018ac-0a29-4ba0-88cf-9616fdb03b71/application",
           "first_seen_at": "2026-10-29T01:44:38Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "01fb57f1660cd8ac",
           "status": "STILL_OPEN"
         },
@@ -6551,7 +6605,7 @@
           "url": "https://jobs.mollie.com/vacancies/ddf75627-d6bc-49cf-92d0-c986157887ef",
           "apply_url": "https://jobs.ashbyhq.com/mollie/ddf75627-d6bc-49cf-92d0-c986157887ef/application",
           "first_seen_at": "2026-11-11T01:54:57Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "23a3dbb872088387",
           "status": "STILL_OPEN"
         },
@@ -6628,7 +6682,7 @@
           "url": "https://sumup.com/careers/positions/8874403002?gh_jid=8874403002",
           "apply_url": "https://sumup.com/careers/positions/8874403002?gh_jid=8874403002",
           "first_seen_at": "2026-10-07T18:15:08Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "ce4fd55a54a8b140",
           "status": "STILL_OPEN"
         },
@@ -6646,7 +6700,7 @@
           "url": "https://sumup.com/careers/positions/8925682002?gh_jid=8925682002",
           "apply_url": "https://sumup.com/careers/positions/8925682002?gh_jid=8925682002",
           "first_seen_at": "2026-10-31T01:43:53Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "fe0cda4bd7f776dd",
           "status": "STILL_OPEN"
         },
@@ -6664,7 +6718,7 @@
           "url": "https://sumup.com/careers/positions/8936259002?gh_jid=8936259002",
           "apply_url": "https://sumup.com/careers/positions/8936259002?gh_jid=8936259002",
           "first_seen_at": "2026-11-14T02:19:02Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "b6f7fd67a37adf6f",
           "status": "STILL_OPEN"
         }
@@ -6696,7 +6750,7 @@
           "url": "https://paypal.eightfold.ai/careers/job/274923376678",
           "apply_url": "https://paypal.eightfold.ai/careers/job/274923376678",
           "first_seen_at": "2026-11-14T02:19:02Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "55a71bb90d4ae0a6",
           "status": "STILL_OPEN"
         },
@@ -6714,7 +6768,7 @@
           "url": "https://paypal.eightfold.ai/careers/job/274923658584",
           "apply_url": "https://paypal.eightfold.ai/careers/job/274923658584",
           "first_seen_at": "2026-11-26T04:08:30Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "00eb928f6113ec52",
           "status": "STILL_OPEN"
         },
@@ -6732,7 +6786,7 @@
           "url": "https://paypal.eightfold.ai/careers/job/274923658586",
           "apply_url": "https://paypal.eightfold.ai/careers/job/274923658586",
           "first_seen_at": "2026-11-26T04:08:30Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "c965a690c0d1774d",
           "status": "STILL_OPEN"
         }
@@ -7083,7 +7137,7 @@
             "job_key": "Euronext::R27644"
           },
           "first_seen_at": "2026-10-07T06:03:28Z",
-          "last_seen_at": "2026-11-28T04:12:59Z"
+          "last_seen_at": "2026-11-28T04:20:39Z"
         }
       ],
       "record_errors": [],
@@ -7619,7 +7673,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.bancamediolanum.it/corporate/careers",
-      "reason": "NotCheckable: Official inventory is reachable (200, 83436 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 83437 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -7627,7 +7681,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 83436 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 83437 bytes) but no safe exhaustive collector is implemented yet for Official corporate careers content; vacancy ATS/inventory unresolved; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Banca Mediolanum"
       }
@@ -7828,7 +7882,7 @@
           "url": "https://fa-ewgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2001/job/33046",
           "apply_url": "https://fa-ewgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2001/job/33046",
           "first_seen_at": "2026-09-19T10:11:09Z",
-          "last_seen_at": "2026-11-28T04:12:59Z",
+          "last_seen_at": "2026-11-28T04:20:39Z",
           "fingerprint": "54d6116299b71ee1",
           "status": "STILL_OPEN"
         }
@@ -7857,7 +7911,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://careers.munichre.com/en/search-jobs",
-      "reason": "NotCheckable: Official inventory is reachable (200, 997912 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 997926 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -7865,7 +7919,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 997912 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 997926 bytes) but no safe exhaustive collector is implemented yet for Custom branded global careers search; ATS backend unresolved; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "Munich Re"
       }
@@ -7879,7 +7933,7 @@
       "inventory_count": null,
       "target_jobs_count": 0,
       "source_url": "https://www.metlifecareers.com/en_US/ml/SearchJobs",
-      "reason": "NotCheckable: Official inventory is reachable (200, 106333 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+      "reason": "NotCheckable: Official inventory is reachable (200, 106338 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
       "jobs": [],
       "record_errors": [],
       "collection_error": {
@@ -7887,7 +7941,7 @@
         "scope": "source",
         "stage": "collection",
         "code": "SOURCE_PARTIAL",
-        "message": "NotCheckable: Official inventory is reachable (200, 106333 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
+        "message": "NotCheckable: Official inventory is reachable (200, 106338 bytes) but no safe exhaustive collector is implemented yet for Avature; retained 0 validated observed jobs",
         "batch": "JW1",
         "company": "MetLife"
       }
@@ -7896,12 +7950,12 @@
       "company": "Fiserv",
       "mapping_level": "FULL",
       "ats_family": "Workday",
-      "coverage": "VERIFIED",
-      "collector": "workday_cxs_metadata",
-      "inventory_count": 435,
-      "target_jobs_count": 7,
-      "source_url": "https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs",
-      "reason": null,
+      "coverage": "FAILED",
+      "collector": "collect_workday",
+      "inventory_count": null,
+      "target_jobs_count": 0,
+      "source_url": "https://fiserv.wd5.myworkdayjobs.com/EXT",
+      "reason": "HTTPError: 429 Client Error: Too Many Requests for url: https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs; retained 0 validated observed jobs",
       "jobs": [
         {
           "source_id": "R-10401218",
@@ -7919,7 +7973,7 @@
           "first_seen_at": "2026-10-04T18:32:28Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "8371834440885cb4",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "/job/Milan-Italy/Senior-Business-Analyst_R-10401217-1",
@@ -7937,7 +7991,7 @@
           "first_seen_at": "2026-10-04T18:32:28Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "2e0525b91c7cb21c",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-10399378",
@@ -7955,7 +8009,7 @@
           "first_seen_at": "2026-11-25T05:09:40Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "a408b0128a1c41ea",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-10399420",
@@ -7973,7 +8027,7 @@
           "first_seen_at": "2026-10-04T18:32:28Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "13fa14572fed4b22",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-10399419",
@@ -7991,7 +8045,7 @@
           "first_seen_at": "2026-10-04T18:32:28Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "726e6dc32e7e87d6",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-10399415",
@@ -8009,7 +8063,7 @@
           "first_seen_at": "2026-10-04T18:32:28Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "05967ccd9bf9ec19",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         },
         {
           "source_id": "R-10399414",
@@ -8027,23 +8081,41 @@
           "first_seen_at": "2026-10-04T18:32:28Z",
           "last_seen_at": "2026-11-28T04:12:59Z",
           "fingerprint": "75ca941c1a5bc7e4",
-          "status": "STILL_OPEN"
+          "status": "UNKNOWN"
         }
       ],
-      "record_errors": []
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_FAILED",
+        "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://fiserv.wd5.myworkdayjobs.com/wday/cxs/fiserv/EXT/jobs; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Fiserv"
+      }
     },
     {
       "company": "Worldpay",
       "mapping_level": "FULL",
       "ats_family": "Workday",
-      "coverage": "VERIFIED",
-      "collector": "workday_cxs_metadata",
-      "inventory_count": 13,
+      "coverage": "FAILED",
+      "collector": "collect_workday",
+      "inventory_count": null,
       "target_jobs_count": 0,
-      "source_url": "https://worldpay.wd5.myworkdayjobs.com/wday/cxs/worldpay/Worldpay_External_Careers_Site/jobs",
-      "reason": null,
+      "source_url": "https://worldpay.wd5.myworkdayjobs.com/Worldpay_External_Careers_Site",
+      "reason": "HTTPError: 429 Client Error: Too Many Requests for url: https://worldpay.wd5.myworkdayjobs.com/wday/cxs/worldpay/Worldpay_External_Careers_Site/jobs; retained 0 validated observed jobs",
       "jobs": [],
-      "record_errors": []
+      "record_errors": [],
+      "collection_error": {
+        "category": "SOURCE_ERROR",
+        "scope": "source",
+        "stage": "collection",
+        "code": "SOURCE_FAILED",
+        "message": "HTTPError: 429 Client Error: Too Many Requests for url: https://worldpay.wd5.myworkdayjobs.com/wday/cxs/worldpay/Worldpay_External_Careers_Site/jobs; retained 0 validated observed jobs",
+        "batch": "JW1",
+        "company": "Worldpay"
+      }
     },
     {
       "company": "Telepass",
@@ -8072,7 +8144,7 @@
     "companies": [
       "Euronext"
     ],
-    "recovered_count": 1,
+    "recovered_count": 0,
     "active_decision_targeted_search": true,
     "official_corporate_listing_fallback": true
   },

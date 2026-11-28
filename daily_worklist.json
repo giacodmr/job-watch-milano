@@ -1,23 +1,23 @@
 {
   "version": "2.0",
   "snapshot": {
-    "run_id": "4e275517d8d3f1cffcb128d1",
+    "run_id": "12defec94c7b74ef9fb64532",
     "source_generated_at": {
-      "JW1": "2026-11-28T04:12:59Z",
-      "JW2": "2026-11-28T04:14:28Z",
-      "JW3": "2026-11-28T04:15:11Z",
-      "JW4": "2026-11-28T04:16:06Z"
+      "JW1": "2026-11-28T04:20:39Z",
+      "JW2": "2026-11-28T04:22:30Z",
+      "JW3": "2026-11-28T04:22:43Z",
+      "JW4": "2026-11-28T04:23:49Z"
     },
     "priority_snapshot_at": {
-      "Amazon": "2026-11-28T04:16:28.989654+00:00"
+      "Amazon": "2026-11-28T04:24:14.258190+00:00"
     },
     "rules_sha256": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
     "source_sha256": {
-      "current_jobs_jw1.json": "a27172c40dd829cd8dc4cc5ff80061a6de873d6e6d68406e219be922d69f4011",
-      "current_jobs_jw2.json": "c4feaf601a7e39f8e7b45ad34f2dc3d7e1e90210e92f0adab4c1646e9076f0df",
-      "current_jobs_jw3.json": "da852ac216c2ed2268f769efeec5b73441328740c2811e1fa8d70bffc918b1af",
-      "current_jobs_jw4.json": "6b17280c2e7bfc76d2d8bedc1c94d0d9b244382f7bf08467c7cd4fe0f19f914b",
-      "amazon_target_check.json": "729eca7354c0d35373552d2e895156bb6d6da2e79b788ea7739b75d998f9280e",
+      "current_jobs_jw1.json": "a9b220f58dde28207fb869e0101ca322993c6b694d0b4560ddc53b8c25f5410b",
+      "current_jobs_jw2.json": "a2307b319bc53c9fe1c8d661b6c8d3fbcd300e6b4fc922752dbe97485a1d1ac4",
+      "current_jobs_jw3.json": "9a9c8ddc1e85e62498b02c37553885514b48583a74ed21e3ed53cddd7632c08a",
+      "current_jobs_jw4.json": "3c3a826eaf92381251d3380417067205b7bd9c8b1606791931965806ce4ae1dd",
+      "amazon_target_check.json": "63e2eccab2ab828d356898eba38e8a49efa17c0e3c5544fca2604a1666601fed",
       "job_watch_rules.json": "986b0d0ce124cbe7bbe4f12a2c844262be0da49826c204d15cfcbb1b3c96c945",
       "job_watch_batches.json": "bb714c7d650391932463ea32df0a9d0522035b6d3520a541f518ebef22820d38",
       "companies_job_watch_v2.json": "72ffc6ead76d448960e1d86bb1d3077fd54fc57df399a5122c13ce5471b56e16"
@@ -26,12 +26,12 @@
   "rules_file": "job_watch_rules.json",
   "instructions_file": "DAILY.md",
   "summary": {
-    "records": 58,
+    "records": 59,
     "daily_semantic_pending": 2,
     "backlog_assigned": 0,
-    "historical_backlog_remaining": 179,
-    "full_semantic_pending": 181,
-    "processable_semantic_pending": 177,
+    "historical_backlog_remaining": 172,
+    "full_semantic_pending": 174,
+    "processable_semantic_pending": 170,
     "jd_retry_deferred": 0,
     "jd_unavailable": 4
   },
@@ -224,24 +224,6 @@
       "first_seen_at": "2026-09-20T14:44:18Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
-    },
-    {
-      "batch": "JW1",
-      "job_key": "Mastercard::R-286677",
-      "action": "TO_REVIEW",
-      "needs_semantic_review": true,
-      "company": "Mastercard",
-      "source_id": "R-286677",
-      "title": "Senior Specialist, Product Management",
-      "location": "London England Angel Lane | London, England (Angel Lane)",
-      "priority_company": true,
-      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
-      "fingerprint": "3c025b31204d3551",
-      "current_status": "UPDATED",
-      "threshold": 80,
-      "user_decision": "TO_REVIEW",
-      "user_decision_reason": "Strong product-strategy, analytics and business-case adjacency; retain for explicit review.",
-      "first_seen_at": "2026-09-19T10:11:09Z"
     },
     {
       "batch": "JW2",
@@ -443,6 +425,23 @@
       "current_status": "UNKNOWN",
       "user_decision": "TO_REVIEW",
       "first_seen_at": "2026-09-26T04:41:20Z",
+      "decision": {},
+      "lifecycle": "CLOSED_OR_UNVERIFIED"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Mastercard::R-286677",
+      "action": "TO_REVIEW",
+      "needs_semantic_review": false,
+      "company": "Mastercard",
+      "source_id": "R-286677",
+      "title": "Senior Specialist, Product Management",
+      "location": "London England Angel Lane | London, England (Angel Lane)",
+      "canonical_url": "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers/job/London-England-Angel-Lane/Senior-Specialist--Product-Management_R-286677",
+      "fingerprint": "3c025b31204d3551",
+      "current_status": "UNKNOWN",
+      "user_decision": "TO_REVIEW",
+      "first_seen_at": "2026-09-19T10:11:09Z",
       "decision": {},
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
@@ -1135,20 +1134,36 @@
       "lifecycle": "CLOSED_OR_UNVERIFIED"
     },
     {
-      "batch": "JW4",
-      "job_key": "Amplifon::13366",
+      "batch": "JW1",
+      "job_key": "Banca Sella::JR-002509",
       "action": "NEW_CANDIDATE",
       "needs_semantic_review": true,
-      "company": "Amplifon",
-      "source_id": "13366",
-      "title": "Una Laurea con Amplifon, A.A. 2026/2027",
-      "location": "Italy | Parma, Emilia Romagna, Italy | Torino, Piemonte, Italy | Padova, Veneto, Italy | Treviso, Veneto, Italy | Pisa, Toscana, Italy | Siena, Toscana, Italy | Roma, Lazio, Italy | Napoli, Campania, Italy | Bari, Puglia, Italy | Catania, Sicilia, Italy | Milano, Lombardia, Italy | Palermo, Sicilia, Italy | Verona, Veneto, Italy | Messina, Sicilia, Italy",
+      "company": "Banca Sella",
+      "source_id": "JR-002509",
+      "title": "Senior Product Manager – Digital Asset Custody",
+      "location": "Milano, Italy",
       "priority_company": false,
-      "canonical_url": "https://careers.amplifon.com/it/sites/CX_1/job/13366",
-      "fingerprint": "6f4c1d7453fabd12",
-      "current_status": "UPDATED",
+      "canonical_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Milano-Italy/Senior-Product-Manager---Digital-Asset-Custody_JR-002509",
+      "fingerprint": "22afe3141c764aa0",
+      "current_status": "NEW",
       "threshold": 70,
-      "first_seen_at": "2026-09-19T10:16:41Z"
+      "first_seen_at": "2026-11-28T04:20:39Z"
+    },
+    {
+      "batch": "JW1",
+      "job_key": "Banca Sella::JR-002512",
+      "action": "NEW_CANDIDATE",
+      "needs_semantic_review": true,
+      "company": "Banca Sella",
+      "source_id": "JR-002512",
+      "title": "Operatore/Operatrice  di Succursale Roma",
+      "location": "Roma, Italy",
+      "priority_company": false,
+      "canonical_url": "https://sellagroup.wd3.myworkdayjobs.com/ID01/job/Roma-Italy/Operatore-Operatrice--di-Succursale-Roma_JR-002512",
+      "fingerprint": "a2e1dbef500bf69f",
+      "current_status": "NEW",
+      "threshold": 70,
+      "first_seen_at": "2026-11-28T04:20:39Z"
     }
   ],
   "lifecycle_updates": [],
@@ -1168,6 +1183,10 @@
     {
       "batch": "JW4",
       "action": "AUTONOMOUS_SEARCH"
+    },
+    {
+      "action": "RETRY_PRIORITY_COLLECTION",
+      "company": "Mastercard"
     }
   ]
 }
